@@ -1,0 +1,43 @@
+.workflowOptions {
+  border-top: 1px solid $light-grey;
+
+  &:last-child {
+    border-bottom: 1px solid $light-grey;
+  }
+}
+.workflowType {
+  color: $text-grey;
+  line-height: 3.75rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+
+  &.active {
+    color: $main-purple;
+  }
+  &.disabled {
+    color: $text-grey;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .addIcon {
+  }
+}
+.workflowItemList {
+  margin-top: $rbwmspace12;
+}
+.workflowItem,
+.cloneItem {
+  padding: 0.75rem 0;
+  color: $text-grey;
+  user-select: none;
+
+  &.dragging {
+    padding: 0.75rem;
+    border-radius: 4px;
+    box-shadow: -3px 3px 6px rgba(0, 0, 0, 0.5);
+    background: $main-purple;
+    color: $white;
+    opacity: 1;
+  }
+}

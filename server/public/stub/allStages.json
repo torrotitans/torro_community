@@ -1,0 +1,473 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "group": "Approval",
+      "itemList": [
+        {
+          "apiTaskName": "",
+          "condition": [],
+          "flowType": "Approval",
+          "id": "approval",
+          "label": "Approval Process"
+        }
+      ],
+      "commonConditions": [
+        {
+          "id": "wsHeadApproval",
+          "label": "workspace owner approval",
+          "value": "wsOwner",
+          "style": 6
+        },
+        {
+          "id": "regionCountry",
+          "label": "region / Country approval",
+          "value": "region",
+          "style": 6
+        }
+      ],
+      "label": "Approval Process"
+    },
+    {
+      "group": "GoogleCloud",
+      "itemList": [
+        {
+          "apiTaskName": "CreateBQDataset",
+          "condition": [
+            {
+              "des": "input your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your dataset region",
+              "id": "dataset_location",
+              "label": "DataSet Location",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your dataset name",
+              "id": "dataset_name",
+              "label": "DataSet Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your dataset cmek, will use the default gcp key if no input",
+              "id": "dataset_cmek",
+              "label": "DataSet CMEK",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input n days your table expiration, default is None",
+              "id": "table_expiration",
+              "label": "Table Expiration",
+              "regExp": "",
+              "style": 1,
+              "value": ""
+            },
+            {
+              "des": "input your dataset label, for example: dataset_owner=second,dataset_expire=9days",
+              "id": "dataset_label",
+              "label": "DataSet Label",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sun, 09 May 2021 00:00:00 GMT",
+          "des": "Create bigquery dataset",
+          "flowType": "GoogleCloud",
+          "id": 27,
+          "label": "Create Bigquery Dataset",
+
+          "updated_time": "Sun, 09 May 2021 00:00:00 GMT"
+        },
+        {
+          "apiTaskName": "CreateBQTable",
+          "condition": [
+            {
+              "des": "input your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your dataset name",
+              "id": "dataset_name",
+              "label": "DataSet Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your table name",
+              "id": "table_name",
+              "label": "Table Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose an upload files field in form for the fields schema",
+              "id": "fields_schema",
+              "label": "Fields Schema",
+              "regExp": "",
+              "style": 4,
+              "value": ""
+            },
+            {
+              "des": "input your table cmek, will use the dataset cmek if no input",
+              "id": "table_cmek",
+              "label": "Table CMEK",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your table partitioning type",
+              "id": "table_partition",
+              "label": "Table Partitioning Type",
+              "options": [
+                {
+                  "label": "By day",
+                  "value": "By day"
+                },
+                {
+                  "label": "By hour",
+                  "value": "By hour"
+                },
+                {
+                  "label": "By month",
+                  "value": "By month"
+                },
+                {
+                  "label": "By year",
+                  "value": "By year"
+                }
+              ],
+              "regExp": "",
+              "style": 2,
+              "value": ""
+            },
+            {
+              "des": "input your table label, for example: table_owner=second,table_expire=9days",
+              "id": "table_label",
+              "label": "Table Label",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sun, 09 May 2021 00:00:00 GMT",
+          "des": "Create bigquery table",
+          "flowType": "GoogleCloud",
+          "id": 28,
+          "label": "Create Bigquery Table",
+
+          "updated_time": "Sun, 09 May 2021 00:00:00 GMT"
+        },
+        {
+          "apiTaskName": "CreateBQView",
+          "condition": [
+            {
+              "des": "input your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your dataset name",
+              "id": "dataset_name",
+              "label": "DataSet Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your view name",
+              "id": "view_name",
+              "label": "View Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your view query schema field in form",
+              "id": "fields_schema",
+              "label": "Fields Schema",
+              "regExp": "",
+              "style": 4,
+              "value": ""
+            },
+            {
+              "des": "input your view label, for example: view_owner=second,view_expire=9days",
+              "id": "view_label",
+              "label": "View Label",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sun, 09 May 2021 00:00:00 GMT",
+          "des": "Create bigquery view",
+          "flowType": "GoogleCloud",
+          "id": 29,
+          "label": "Create Bigquery View",
+          "updated_time": "Sun, 09 May 2021 00:00:00 GMT"
+        },
+        {
+          "apiTaskName": "BQIAMBinding",
+          "condition": [
+            {
+              "des": "input your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your dataset name",
+              "id": "dataset_name",
+              "label": "DataSet Name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your binding list, for example: [account_type:account_email,account_type:account_email]",
+              "id": "binding_list",
+              "label": "Binding List",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your binding level",
+              "id": "binding_level",
+              "label": "Binding Level",
+              "options": [
+                {
+                  "label": "dataset",
+                  "value": "dataset"
+                },
+                {
+                  "label": "table/view",
+                  "value": "table/view"
+                },
+                {
+                  "label": "field",
+                  "value": "field"
+                }
+              ],
+              "regExp": "",
+              "style": 2,
+              "value": ""
+            },
+            {
+              "des": "choose your binding resource splice by ,",
+              "id": "resource_list",
+              "label": "Resource List",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sun, 09 May 2021 00:00:00 GMT",
+          "des": "Bigquery IAM binding",
+          "flowType": "GoogleCloud",
+          "id": 30,
+          "label": "Bigquery IAM Binding",
+          "updated_time": "Sun, 09 May 2021 00:00:00 GMT"
+        },
+        {
+          "apiTaskName": "StorageIAMBinding",
+          "condition": [
+            {
+              "des": "choose your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your bucket name",
+              "id": "bucket_name",
+              "label": "bucket_name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your member and roles and split by :and+ for example: type:user1+role1,type:user1+role2,type:user2+role1 ",
+              "id": "member_roles",
+              "label": "member_roles",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sat, 26 Jun 2021 00:00:00 GMT",
+          "des": "Storage IAM binding",
+          "flowType": "GoogleCloud",
+          "id": 32,
+          "label": "Storage IAM Binding",
+          "updated_time": "Sat, 26 Jun 2021 00:00:00 GMT"
+        },
+        {
+          "apiTaskName": "CreateStorageBucket",
+          "condition": [
+            {
+              "des": "choose your project id",
+              "id": "porject_id",
+              "label": "Porject ID",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your bucket region, need to match gcp region",
+              "id": "bucket_location",
+              "label": "bucket region",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your bucket name",
+              "id": "bucket_name",
+              "label": "bucket_name",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "choose your storage class",
+              "id": "bucket_class",
+              "label": "bucket_class",
+              "options": [
+                {
+                  "label": "STANDARD",
+                  "value": "STANDARD"
+                },
+                {
+                  "label": "NEARLINE",
+                  "value": "NEARLINE"
+                },
+                {
+                  "label": "COLDLINE",
+                  "value": "COLDLINE"
+                },
+                {
+                  "label": "ARCHIVE",
+                  "value": "ARCHIVE"
+                }
+              ],
+              "regExp": "",
+              "style": 2,
+              "value": ""
+            },
+            {
+              "des": "input your kms_key_name",
+              "id": "bucket_cmek",
+              "label": "bucket_cmek",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            },
+            {
+              "des": "input your bucket labels and split by , for example: key1=value1,key2=value2 ",
+              "id": "bucket_labels",
+              "label": "bucket_labels",
+              "regExp": "",
+              "style": 3,
+              "value": ""
+            }
+          ],
+          "create_time": "Sat, 26 Jun 2021 00:00:00 GMT",
+          "des": "Create Storage Bucket",
+          "flowType": "GoogleCloud",
+          "id": 33,
+          "label": "Create Storage Bucket",
+          "updated_time": "Sat, 26 Jun 2021 00:00:00 GMT"
+        }
+      ],
+      "label": "Google Cloud Task"
+    },
+    {
+      "group": "System",
+      "itemList": [
+        {
+          "apiTaskName": "EmailNotify",
+          "condition": [
+            {
+              "id": "email_msg",
+              "label": "Email msg",
+              "value": "",
+              "style": 1
+            }
+          ],
+          "flowType": "System",
+          "id": "email_notify",
+          "label": "Emails Notification"
+        },
+        {
+          "apiTaskName": "systemNotify",
+          "condition": [
+            {
+              "id": "email_msg",
+              "label": "Email msg",
+              "value": "",
+              "style": 1
+            }
+          ],
+          "flowType": "System",
+          "id": "system_notify",
+          "label": "System Notification"
+        },
+        {
+          "apiTaskName": "system_dynamic_field",
+          "condition": [
+            {
+              "id": "FieldName",
+              "label": "Field Name",
+              "value": "",
+              "style": 1
+            },
+            {
+              "id": "optionLabel",
+              "label": "Respective Form Name",
+              "value": "",
+              "style": 5
+            },
+            {
+              "id": "optionsValue",
+              "label": "Respective Form AD Group",
+              "value": "",
+              "style": 5
+            }
+          ],
+          "flowType": "System",
+          "id": 14,
+          "label": "System Define Label"
+        }
+      ],
+      "label": "System Task"
+    }
+  ],
+  "msg": "request successfully"
+}

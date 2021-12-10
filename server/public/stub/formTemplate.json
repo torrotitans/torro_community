@@ -1,0 +1,157 @@
+[
+  {
+    "id": "1",
+    "title": "Form Name",
+    "des": "Please fill in the form below",
+    "itemList": [
+      {
+        "id": "1",
+        "style": 1,
+        "label": "Region",
+        "default": "true,false",
+        "options": [
+          { "label": "Asian Pacific", "value": "Asian Pacific" },
+          { "label": "UK Pacific", "value": "UK Pacific" }
+        ],
+        "placeholder": ""
+      },
+      {
+        "id": "2",
+        "style": 2,
+        "label": "Region",
+        "default": "Asian Pacific",
+        "options": [
+          { "label": "Asian Pacific", "value": "Asian Pacific" },
+          { "label": "UK Pacific", "value": "UK Pacific" }
+        ]
+      },
+      {
+        "id": "3",
+        "style": 3,
+        "label": "Staff ID",
+        "default": "12345678",
+        "placeholder": ""
+      },
+      {
+        "id": "4",
+        "style": 5,
+        "label": "Switch",
+        "default": true,
+        "placeholder": ""
+      },
+      {
+        "id": "5",
+        "style": 2,
+        "label": "Department",
+        "default": "Data Science",
+        "options": [
+          { "label": "Data Science", "value": "Data Science" },
+          { "label": "AQM", "value": "AQM" }
+        ]
+      },
+      {
+        "id": "6",
+        "style": 6,
+        "label": "from",
+        "default": "",
+        "placeholder": ""
+      },
+      {
+        "id": "7",
+        "style": 3,
+        "label": "Description",
+        "default": "Mark is the use case for transaction anomally detection",
+        "placeholder": ""
+      }
+    ],
+    "maxId": 7
+  },
+  {
+    "id": "2",
+    "title": "Create new use case",
+    "des": "This form will create a new use case for data users",
+    "itemList": [
+      { "id": "1", "style": 3, "label": "Use Case Name", "default": "Mark" },
+      {
+        "id": "2",
+        "style": 3,
+        "label": "Use Case Owner Name",
+        "default": "John Doe"
+      },
+      { "id": "3", "style": 3, "label": "Use Case Name", "default": "Mark" },
+      {
+        "id": "4",
+        "style": 2,
+        "label": "Region",
+        "default": "Asian Pacific",
+        "options": [
+          { "label": "Asian Pacific", "value": "Asian Pacific" },
+          { "label": "UK Pacific", "value": "UK Pacific" }
+        ]
+      },
+      {
+        "id": "5",
+        "style": 2,
+        "label": "Country",
+        "default": "China",
+        "options": [
+          { "label": "China", "value": "China" },
+          { "label": "Canada", "value": "Canada" }
+        ]
+      },
+      {
+        "id": "6",
+        "style": 2,
+        "label": "Department",
+        "default": "Data Science",
+        "options": [
+          { "label": "Data Science", "value": "Data Science" },
+          { "label": "AQM", "value": "AQM" }
+        ]
+      },
+      {
+        "id": "7",
+        "style": 3,
+        "label": "Description",
+        "default": "Mark is the use case for transaction anomally detection"
+      },
+      {
+        "id": "8",
+        "style": 6,
+        "label": "from",
+        "default": "",
+        "placeholder": ""
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "title": "Add user to use case",
+    "des": "Add user to use case",
+    "itemList": []
+  },
+  {
+    "id": "4",
+    "title": "Request data access",
+    "des": "Request data access",
+    "itemList": []
+  },
+  {
+    "id": "5",
+    "title": "Request Jupyter Notebook",
+    "des": "Request Jupyter Notebook",
+    "itemList": []
+  },
+  {
+    "id": "6",
+    "title": "Add new data source",
+    "des": "Add new data source",
+    "itemList": []
+  },
+  {
+    "id": "7",
+    "title": "Raise support Ticket",
+    "des": "Raise support Ticket",
+    "itemList": []
+  }
+]

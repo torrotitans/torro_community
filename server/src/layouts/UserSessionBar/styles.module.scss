@@ -1,0 +1,113 @@
+.UserSessionBar {
+  width: 100%;
+  height: 3rem;
+  background-color: $dark-purple;
+  position: relative;
+  padding: 0 $rbwmspace32 0 $rbwmspace20;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+}
+.UserSessionContent {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.leftBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu {
+  color: $white;
+  margin-right: $rbwmspace12;
+  cursor: pointer;
+}
+.logo {
+  color: $white;
+  margin-right: $rbwmspace20;
+  svg {
+    width: 7rem;
+    height: auto;
+  }
+}
+.userInfo {
+  display: flex;
+  align-items: center;
+  color: $white;
+}
+.userHeadIcon {
+  color: $white;
+  background-color: $text-grey;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  margin-right: $rbwmspace12;
+}
+
+.rightBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  .toolIcon {
+    margin: 0 5px;
+    position: relative;
+    cursor: pointer;
+    &:last-child {
+      margin-right: $rbwmspace12;
+    }
+  }
+  .svgIcon {
+    width: 2rem;
+    color: $white;
+    height: 2rem;
+    margin: 0 5px;
+    display: inline-block;
+  }
+  .iconLabel {
+    font-size: 1rem;
+    color: $white;
+    display: inline-block;
+  }
+  .notificaNum {
+    width: 1rem;
+    height: 1rem;
+    background-color: $dark-red;
+    border-radius: 50%;
+    color: $white;
+    font-size: 0.75rem;
+    text-align: center;
+    line-height: 1rem;
+    position: absolute;
+    bottom: $rbwmspace8;
+    right: 6px;
+  }
+}
+.userTag {
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: 1.8rem !important;
+    margin-right: $rbwmspace8 !important;
+  }
+}
+
+.optionsBox {
+  height: 3rem;
+  div {
+    color: $white !important;
+    background: transparent !important;
+    height: 100%;
+    box-sizing: border-box;
+    height: 100%;
+
+    svg {
+      color: $white;
+    }
+  }
+}

@@ -1,0 +1,81 @@
+.commentBox {
+  margin-bottom: $rbwmspace40;
+}
+.requestTitle {
+  color: $main-purple;
+  margin-bottom: $rbwmspace40;
+}
+
+.commentList {
+  margin-top: $rbwmspace40;
+}
+
+.commentRecord {
+  margin-bottom: $rbwmspace20;
+  width: 100%;
+}
+
+.commnetTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $rbwmspace12;
+  color: $dark-purple;
+  font-size: $fontSize3;
+  font-weight: $medium-font-weight;
+  position: relative;
+
+  &:hover {
+    .deleteIcon {
+      display: block;
+    }
+  }
+}
+
+.accountDetail {
+  display: flex;
+  align-items: center;
+
+  svg {
+    width: $rbwmspace40;
+    height: $rbwmspace40;
+    margin-right: $rbwmspace12;
+  }
+}
+
+.deleteIcon {
+  display: none;
+  cursor: pointer;
+  margin-left: $rbwmspace12;
+  width: 16px;
+  height: 16px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: $text-grey;
+  }
+}
+
+.commentContent {
+  color: $text;
+  font-size: $fontSize4;
+}
+
+.commentOperate {
+  width: 100%;
+}
+
+.textArea {
+  width: 100%;
+  margin-bottom: $rbwmspace20;
+}
+
+.addComment {
+  display: flex;
+  justify-content: flex-end;
+}
+.statusTag {
+  color: $dark-red;
+  margin-left: $rbwmspace8;
+}

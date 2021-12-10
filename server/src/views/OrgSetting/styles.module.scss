@@ -1,0 +1,52 @@
+.orgSettingPage {
+  width: 100%;
+  position: relative;
+  min-width: 1280px;
+  height: 100vh;
+  background-color: $white;
+  padding: $rbwmspace44;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  svg {
+    color: $main-purple;
+    height: 7rem;
+    width: auto;
+  }
+  margin-bottom: $rbwmspace32;
+}
+
+.title {
+  color: $main-purple;
+  .formDes {
+    color: $text-grey;
+  }
+  margin-bottom: $rbwmspace32;
+}
+
+.settingForm {
+  display: flex;
+  flex-wrap: wrap;
+  .button {
+    width: 12.5rem;
+    height: 3.75rem;
+    margin-right: $rbwmspace32;
+  }
+  .formItem {
+    width: calc(33.3% - 0.66rem);
+    margin-bottom: $rbwmspace32;
+    display: inline-block;
+    margin-right: $rbwmspace16;
+    &:nth-child(3n) {
+      margin-right: 0;
+    }
+  }
+}
+.buttonGroup {
+  position: absolute;
+  bottom: $rbwmspace44;
+  right: 0;
+}

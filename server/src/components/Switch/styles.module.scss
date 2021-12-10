@@ -1,0 +1,14 @@
+.switch {
+  display: block;
+  span[class*="MuiSwitch-track"] {
+    background-color: $text-grey;
+  }
+  &.checked {
+    span[class*="MuiSwitch-thumb"] {
+      color: $main-purple;
+    }
+    span[class*="MuiSwitch-track"] {
+      background: $main-purple;
+    }
+  }
+}

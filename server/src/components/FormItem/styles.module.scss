@@ -1,0 +1,105 @@
+.formCreation {
+  display: flex;
+  height: 100%;
+}
+
+.formOptions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.formItem {
+  width: calc(33.3%);
+  position: relative;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  overflow: hidden;
+
+  &.fullWidth {
+    width: 100% !important;
+
+    .formControl {
+      padding: $rbwmspace16 0;
+    }
+  }
+
+  &:hover {
+    .operation {
+      display: block;
+    }
+  }
+  &.edit {
+    border: 1px dashed $main-purple;
+    border-radius: 4px;
+    .operation {
+      display: block;
+    }
+  }
+
+  &.flex-basis {
+    flex-basis: 100%;
+  }
+}
+
+.systemTag {
+  color: $dark-yellow;
+  margin-left: $rbwmspace8;
+}
+
+.addFields {
+  border: 1px solid $main-purple;
+  border-radius: 4px;
+  width: 100%;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $main-purple;
+  margin-top: $rbwmspace24;
+  cursor: pointer;
+
+  &.active {
+  }
+
+  svg {
+    margin-right: 8px;
+  }
+}
+
+.operation {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 1rem;
+  right: 1rem;
+  display: none;
+
+  svg {
+    color: $text-grey;
+    cursor: pointer;
+  }
+}
+.required {
+  color: $main-red;
+  margin-left: $rbwmspace4;
+}
+
+.formControl {
+  width: 100%;
+  padding: $rbwmspace16;
+  box-sizing: border-box;
+  color: $main-purple;
+
+  .label {
+    display: inline-block;
+    margin-bottom: $rbwmspace16;
+    color: $main-purple;
+  }
+}
+
+.errorText {
+  > p {
+    color: #f44336;
+  }
+}
