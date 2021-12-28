@@ -102,7 +102,7 @@ const config = {
 
   formListGet: {
     // url: `${API_URL}/stub/formItem.json`,
-    url: "http://34.92.243.193/api/getFormList",
+    url: "http://34.92.243.193/api/getFormList/1",
     method: GET,
   },
   formItemGet: {
@@ -213,6 +213,13 @@ const config = {
   governersTagGet: {
     // url: `${API_URL}/stub/TagList.json`,
     url: "http://34.92.243.193/api/getTagTemplateList",
+    method: GET,
+  },
+
+  /* static data */
+  onBoardDataForm: {
+    url: `${API_URL}/stub/dataOnBoardForm.json`,
+    // url: "http://34.92.243.193/api/getTagTemplateList",
     method: GET,
   },
 };

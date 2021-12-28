@@ -141,3 +141,13 @@
   color: $main-purple;
   font-size: $fontSize3;
 }
+
+.specialField {
+  display: flex;
+  justify-content: center;
+  .specialStr {
+    margin-right: $rbwmspace8;
+    color: $main-purple;
+    text-decoration: underline;
+  }
+}

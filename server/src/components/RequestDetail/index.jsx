@@ -17,11 +17,11 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import FormDataDisplay from "./FormDataDisplay";
 import styles from "./styles.module.scss";
 import Loading from "src/icons/Loading";
-import HeadLine from "@comp/HeadLine";
+import HeadLine from "@comp/basics/HeadLine";
 import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import Text from "@comp/Text";
-import CallModal from "@comp/CallModal";
+import Text from "@comp/basics/Text";
+import CallModal from "@comp/basics/CallModal";
 
 const RequestDetail = ({ recordId, approvedView }) => {
   const [formLoading, setFormLoading] = useState(true);

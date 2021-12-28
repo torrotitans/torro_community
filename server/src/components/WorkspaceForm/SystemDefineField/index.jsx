@@ -10,7 +10,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import FormItem from "@comp/FormItem";
 import CheckBoxIcon from "src/icons/moduleIcon/CheckBoxIcon";
 import DropdownIcon from "src/icons/moduleIcon/DropdownIcon";
@@ -21,8 +21,8 @@ import DatePickerIcon from "src/icons/moduleIcon/DatePickerIcon";
 import styles from "./styles.module.scss";
 import {} from "@lib/api";
 import DesignPanel from "./DesignPanel";
-import Text from "@comp/Text";
-import HeadLine from "@comp/HeadLine";
+import Text from "@comp/basics/Text";
+import HeadLine from "@comp/basics/HeadLine";
 
 const moduleTypeList = [
   { style: 1, icon: CheckBoxIcon, cls: "checkbox", temp: "text" },

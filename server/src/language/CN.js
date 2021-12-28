@@ -54,8 +54,8 @@ export default {
   leftNav_addData: "添加新数据源",
   leftNav_support: "请求协助",
 
-  formcreation: "表单创建",
-  workflowcreation: "工作流创建",
+  formManagement: "表单创建",
+  workflowManagement: "工作流创建",
   bashCommand: "终端",
 
   save: "保存",
@@ -73,7 +73,7 @@ export default {
   addField: "添加表单项",
   addForm: "Add form",
 
-  /* workflowCreation */
+  /* workflowManagement */
   plsSelectForm: "请选择一个表单",
   addWorkflow: "添加一个新的工作流",
   formTrigger: "表单触发",

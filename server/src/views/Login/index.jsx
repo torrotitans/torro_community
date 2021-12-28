@@ -8,13 +8,13 @@ import cn from "classnames";
 /*local components && methods*/
 import withAuthentication from "src/hoc/withAuthentication";
 import UserInput from "@comp/UserComp/UserInput";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import Torro from "src/icons/Torrotext";
 import styles from "./styles.module.scss";
 import { LoginCall } from "@lib/api";
 import { useGlobalContext } from "src/context";
 import decode from "src/utils/encode.js";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 
 const LoginPage = () => {
   const { handleSubmit, reset, control } = useForm(); // initialise the hook

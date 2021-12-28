@@ -7,7 +7,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Input from "@material-ui/core/Input";
 
 /* local components & methods */
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import styles from "../styles.module.scss";
 
 const SwitchDesign = ({ data, onChange }) => {

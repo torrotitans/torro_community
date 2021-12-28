@@ -97,13 +97,30 @@ const GlobalContextProvider = (props) => {
       let newState = state;
       newState = {
         ...state,
-        lang: actions.payload.list,
+        list: actions.payload,
+        userList: actions.payload.filter((item) => item.hide === 0),
+        managementList: actions.payload.filter(
+          (item) => item.hide === 0 || item.id === 2
+        ),
       };
       return newState;
     },
     {
       list: [],
+      userList: [],
     }
+  );
+
+  const [torroConfigContext, torroConfigDispatch] = useReducer(
+    (state, actions) => {
+      let newState = state;
+      newState = {
+        ...state,
+        ...actions.payload,
+      };
+      return newState;
+    },
+    {}
   );
 
   const [wsContext, wsContextDispatch] = useReducer(
@@ -153,15 +170,22 @@ const GlobalContextProvider = (props) => {
     });
   };
 
-  const setFormContext = (data) => {
+  const setFormContext = (list) => {
     formListContextDispatch({
       type: "",
-      payload: data,
+      payload: list,
     });
   };
 
   const setWsContext = (data) => {
     wsContextDispatch({
+      type: "",
+      payload: data,
+    });
+  };
+
+  const setTorroConfig = (data) => {
+    torroConfigDispatch({
       type: "",
       payload: data,
     });
@@ -176,6 +200,8 @@ const GlobalContextProvider = (props) => {
     setFormContext,
     wsContext,
     setWsContext,
+    torroConfigContext,
+    setTorroConfig,
   };
 
   return (

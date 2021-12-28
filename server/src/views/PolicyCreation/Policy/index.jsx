@@ -9,15 +9,15 @@ import FormLabel from "@material-ui/core/FormLabel";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
-import HeadLine from "@comp/HeadLine";
+import HeadLine from "@comp/basics/HeadLine";
 import FormItem from "@comp/FormItem";
-import Button from "@comp/Button";
-import Text from "@comp/Text";
+import Button from "@comp/basics/Button";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
 import { wsPut, wsPost, getPolicyDetail } from "@lib/api";
 import Loading from "src/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 import PolicyTags from "../PolicyTags";
 

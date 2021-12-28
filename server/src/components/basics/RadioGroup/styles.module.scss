@@ -1,0 +1,13 @@
+.checked {
+  svg {
+    color: $main-purple;
+  }
+}
+.radio {
+  display: inline-block;
+}
+
+.radioGroup {
+  display: flex !important;
+  flex-direction: row !important;
+}

@@ -13,14 +13,14 @@ import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
 import { USER, GOVERNOR, IT } from "src/lib/data/roleType.js";
 import LANGUAGE from "src/lib/data/languageType";
-import Model from "@comp/Model";
+import Model from "@comp/basics/Modal";
 import DoubleSquare from "src/icons/DoubleSquare";
 import DoubleCircle from "src/icons/DoubleCircle";
 import DoubleTriangle from "src/icons/DoubleTriangle";
 import LeftNav from "src/components/LeftNav";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import Torro from "src/icons/Torrotext";
-import Select from "@comp/Select";
+import Select from "@comp/basics/Select";
 import { sendNotify } from "src/utils/systerm-error";
 import { updateLogin } from "@lib/api";
 

@@ -11,11 +11,11 @@ import TablePagination from "@material-ui/core/TablePagination";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
-import Button from "@comp/Button";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
+import Button from "@comp/basics/Button";
 import Loading from "src/icons/Loading";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 import { getTags, deleteFormData } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import {
@@ -25,7 +25,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 const TagTemplateList = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();
@@ -109,7 +109,7 @@ const TagTemplateList = ({ setStep, setCurrentId }) => {
         <Button
           filled
           onClick={() => {
-            navigate("/app/formcreation?tag_template=true");
+            navigate("/app/formManagement?tag_template=true");
           }}
         >
           <Intl id="addTagTemplate" />

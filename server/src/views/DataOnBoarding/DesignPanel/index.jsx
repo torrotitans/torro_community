@@ -14,6 +14,7 @@ const DesignPanel = ({
   handleApply,
   type,
   tagTemplateList,
+  checkedTagList,
 }) => {
   const [openState, setOpenState] = useState(false);
 
@@ -46,6 +47,7 @@ const DesignPanel = ({
               handleApply={handleApply}
               type={type}
               tagTemplateList={tagTemplateList}
+              checkedTagList={checkedTagList}
             />
           )}
         </div>

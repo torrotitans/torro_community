@@ -7,15 +7,15 @@ import CloseIcon from "@material-ui/icons/Close";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import TextBox from "@comp/TextBox";
-import Select from "@comp/Select";
+import TextBox from "@comp/basics/TextBox";
+import Select from "@comp/basics/Select";
 import Ueditor from "./Ueditor";
 import Schema from "./Schema";
 import CommonConditionHolder from "../CommonConditionHolder";
-import CheckBoxGroup from "@comp/CheckBoxGroup";
-import DatePicker from "@comp/DatePicker";
-import Switch from "@comp/Switch";
-import Text from "@comp/Text";
+import CheckBoxGroup from "@comp/basics/CheckBoxGroup";
+import DatePicker from "@comp/basics/DatePicker";
+import Switch from "@comp/basics/Switch";
+import Text from "@comp/basics/Text";
 
 const conditionTypeList = [
   { label: "=", value: "0" },

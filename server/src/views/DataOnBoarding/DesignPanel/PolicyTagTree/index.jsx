@@ -8,8 +8,8 @@ import styles from "./styles.module.scss";
 import PolicyItems from "../PolicyItems";
 import { getPolicys } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import Text from "@comp/Text";
-import Button from "@comp/Button";
+import Text from "@comp/basics/Text";
+import Button from "@comp/basics/Button";
 
 const PolicyTagTree = ({ handleApply }) => {
   const [policys, setPolicys] = useState([]);

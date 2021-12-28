@@ -13,15 +13,15 @@ import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 
 /* local components & methods */
-import Text from "@comp/Text";
-import FileUpload from "@comp/FileUpload";
-import DatePicker from "@comp/DatePicker";
-import TextBox from "@comp/TextBox";
-import Select from "@comp/Select";
-import Switch from "@comp/Switch";
+import Text from "@comp/basics/Text";
+import FileUpload from "@comp/basics/FileUpload";
+import DatePicker from "@comp/basics/DatePicker";
+import TextBox from "@comp/basics/TextBox";
+import Select from "@comp/basics/Select";
+import Switch from "@comp/basics/Switch";
 import PolicyTags from "@comp/PolicyTags";
-import CheckBoxGroup from "@comp/CheckBoxGroup";
-import RadioGroup from "@comp/RadioGroup";
+import CheckBoxGroup from "@comp/basics/CheckBoxGroup";
+import RadioGroup from "@comp/basics/RadioGroup";
 import styles from "./styles.module.scss";
 
 const FormItem = ({

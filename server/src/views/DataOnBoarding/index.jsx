@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm, useWatch } from "react-hook-form";
 import ScrollBar from "react-perfect-scrollbar";
+import { useNavigate } from "react-router-dom";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
@@ -14,15 +15,21 @@ import Delete from "@material-ui/icons/Close";
 import styles from "./styles.module.scss";
 /* local components & methods */
 import FormItem from "@comp/FormItem";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
-import CallModal from "@comp/CallModal";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
+import CallModal from "@comp/basics/CallModal";
 import Loading from "src/icons/Loading";
 import DesignPanel from "./DesignPanel";
-import TableTagDisplay from "./TableTagDisplay";
-import { getTableSchema, getTags, getPolicys } from "@lib/api";
+import TableTagDisplay from "@comp/TableTagDisplay";
+import {
+  getOnBoardDataForm,
+  getTableSchema,
+  getTags,
+  getPolicys,
+  raiseFormRequest,
+} from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import {
   Table,
@@ -31,10 +38,11 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 const DataOnBoarding = () => {
-  const { handleSubmit, control, register, formState } = useForm(); // initialise the hook
+  const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const navigate = useNavigate();
   const resourceType = useWatch({
     control,
     name: "resourceType",
@@ -51,6 +59,8 @@ const DataOnBoarding = () => {
   const [selectedList, setSelectedList] = useState([]);
   const [type, setType] = useState(0);
   const [tagTemplateList, setTagTempalteList] = useState([]);
+  const [submitData, setSubmitData] = useState(null);
+  const [onBoardDataForm, setOnBoardDataForm] = useState(null);
 
   const [modalData, setModalData] = useState({
     open: false,
@@ -59,56 +69,27 @@ const DataOnBoarding = () => {
     cb: null,
   });
 
-  const tableForm = useMemo(() => {
-    let gcrFlag = resourceType === "GCP";
+  const renderFormItem = (items, disabled) => {
+    return items.map((item, index) => {
+      return (
+        <FormItem
+          key={index}
+          data={item}
+          index={index}
+          control={control}
+          register={register}
+          disabled={disabled}
+        />
+      );
+    });
+  };
 
-    return [
-      {
-        default: "GCP",
-        des: "Resource type",
-        edit: 1,
-        id: "resourceType",
-        label: "Resource type",
-        options: [{ label: "GCP" }, { label: "Hive" }],
-        placeholder: "Resource type",
-        style: 8,
-        required: true,
-      },
-      {
-        default: "",
-        des: gcrFlag ? "GCP Project" : "Service name",
-        edit: 1,
-        id: "projectId",
-        label: gcrFlag ? "GCP Project" : "Service name",
-        options: [],
-        placeholder: gcrFlag ? "GCP Project" : "Service name",
-        style: 3,
-        required: true,
-      },
-      {
-        default: "",
-        des: gcrFlag ? "Dataset" : "Database",
-        edit: 1,
-        id: "datasetName",
-        label: gcrFlag ? "Dataset" : "Database",
-        options: [],
-        placeholder: gcrFlag ? "Dataset" : "Database",
-        style: 3,
-        required: true,
-      },
-      {
-        default: "",
-        des: "Table",
-        edit: 1,
-        id: "tableName",
-        label: "Table",
-        options: [],
-        placeholder: "Table",
-        style: 3,
-        required: true,
-      },
-    ];
-  }, [resourceType]);
+  const tableForm = useMemo(() => {
+    if (!onBoardDataForm) {
+      return [];
+    }
+    return resourceType === "GCP" ? onBoardDataForm.gcp : onBoardDataForm.hive;
+  }, [resourceType, onBoardDataForm]);
 
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
@@ -145,6 +126,32 @@ const DataOnBoarding = () => {
     return map;
   }, [policys]);
 
+  const isSelectedAll = useMemo(() => {
+    if (!selectedList || !tableList) {
+      return false;
+    }
+    return selectedList.length === tableList.length;
+  }, [selectedList, tableList]);
+
+  const enableAddTagBtn = useMemo(() => {
+    return selectedList.length > 0;
+  }, [selectedList]);
+
+  const checkedTagList = useMemo(() => {
+    if (type === 1) {
+      return tableData.tags;
+    }
+    if (tableList && type === 2 && selectedList.length === 1) {
+      return tableList[selectedList[0]].tags;
+    }
+
+    return [];
+  }, [selectedList, tableList, type, tableData]);
+
+  const haveTableTag = useMemo(() => {
+    return tableData?.tags.length > 0;
+  }, [tableData]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -157,43 +164,6 @@ const DataOnBoarding = () => {
   const submitHandle = (data) => {
     setSearchQuery(data);
   };
-
-  const renderFormItem = (items, disabled) => {
-    return items.map((item, index) => {
-      return (
-        <FormItem
-          key={index}
-          data={item}
-          index={index}
-          control={control}
-          register={register}
-          disabled={disabled}
-        />
-      );
-    });
-  };
-
-  const closeModal = () => {
-    setModalData({ ...modalData, open: false, cb: null });
-  };
-
-  const handleClose = (e) => {
-    if (
-      e &&
-      e.target &&
-      e.target.nodeName === "BODY" &&
-      e.target.style.overflow === "hidden"
-    ) {
-      return;
-    }
-    setAddState(false);
-  };
-  const isSelectedAll = useMemo(() => {
-    if (!selectedList || !tableList) {
-      return false;
-    }
-    return selectedList.length === tableList.length;
-  }, [selectedList, tableList]);
 
   const onSelectAllClick = useCallback(() => {
     if (isSelectedAll) {
@@ -230,18 +200,21 @@ const DataOnBoarding = () => {
     [selectedList, page, rowsPerPage]
   );
 
-  const enableAddTagBtn = useMemo(() => {
-    return selectedList.length > 0;
-  }, [selectedList]);
+  const closeModal = () => {
+    setModalData({ ...modalData, open: false, cb: null });
+  };
 
-  const selectedItem = useMemo(() => {
-    if (!tableList) {
-      return [];
+  const handleClose = (e) => {
+    if (
+      e &&
+      e.target &&
+      e.target.nodeName === "BODY" &&
+      e.target.style.overflow === "hidden"
+    ) {
+      return;
     }
-    return tableList.filter((item, index) => {
-      return selectedList.includes(index);
-    });
-  }, [selectedList, tableList]);
+    setAddState(false);
+  };
 
   const handleApply = useCallback(
     (data, type) => {
@@ -260,7 +233,8 @@ const DataOnBoarding = () => {
         if (!tmpData.tags) {
           tmpData.tags = [];
         }
-        tmpData.tags.push(data);
+        tmpData.tags = data;
+        setAddState(false);
         setTableData(tmpData);
       } else if (type === "COLUMNTAGS") {
         let tmp = [...tableList];
@@ -268,7 +242,7 @@ const DataOnBoarding = () => {
           if (!tmp[item].tags) {
             tmp[item].tags = [];
           }
-          tmp[item].tags.push(data);
+          tmp[item].tags = data;
         });
         let tmpData = JSON.parse(JSON.stringify(tableData));
         tmpData.schema.fields = tmp;
@@ -298,7 +272,7 @@ const DataOnBoarding = () => {
 
   const handleDeleteTag = useCallback(
     (tag, recordIndex) => {
-      let tmp = [...tableList];
+      let tmp = JSON.parse(JSON.stringify(tableList));
       let calcIndex = page * rowsPerPage + recordIndex;
       let tagList = tmp[calcIndex].tags;
       let tagIndex = tagList.indexOf(tag);
@@ -309,6 +283,66 @@ const DataOnBoarding = () => {
       setTableData(tmpData);
     },
     [tableData, tableList, page, rowsPerPage]
+  );
+
+  const buttonClickHandle = useCallback(() => {
+    let apiCall = raiseFormRequest;
+    let postData = submitData;
+    switch (modalData.status) {
+      case 1:
+      case 3:
+        setModalData({
+          ...modalData,
+          status: 0,
+          content: <Intl id="loadNpatience" />,
+        });
+
+        apiCall(postData)
+          .then((res) => {
+            if (res.code === SUCCESS) {
+              setModalData({
+                open: true,
+                status: 2,
+                content: <Intl id="newRequestSubmit" />,
+                successCb: () => {
+                  navigate(`/app/requestDetail?id=${res.data.id}`);
+                },
+              });
+            }
+          })
+          .catch((e) => {
+            setModalData({
+              ...modalData,
+              status: 3,
+              content: e.message,
+            });
+          });
+        break;
+      default:
+        setModalData({ ...modalData, open: false });
+        break;
+    }
+  }, [modalData, submitData, navigate]);
+
+  const onBoardHandle = useCallback(
+    (data) => {
+      setModalData({
+        open: true,
+        status: 1,
+        content: <Intl id="confirmOnboard" />,
+      });
+      setSubmitData({
+        form_id: "107",
+        form_field_values_dict: {
+          u1: tableData?.tableReference.projectId,
+          u2: tableData?.tableReference.datasetId,
+          u3: tableData?.tableReference.tableId,
+          u4: tableData?.schema?.fields,
+          u5: tableData?.tags,
+        },
+      });
+    },
+    [tableData]
   );
 
   useEffect(() => {
@@ -345,6 +379,20 @@ const DataOnBoarding = () => {
     getTags()
       .then((res) => {
         setTagTempalteList(res.data);
+      })
+      .catch((e) => {
+        sendNotify({
+          msg: "Get Policy tags error.",
+          status: 3,
+          show: true,
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    getOnBoardDataForm()
+      .then((res) => {
+        setOnBoardDataForm(res);
       })
       .catch((e) => {
         sendNotify({
@@ -419,7 +467,16 @@ const DataOnBoarding = () => {
                 </div>
               </div>
               {tableData.tags && tableData.tags.length > 0 && (
-                <TableTagDisplay tags={tableData.tags} />
+                <div>
+                  <div className={styles.designerTitle}>
+                    <Text type="title">Tags ({tableData.tags.length})</Text>
+                  </div>
+                  <div className={styles.tableTagList}>
+                    {tableData.tags.map((tag, index) => {
+                      return <TableTagDisplay key={index} tagData={tag} />;
+                    })}
+                  </div>
+                </div>
               )}
               <div className={styles.filter}>
                 <Button
@@ -429,7 +486,11 @@ const DataOnBoarding = () => {
                     setAddState(true);
                   }}
                 >
-                  <Intl id="addTableTag" />
+                  {!haveTableTag ? (
+                    <Intl id="addTableTag" />
+                  ) : (
+                    <Intl id="modifyTableTag" />
+                  )}
                 </Button>
                 <Button
                   filled
@@ -525,12 +586,21 @@ const DataOnBoarding = () => {
                                     item.tag_template_form_id
                                   ] && (
                                     <div
-                                      className={styles.policyTag}
+                                      className={styles.columnTag}
                                       key={index}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        let calcIndex =
+                                          page * rowsPerPage + rowIndex;
+                                        setSelectedList([calcIndex]);
+                                        setType(2);
+                                        setAddState(true);
+                                      }}
                                     >
                                       <span className={styles.delete}>
                                         <Delete
-                                          onClick={() => {
+                                          onClick={(e) => {
+                                            e.stopPropagation();
                                             handleDeleteTag(item, rowIndex);
                                           }}
                                         />
@@ -595,6 +665,16 @@ const DataOnBoarding = () => {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
               />
+
+              <div className={styles.buttonWrapper}>
+                <Button
+                  className={styles.button}
+                  onClick={onBoardHandle}
+                  variant="contained"
+                >
+                  <Intl id="submit" />
+                </Button>
+              </div>
             </>
           )}
         </div>
@@ -605,13 +685,14 @@ const DataOnBoarding = () => {
             handleApply={handleApply}
             tagTemplateList={tagTemplateList}
             type={type}
+            checkedTagList={checkedTagList}
           />
         )}
         <CallModal
           open={modalData.open}
           content={modalData.content}
           status={modalData.status}
-          buttonClickHandle={modalData.cb}
+          buttonClickHandle={buttonClickHandle}
           handleClose={closeModal}
         />
       </ScrollBar>

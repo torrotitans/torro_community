@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 /* material-ui */
 import Delete from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 import Paper from "@material-ui/core/Paper";
 import TablePagination from "@material-ui/core/TablePagination";
 
@@ -26,10 +27,10 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
-import CallModal from "@comp/CallModal";
+} from "@comp/basics/Table";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
+import CallModal from "@comp/basics/CallModal";
 import Loading from "src/icons/Loading";
 import WorkspaceForm from "@comp/WorkspaceForm";
 import {
@@ -41,12 +42,13 @@ import {
   getWsDetail,
 } from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import { useGlobalContext } from "src/context";
 import FormRender from "@comp/FormRender";
 import FormItem from "@comp/FormItem";
 import renderCheckBoxValue from "src/utils/renderCheckBoxValue";
+import UsecaseInfo from "@comp/UsecaseInfo";
 
 const USE_CASE_FORM_ID = 2;
 const UC_FLOW_OPTIONS = [
@@ -70,6 +72,7 @@ const WorkspaceManage = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [ucDefaultData, setUcDefaultData] = useState(null);
+  const [viewUcId, setViewUcId] = useState(null);
   const [modalData, setModalData] = useState({
     open: false,
     status: 0,
@@ -239,6 +242,11 @@ const WorkspaceManage = () => {
           });
       },
     });
+  }, []);
+
+  const handleViewClick = useCallback((uc, ucIndex) => {
+    setViewUcId(uc.id);
+    setStep(3);
   }, []);
 
   const dynamicField = useMemo(() => {
@@ -511,6 +519,11 @@ const WorkspaceManage = () => {
                                 </TableCell>
                                 <TableCell align="center">
                                   <div className={styles.operation}>
+                                    <VisibilityIcon
+                                      onClick={() => {
+                                        handleViewClick(uc, ucIndex);
+                                      }}
+                                    />
                                     <EditIcon
                                       onClick={() => {
                                         handleUcClick(uc, ucIndex);
@@ -583,6 +596,16 @@ const WorkspaceManage = () => {
                   setUcDefaultData(null);
                 }}
                 defaultData={ucDefaultData}
+              />
+            )}
+
+            {step === 3 && (
+              <UsecaseInfo
+                onBack={() => {
+                  setStep(0);
+                  setUcDefaultData(null);
+                }}
+                usecaseId={viewUcId}
               />
             )}
 

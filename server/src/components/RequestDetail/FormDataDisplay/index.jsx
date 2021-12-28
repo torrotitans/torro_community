@@ -11,17 +11,17 @@ import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 /* local components & methods */
 import ProgressBar from "@comp/ProgressBar";
 import FormItem from "@comp/FormItem";
-import Button from "@comp/Button";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
+import Button from "@comp/basics/Button";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
 import { updateFormRequest, changeStatus } from "@lib/api";
 import Loading from "src/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 import { useMemo } from "react";
-import TextBox from "@comp/TextBox";
+import TextBox from "@comp/basics/TextBox";
 import { useGlobalContext } from "src/context";
 import SpecialField from "./SpecialField";
 import CommentSection from "../CommentSection";
@@ -33,7 +33,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 import { STATUS_MAP } from "src/constant";
 
 const FormDataDisplay = ({
@@ -84,7 +84,7 @@ const FormDataDisplay = ({
       apiCall = updateFormRequest;
       postData = { ...submitData.data, id: recordId };
       let valueMap = postData.form_field_values_dict;
-      successTips = "New Request is submitted.";
+      successTips = <Intl id="newRequestSubmit" />;
       if (valueMap) {
         let validate = true;
         Object.keys(valueMap).forEach((k) => {
@@ -119,6 +119,7 @@ const FormDataDisplay = ({
                 content: successTips,
               });
               submitCallback(res.data.history_id);
+              window.location.reload();
             }
           })
           .catch(() => {
@@ -226,7 +227,7 @@ const FormDataDisplay = ({
       let label = row.label;
       let defaultValue = row.default;
       let options = row.options;
-
+      console.log(row);
       if (defaultValue instanceof Array || defaultValue instanceof Object) {
         if (
           defaultValue instanceof Array &&
@@ -261,6 +262,18 @@ const FormDataDisplay = ({
       } else {
         if (row.style === 1) {
           return renderCheckBoxValue(defaultValue, options);
+        } else if (row.label === "Use case" && row.id === "d15") {
+          return (
+            <div className={styles.specialField}>
+              <div className={styles.specialStr}>{defaultValue}</div>
+              <SpecialField
+                formId={formId}
+                fieldLabel={label}
+                data={defaultValue}
+                type="usecase"
+              />
+            </div>
+          );
         }
         return defaultValue;
       }

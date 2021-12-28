@@ -412,3 +412,15 @@ export const getTags = async (param) => {
 
   return await handleResponse(await callApi(method, url, param));
 };
+
+/* ============== static data call =====================*/
+
+export const getOnBoardDataForm = async (param) => {
+  let {
+    onBoardDataForm: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+/* ============== static data end =====================*/

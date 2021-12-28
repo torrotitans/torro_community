@@ -8,9 +8,9 @@ import LoginPage from "src/views/Login";
 import RoleSelection from "src/views/RoleSelection";
 import DataUserView from "src/views/Dashboard/DataUserView";
 import FormPage from "src/views/FormPage";
-import WorkflowCreation from "src/views/WorkflowCreation";
+import WorkflowManagement from "src/views/WorkflowManagement";
 import BashCommand from "src/views/BashCommand";
-import FormCreation from "src/views/FormCreation";
+import FormManagement from "src/views/FormManagement";
 import OrgSetting from "src/views/OrgSetting";
 import WorkspaceCreation from "src/views/WorkspaceCreation";
 import WorkspaceManage from "src/views/WorkspaceManage";
@@ -48,8 +48,8 @@ const routes = (language, isLoggedIn, haveRole) => {
       children: [
         { path: "/dashboard", element: <DataUserView /> },
         { path: "/forms", element: <FormPage /> },
-        { path: "/formcreation", element: <FormCreation /> },
-        { path: "/workflowcreation", element: <WorkflowCreation /> },
+        { path: "/formManagement", element: <FormManagement /> },
+        { path: "/workflowManagement", element: <WorkflowManagement /> },
         { path: "/bashCommand", element: <BashCommand /> },
         { path: "/WorkspaceManage", element: <WorkspaceManage /> },
         { path: "/WorkspaceCreation", element: <WorkspaceCreation /> },

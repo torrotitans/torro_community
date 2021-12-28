@@ -24,17 +24,23 @@ export default {
   System: "System",
   expired: "expired",
   add: "Add",
+  update: "Update",
   required: "Required",
   maxLength: "Max length",
   itemWidth: "Item width",
   search: "Search",
   apply: "Apply",
-  addTableTag: "ADD TABLE TAG",
-  addColumnTag: "ADD COLUMN TAG",
+  addTableTag: "Add table tags",
+  modifyTableTag: "Modify table tags",
+  addColumnTag: "Add column tags",
+  modifyColumnTag: "Modify column tags",
   CLEAR: "CLEAR",
   dropItem: "Drop workflow item here.",
   dropwfItem: "Drop workflow item here.",
   checkRequest: "View approval progress",
+  confirmRaise: "Do you confirm to raise this request?",
+  confirmOnboard: "Do you confirm to onBoard this Project?",
+  newRequestSubmit: "New Request is submitted.",
 
   // workspace
   wsCreate: "Create new worp",
@@ -83,9 +89,12 @@ export default {
   tagTemplateDeleted: "This tag template has been  deleted?",
 
   // Use case
-  useCase: "Use Case",
+  useCase: "Use case",
+  usecaseInfo: "Use case info",
+  useCaseDetail: "Use case detail",
+  useCaseMember: "Use case members",
   ucId: "Use case ID",
-  ucList: "Use Case List",
+  ucList: "Use case List",
   ucName: "Use case name",
   usOwnerGroup: "Use case owner group",
   ValidityDate: "Validity date",
@@ -182,8 +191,8 @@ export default {
   leftNav_addData: "Add new data source",
   leftNav_support: "Raise support Ticket",
 
-  formcreation: "Form creation",
-  workflowcreation: "Workflow creation",
+  formManagement: "Form management",
+  workflowManagement: "Workflow management",
   bashCommand: "Terinmal",
 
   save: "Save",
@@ -203,7 +212,7 @@ export default {
   addField: "Add field",
   addForm: "Add form",
 
-  /* workflowCreation */
+  /* workflowManagement */
   plsSelectForm: "Please select a form.",
   addWorkflow: "Add a new workflow",
   formTrigger: "Form Trigger",

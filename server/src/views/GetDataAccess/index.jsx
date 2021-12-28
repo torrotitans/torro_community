@@ -4,6 +4,7 @@ import { FormattedMessage as Intl } from "react-intl";
 import { useForm, useWatch } from "react-hook-form";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
+import { useNavigate } from "react-router-dom";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
@@ -16,12 +17,17 @@ import ListItemText from "@material-ui/core/ListItemText";
 /* local components & methods */
 import styles from "./styles.module.scss";
 import FormItem from "@comp/FormItem";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
-import CallModal from "@comp/CallModal";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
+import CallModal from "@comp/basics/CallModal";
 import Loading from "src/icons/Loading";
-import { getTableSchema, getPolicys, getTags } from "@lib/api";
-import Button from "@comp/Button";
+import {
+  getTableSchema,
+  getPolicys,
+  getTags,
+  raiseFormRequest,
+} from "@lib/api";
+import Button from "@comp/basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import {
   Table,
@@ -30,10 +36,13 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
+import TableTagDisplay from "@comp/TableTagDisplay";
+import { remove } from "lodash";
 
 const GetDataAccess = () => {
   const { handleSubmit, control, register, reset } = useForm(); // initialise the hook
+  const navigate = useNavigate();
   const resourceType = useWatch({
     control,
     name: "resourceType",
@@ -49,29 +58,25 @@ const GetDataAccess = () => {
   const [selectedList, setSelectedList] = useState([]);
   const [cartList, setCartList] = useState([]);
   const [tagTemplateList, setTagTempalteList] = useState([]);
+  const [submitData, setSubmitData] = useState(null);
 
   const tableForm = useMemo(() => {
     let gcrFlag = resourceType === "GCP";
 
     return [
       {
-        default: "Use case1",
-        des: "staff name",
-        edit: 1,
-        id: "u2",
-        label: "Use case name",
+        create_time: "Wed, 08 Dec 2021 10:17:00 GMT",
+        default: "DNA_CN",
+        des: null,
+        id: "use_case",
+        label: "Use case",
         options: [
-          {
-            label: "Use case1",
-            value: "Use case1",
-          },
-          {
-            label: "Use case2",
-            value: "Use case2",
-          },
+          { label: "DNA_CN", value: "DNA_CN" },
+          { label: "DNA_SG", value: "DNA_SG" },
         ],
-        placeholder: "placeholder",
+        placeholder: "DNA_CN",
         style: 2,
+        value_num: 2,
       },
       {
         default: "GCP",
@@ -150,6 +155,64 @@ const GetDataAccess = () => {
   const submitHandle = (data) => {
     setSearchQuery(data);
   };
+
+  const buttonClickHandle = useCallback(() => {
+    let apiCall = raiseFormRequest;
+    let postData = submitData;
+    switch (modalData.status) {
+      case 1:
+      case 3:
+        setModalData({
+          ...modalData,
+          status: 0,
+          content: <Intl id="loadNpatience" />,
+        });
+
+        apiCall(postData)
+          .then((res) => {
+            if (res.code === 200) {
+              setModalData({
+                open: true,
+                status: 2,
+                content: <Intl id="newRequestSubmit" />,
+                successCb: () => {
+                  navigate(`/app/requestDetail?id=${res.data.id}`);
+                },
+              });
+            }
+          })
+          .catch((e) => {
+            setModalData({
+              ...modalData,
+              status: 3,
+              content: e.message,
+            });
+          });
+        break;
+      default:
+        setModalData({ ...modalData, open: false });
+        break;
+    }
+  }, [modalData, submitData, navigate]);
+
+  const orderHandle = useCallback(() => {
+    setModalData({
+      open: true,
+      status: 1,
+      content: <Intl id="confirmOnboard" />,
+    });
+    setSubmitData({
+      form_id: "108",
+      form_field_values_dict: {
+        u1: tableData?.tableReference.projectId,
+        d15: searchQuery?.use_case,
+        u3: tableData?.location,
+        u4: tableData?.tableReference.datasetId,
+        u5: tableData?.tableReference.tableId,
+        u6: tableData?.schema?.fields,
+      },
+    });
+  }, [tableData, searchQuery]);
 
   const closeModal = () => {
     setModalData({ ...modalData, open: false, cb: null });
@@ -254,8 +317,10 @@ const GetDataAccess = () => {
 
   useEffect(() => {
     if (searchQuery) {
+      let postData = { ...searchQuery };
+      delete postData.use_case;
       setFormLoading(true);
-      getTableSchema(searchQuery)
+      getTableSchema(postData)
         .then((res) => {
           setTableData(res.data);
           setFormLoading(false);
@@ -360,6 +425,18 @@ const GetDataAccess = () => {
                     </div>
                   </div>
                 </div>
+                {tableData.tags && tableData.tags.length > 0 && (
+                  <div>
+                    <div className={styles.designerTitle}>
+                      <Text type="title">Tags ({tableData.tags.length})</Text>
+                    </div>
+                    <div className={styles.tableTagList}>
+                      {tableData.tags.map((tag, index) => {
+                        return <TableTagDisplay key={index} tagData={tag} />;
+                      })}
+                    </div>
+                  </div>
+                )}
                 <div className={styles.filter}>
                   <Button
                     filled
@@ -522,7 +599,7 @@ const GetDataAccess = () => {
               </ScrollBar>
             </div>
             <div className={styles.orderNow}>
-              <Button filled onClick={() => {}}>
+              <Button filled onClick={orderHandle}>
                 <Intl id="orderNow" />
               </Button>
             </div>
@@ -534,7 +611,7 @@ const GetDataAccess = () => {
         open={modalData.open}
         content={modalData.content}
         status={modalData.status}
-        buttonClickHandle={modalData.cb}
+        buttonClickHandle={buttonClickHandle}
         handleClose={closeModal}
       />
     </div>

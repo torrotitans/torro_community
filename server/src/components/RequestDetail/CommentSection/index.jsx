@@ -8,12 +8,12 @@ import Delete from "@material-ui/icons/Delete";
 
 /* local components & methods */
 import { postComment, deleteComment } from "@lib/api";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
-import TextBox from "@comp/TextBox";
-import CallModal from "@comp/CallModal";
+import TextBox from "@comp/basics/TextBox";
+import CallModal from "@comp/basics/CallModal";
 import { useGlobalContext } from "src/context";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 
 const CommentSection = ({
   recordId,

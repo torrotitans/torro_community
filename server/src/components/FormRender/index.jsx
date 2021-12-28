@@ -6,14 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 /* local components & methods */
 import FormItem from "@comp/FormItem";
-import Button from "@comp/Button";
-import HeadLine from "@comp/HeadLine";
-import Text from "@comp/Text";
+import Button from "@comp/basics/Button";
+import HeadLine from "@comp/basics/HeadLine";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
 import { getFormItem, raiseFormRequest, updateFormRequest } from "@lib/api";
 import Loading from "src/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 
 const FormRender = ({ formId, onBack, defaultData }) => {
@@ -47,7 +47,7 @@ const FormRender = ({ formId, onBack, defaultData }) => {
               setModalData({
                 open: true,
                 status: 2,
-                content: "New Request is submitted.",
+                content: <Intl id="newRequestSubmit" />,
                 successCb: () => {
                   navigate(`/app/requestDetail?id=${res.data.id}`);
                 },
@@ -72,7 +72,7 @@ const FormRender = ({ formId, onBack, defaultData }) => {
     setModalData({
       open: true,
       status: 1,
-      content: "Do you confirm to raise this request?",
+      content: <Intl id="confirmRaise" />,
     });
     let files = {};
     Object.keys(data).forEach((key) => {
@@ -152,11 +152,7 @@ const FormRender = ({ formId, onBack, defaultData }) => {
           <div className={styles.formDes}>
             <Text>{formData.des}</Text>
           </div>
-          <form
-            className={styles.form}
-            id={`currentForm${formData.id}`}
-            onSubmit={handleSubmit(submitHandle)}
-          >
+          <form className={styles.form} onSubmit={handleSubmit(submitHandle)}>
             <div className={styles.formOptions}>
               {renderFormItem(formData.fieldList)}
             </div>

@@ -4,7 +4,7 @@ import { FormattedMessage as Intl } from "react-intl";
 import Terminal from "terminal-in-react";
 
 /* local component */
-import HeadLine from "@comp/HeadLine";
+import HeadLine from "@comp/basics/HeadLine";
 import styles from "./styles.module.scss";
 import { getConsole } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";

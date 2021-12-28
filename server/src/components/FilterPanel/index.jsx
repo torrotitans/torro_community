@@ -10,9 +10,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import DatePicker from "@comp/DatePicker";
-import Select from "@comp/Select";
-import Button from "@comp/Button";
+import DatePicker from "@comp/basics/DatePicker";
+import Select from "@comp/basics/Select";
+import Button from "@comp/basics/Button";
 import FilterIcon from "src/icons/FilterIcon";
 
 const FilterPanel = ({

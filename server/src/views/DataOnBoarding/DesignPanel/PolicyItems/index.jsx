@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import Paper from "@material-ui/core/Paper";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 /* local component */
 import styles from "./styles.module.scss";

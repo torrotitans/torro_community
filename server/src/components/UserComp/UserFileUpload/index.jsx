@@ -6,8 +6,8 @@ import styles from "./styles.module.scss";
 import FormLabel from "@material-ui/core/FormLabel";
 
 /* local components & methods */
-import Text from "@comp/Text";
-import FileUpload from "@comp/FileUpload";
+import Text from "@comp/basics/Text";
+import FileUpload from "@comp/basics/FileUpload";
 
 const UserFileUpload = React.forwardRef(({ id, name, label }, ref) => {
   let textId = id;

@@ -13,7 +13,7 @@ import Paper from "@material-ui/core/Paper";
 
 /* local component */
 import styles from "./styles.module.scss";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 const SubTagList = ({ subTagList, onCheck, checkedList }) => {
   return (

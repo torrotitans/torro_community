@@ -8,14 +8,14 @@ import { useNavigate } from "react-router-dom";
 import withAuthentication from "src/hoc/withAuthentication";
 import UserInput from "@comp/UserComp/UserInput";
 import UserFileUpload from "@comp/UserComp/UserFileUpload";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import Torro from "src/icons/Torrotext";
 import styles from "./styles.module.scss";
 import { OrgSetup } from "@lib/api";
 import { useGlobalContext } from "src/context";
-import HeadLine from "@comp/HeadLine";
+import HeadLine from "@comp/basics/HeadLine";
 import decode from "src/utils/encode.js";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 
 const OrgSetting = () => {
   const { handleSubmit, reset, control, register } = useForm(); // initialise the hook

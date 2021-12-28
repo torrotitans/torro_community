@@ -1,0 +1,97 @@
+{
+  "form_id": 2,
+  "gcp": [
+    {
+      "default": "GCP",
+      "des": "Resource type",
+      "edit": 1,
+      "id": "resourceType",
+      "label": "Resource type",
+      "options": [{ "label": "GCP" }, { "label": "Hive" }],
+      "placeholder": "Resource type",
+      "style": 8,
+      "required": true,
+      "width": 100
+    },
+    {
+      "default": "",
+      "des": "GCP Project",
+      "edit": 1,
+      "id": "projectId",
+      "label": "GCP Project",
+      "options": [],
+      "placeholder": "GCP Project",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Dataset",
+      "edit": 1,
+      "id": "datasetName",
+      "label": "Dataset",
+      "options": [],
+      "placeholder": "Dataset",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Table",
+      "edit": 1,
+      "id": "tableName",
+      "label": "Table name",
+      "options": [],
+      "placeholder": "Table",
+      "style": 3,
+      "required": true
+    }
+  ],
+  "hive": [
+    {
+      "default": "GCP",
+      "des": "Resource type",
+      "edit": 1,
+      "id": "resourceType",
+      "label": "Resource type",
+      "options": [{ "label": "GCP" }, { "label": "Hive" }],
+      "placeholder": "Resource type",
+      "style": 8,
+      "required": true,
+      "width": 100
+    },
+    {
+      "default": "",
+      "des": "Service path",
+      "edit": 1,
+      "id": "projectId",
+      "label": "Service path",
+      "options": [],
+      "placeholder": "Service path",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Database",
+      "edit": 1,
+      "id": "datasetName",
+      "label": "Database",
+      "options": [],
+      "placeholder": "Database",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Table",
+      "edit": 1,
+      "id": "tableName",
+      "label": "Table",
+      "options": [],
+      "placeholder": "Table name",
+      "style": 3,
+      "required": true
+    }
+  ]
+}

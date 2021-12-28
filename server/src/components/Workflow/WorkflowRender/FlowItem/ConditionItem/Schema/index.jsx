@@ -9,11 +9,11 @@ import EditIcon from "@material-ui/icons/Edit";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Text from "@comp/Text";
-import Model from "@comp/Model";
-import Button from "@comp/Button";
-import Select from "@comp/Select";
-import TextBox from "@comp/TextBox";
+import Text from "@comp/basics/Text";
+import Model from "@comp/basics/Modal";
+import Button from "@comp/basics/Button";
+import Select from "@comp/basics/Select";
+import TextBox from "@comp/basics/TextBox";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 const typeList = [
   {

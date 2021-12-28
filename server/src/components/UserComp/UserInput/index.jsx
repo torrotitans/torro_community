@@ -4,11 +4,11 @@ import React from "react";
 import { Controller } from "react-hook-form";
 
 /* material-ui */
-import TextBox from "@comp/TextBox";
+import TextBox from "@comp/basics/TextBox";
 import FormLabel from "@material-ui/core/FormLabel";
 
 /* local components */
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
 
 const UserInput = ({

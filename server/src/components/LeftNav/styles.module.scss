@@ -1,9 +1,9 @@
 .leftNav {
   height: calc(100vh - 3rem);
-  width: 14rem;
+  width: 18rem;
   background-color: $dark-purple;
   position: absolute;
-  left: -14rem;
+  left: -18rem;
   top: 3rem;
   z-index: 999;
   transition: 0.5s all;
@@ -62,11 +62,11 @@
 .secondNavPanel {
   display: none;
   position: absolute;
-  width: 23.25rem;
+  width: 25rem;
   height: calc(100vh - 1rem);
   background-color: $light-purple;
   top: 0;
-  left: 14rem;
+  left: 18rem;
   z-index: 999;
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;

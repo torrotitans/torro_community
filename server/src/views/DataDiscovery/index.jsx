@@ -13,13 +13,13 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import styles from "./styles.module.scss";
 import TableView from "./TableView";
 import FormItem from "@comp/FormItem";
-import HeadLine from "@comp/HeadLine";
-import Search from "@comp/Search";
-import Text from "@comp/Text";
-import CallModal from "@comp/CallModal";
+import HeadLine from "@comp/basics/HeadLine";
+import Search from "@comp/basics/Search";
+import Text from "@comp/basics/Text";
+import CallModal from "@comp/basics/CallModal";
 import Loading from "src/icons/Loading";
 import { getTableData } from "@lib/api";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import {
   Table,
@@ -28,7 +28,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
+} from "@comp/basics/Table";
 
 const tableForm = [
   {

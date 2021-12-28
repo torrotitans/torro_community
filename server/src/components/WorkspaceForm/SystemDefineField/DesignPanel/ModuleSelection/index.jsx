@@ -4,7 +4,7 @@ import cn from "classnames";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import styles from "./styles.module.scss";
 
 /* moduleDesigb */

@@ -7,9 +7,9 @@ import cn from "classnames";
 import Input from "@material-ui/core/Input";
 
 /* local components & methods */
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import styles from "../styles.module.scss";
-import KeyGroup from "@comp/KeyGroup";
+import KeyGroup from "@comp/basics/KeyGroup";
 
 const TextDesign = ({ data, onChange }) => {
   return (

@@ -9,8 +9,8 @@ import EditIcon from "@material-ui/icons/Edit";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Button from "@comp/Button";
-import Model from "@comp/Model";
+import Button from "@comp/basics/Button";
+import Model from "@comp/basics/Modal";
 
 const SimpleMenu = ({ options, insert }) => {
   const [anchorEl, setAnchorEl] = useState(null);

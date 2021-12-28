@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import styles from "./styles.module.scss";
 import TagTemplateList from "./TagTemplateList";
 import PolicyTagTable from "./PolicyTagTable";
-import CallModal from "@comp/CallModal";
+import CallModal from "@comp/basics/CallModal";
 import Policy from "./Policy";
 
 const PolicyCreation = () => {

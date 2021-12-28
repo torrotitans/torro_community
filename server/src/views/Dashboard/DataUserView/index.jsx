@@ -9,7 +9,7 @@ import cn from "classnames";
 /* local Component*/
 import Frequently from "./Frequently";
 import RecordTable from "./RecordTable";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 
 const DataUserView = () => {
   const [currentTab, setCurrentTab] = useState(1);

@@ -5,11 +5,11 @@ import { Link } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import Dashboard from "src/icons/Dashboard";
 import RaiseTicket from "src/icons/RaiseTicket";
-import FormCreation from "src/icons/FormCreation";
-import WorkflowCreation from "src/icons/WorkflowCreation";
+import FormManagement from "src/icons/FormManagement";
+import WorkflowManagement from "src/icons/WorkflowManagement";
 import Terminal from "src/icons/Terminal";
 import { getFormList } from "@lib/api";
 import styles from "./styles.module.scss";
@@ -20,6 +20,11 @@ import { SUCCESS } from "src/lib/data/callStatus";
 const ROOT = "/app";
 const wsItemList = [
   {
+    id: "createUc",
+    title: <Intl id="createUc" />,
+    link: `${ROOT}/forms?id=2`,
+  },
+  {
     id: "wsMan",
     title: <Intl id="wsMan" />,
     link: `${ROOT}/WorkspaceManage`,
@@ -29,11 +34,6 @@ const wsItemList = [
     title: <Intl id="createWs" />,
     link: `${ROOT}/WorkspaceCreation`,
   },
-  // {
-  //   id: "createUc",
-  //   title: <Intl id="createUc" />,
-  //   link: "${ROOT}/forms?id=2",
-  // },
   {
     id: "policyMan",
     title: <Intl id="policyMan" />,
@@ -62,8 +62,17 @@ const wsItemList = [
 ];
 
 const LeftNav = ({ open, closeHandle }) => {
-  const [formList, setFormList] = useState([]);
-  const { authContext } = useGlobalContext();
+  const { authContext, formListContext, setFormContext } = useGlobalContext();
+
+  const formList = useMemo(() => {
+    return formListContext.userList.map((item) => {
+      return {
+        ...item,
+        link: `${ROOT}/forms?id=${item.id}`,
+      };
+    });
+  }, [formListContext]);
+
   const navList = useMemo(() => {
     switch (authContext.role) {
       case GOVERNOR:
@@ -77,9 +86,9 @@ const LeftNav = ({ open, closeHandle }) => {
             list: wsItemList,
           },
           {
-            link: `${ROOT}/formcreation`,
-            id: "formcreation",
-            icon: FormCreation,
+            link: `${ROOT}/formManagement`,
+            id: "formManagement",
+            icon: FormManagement,
           },
           {
             link: "",
@@ -89,9 +98,9 @@ const LeftNav = ({ open, closeHandle }) => {
             list: formList || [],
           },
           {
-            link: `${ROOT}/workflowcreation`,
-            id: "workflowcreation",
-            icon: WorkflowCreation,
+            link: `${ROOT}/workflowManagement`,
+            id: "workflowManagement",
+            icon: WorkflowManagement,
           },
         ];
       case IT:
@@ -105,9 +114,9 @@ const LeftNav = ({ open, closeHandle }) => {
             list: wsItemList,
           },
           {
-            link: `${ROOT}/formcreation`,
-            id: "formcreation",
-            icon: FormCreation,
+            link: `${ROOT}/formManagement`,
+            id: "formManagement",
+            icon: FormManagement,
           },
           {
             link: "",
@@ -117,9 +126,9 @@ const LeftNav = ({ open, closeHandle }) => {
             list: formList || [],
           },
           {
-            link: `${ROOT}/workflowcreation`,
-            id: "workflowcreation",
-            icon: WorkflowCreation,
+            link: `${ROOT}/workflowManagement`,
+            id: "workflowManagement",
+            icon: WorkflowManagement,
           },
           {
             link: `${ROOT}/bashCommand`,
@@ -144,16 +153,11 @@ const LeftNav = ({ open, closeHandle }) => {
   useEffect(() => {
     getFormList().then((res) => {
       if (res && res.code === SUCCESS) {
-        let tempData = res.data.map((item) => {
-          return {
-            ...item,
-            link: `${ROOT}/forms?id=${item.id}`,
-          };
-        });
-        setFormList(tempData);
+        setFormContext(res.data);
       }
     });
   }, []);
+
   return (
     <div
       className={cn(styles.leftNav, {

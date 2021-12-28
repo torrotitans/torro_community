@@ -12,9 +12,9 @@ import TablePagination from "@material-ui/core/TablePagination";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Text from "@comp/Text";
+import Text from "@comp/basics/Text";
 import Loading from "src/icons/Loading";
-import Search from "@comp/Search";
+import Search from "@comp/basics/Search";
 import Filter from "@comp/FilterPanel";
 import {
   Table,
@@ -23,11 +23,11 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/Table";
-import { getRequestData, getFormList, getFilterOptions } from "@lib/api";
+} from "@comp/basics/Table";
+import { getRequestData, getFilterOptions } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import { useCallback } from "react";
-import Button from "@comp/Button";
+import Button from "@comp/basics/Button";
 import { useGlobalContext } from "src/context";
 
 const tabList = [
@@ -46,11 +46,10 @@ const tabList = [
 ];
 
 const RecordTable = ({ approved }) => {
-  const { authContext } = useGlobalContext();
+  const { authContext, formListContext } = useGlobalContext();
   const navigate = useNavigate();
 
   const [formLoading, setFormLoading] = useState(true);
-  const [formList, setFormList] = useState([]);
   const [tableList, setTableList] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -63,6 +62,10 @@ const RecordTable = ({ approved }) => {
     form: [],
   });
   const [condition, setCondition] = useState({});
+
+  const formList = useMemo(() => {
+    return formListContext.list;
+  }, [formListContext]);
 
   const formIdMap = useMemo(() => {
     let map = {};
@@ -168,15 +171,13 @@ const RecordTable = ({ approved }) => {
       postData.approverView = true;
     }
     setFormLoading(true);
-    Promise.all([getFilterOptions(), getFormList(), getRequestData(postData)])
+    Promise.all([getFilterOptions(), getRequestData(postData)])
       .then((res) => {
         let res1 = res[0];
         let res2 = res[1];
-        let res3 = res[2];
         if (res1.data && res2.data) {
           setFilterOption(res1.data.data);
-          setFormList(res2.data);
-          setTableList(res3.data);
+          setTableList(res2.data);
           setFormLoading(false);
         }
       })
@@ -194,6 +195,7 @@ const RecordTable = ({ approved }) => {
               key={item.label}
               onClick={() => {
                 tabClickHandle(item.value, index);
+                setPage(0);
               }}
               className={cn(styles.statusTabItem, {
                 [styles["active"]]: index === tabIndex,
@@ -244,6 +246,11 @@ const RecordTable = ({ approved }) => {
                           <Intl id="requestNum" />
                         </Text>
                       </TableCell>
+                      <TableCell align="center">
+                        <Text type="subTitle">
+                          <Intl id="useCase" />
+                        </Text>
+                      </TableCell>
                       {approved && (
                         <TableCell align="center">
                           <Text type="subTitle">
@@ -272,6 +279,9 @@ const RecordTable = ({ approved }) => {
                     {filterTableList.map((row, index) => (
                       <TableRow key={index}>
                         <TableCell align="center">{row.id}</TableCell>
+                        <TableCell align="center">
+                          {row["Use case"] || "-"}
+                        </TableCell>
                         {approved && (
                           <TableCell align="center">{row.creator_id}</TableCell>
                         )}
