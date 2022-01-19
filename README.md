@@ -3,88 +3,38 @@ Torro is a unified data & AI governance engine on the google cloud. It provides 
 
 Currently, Torro community is under public beta preview and feel free to raise any bugs report and feature requests, any contribution is welcome!
 
-## Prerequisite 
+## 1.0 GCP Setup 
 ```
-pip install -r requirements.txt
-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-yum install -y wget
-yum install -y coreutils
-yum install -y python3-devel
-yum install -y tmux
-wget https://repo.mysql.com//mysql80-community-release-el8-1.noarch.rpm
-rpm -ivh mysql80-community-release-el8-1.noarch.rpm
+Enable Component:
+'Cloud Asset API', 'Cloud Asset API', 'Cloud Storage', 'BigQuery', 'IAM'
 
-yum install -y git
-yum install -y mysql-server
-systemctl enable mysqld.service
-systemctl list-unit-files|grep mysqld
-systemctl start mysqld.service
-ps -ef|grep mysql
-mysql
-alter user 'root'@'localhost' identified by 'XXXX';
-create database torro_api;
-
-yum install -y gcc-c++
-yum -y install gcc automake autoconf libtool make
-yum -y install zlib zlib-devel openssl openssl-devel pcre pcre-devel
-mkdir /home/torro_admin
-cd /home/torro_admin
-wget http://nginx.org/download/nginx-1.19.9.tar.gz
-tar -zxvf nginx-1.19.9.tar.gz nginx-1.19.9/
-cd nginx-1.19.9
-./configure --prefix=/home/torro_admin/nginx --with-http_ssl_module
-make
-make install
-cd /home/torro_admin/nginx/
-mkdir /home/torro_admin/nginx/conf/crt/
-mkdir /var/log/nginx/
-echo ''> /var/log/nginx/error.log
-openssl genrsa -out /home/torro_admin/nginx/conf/crt/server.key &>/dev/null
-openssl req -new -x509 -key /home/torro_admin/nginx/conf/crt/server.key -subj "/CN=commmon" -out /home/torro_admin/nginx/conf/crt/server.crt &>/dev/null
-
-cd /home/torro_admin
-wget https://nodejs.org/dist/v14.17.6/node-v14.17.6-linux-x64.tar.xz
-tar -xvf node-v14.17.6-linux-x64.tar.xz
-mv node-v14.17.6-linux-x64 nodejs
-cp /etc/profile /etc/profile.bak
-echo 'export PATH=$PATH:/home/torro_admin/nodejs/bin' >> /etc/profile
-source /etc/profile
+Service account project permission: 
+'Cloud Asset Viewer', 'BigQuery Admin', 
+'Data Catalog Admin', 'Fine-Grained Reader', 
+'Service Account Admin', 'Storage Admin'
 ```
 
 
-UI Server startup
-- Make sure your NodeJS and npm versions are up to date for `React 16.8.6`
-- Install dependencies: `npm install` or `yarn`
-- Start the server: `npm run start` or `yarn start`
-- Views are on: `localhost:3000`
-
-### Start the Engine
-
+## 2.0 Config files
 ```
-cd torro_community/engine
-nohup gunicorn -b 0.0.0.0:3128 main:app &
+Torro: config.ini
+GCP: config.py
+Ldap/offline: common/common_input_form_status.py: *offline_flag*
 ```
 
-### Configure file
+### 3.0 Run the init script
 
 ```
-config.ini
+git clone torro_backend
+run: init_torro.sh
 ```
 
-### Project SQL
+### 4.0 Setup the webserver
+- Install dependencies: `npm install`
 
-```
-user_api.sql
-```
+- Start the server: `npm run start`
 
-### List of GCP IAM
-
-```
-enable 'Cloud Asset API'
-
-project: Cloud Asset Viewer
-# to be updated
-```
+- Views are on: `localhost:8080`
 
 ## Licensing
 Torro Community Edition is an open source product licensed under AGPLv3.
