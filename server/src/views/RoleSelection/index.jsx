@@ -1,10 +1,10 @@
 /* third lib*/
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
-import Torro from "src/icons/Torro";
+import Torro from "@assets/icons/Torro";
 import { default as dataUser } from "@assets/roleBtn/dataUser.svg";
 import { default as dataGovernor } from "@assets/roleBtn/dataGovernor.svg";
 import { default as itAdmin } from "@assets/roleBtn/itAdmin.svg";
@@ -14,6 +14,7 @@ import { USER, GOVERNOR, IT } from "src/lib/data/roleType.js";
 import withAuthentication from "src/hoc/withAuthentication";
 import { updateLogin } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
+import { useMemo } from "react";
 
 const RoleSelection = () => {
   const { setAuth, authContext } = useGlobalContext();
@@ -32,9 +33,24 @@ const RoleSelection = () => {
         }
       })
       .catch((e) => {
-        sendNotify({ msg: e.message, status: 3, show: true });
+        sendNotify({
+          msg: e.message,
+          status: 3,
+          show: true,
+        });
       });
   };
+
+  /* temp logic start */
+  const roleList = useMemo(() => {
+    const realRoles = ["USER", "IT", "GOVERNOR"];
+    if (authContext.roleList.length > 0) {
+      return authContext.roleList.filter((role) => realRoles.includes(role));
+    } else {
+      return [];
+    }
+  }, [authContext.roleList]);
+  /* temp logic end*/
 
   return (
     <div className={styles.roleSelection}>
@@ -46,7 +62,7 @@ const RoleSelection = () => {
         </div>
       </div>
       <div className={styles.roleGroup}>
-        {authContext.roleList.map((item) => {
+        {roleList.map((item) => {
           let tmpSrc;
           switch (item) {
             case USER:

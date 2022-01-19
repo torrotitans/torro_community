@@ -11,7 +11,7 @@ import MenuList from "@material-ui/core/MenuList";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import { default as FilterIcon } from "@assets/Filter.svg";
+import FilterIcon from "@assets/icons/Filter";
 import { startsWith } from "lodash";
 
 const Filter = ({ id, value, options, onChange }) => {

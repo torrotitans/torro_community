@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 /* material-ui */
-import GlobalNotification from "@comp/basics/GlobalNotification";
+import GlobalNotification from "@basics/GlobalNotification";
 
 const ID = "system-error";
 

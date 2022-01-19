@@ -1,7 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
-
+@author：li-boss
+@file_name: db_user_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 import datetime
 from db.base import DbBase
@@ -30,6 +35,10 @@ class DbFormMgr(DbBase):
         """
         db_conn = MysqlConn()
         try:
+            if not system:
+                system = 0
+            else:
+                system = int(system)
             if system == 1:
                 condition_list = ["available=1"]
             else:
@@ -147,13 +156,13 @@ class DbFormMgr(DbBase):
                     # get dynamicFieldValue
                     condition = "dynamic_field_id='%s'" % dynamic_field_id
                     sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
-                                                 'option_label,option_value,create_time', condition=condition)
+                                                 'option_label,create_time', condition=condition)
                     values_info = self.execute_fetch_all(conn, sql)
                     field_info['options'] = []
                     # print('field_info:', field_info)
                     for value_info in values_info:
                         field_info['options'].append(
-                            {'label': value_info['option_label'], 'value': value_info['option_value']})
+                            {'label': value_info['option_label'], 'value': value_info['option_label']})
                     field_info['default'] = field_info['default_value']
                     del field_info['default_value']
                     field_info['id'] = 'd' + str(field_info['id'])
@@ -238,9 +247,9 @@ class DbFormMgr(DbBase):
 
             if wp_id != 0:
                 if style != 0:
-                    condition = "workspace_id='%s' and style='%s'" % (wp_id, style)
+                    condition = "style='%s'" % (style)
                 else:
-                    condition = "workspace_id='%s'" % (wp_id)
+                    condition = "1=1"
                 sql = self.create_select_sql(db_name, 'dynamicFieldTable',
                                              'id,style,label,default_value,placeholder,value_num,des,create_time',
                                              condition=condition)
@@ -248,9 +257,12 @@ class DbFormMgr(DbBase):
                 for dynamic_field_info in dynamic_fields_info:
                     dynamic_field_id = dynamic_field_info['id']
                     # get dynamicFieldValue
-                    condition = "dynamic_field_id='%s'" % dynamic_field_id
+                    if wp_id != 0:
+                        condition = "workspace_id=%s and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
+                    else:
+                        condition = "dynamic_field_id='%s'" % dynamic_field_id
                     sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
-                                                 'option_label,option_value,create_time',
+                                                 'option_label,create_time',
                                                  condition=condition)
                     values_info = self.execute_fetch_all(conn, sql)
                     new_field_info = dynamic_field_info
@@ -259,7 +271,7 @@ class DbFormMgr(DbBase):
                     # # print('values_info:', values_info)
                     for value_info in values_info:
                         new_field_info['options'].append(
-                            {'label': value_info['option_label'], 'value': value_info['option_value']})
+                            {'label': value_info['option_label'], 'value': value_info['option_label']})
                     new_field_info['default'] = new_field_info['default_value']
                     # del new_field_info['default_value']
                     # # print(new_field_info)

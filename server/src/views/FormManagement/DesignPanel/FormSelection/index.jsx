@@ -9,8 +9,8 @@ import AddIcon from "@material-ui/icons/Add";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Text from "@comp/basics/Text";
-import Delete from "src/icons/Delete";
+import Text from "@basics/Text";
+import Delete from "@assets/icons/Delete";
 
 const FormSelection = ({
   formList,
@@ -41,6 +41,7 @@ const FormSelection = ({
                   onClick={() => {
                     formChange(item.id);
                   }}
+                  title={item.title}
                 >
                   <Text type="subTitle">{item.title}</Text>
                   <Delete

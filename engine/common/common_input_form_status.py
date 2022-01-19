@@ -1,4 +1,5 @@
 class status:
+    # offline_flag = 0: using ldap
     offline_flag = 1
 
     pending_approval = 0
@@ -30,5 +31,25 @@ class status:
                             'system_create_tag', 'system_create_tag_template_form', 'system_add_new_usecase']
 
     db_operation_tasks = ['CreatePolicyTagsV1', 'system_create_form', 'system_update_form', 'CreateTagTemplate',
+                          'ModifyTablePolicyTags', 'GrantRoleForPolicyTags',
                           'UpdateTagTemplate', 'DeleteTagTemplate', 'system_add_new_usecase', 'system_define_field',
-                          'system_create_tag', 'system_create_tag_template_form']
+                          'ModifyTableTags', 'GrantRoleForBQTable',
+                          'system_create_tag', 'system_create_tag_template_form', 'ModifyTablePolicyTags',
+                          'ModifyTableTags']
+
+    system_form_id = {'usecase': 2, 'add_user': 1, 'data_access': 108, 'data_ob': 107, 'data_approval_tag_template': 419,
+                      'tag_template': 104}
+    system_form_field_id = {'data_access': {'project_id': 'u1',
+                                            'location': 'u3',
+                                            'dataset_id': 'u4',
+                                            'table_id': 'u5',
+                                            'field_id': 'u6'},
+                            'data_ob': {'project_id': 'u1',
+                                            'location': 'u2',
+                                            'dataset_id': 'u3',
+                                            'table_id': 'u4',
+                                            'field_id': 'u5'},
+                            'usecase': {
+                                'usecase_name': 15
+                            }
+                            }

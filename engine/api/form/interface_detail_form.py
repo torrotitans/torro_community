@@ -30,8 +30,6 @@ class interfaceDetailForm(Resource):
     #         lg.error(e)
     #         error_data = response_code.GET_DATA_FAIL
     #         return response_result_process(error_data, xml=xml)
-
-
     # @api_version
     @login_required
     def post(self,):
@@ -62,6 +60,43 @@ class interfaceDetailForm(Resource):
             # print(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
+class interfaceDetailFormList(Resource):
+
+
+    @login_required
+    def post(self,):
+        xml = request.args.get('format')
+        try:
+            request_data = req.request_process(request, xml, modelEnum.department.value)
+            if isinstance(request_data, bool):
+                request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
+                return response_result_process(request_data, xml=xml)
+
+            request_data = req.verify_all_param(request_data, formApiPara.getFormData_POST_request)
+
+            workspace_id = req.get_workspace_id()
+            # wp_id = request_data.get('workspace_id', workspace_id)
+            uc_id = request_data.get('usecase_id', 0)
+            form_id_list = request_data.get('idList')
+            data = response_code.SUCCESS
+            data['data'] = []
+            for form_id in form_id_list:
+                one_data = formSingleton_singleton.get_details_form_by_id(form_id, workspace_id, uc_id)
+                if one_data['code'] == 200:
+                    response_data = one_data['data']
+                    response_data = req.verify_all_param(response_data, formApiPara.getFormData_POST_response)
+                    data['data'].append(response_data)
+                else:
+                    data['data'].append(None)
+            # # print(data)
+            return response_result_process(data, xml=xml)
+        except Exception as e:
+            lg.error(traceback.format_exc())
+            # print(traceback.format_exc())
+            error_data = response_code.GET_DATA_FAIL
+            return response_result_process(error_data, xml=xml)
+
 
 class testingDetailForm():
 

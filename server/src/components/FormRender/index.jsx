@@ -6,19 +6,19 @@ import { useNavigate } from "react-router-dom";
 
 /* local components & methods */
 import FormItem from "@comp/FormItem";
-import Button from "@comp/basics/Button";
-import HeadLine from "@comp/basics/HeadLine";
-import Text from "@comp/basics/Text";
+import Button from "@basics/Button";
+import HeadLine from "@basics/HeadLine";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 import { getFormItem, raiseFormRequest, updateFormRequest } from "@lib/api";
-import Loading from "src/icons/Loading";
+import Loading from "@assets/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/basics/CallModal";
+import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 
 const FormRender = ({ formId, onBack, defaultData }) => {
   const navigate = useNavigate();
-  const { handleSubmit, control, register, formState } = useForm(); // initialise the hook
+  const { handleSubmit, control, register } = useForm(); // initialise the hook
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
   const [submitData, setSubmitData] = useState(null);

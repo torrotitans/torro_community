@@ -1,17 +1,17 @@
 /* third libs */
-import React, { Children, useMemo } from "react";
+import React, { useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import cn from "classnames";
 
 /* material-ui */
-import Model from "@comp/basics/Modal";
-import Text from "@comp/basics/Text";
-import HeadLine from "@comp/basics/HeadLine";
-import Button from "@comp/basics/Button";
-import Loading from "src/icons/StatusIcon/Loading";
-import Confirm from "src/icons/StatusIcon/Confirm";
-import Success from "src/icons/StatusIcon/Success";
-import ErrorIcon from "src/icons/StatusIcon/Error";
+import Model from "@basics/Modal";
+import Text from "@basics/Text";
+import HeadLine from "@basics/HeadLine";
+import Button from "@basics/Button";
+import Loading from "@assets/icons/StatusIcon/Loading";
+import Confirm from "@assets/icons/StatusIcon/Confirm";
+import Success from "@assets/icons/StatusIcon/Success";
+import ErrorIcon from "@assets/icons/StatusIcon/Error";
 
 /* local components & methods */
 import styles from "./styles.module.scss";

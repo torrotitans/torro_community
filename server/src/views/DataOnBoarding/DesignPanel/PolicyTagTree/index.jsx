@@ -1,6 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import cn from "classnames";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
@@ -8,8 +7,8 @@ import styles from "./styles.module.scss";
 import PolicyItems from "../PolicyItems";
 import { getPolicys } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import Text from "@comp/basics/Text";
-import Button from "@comp/basics/Button";
+import Text from "@basics/Text";
+import Button from "@basics/Button";
 
 const PolicyTagTree = ({ handleApply }) => {
   const [policys, setPolicys] = useState([]);

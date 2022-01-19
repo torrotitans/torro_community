@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: base.py
+@create date: 2019-10-27 14:23 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：数据库操作基础类
 """
 import math
 import json

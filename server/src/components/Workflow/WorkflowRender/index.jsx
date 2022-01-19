@@ -8,7 +8,7 @@ import AddCircleOutline from "@material-ui/icons/AddCircleOutline";
 /* local components & methods */
 import styles from "./styles.module.scss";
 import FlowItem from "./FlowItem";
-import ProcessArrow from "src/icons/ProcessArrow";
+import ProcessArrow from "@assets/icons/ProcessArrow";
 
 const StartButton = () => (
   <div className={cn(styles.startButton)}>

@@ -13,16 +13,17 @@ import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
 import { USER, GOVERNOR, IT } from "src/lib/data/roleType.js";
 import LANGUAGE from "src/lib/data/languageType";
-import Model from "@comp/basics/Modal";
-import DoubleSquare from "src/icons/DoubleSquare";
-import DoubleCircle from "src/icons/DoubleCircle";
-import DoubleTriangle from "src/icons/DoubleTriangle";
+import Model from "@basics/Modal";
+import DoubleSquare from "@assets/icons/DoubleSquare";
+import DoubleCircle from "@assets/icons/DoubleCircle";
+import DoubleTriangle from "@assets/icons/DoubleTriangle";
 import LeftNav from "src/components/LeftNav";
-import Text from "@comp/basics/Text";
-import Torro from "src/icons/Torrotext";
-import Select from "@comp/basics/Select";
+import Text from "@basics/Text";
+import Torro from "@assets/icons/Torrotext";
+import Select from "@basics/Select";
 import { sendNotify } from "src/utils/systerm-error";
 import { updateLogin } from "@lib/api";
+import { useEffect } from "react";
 
 const UserTag = ({ role }) => {
   const { setAuth, authContext } = useGlobalContext();
@@ -68,8 +69,6 @@ const UserSessionBar = () => {
   const {
     authContext,
     setAuth,
-    wsContext,
-    setWsContext,
     languageContext,
     setLanguage,
   } = useGlobalContext();
@@ -117,6 +116,10 @@ const UserSessionBar = () => {
     },
     [setAuth, authContext]
   );
+
+  useEffect(() => {
+    setNotifyNum(1);
+  }, []);
 
   return (
     <ClickAwayListener onClickAway={handleClose}>

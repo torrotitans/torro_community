@@ -185,7 +185,8 @@ class Ldap():
                 else:
                     return []
             else:
-                return  ["Engineer@torro.ai", "Torro@torro.ai"]
+                ad_group_list = org_mgr.offline_ad_group(username)
+                return  ad_group_list
         except:
             # print(traceback.format_exc())
             return []

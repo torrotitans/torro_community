@@ -10,10 +10,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import DatePicker from "@comp/basics/DatePicker";
-import Select from "@comp/basics/Select";
-import Button from "@comp/basics/Button";
-import FilterIcon from "src/icons/FilterIcon";
+import DatePicker from "@basics/DatePicker";
+import Select from "@basics/Select";
+import Button from "@basics/Button";
+import FilterIcon from "@assets/icons/FilterIcon";
 
 const FilterPanel = ({
   id,
@@ -49,9 +49,12 @@ const FilterPanel = ({
     setOpen(false);
   }, []);
 
-  const handleResetClick = useCallback((e) => {
-    handleReset();
-  }, []);
+  const handleResetClick = useCallback(
+    (e) => {
+      handleReset();
+    },
+    [handleReset]
+  );
 
   return (
     <Paper id={id} ref={anchorRef} className={styles.filter}>

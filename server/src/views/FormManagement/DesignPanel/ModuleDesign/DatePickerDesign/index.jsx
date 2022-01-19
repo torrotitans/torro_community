@@ -7,7 +7,7 @@ import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
 const DatePickerDesign = ({ data, onChange }) => {

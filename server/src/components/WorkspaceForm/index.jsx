@@ -8,15 +8,15 @@ import Scrollbar from "react-perfect-scrollbar";
 import FormLabel from "@material-ui/core/FormLabel";
 
 /* local components & methods */
-import HeadLine from "@comp/basics/HeadLine";
+import HeadLine from "@basics/HeadLine";
 import FormItem from "@comp/FormItem";
-import Button from "@comp/basics/Button";
-import Text from "@comp/basics/Text";
+import Button from "@basics/Button";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 import { getFieldTemplate, wsPut, wsPost, getWsDetail } from "@lib/api";
-import Loading from "src/icons/Loading";
+import Loading from "@assets/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/basics/CallModal";
+import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 import SystemDefineField from "./SystemDefineField";
 import RegionDesign from "./RegionDesign";

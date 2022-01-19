@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import cn from "classnames";
 
@@ -10,7 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import Paper from "@material-ui/core/Paper";
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import {
   Table,
   TableBody,
@@ -18,7 +18,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 /* local component */
 import styles from "./styles.module.scss";
@@ -102,12 +102,12 @@ const PolicyItems = ({ item, onCheck, checkedList }) => {
     const mapTags = (item) => {
       if (item.policy_tags_list && item.policy_tags_list.length > 0) {
         count += item.policy_tags_list.length;
-        item.policy_tags_list.map((subTag) => {
+        item.policy_tags_list.forEach((subTag) => {
           mapTags(subTag);
         });
       } else if (item.sub_tags.length && item.sub_tags.length > 0) {
         count += item.sub_tags.length;
-        item.sub_tags.map((subTag) => {
+        item.sub_tags.forEach((subTag) => {
           mapTags(subTag);
         });
       }

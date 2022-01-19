@@ -17,22 +17,22 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
-import Select from "@comp/basics/Select";
+} from "@basics/Table";
+import Select from "@basics/Select";
 import styles from "./styles.module.scss";
-import HeadLine from "@comp/basics/HeadLine";
-import Text from "@comp/basics/Text";
-import CallModal from "@comp/basics/CallModal";
-import Model from "@comp/basics/Modal";
+import HeadLine from "@basics/HeadLine";
+import Text from "@basics/Text";
+import CallModal from "@basics/CallModal";
+import Model from "@basics/Modal";
 import Filter from "@comp/Filter";
-import Loading from "src/icons/Loading";
+import Loading from "@assets/icons/Loading";
 import {
   getFormWorkflowData,
   postWorkflowData,
   deleteWorkflowData,
 } from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
-import Button from "@comp/basics/Button";
+import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import { useGlobalContext } from "src/context";
 const TRIGGER = "Trigger";
@@ -251,7 +251,7 @@ const WorkflowManagement = () => {
                     <TableRow key={index}>
                       <TableCell align="center">
                         {row.id}
-                        {row.available == 0 && (
+                        {row.available === 0 && (
                           <span className={styles.expired}>
                             (<Intl id="expired" />)
                           </span>

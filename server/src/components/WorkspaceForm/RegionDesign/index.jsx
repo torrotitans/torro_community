@@ -10,7 +10,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
 
 /* local component */
-import TextBox from "@comp/basics/TextBox";
+import TextBox from "@basics/TextBox";
 import styles from "./styles.module.scss";
 import {
   Table,
@@ -19,7 +19,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const Region = ({ row, onChange, onDelete }) => {
   const [open, setOpen] = useState(false);

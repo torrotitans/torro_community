@@ -1,14 +1,7 @@
 /* third lib*/
-import React, {
-  Fragment,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import Scrollbar from "react-perfect-scrollbar";
-import cn from "classnames";
 import { useForm } from "react-hook-form";
 
 /* material-ui */
@@ -27,11 +20,11 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
-import HeadLine from "@comp/basics/HeadLine";
-import Text from "@comp/basics/Text";
-import CallModal from "@comp/basics/CallModal";
-import Loading from "src/icons/Loading";
+} from "@basics/Table";
+import HeadLine from "@basics/HeadLine";
+import Text from "@basics/Text";
+import CallModal from "@basics/CallModal";
+import Loading from "@assets/icons/Loading";
 import WorkspaceForm from "@comp/WorkspaceForm";
 import {
   getWsList,
@@ -42,7 +35,7 @@ import {
   getWsDetail,
 } from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
-import Button from "@comp/basics/Button";
+import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import { useGlobalContext } from "src/context";
 import FormRender from "@comp/FormRender";
@@ -62,7 +55,7 @@ const UC_FLOW_OPTIONS = [
 
 const WorkspaceManage = () => {
   const { authContext } = useGlobalContext();
-  const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const { control, register } = useForm(); // initialise the hook
 
   const [wsData, setWsData] = useState();
   const [formLoading, setFormLoading] = useState(true);

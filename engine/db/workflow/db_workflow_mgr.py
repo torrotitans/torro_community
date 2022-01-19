@@ -1,12 +1,18 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: db_user_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 import datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
 from utils.log_helper import lg
-import traceback
+import copy
 from utils.status_code import response_code
 from config import configuration
 from common.common_crypto import prpcrypt
@@ -20,6 +26,7 @@ class DbWorkflowMgr(DbBase):
     """
     workflow相关数据库表操作类
     """
+    # already have 0-6 approval
     defalut_stages = [
                 {
                     "group": "Approval",
@@ -33,10 +40,12 @@ class DbWorkflowMgr(DbBase):
                         }
                     ],
                     "commonConditions": [
+                        {"id": 0, "label": "Data owner", "value": "", "style": 6},
                         {"id": 1, "label": "Workspace owner", "value": "", "style": 6},
                         {"id": 2, "label": "Region / Country owner", "value": "", "style": 6},
-                        {"id": 3, "label": "Line manager", "value": "", "style": 6},
-                        {"id": 4, "label": "Use case data approver(s)", "value": "", "style": 6}
+                        # {"id": 3, "label": "{ynamic field approval".format(label), "value": field_id, "style": 6}
+                        {"id": 4, "label": "Line manager", "value": "", "style": 6},
+                        {"id": 5, "label": "Use case data approver(s)", "value": "", "style": 6}
 
                     ],
                     "label": "Approval Process"
@@ -240,7 +249,7 @@ class DbWorkflowMgr(DbBase):
                                 }
                             ],
                             "flowType": "System",
-                            "id": 17,
+                            "id": 18,
                             "label": "Create New Use Case"
                         }
                     ],
@@ -434,7 +443,7 @@ class DbWorkflowMgr(DbBase):
             table_name = 'stageTable'
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields)
-            result = self.defalut_stages.copy()
+            result = copy.deepcopy(self.defalut_stages)
             itemList = self.execute_fetch_all(db_conn, sql)
             for index in range(len(itemList)):
                 itemList[index]['condition'] = json.loads(itemList[index]['condition'])
@@ -458,7 +467,7 @@ class DbWorkflowMgr(DbBase):
             table_name = 'stageTable'
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields)
-            result = self.defalut_stages.copy()
+            result = copy.deepcopy(self.defalut_stages)
             itemList = self.execute_fetch_all(db_conn, sql)
             for index in range(len(itemList)):
                 itemList[index]['condition'] = json.loads(itemList[index]['condition'])
@@ -472,16 +481,22 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_get_relation_sql(db_name, table_name, fields, role_relations,
                                                                condition=condition)
             # conditon = 'id=%s' % (form_id)
-            # print('sql:', sql)
+            print('sql:', sql)
             # sql = self.create_select_sql(db_name, 'formTable', '*', condition=conditon)
             form_info = self.execute_fetch_one(db_conn, sql)
             fields_list = json.loads(form_info['fields_list'])
+            # deduplication list
+            field_id_list = []
             for field in fields_list:
                 field_id = field['id']
                 label = field['label']
-                if 'd' in field_id:
+                print('field_id_list:', field_id_list)
+                if 'd' in field_id and field_id not in field_id_list:
+                    field_id_list.append(field_id)
                     approval_item = {"id": 3, "label": "{} approval".format(label), "value": field_id, "style": 6}
+                    print('approval_item:', result[0]['commonConditions'])
                     result[0]['commonConditions'].append(approval_item)
+            print('1234result:', result)
             data = response_code.SUCCESS
             data['data'] = result
             return data

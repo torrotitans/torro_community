@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: common_request_process.py
+@create date: 2019-10-27 14:08 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：请求处理
 """
 
 import json

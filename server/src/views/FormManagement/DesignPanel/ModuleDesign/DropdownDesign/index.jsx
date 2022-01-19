@@ -8,9 +8,9 @@ import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "../styles.module.scss";
-import KeyPairGroup from "@comp/basics/KeyPairGroup";
+import KeyPairGroup from "@basics/KeyPairGroup";
 
 const DropdownDesign = ({ data, onChange }) => {
   return (

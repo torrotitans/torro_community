@@ -1,18 +1,18 @@
 /* third lib*/
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import cn from "classnames";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
-import Collapse from "@comp/basics/Collapse";
-import Text from "@comp/basics/Text";
+import Collapse from "@basics/Collapse";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
-import CheckBoxIcon from "src/icons/moduleIcon/CheckBoxIcon";
-import DropdownIcon from "src/icons/moduleIcon/DropdownIcon";
-import TextIcon from "src/icons/moduleIcon/TextIcon";
-import UploadIcon from "src/icons/moduleIcon/UploadIcon";
-import ToggleIcon from "src/icons/moduleIcon/ToggleIcon";
-import DatePickerIcon from "src/icons/moduleIcon/DatePickerIcon";
+import CheckBoxIcon from "@assets/icons/moduleIcon/CheckBoxIcon";
+import DropdownIcon from "@assets/icons/moduleIcon/DropdownIcon";
+import TextIcon from "@assets/icons/moduleIcon/TextIcon";
+import UploadIcon from "@assets/icons/moduleIcon/UploadIcon";
+import ToggleIcon from "@assets/icons/moduleIcon/ToggleIcon";
+import DatePickerIcon from "@assets/icons/moduleIcon/DatePickerIcon";
 
 /* moduleDesigb */
 import CheckBoxDesign from "../ModuleDesign/CheckBoxDesign";
@@ -65,16 +65,17 @@ const ModuleSelection = ({ data, template, onChange, tagTemplate }) => {
   }, [data]);
 
   const moduleTypeList = useMemo(() => {
+    let moduleType = [
+      { style: 1, icon: CheckBoxIcon, cls: "checkbox", temp: "text" },
+      { style: 2, icon: DropdownIcon, cls: "dropdown" },
+      { style: 3, icon: TextIcon, cls: "text" },
+      { style: 4, icon: UploadIcon, cls: "upload" },
+      { style: 5, icon: ToggleIcon, cls: "switch" },
+      { style: 6, icon: DatePickerIcon, cls: "datepicker" },
+    ];
     return tagTemplate
-      ? [{ style: 3, icon: TextIcon, cls: "text" }]
-      : [
-          { style: 1, icon: CheckBoxIcon, cls: "checkbox", temp: "text" },
-          { style: 2, icon: DropdownIcon, cls: "dropdown" },
-          { style: 3, icon: TextIcon, cls: "text" },
-          { style: 4, icon: UploadIcon, cls: "upload" },
-          { style: 5, icon: ToggleIcon, cls: "switch" },
-          { style: 6, icon: DatePickerIcon, cls: "datepicker" },
-        ];
+      ? moduleType.filter((item) => item.style !== 4)
+      : moduleType;
   }, [tagTemplate]);
 
   const currentTemplate = useMemo(() => {

@@ -6,7 +6,7 @@ import { FormattedMessage as Intl } from "react-intl";
 import Input from "@material-ui/core/Input";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
 const DatePickerDesign = ({ data, onChange }) => {

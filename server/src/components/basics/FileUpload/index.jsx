@@ -6,7 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import MenuList from "@material-ui/core/MenuList";
-import UploadIcon from "src/icons/moduleIcon/UploadIcon";
+import UploadIcon from "@assets/icons/moduleIcon/UploadIcon";
 import { FormattedMessage as Intl } from "react-intl";
 import { useEffect } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";

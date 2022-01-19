@@ -9,8 +9,8 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Loading from "src/icons/Loading";
-import Text from "@comp/basics/Text";
+import Loading from "@assets/icons/Loading";
+import Text from "@basics/Text";
 import { getTableSchema } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import {
@@ -20,7 +20,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const TableView = ({ tableId, onBack }) => {
   const [formLoading, setFormLoading] = useState(false);

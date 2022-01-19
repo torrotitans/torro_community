@@ -1,9 +1,3 @@
-.workspaceCreation {
-  width: 100%;
-  height: 100%;
-  background-color: $white;
-}
-
 .wsContainer {
   width: 100%;
   height: 100%;
@@ -28,10 +22,6 @@
   margin-bottom: $rbwmspace20;
 }
 
-.fullLineField {
-  margin-bottom: $rbwmspace40;
-}
-
 .detailItem {
   width: 25%;
   margin-bottom: $rbwmspace20;
@@ -41,45 +31,6 @@
   margin-bottom: $rbwmspace4;
 }
 .detailValue {
-}
-
-.formOptions {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: -1rem;
-}
-
-.operation {
-  cursor: pointer;
-  margin-left: 1rem;
-  align-items: center;
-  svg {
-    color: $text-grey;
-    width: 1.5rem;
-    height: 1.5rem;
-    &:nth-child(1) {
-      margin-right: $rbwmspace8;
-    }
-    &:hover {
-      color: $main-purple;
-    }
-  }
-
-  &.disabled {
-    color: red;
-    svg {
-      opacity: 0.5;
-      cursor: not-allowed;
-      &:hover {
-        color: $text-grey;
-      }
-    }
-  }
-}
-
-.wsSelectBox {
-  width: 24rem;
 }
 
 .secondTitle {

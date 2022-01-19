@@ -1,225 +1,235 @@
 import { DELETE, GET, POST, PUT } from "@lib/data/api-types";
 
-const API_URL = "";
+/* eslint-disable no-undef */
+const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://34.92.243.193";
+/* eslint-disable no-new */
 
 const config = {
   login: {
-    // url: `${API_URL}/stub/userData.json`,
-    url: "http://34.92.243.193/api/login",
+    url: `${BASE_API_URL}/api/login`,
     method: POST,
   },
   loginPut: {
-    url: "http://34.92.243.193/api/login",
+    url: `${BASE_API_URL}/api/login`,
     method: PUT,
   },
   filterOptionGet: {
-    // url: `${API_URL}/stub/requestor.json`,
-    url: "http://34.92.243.193/api/getDashboardOptions",
+    url: `${BASE_API_URL}/api/getDashboardOptions`,
     method: GET,
   },
-
   orgPost: {
-    url: "http://34.92.243.193/api/orgSetting",
-    // url: "http://127.0.0.1:5000/orgSetting",
+    url: `${BASE_API_URL}/api/orgSetting`,
     method: POST,
   },
   postFormRequest: {
-    url: "http://34.92.243.193/api/inputFormData",
+    url: `${BASE_API_URL}/api/inputFormData`,
+    method: POST,
+  },
+  postFormRequestList: {
+    url: `${BASE_API_URL}/api/inputFormDataList`,
     method: POST,
   },
   putFormRequest: {
-    url: "http://34.92.243.193/api/inputFormData",
+    url: `${BASE_API_URL}/api/inputFormData`,
     method: PUT,
   },
   deleteFormRequest: {
-    url: "http://34.92.243.193/api/inputFormData",
+    url: `${BASE_API_URL}/api/inputFormData`,
     method: DELETE,
   },
 
   postRequestStatus: {
-    url: "http://34.92.243.193/api/changeStatus",
+    url: `${BASE_API_URL}/api/changeStatus`,
     method: POST,
   },
+
+  postRequestStatusList: {
+    url: `${BASE_API_URL}/api/changeStatusList`,
+    method: POST,
+  },
+
   requestDataGet: {
-    // url: `${API_URL}/stub/requestDataGet.json`,
-    url: "http://34.92.243.193/api/getInputFormInfo",
+    url: `${BASE_API_URL}/api/getInputFormInfo`,
     method: POST,
   },
   requestDetailGet: {
-    // url: `${API_URL}/stub/InputformDetail.json`,
-    url: "http://34.92.243.193/api/getInputFormDetails",
+    url: `${BASE_API_URL}/api/getInputFormDetails`,
+    method: POST,
+  },
+
+  requestDetailListGet: {
+    url: `${BASE_API_URL}/api/getInputFormDetailsList`,
     method: POST,
   },
 
   commentPost: {
-    url: "http://34.92.243.193/api/inputFormComment",
+    url: `${BASE_API_URL}/api/inputFormComment`,
     method: POST,
   },
 
   commentDelete: {
-    url: "http://34.92.243.193/api/inputFormComment",
+    url: `${BASE_API_URL}/api/inputFormComment`,
     method: DELETE,
   },
 
   fieldTemplateGet: {
-    // url: `${API_URL}/stub/fieldTemplate.json`,
-    url: "http://34.92.243.193/api/getFieldTemplate",
+    url: `${BASE_API_URL}/api/getFieldTemplate`,
     method: GET,
   },
   workspaceGet: {
-    // url: `${API_URL}/stub/workspaceGet.json`,
-    url: "http://34.92.243.193/api/workspaceSetting",
+    url: `${BASE_API_URL}/api/workspaceSetting`,
     method: GET,
   },
   workspaceDetailGet: {
-    // url: `${API_URL}/stub/workspaceGet.json`,
-    url: "http://34.92.243.193/api/workspaceInfo",
+    url: `${BASE_API_URL}/api/workspaceInfo`,
     method: POST,
   },
   workspacePut: {
-    // url: `${API_URL}/stub/wsPut.json`,
-    url: "http://34.92.243.193/api/workspaceSetting",
+    url: `${BASE_API_URL}/api/workspaceSetting`,
     method: PUT,
   },
   workspacePost: {
-    // url: `${API_URL}/stub/wsPut.json`,
-    url: "http://34.92.243.193/api/workspaceSetting",
+    url: `${BASE_API_URL}/api/workspaceSetting`,
     method: POST,
   },
   workspaceDelete: {
-    // url: `${API_URL}/stub/workspaceGet.json`,
-    url: "http://34.92.243.193/api/workspaceSetting",
+    url: `${BASE_API_URL}/api/workspaceSetting`,
     method: DELETE,
   },
   useCaseGet: {
-    url: "http://34.92.243.193/api/usecaseInfo",
+    url: `${BASE_API_URL}/api/usecaseInfo`,
     method: GET,
   },
   useCasePost: {
-    url: "http://34.92.243.193/api/usecaseInfo",
+    url: `${BASE_API_URL}/api/usecaseInfo`,
     method: POST,
   },
 
   formListGet: {
-    // url: `${API_URL}/stub/formItem.json`,
-    url: "http://34.92.243.193/api/getFormList/1",
+    url: `${BASE_API_URL}/api/getFormList/1`,
     method: GET,
   },
   formItemGet: {
-    // url: `${API_URL}/stub/tmpGetFormData.json`,
-    url: "http://34.92.243.193/api/getFormData",
+    url: `${BASE_API_URL}/api/getFormData`,
+    method: POST,
+  },
+
+  formItemListGet: {
+    url: `${BASE_API_URL}/api/getFormDataList`,
     method: POST,
   },
 
   formDataPost: {
-    // url: `${API_URL}/stub/postData.json`,
-    url: "http://34.92.243.193/api/postFormData",
+    url: `${BASE_API_URL}/api/postFormData`,
     method: PUT,
   },
 
   formAddPost: {
-    // url: `${API_URL}/stub/addFormData.json`,
-    url: "http://34.92.243.193/api/postFormData",
+    url: `${BASE_API_URL}/api/postFormData`,
     method: POST,
   },
 
   formDelete: {
-    // url: `${API_URL}/stub/addFormData.json`,
-    url: "http://34.92.243.193/api/postFormData",
+    url: `${BASE_API_URL}/api/postFormData`,
     method: DELETE,
   },
 
   flowDataGet: {
-    url: `${API_URL}/stub/flowData.json`,
+    url: `/stub/flowData.json`,
     method: GET,
   },
 
   approverLevelGet: {
-    url: `${API_URL}/stub/approverLevel.json`,
+    url: `/stub/approverLevel.json`,
     method: GET,
   },
 
   allStageGet: {
-    // url: `${API_URL}/stub/allStages.json`,
     url: `http://34.92.243.193/api/getAllStages`,
     method: POST,
   },
 
   workFlowDataGet: {
-    url: "http://34.92.243.193/api/getDetailsWorkflowDataById",
+    url: `${BASE_API_URL}/api/getDetailsWorkflowDataById`,
     method: POST,
   },
   workFlowFormDataGet: {
-    url: "http://34.92.243.193/api/getBaseWorkflowListByFormId",
+    url: `${BASE_API_URL}/api/getBaseWorkflowListByFormId`,
     method: GET,
   },
 
   workFlowDataPut: {
-    url: "http://34.92.243.193/api/postWorkflowData",
+    url: `${BASE_API_URL}/api/postWorkflowData`,
     method: PUT,
   },
 
   workFlowDataPost: {
-    url: "http://34.92.243.193/api/postWorkflowData",
+    url: `${BASE_API_URL}/api/postWorkflowData`,
     method: POST,
   },
 
   workFlowDataDelete: {
-    url: "http://34.92.243.193/api/postWorkflowData",
+    url: `${BASE_API_URL}/api/postWorkflowData`,
     method: DELETE,
   },
 
   ConsoleGet: {
-    // url: "http://localhost:5000/commandrun",
-    url: "http://34.92.243.193/api/debug",
+    url: `${BASE_API_URL}/api/debug`,
     method: POST,
   },
 
   lookupResource: {
-    // url: `${API_URL}/stub/bq_table_schema.json`,
-    url: "http://34.92.243.193/api/tableSchema",
+    url: `${BASE_API_URL}/api/tableSchema`,
     method: PUT,
   },
 
   tableSchemaGet: {
-    // url: `${API_URL}/stub/bq_table_schema.json`,
-    url: "http://34.92.243.193/api/tableSchema",
+    url: `${BASE_API_URL}/api/tableSchema`,
     method: POST,
   },
 
   policyTagGet: {
-    url: `${API_URL}/stub/policy_tags.json`,
-    // url: "http://34.92.243.193/api/debug",
+    url: `/stub/policy_tags.json`,
     method: GET,
   },
 
   policysGet: {
-    // url: `${API_URL}/stub/policys.json`,
-    url: "http://34.92.243.193/api/getPolicyTagsList",
+    url: `${BASE_API_URL}/api/getPolicyTagsList`,
     method: GET,
   },
 
   tableDataGet: {
-    url: `${API_URL}/stub/tableData.json`,
-    // url: "http://34.92.243.193/api/getPolicyTagsList",
+    url: `/stub/tableData.json`,
     method: GET,
   },
   policyDetailGet: {
-    url: `${API_URL}/stub/policyDetail.json`,
-    // url: "http://34.92.243.193/api/debug",
+    url: `/stub/policyDetail.json`,
     method: GET,
   },
 
   governersTagGet: {
-    // url: `${API_URL}/stub/TagList.json`,
-    url: "http://34.92.243.193/api/getTagTemplateList",
+    url: `${BASE_API_URL}/api/getTagTemplateList`,
     method: GET,
   },
 
   /* static data */
   onBoardDataForm: {
-    url: `${API_URL}/stub/dataOnBoardForm.json`,
-    // url: "http://34.92.243.193/api/getTagTemplateList",
+    url: `${BASE_API_URL}/api/torroConfig/en.form.dataOnBoardForm`,
+    method: GET,
+  },
+
+  fieldDisplayConfig: {
+    url: `${BASE_API_URL}/api/torroConfig/en.form.specialRenderItem`,
+    method: GET,
+  },
+
+  useCaseMemberConfig: {
+    url: `${BASE_API_URL}/api/torroConfig/en.form.ucMemberConfig`,
+    method: GET,
+  },
+
+  requiredTableTag: {
+    url: `${BASE_API_URL}/api/torroConfig/en.form.requireTableTagId`,
     method: GET,
   },
 };

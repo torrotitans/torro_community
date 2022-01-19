@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: db_user_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 from utils.ldap_helper import Ldap
 from db.base import DbBase
@@ -197,7 +203,7 @@ class DbUserMgr(DbBase):
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(conn, sql)
-            user_info['permissions'] = {'usecase': {}, 'workspace': {}}
+            user_info['permissions'] = {'usecase': {}, 'workspace': {}, 'org': {}}
             role_set = set()
             workspace_id_set = set()
             # # print('user_info', user_info)
@@ -222,6 +228,7 @@ class DbUserMgr(DbBase):
                     ad_group_info = self.execute_fetch_one(conn, sql)
                     if not ad_group_info:
                         continue
+                    # print('adgroup:', ad_group)
                     ad_group_id = ad_group_info['ID']
                     # get workspace id
                     condition = 'AD_GROUP_ID="%s"' % ad_group_id
@@ -235,15 +242,39 @@ class DbUserMgr(DbBase):
                     # get org permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID', db_name, conn)
                     role_set = utils_role_set | role_set
-                    user_info['permissions']['org'] = permissions
+                    # print('org_to_adgroupTable:', permissions)
+                    for item_id in permissions:
+                        if item_id in user_info['permissions']['org']:
+                            for role_name in permissions[item_id]:
+                                role_permissions = user_info['permissions']['org'][item_id].get(role_name, [])
+                                role_permissions = list(set(role_permissions + permissions[item_id][role_name]))
+                                user_info['permissions']['org'][item_id][role_name] = role_permissions
+                        else:
+                            user_info['permissions']['org'][item_id] = permissions[item_id]
                     # get workspace permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'workspace_to_adgroupTable', 'WORKSPACE_ID', db_name, conn)
                     role_set = utils_role_set | role_set
-                    user_info['permissions']['workspace'] = permissions
+                    # print('workspace_to_adgroupTable:', permissions)
+                    for item_id in permissions:
+                        if item_id in user_info['permissions']['workspace']:
+                            for role_name in permissions[item_id]:
+                                role_permissions = user_info['permissions']['workspace'][item_id].get(role_name, [])
+                                role_permissions = list(set(role_permissions + permissions[item_id][role_name]))
+                                user_info['permissions']['workspace'][item_id][role_name] = role_permissions
+                        else:
+                            user_info['permissions']['workspace'][item_id] = permissions[item_id]
                     # get usecase permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'usecase_to_adgroupTable', 'USECASE_ID', db_name, conn)
                     role_set = utils_role_set | role_set
-                    user_info['permissions']['usecase'] = permissions
+                    # print('usecase_to_adgroupTable:', permissions)
+                    for item_id in permissions:
+                        if item_id in user_info['permissions']['usecase']:
+                            for role_name in permissions[item_id]:
+                                role_permissions = user_info['permissions']['usecase'][item_id].get(role_name, [])
+                                role_permissions = list(set(role_permissions + permissions[item_id][role_name]))
+                                user_info['permissions']['usecase'][item_id][role_name] = role_permissions
+                        else:
+                            user_info['permissions']['usecase'][item_id] = permissions[item_id]
                 user_info['role_list'] = list(role_set)
                 # print('workspace_id_set:', workspace_id_set)
                 workspace_list = list(workspace_id_set)
@@ -429,6 +460,7 @@ class DbUserMgr(DbBase):
             return None, None
         finally:
             conn.close()
+
 
 
 

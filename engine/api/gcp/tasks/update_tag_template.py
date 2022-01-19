@@ -129,7 +129,7 @@ class UpdateTagTemplate(baseTask, DbBase):
                     project, location, tag_template_name, tag_tempalte_form_id,
                     new_tag_template_id,
                     json.dumps(tag_template_body), description, create_time)
-                condition = "workspace_id='%s' and tag_template_form_id='%s'" % (
+                condition = "(workspace_id='%s' or workspace_id=0) and tag_template_form_id='%s'" % (
                 workspace_id, old_tag_template_form_id)
                 sql = self.create_update_sql(db_name, 'tagTemplatesTable',
                                              tag_template_fields, values, condition=condition)

@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: auth_helper.py
+@create date: 2019-10-27 14:17 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 import json
 import sys
@@ -197,8 +203,8 @@ class Auth(object):
         all_endpoint_permission = '{}-*'.format(api_endpoint)
         all_permission = '*-*'
         permission_allow = 0
-        # print('user_role:', user_role)
-        # print('permissions:', permissions)
+        print('user_role:', user_role)
+        print('permissions:', permissions)
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
@@ -255,7 +261,7 @@ class Auth(object):
         :return: list
         """
         auth_token = request.cookies.get('token')
-        # print('auth_token', auth_token)
+        print('auth_token:', auth_token)
         if (auth_token):
             # Bearer cjidsfjsfi
             # workspace_id = request.cookies.get('workspace_id', '1')
@@ -267,6 +273,7 @@ class Auth(object):
                 return data, None, None
             else:
                 payload = cls.__decode_auth_token(cls, auth_token)
+                print('payload:', payload)
                 if not isinstance(payload, str):
                     user_id = payload['data']['user_key']
                     account_id = payload['data']['account_id']

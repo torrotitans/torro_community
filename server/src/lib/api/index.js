@@ -27,7 +27,7 @@ const handleObjectToFormData = (data, ss) => {
 
   if (isObject(data)) {
     const formData = new FormData();
-    Object.keys(data).map((key) => {
+    Object.keys(data).forEach((key) => {
       if (typeof data[key] === "object") {
         if (data[key] instanceof File) {
           formData.append(key, data[key], data[key].name);
@@ -141,6 +141,14 @@ export const getRequestDetail = async (param) => {
   return await handleResponse(await callApi(method, url, param));
 };
 
+export const getRequestDetailList = async (param) => {
+  let {
+    requestDetailListGet: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
 export const postComment = async (param) => {
   let {
     commentPost: { url, method },
@@ -176,6 +184,14 @@ export const getFieldTemplate = async (param) => {
 export const getFormItem = async (param) => {
   let {
     formItemGet: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const getFormDataList = async (param) => {
+  let {
+    formItemListGet: { url, method },
   } = API_CONFIG;
 
   return await handleResponse(await callApi(method, url, param));
@@ -277,6 +293,14 @@ export const raiseFormRequest = async (param) => {
   return await handleResponse(await callApi(method, url, param));
 };
 
+export const raiseFormRequestList = async (param) => {
+  let {
+    postFormRequestList: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
 export const updateFormRequest = async (param) => {
   let {
     putFormRequest: { url, method },
@@ -296,6 +320,14 @@ export const deleteFormRequest = async (param) => {
 export const changeStatus = async (param) => {
   let {
     postRequestStatus: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const changeStatusList = async (param) => {
+  let {
+    postRequestStatusList: { url, method },
   } = API_CONFIG;
 
   return await handleResponse(await callApi(method, url, param));
@@ -418,6 +450,30 @@ export const getTags = async (param) => {
 export const getOnBoardDataForm = async (param) => {
   let {
     onBoardDataForm: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const getFieldDisplayConfig = async (param) => {
+  let {
+    fieldDisplayConfig: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const getUserCaseMemberConfig = async (param) => {
+  let {
+    useCaseMemberConfig: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const getRequiredTableTag = async (param) => {
+  let {
+    requiredTableTag: { url, method },
   } = API_CONFIG;
 
   return await handleResponse(await callApi(method, url, param));

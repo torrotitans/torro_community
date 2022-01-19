@@ -8,9 +8,9 @@ import Input from "@material-ui/core/Input";
 import Checkbox from "@material-ui/core/Checkbox";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "../styles.module.scss";
-import Select from "@comp/basics/Select";
+import Select from "@basics/Select";
 const ruleOptions = [
   { label: "Default", value: 0 },
   { label: "Amount", value: 1 },

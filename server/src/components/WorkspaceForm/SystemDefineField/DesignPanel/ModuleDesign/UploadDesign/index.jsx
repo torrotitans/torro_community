@@ -6,7 +6,7 @@ import { FormattedMessage as Intl } from "react-intl";
 import Checkbox from "@material-ui/core/Checkbox";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 import Input from "@material-ui/core/Input";
 

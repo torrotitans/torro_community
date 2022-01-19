@@ -9,11 +9,11 @@ import Delete from "@material-ui/icons/Close";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Select from "@comp/basics/Select";
-import { getTags, getFormItem } from "@lib/api";
+import Select from "@basics/Select";
+import { getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import Text from "@comp/basics/Text";
-import Button from "@comp/basics/Button";
+import Text from "@basics/Text";
+import Button from "@basics/Button";
 import FormItem from "@comp/FormItem";
 
 const AddTag = ({ handleApply, tagTemplateList, type, checkedTagList }) => {
@@ -90,7 +90,9 @@ const AddTag = ({ handleApply, tagTemplateList, type, checkedTagList }) => {
     (data) => {
       let tmpList = [...tagList];
       if (currentTag.seq !== null) {
+        let tmpTag = tmpList[currentTag.seq];
         tmpList[currentTag.seq] = {
+          ...tmpTag,
           tag_template_form_id: currentTag.tag_template_form_id,
           data: data,
         };
@@ -120,6 +122,31 @@ const AddTag = ({ handleApply, tagTemplateList, type, checkedTagList }) => {
     [tagList]
   );
 
+  const applyHandle = useCallback(() => {
+    const applyType = type === 1 ? "TABLETAG" : "COLUMNTAGS";
+    let avaliable = true;
+    if (type === 1) {
+      tagList.forEach((item) => {
+        if (!item.data) {
+          sendNotify({
+            msg: "Please fill in the required tag",
+            status: 3,
+            show: true,
+          });
+          avaliable = false;
+        }
+      });
+    }
+    if (avaliable) {
+      handleApply(tagList, applyType);
+    }
+  }, [tagList, handleApply, type]);
+
+  const tagClickHandle = useCallback((tag) => {
+    setSeletedTemplate("");
+    setCurrentTag(tag);
+  }, []);
+
   useEffect(() => {
     if (currentTag.tag_template_form_id) {
       getFormItem({ id: currentTag.tag_template_form_id })
@@ -127,12 +154,15 @@ const AddTag = ({ handleApply, tagTemplateList, type, checkedTagList }) => {
           if (res.data) {
             reset({});
             let tmpFieldList = res.data.fieldList;
-            tmpFieldList = tmpFieldList.map((item) => {
-              return {
-                ...item,
-                default: currentTag.data[item.id] || "",
-              };
-            });
+
+            if (currentTag.data) {
+              tmpFieldList = tmpFieldList.map((item) => {
+                return {
+                  ...item,
+                  default: currentTag.data[item.id] || "",
+                };
+              });
+            }
 
             res.data.fieldList = tmpFieldList;
             setFormData(res.data);
@@ -198,49 +228,39 @@ const AddTag = ({ handleApply, tagTemplateList, type, checkedTagList }) => {
           <Text type="title">Tags ({tagList.length})</Text>
         </div>
 
-        {tagList.map((item, index) => {
+        {tagList.map((tag, index) => {
           return (
             <div
               onClick={() => {
-                setSeletedTemplate("");
-                setCurrentTag({
-                  ...item,
+                tagClickHandle({
+                  ...tag,
                   seq: index,
                 });
               }}
               key={index}
-              className={styles.tagDisplay}
+              className={cn(styles.tagDisplay, {
+                [styles["alert"]]: tag?.required && tag.data === null,
+              })}
             >
-              <span className={styles.delete}>
-                <Delete
-                  onClick={(e) => {
-                    handleDeleteTag(index);
-                    e.stopPropagation();
-                  }}
-                />
-              </span>
+              {!tag.required && (
+                <span className={styles.delete}>
+                  <Delete
+                    onClick={(e) => {
+                      handleDeleteTag(index);
+                      e.stopPropagation();
+                    }}
+                  />
+                </span>
+              )}
               <span className={styles.policyName}>
-                {templateNameMap[item.tag_template_form_id]}
+                {templateNameMap[tag.tag_template_form_id]}
               </span>
             </div>
           );
         })}
       </div>
       <div className={styles.buttonWrapper}>
-        <Button
-          className={styles.button}
-          onClick={() => {
-            if (tagList.length < 1) {
-              sendNotify({
-                msg: "Please add at least on tag",
-                status: 3,
-                show: true,
-              });
-              return;
-            }
-            handleApply(tagList, type === 1 ? "TABLETAG" : "COLUMNTAGS");
-          }}
-        >
+        <Button className={styles.button} onClick={applyHandle}>
           <Intl id="apply" />
         </Button>
       </div>

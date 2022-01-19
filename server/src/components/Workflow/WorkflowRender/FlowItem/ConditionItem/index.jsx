@@ -1,21 +1,20 @@
 /* third lib*/
-import React, { useEffect, useMemo, useState } from "react";
-import cn from "classnames";
+import React, { useMemo } from "react";
 
 /* material-ui */
 import CloseIcon from "@material-ui/icons/Close";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import TextBox from "@comp/basics/TextBox";
-import Select from "@comp/basics/Select";
+import TextBox from "@basics/TextBox";
+import Select from "@basics/Select";
 import Ueditor from "./Ueditor";
 import Schema from "./Schema";
 import CommonConditionHolder from "../CommonConditionHolder";
-import CheckBoxGroup from "@comp/basics/CheckBoxGroup";
-import DatePicker from "@comp/basics/DatePicker";
-import Switch from "@comp/basics/Switch";
-import Text from "@comp/basics/Text";
+import CheckBoxGroup from "@basics/CheckBoxGroup";
+import DatePicker from "@basics/DatePicker";
+import Switch from "@basics/Switch";
+import Text from "@basics/Text";
 
 const conditionTypeList = [
   { label: "=", value: "0" },

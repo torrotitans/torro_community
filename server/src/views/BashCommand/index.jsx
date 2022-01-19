@@ -4,7 +4,7 @@ import { FormattedMessage as Intl } from "react-intl";
 import Terminal from "terminal-in-react";
 
 /* local component */
-import HeadLine from "@comp/basics/HeadLine";
+import HeadLine from "@basics/HeadLine";
 import styles from "./styles.module.scss";
 import { getConsole } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
@@ -17,7 +17,7 @@ const BashCommand = () => {
   const [initPath, setInitPath] = useState("");
   const [currentPath, setCurrentPath] = useState("");
   const [loading, setLoading] = useState(true);
-  const [fileStructure, setFileStructure] = useState({});
+  // const [fileStructure, setFileStructure] = useState({});
   const [commands, setCommands] = useState({});
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const BashCommand = () => {
           setInitPath(prefixFile(res1.data));
         }
         if (res2.data) {
-          setFileStructure(res2.data.split("\n"));
+          // setFileStructure(res2.data.split("\n"));
         }
         setLoading(false);
       })
@@ -61,10 +61,10 @@ const BashCommand = () => {
             if (res.data) {
               let PathIndex = res.data.indexOf(path) + path.length;
               let fileName = res.data.slice(0, PathIndex);
-              let structure = res.data.slice(PathIndex, res.data.length);
+              // let structure = res.data.slice(PathIndex, res.data.length);
               print(prefixFile(fileName.trim()));
               setCurrentPath(fileName.trim());
-              setFileStructure(structure.split("\n"));
+              // setFileStructure(structure.split("\n"));
             }
           })
           .catch((e) => {

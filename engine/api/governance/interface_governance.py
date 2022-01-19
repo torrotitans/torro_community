@@ -104,3 +104,66 @@ class interfaceGovernance(Resource):
             lg.error(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
+class interfaceGovernanceBatch(Resource):
+    @login_required
+    def post(self,):
+        xml = request.args.get('format')
+        try:
+            request_data = req.request_process(request, xml, modelEnum.department.value)
+            if isinstance(request_data, bool):
+                request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
+                return response_result_process(request_data, xml=xml)
+
+
+            request_data = req.verify_all_param(request_data, governanceApiPara.changeStatus_POST_request)
+
+            # try:
+            try:
+                user_key = req.get_user_key()
+                account_id = req.get_user_account_id()
+                workspace_id = req.get_workspace_id()
+                # print('user id:', user_key)
+                # print('account_id:', account_id)
+                # print('12334 user workspace_id:', workspace_id)
+            except:
+                data = response_code.GET_DATA_FAIL
+                # print(traceback.format_exc())
+                data['msg'] = 'Token error or expired, please login again.'
+                return response_result_process(data, xml=xml)
+            # exit(0)
+
+            status_infos = request_data['data']
+            data = response_code.SUCCESS
+            data['data'] = []
+            for status_info in status_infos:
+                form_id = status_info['form_id']
+                input_form_id = status_info['id']
+                # # print('user id:', user_key)
+                # change status
+                one_data = governance_singleton.change_status(user_key, account_id, status_info)
+                # print('change status data: ', data)
+                # if begin to execute task
+
+                if one_data['code'] == 200 and 'data' in one_data and 'is_approved' in one_data['data'] and one_data['data']['is_approved'] == 1:
+                    gcp_tasks = one_data['data'].get('gcp_tasks', [])
+                    tasks = one_data['data'].get('tasks', [])
+                    return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
+                    one_data = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+                data['data'].append(one_data)
+
+            # # email notification
+            # if data['code'] == 200 and data1['code'] == 200:
+            #     notice_ids = data['data']['notice_ids']
+            #     data2 = notify_approvers(data1['data']['history_id'], notice_ids)
+            #     if data2['code'] == 200:
+            #         data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
+            #     else:
+            #         data = response_code.UPDATE_DATA_FAIL
+            #         data['msg'] = 'Create new form success, fail to send email to approves'
+
+            return response_result_process(data, xml=xml)
+        except Exception as e:
+            lg.error(traceback.format_exc())
+            error_data = response_code.GET_DATA_FAIL
+            return response_result_process(error_data, xml=xml)

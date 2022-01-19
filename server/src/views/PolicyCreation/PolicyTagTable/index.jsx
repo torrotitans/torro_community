@@ -11,10 +11,10 @@ import TablePagination from "@material-ui/core/TablePagination";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import HeadLine from "@comp/basics/HeadLine";
-import Text from "@comp/basics/Text";
-import Button from "@comp/basics/Button";
-import Loading from "src/icons/Loading";
+import HeadLine from "@basics/HeadLine";
+import Text from "@basics/Text";
+import Button from "@basics/Button";
+import Loading from "@assets/icons/Loading";
 import { getPolicys } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import {
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const PolicyTagTable = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();

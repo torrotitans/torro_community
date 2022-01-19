@@ -46,7 +46,7 @@ class system_create_tag_template_form(baseTask, DbBase):
                     tag_tempalte_form_id = data['data']['id']
                     fields = ('tag_template_form_id',)
                     values = (tag_tempalte_form_id,)
-                    condition = "workspace_id='%s' and input_form_id='%s' and creator_id='%s'" % (workspace_id, input_form_id, user_id)
+                    condition = "(workspace_id='%s' or workspace_id=0) and input_form_id='%s' and creator_id='%s'" % (workspace_id, input_form_id, user_id)
                     sql = self.create_update_sql(db_name, 'tagTemplatesTable', fields, values, condition=condition)
                     print('tagTemplatesTable create_update_sql:', sql)
                     return_count = self.updete_exec(conn, sql)

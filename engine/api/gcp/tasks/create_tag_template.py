@@ -76,7 +76,8 @@ class CreateTagTemplate(baseTask, DbBase):
                 for index, field_info in enumerate(field_list):
                     style = int(field_info['style'])
                     label = field_info['label']
-                    field_id = label.replace(' ', '_').lower().strip()
+                    label = label.replace(' ', '_').replace('/', 'or').replace('&', 'and').replace('&', 'and').replace('!', '').replace(',', '').replace('@', '').replace('$', '').replace('#', '').replace('^', '')
+                    field_id = label.lower().strip()
                     des = field_info['des']
 
                     field = copy.deepcopy(field_tamplate)
@@ -141,7 +142,7 @@ class CreateTagTemplate(baseTask, DbBase):
         form_name = self.stage_dict['tag_template_display_name']
         description = self.stage_dict['description']
         field_list = self.stage_dict['field_list']
-        form = {'title': form_name, 'des': description, 'fieldList': field_list}
+        form = {'title': form_name, 'des': description, 'fieldList': field_list, 'hide': 1}
         # print('form:', form)
         data = formSingleton_singleton.add_new_form(form, workspace_id)
         print('*tags table data:', data)

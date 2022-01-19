@@ -1,22 +1,19 @@
 /* third lib*/
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
 import TablePagination from "@material-ui/core/TablePagination";
+
 /* local components & methods */
 import styles from "./styles.module.scss";
-/* local components & methods */
-
-import Text from "@comp/basics/Text";
-
-import Loading from "src/icons/Loading";
-
+import Text from "@basics/Text";
+import Loading from "@assets/icons/Loading";
 import { getTags, getPolicys } from "@lib/api";
-
 import { sendNotify } from "src/utils/systerm-error";
+import { openTips } from "src/utils/systemTips";
 import {
   Table,
   TableBody,
@@ -24,7 +21,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const OnboardDataDisplay = ({ tableList }) => {
   const [policys, setPolicys] = useState([]);
@@ -145,7 +142,16 @@ const OnboardDataDisplay = ({ tableList }) => {
                             return (
                               <div key={index}>
                                 {tagTemplateMap[item.tag_template_form_id] && (
-                                  <div className={styles.columnTag} key={index}>
+                                  <div
+                                    className={styles.columnTag}
+                                    key={index}
+                                    onClick={() => {
+                                      openTips({
+                                        style: 1,
+                                        tagData: item,
+                                      });
+                                    }}
+                                  >
                                     <span className={styles.policyName}>
                                       {
                                         tagTemplateMap[

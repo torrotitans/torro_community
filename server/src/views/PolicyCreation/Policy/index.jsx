@@ -1,23 +1,21 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import Scrollbar from "react-perfect-scrollbar";
 
 /* material-ui */
 import FormLabel from "@material-ui/core/FormLabel";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
-import HeadLine from "@comp/basics/HeadLine";
+import HeadLine from "@basics/HeadLine";
 import FormItem from "@comp/FormItem";
-import Button from "@comp/basics/Button";
-import Text from "@comp/basics/Text";
+import Button from "@basics/Button";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 import { wsPut, wsPost, getPolicyDetail } from "@lib/api";
-import Loading from "src/icons/Loading";
-import { sendNotify } from "src/utils/systerm-error";
-import CallModal from "@comp/basics/CallModal";
+import Loading from "@assets/icons/Loading";
+import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 import PolicyTags from "../PolicyTags";
 

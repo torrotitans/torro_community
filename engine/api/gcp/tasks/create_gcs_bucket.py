@@ -12,6 +12,7 @@ class CreateGCSBucket(baseTask):
 
     def __init__(self, stage_dict):
         super(CreateGCSBucket, self).__init__(stage_dict)
+        self.target_project = stage_dict['porject_id']
 
     def execute(self):
         missing_set = set()

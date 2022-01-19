@@ -13,15 +13,15 @@ import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
-import FileUpload from "@comp/basics/FileUpload";
-import DatePicker from "@comp/basics/DatePicker";
-import TextBox from "@comp/basics/TextBox";
-import Select from "@comp/basics/Select";
-import Switch from "@comp/basics/Switch";
+import Text from "@basics/Text";
+import FileUpload from "@basics/FileUpload";
+import DatePicker from "@basics/DatePicker";
+import TextBox from "@basics/TextBox";
+import Select from "@basics/Select";
+import Switch from "@basics/Switch";
 import PolicyTags from "@comp/PolicyTags";
-import CheckBoxGroup from "@comp/basics/CheckBoxGroup";
-import RadioGroup from "@comp/basics/RadioGroup";
+import CheckBoxGroup from "@basics/CheckBoxGroup";
+import RadioGroup from "@basics/RadioGroup";
 import styles from "./styles.module.scss";
 
 const FormItem = ({
@@ -118,10 +118,13 @@ const FormItem = ({
         };
       }
       case 2:
+        /* eslint-disable */
         return {
           value: /^([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i,
           message: "Please input correct email",
         };
+      /* eslint-disable */
+
       case 3:
         return {
           value: /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/,

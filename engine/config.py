@@ -125,6 +125,7 @@ configuration = Configuration()
 
 
 class Config(object):
+
     DEBUG = False
     TESTING = False
     SECRET_KEY = 'USER-API-DPkzlGoXTUQzfKGxJhkcbDOg9bThYO9s'
@@ -154,37 +155,34 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    DB_CONFIG = {'host': '192.168.1.60', 'port': 3306, 'user': 'devuser', 'password': 'root', 'db': 'data',
-                 'connect_timeout': 300, 'read_timeout': 300, 'write_timeout': 300,
-                 'charset': 'utf8'}
+
     DEFAULT_BUCEKT = 'torro_landing_bucket_dev_v2'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'
     DEFAULT_SA = '580079130038-compute@developer.gserviceaccount.com'
+    BUCEKT_CMKE = None
     pass
 
 
 class TestingConfig(Config):
     TESTING = False
-    DB_CONFIG = {'host': '192.168.1.60', 'port': 3306, 'user': 'devuser', 'password': 'root', 'db': 'data',
-                 'connect_timeout': 300, 'read_timeout': 300, 'write_timeout': 300,
-                 'charset': 'utf8'}
+
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_testing'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'
     DEFAULT_SA = '580079130038-compute@developer.gserviceaccount.com'
+    BUCEKT_CMKE = None
     pass
 
 
 class ProductionConfig(Config):
     DEBUG = False
-    DB_CONFIG = {'host': '192.168.1.60', 'port': 3306, 'user': 'devuser', 'password': 'root', 'db': 'data',
-                 'connect_timeout': 300, 'read_timeout': 300, 'write_timeout': 300,
-                 'charset': 'utf8'}
+
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'
     DEFAULT_SA = '580079130038-compute@developer.gserviceaccount.com'
+    BUCEKT_CMKE = None
     pass
 
 

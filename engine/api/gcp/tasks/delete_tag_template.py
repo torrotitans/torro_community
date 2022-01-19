@@ -59,7 +59,7 @@ class DeleteTagTemplate(baseTask, DbBase):
                 service = googleapiclient.discovery.build(
                     'datacatalog', 'v1beta1', credentials=credentials)
                 tag_template_form_id = self.stage_dict['tag_template_form_id']
-                condition = "workspace_id='%s' and tag_template_form_id='%s'" % (workspace_id, tag_template_form_id)
+                condition = "(workspace_id='%s' or workspace_id=0) and tag_template_form_id='%s'" % (workspace_id, tag_template_form_id)
                 sql = self.create_select_sql(db_name, 'tagTemplatesTable', '*', condition=condition)
                 print('tagTemplatesTable sql:', sql)
                 tag_template_info = self.execute_fetch_one(conn, sql)

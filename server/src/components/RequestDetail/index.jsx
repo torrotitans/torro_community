@@ -1,5 +1,5 @@
 // third lib
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
@@ -14,20 +14,19 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
-import FormDataDisplay from "./FormDataDisplay";
+import FormDataDisplay from "../FormDataDisplay";
 import styles from "./styles.module.scss";
-import Loading from "src/icons/Loading";
-import HeadLine from "@comp/basics/HeadLine";
+import Loading from "@assets/icons/Loading";
+import HeadLine from "@basics/HeadLine";
 import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import Text from "@comp/basics/Text";
-import CallModal from "@comp/basics/CallModal";
+import Text from "@basics/Text";
+import CallModal from "@basics/CallModal";
+import { useCallback } from "react";
 
 const RequestDetail = ({ recordId, approvedView }) => {
   const [formLoading, setFormLoading] = useState(true);
   const [tableList, setTableList] = useState([]);
-  const [formId, setFormId] = useState();
-  const [latestId, setLatestId] = useState();
   const [formData, setFormData] = useState();
   const [changeData, setChangeData] = useState();
   const [editView, setEditView] = useState(false);
@@ -46,28 +45,25 @@ const RequestDetail = ({ recordId, approvedView }) => {
     setModalData({ ...modalData, open: false });
   };
 
-  const InitDetailPage = () => {
+  const InitDetailPage = useCallback(() => {
     setFormLoading(true);
 
     getRequestDetail({ id: recordId })
       .then((res) => {
         if (res.code === 200) {
           let latestRecord = res.data[0];
-          let formId = latestRecord.form_id;
           res.data.forEach((item) => {
             if (item.createTime > latestRecord.createTime) latestRecord = item;
           });
           setDefaultData({ index: 0, data: latestRecord });
-          setLatestId(latestRecord.id);
           setTableList(res.data);
           getFormItem({
-            id: formId,
+            id: latestRecord.form_id,
           })
             .then((res2) => {
               if (res2.code === 200) {
                 let data = res2.data;
                 setFormData(data);
-                setFormId(formId);
                 setFormLoading(false);
               }
             })
@@ -79,14 +75,14 @@ const RequestDetail = ({ recordId, approvedView }) => {
       .catch((e) => {
         sendNotify({ msg: e.message, status: 3, show: true });
       });
-  };
+  }, [recordId]);
 
   useEffect(() => {
     setFormLoading(true);
     if (recordId) {
       InitDetailPage();
     }
-  }, []);
+  }, [recordId, InitDetailPage]);
 
   return (
     <div className={styles.requestDetail}>
@@ -109,15 +105,12 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   </Text>
                 </div>
                 <FormDataDisplay
-                  formId={formId}
+                  formId={formData.id}
                   formTemplate={formData}
                   recordId={recordId}
                   approvedView={approvedView}
-                  defaultData={defaultData}
+                  defaultData={defaultData.data}
                   enableReOpen={defaultData.index === 0}
-                  submitCallback={(id) => {
-                    InitDetailPage();
-                  }}
                   setEditView={setEditView}
                 />
               </div>

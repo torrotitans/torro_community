@@ -1,5 +1,3 @@
-import { GOVERNOR } from "src/lib/data/roleType";
-
 export default {
   // Global
   notFound: "Not found",
@@ -7,6 +5,10 @@ export default {
   end: "End",
   approve: "Approve",
   reject: "Reject",
+  previewAll: "Preview all",
+  approveAll: "Approve all",
+  rejectAll: "Reject all",
+  requestList: "Request list",
   attachFile: "Attach a file",
   attachAnotherFile: "Attach another file",
   multiple: "Multiple",
@@ -26,6 +28,7 @@ export default {
   add: "Add",
   update: "Update",
   required: "Required",
+  required_: "Required *",
   maxLength: "Max length",
   itemWidth: "Item width",
   search: "Search",
@@ -35,12 +38,13 @@ export default {
   addColumnTag: "Add column tags",
   modifyColumnTag: "Modify column tags",
   CLEAR: "CLEAR",
-  dropItem: "Drop workflow item here.",
   dropwfItem: "Drop workflow item here.",
   checkRequest: "View approval progress",
   confirmRaise: "Do you confirm to raise this request?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
   newRequestSubmit: "New Request is submitted.",
+  selectedUc: "Select use case",
+  checkTableTagInput: "Table tag have empty value, please check your input.",
 
   // workspace
   wsCreate: "Create new worp",
@@ -118,7 +122,7 @@ export default {
   addTagTemplate: "Add tag template",
 
   //Data Onboarding
-  dataOnboarding: "Data Onboarding",
+  dataOnboarding: "Data Publishing",
   fieldName: "Field name",
   type: "Type",
   mode: "Mode",
@@ -237,7 +241,7 @@ export default {
   visualisation: "Visualisation",
 
   //getDataAccess
-  getDataAccess: "Get Data Access for use case",
+  getDataAccess: "Data Consumption Request",
   dataAccessCart: "List of request(s)",
   addToCart: "Add to cart",
   orderNow: "Submit for approval",

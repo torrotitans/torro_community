@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+
 """
 from db.gcp.task_operator import taskFetcher
 from config import configuration
@@ -104,7 +105,7 @@ class DbGCPMgr(DbBase):
             project_id = request_data['projectId']
             dataset_id = request_data['datasetName']
             table_id = request_data['tableName']
-
+            from_torro = request_data.get('fromTorro', False)
 
             client = bigquery.Client(project_id)
             project = client.project
@@ -113,7 +114,16 @@ class DbGCPMgr(DbBase):
             table = client.get_table(table_ref)  # API request
 
             table_schema = table.to_api_repr()
-
+            # workspace_id | project_id | dataset_id | table_id
+            # check if it is alreadys in torro
+            if from_torro:
+                cond = "workspace_id=%s and project_id='%s' and dataset_id='%s' and table_id='%s'" % (workspace_id, project_id, dataset_id, table_id)
+                sql = self.create_select_sql(db_name, 'dataOnboardTable', 'input_form_id', cond)
+                table_info = self.execute_fetch_one(conn, sql)
+                if not table_info:
+                    data = response_code.GET_DATA_FAIL
+                    data['msg'] = 'Table not found in torro.'
+                    return data
             # get tags
             datacatalog_client = datacatalog_v1.DataCatalogClient()
             resource_name = (
@@ -135,7 +145,7 @@ class DbGCPMgr(DbBase):
                 tag_tempalte_header, tag_template_locations = tag_tempalte_header.split('/locations/')
                 tag_template_project = tag_tempalte_header.replace('projects/', '')
                 relations = [{"table_name": "formTable", "join_condition": "tagTemplatesTable.tag_template_form_id=formTable.id"}]
-                condition = 'tag_template_id="%s" and project_id="%s" and location="%s"' % (tag_template_id, tag_template_project,tag_template_locations)
+                condition = 'tag_template_id="%s" and project_id="%s" and location="%s" and (tagTemplatesTable.workspace_id=%s or tagTemplatesTable.workspace_id=0)' % (tag_template_id, tag_template_project,tag_template_locations, workspace_id)
                 sql = self.create_get_relation_sql(db_name, 'tagTemplatesTable', 'tag_template_form_id, fields_list', relations=relations, condition=condition)
                 print('tagTemplatesTable relation sql:', sql)
                 data = self.execute_fetch_one(conn, sql)
@@ -184,14 +194,30 @@ class DbGCPMgr(DbBase):
                 else:
                     if tag_column_name not in column_tags:
                         column_tags[tag_column_name] = return_tag
-
-            table_schema['tags'] = [table_tags]
+            if not table_tags:
+                table_schema['tags'] = []
+            else:
+                table_schema['tags'] = [table_tags]
             for index in range(len(table_schema['schema']['fields'])):
+                # fill column tags
                 column_name = table_schema['schema']['fields'][index]['name']
                 if column_name in column_tags:
                     if 'tags' not in table_schema['schema']['fields'][index]:
                         table_schema['schema']['fields'][index]['tags'] = []
                     table_schema['schema']['fields'][index]['tags'].append(column_tags[column_name])
+                # replace column policy tags
+                if 'policyTags' in table_schema['schema']['fields'][index]:
+                    policy_tags = table_schema['schema']['fields'][index]['policyTags']['names']
+                    local_policy_tag_id = []
+                    for gcp_policy_tag_id in policy_tags:
+                        cond = "gcp_policy_tag_id='%s'" % gcp_policy_tag_id
+                        sql = self.create_select_sql(db_name, 'policyTagsTable', 'id,ad_group', cond)
+                        policy_tag_info = self.execute_fetch_one(conn, sql)
+                        if policy_tag_info:
+                            local_policy_tag_id.append(policy_tag_info['id'])
+                        else:
+                            local_policy_tag_id = [None]
+                    table_schema['schema']['fields'][index]['policyTags']['names'] = local_policy_tag_id
             data = response_code.SUCCESS
             data['data'] = table_schema
 
@@ -210,6 +236,7 @@ class DbGCPMgr(DbBase):
         dataset_id = request_data.get('datasetName', None)
 
         if project_id is None:
+
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'project not found'
 

@@ -1,16 +1,17 @@
 /* third lib */
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import cn from "classnames";
 import { Link } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
-import Dashboard from "src/icons/Dashboard";
-import RaiseTicket from "src/icons/RaiseTicket";
-import FormManagement from "src/icons/FormManagement";
-import WorkflowManagement from "src/icons/WorkflowManagement";
-import Terminal from "src/icons/Terminal";
+import Text from "@basics/Text";
+import Dashboard from "@assets/icons/Dashboard";
+import RaiseTicket from "@assets/icons/RaiseTicket";
+import FormManagement from "@assets/icons/FormManagement";
+import WorkflowManagement from "@assets/icons/WorkflowManagement";
+import Terminal from "@assets/icons/Terminal";
 import { getFormList } from "@lib/api";
 import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
@@ -77,7 +78,11 @@ const LeftNav = ({ open, closeHandle }) => {
     switch (authContext.role) {
       case GOVERNOR:
         return [
-          { link: `${ROOT}/dashboard`, id: "dashboard", icon: Dashboard },
+          {
+            link: `${ROOT}/dashboard`,
+            id: "dashboard",
+            icon: Dashboard,
+          },
           {
             link: "",
             id: "wsManagement",
@@ -105,7 +110,11 @@ const LeftNav = ({ open, closeHandle }) => {
         ];
       case IT:
         return [
-          { link: `${ROOT}/dashboard`, id: "dashboard", icon: Dashboard },
+          {
+            link: `${ROOT}/dashboard`,
+            id: "dashboard",
+            icon: Dashboard,
+          },
           {
             link: "",
             id: "wsManagement",
@@ -138,7 +147,11 @@ const LeftNav = ({ open, closeHandle }) => {
         ];
       default:
         return [
-          { link: `${ROOT}/dashboard`, id: "dashboard", icon: Dashboard },
+          {
+            link: `${ROOT}/dashboard`,
+            id: "dashboard",
+            icon: Dashboard,
+          },
           {
             link: "",
             id: "raiseTicket",
@@ -156,7 +169,10 @@ const LeftNav = ({ open, closeHandle }) => {
         setFormContext(res.data);
       }
     });
+
+    /* eslint-disable */
   }, []);
+  /* eslint-disable */
 
   return (
     <div
@@ -197,21 +213,25 @@ const LeftNav = ({ open, closeHandle }) => {
                       <Intl id="pickStart" />
                     </Text>
                   </div>
-                  {item.list.map((item) => {
-                    return (
-                      <Link
-                        onClick={closeHandle}
-                        key={`form-${item.id}`}
-                        to={item.link}
-                      >
-                        <div className={styles.secondNav}>
-                          <div className={styles.secondNavLabel}>
-                            <Text type="subTitle">{item.title}</Text>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
+                  <div className={styles.childMenus}>
+                    <ScrollBar>
+                      {item.list.map((item) => {
+                        return (
+                          <Link
+                            onClick={closeHandle}
+                            key={`form-${item.id}`}
+                            to={item.link}
+                          >
+                            <div className={styles.secondNav}>
+                              <div className={styles.secondNavLabel}>
+                                <Text type="subTitle">{item.title}</Text>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </ScrollBar>
+                  </div>
                 </div>
               )}
             </div>

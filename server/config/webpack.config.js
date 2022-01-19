@@ -128,7 +128,7 @@ module.exports = function(webpackEnv) {
     return loaders;
   };
 
-  return {
+  const ClientConfig = {
     mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
     // Stop compilation early in production
     bail: isEnvProduction,
@@ -298,6 +298,7 @@ module.exports = function(webpackEnv) {
         "@context": paths.appContext,
         "@comp": paths.appComponets,
         "@config": paths.appConfig,
+        "@basics": paths.basicsComponent,
         // Allows for better profiling with ReactDevTools
         ...(isEnvProductionProfile && {
           "react-dom$": "react-dom/profiling",
@@ -695,4 +696,34 @@ module.exports = function(webpackEnv) {
     // our own hints via the FileSizeReporter
     performance: false,
   };
+
+  let serverConfig = {
+    mode: isEnvProduction ? "production" : isEnvDevelopment && "development",
+    // Stop compilation early in production
+    context: path.resolve(__dirname, "..", "server"),
+    devtool: isEnvProduction ? "hidden-source-map" : "source-map",
+    entry: "./index.js",
+    output: {
+      path: path.resolve(__dirname, "..", "build", "server"),
+      filename: "index.js",
+      publicPath: "/",
+    },
+    resolve: {
+      alias: {
+        "~": path.resolve(__dirname, "..", "server"),
+      },
+    },
+    node: {
+      __dirname: false,
+      __filename: false,
+    },
+    target: "node",
+  };
+
+  let config = [ClientConfig];
+  if (isEnvProduction) {
+    config.push(serverConfig);
+  }
+
+  return config;
 };

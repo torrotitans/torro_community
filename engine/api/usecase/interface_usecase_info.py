@@ -53,6 +53,10 @@ class interfaceUseCaseInfo(Resource):
             if isinstance(request_data, bool):
                 request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
                 return response_result_process(request_data, xml=xml)
+
+            user_key = req.get_user_key()
+            account_id = req.get_user_account_id()
+            workspace_id = req.get_workspace_id()
             # if not request_data:
             #     data = response_code.REQUEST_PARAM_MISSED
             #     return response_result_process(data, xml=xml)
@@ -60,7 +64,7 @@ class interfaceUseCaseInfo(Resource):
             # # print('usecaseApiPara.setUseCase_POST_request', usecaseApiPara.setUseCase_POST_request)
             request_data = req.verify_all_param(request_data, usecaseApiPara.getUseCase_POST_request)
             usecase_id = request_data['id']
-            data = usecaseSingleton_singleton.get_usecase_details_info_by_id(usecase_id)
+            data = usecaseSingleton_singleton.get_usecase_details_info_by_id(workspace_id, usecase_id)
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, usecaseApiPara.getUseCase_POST_response)

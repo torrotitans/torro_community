@@ -16,12 +16,20 @@
 
 .createdFrom {
   color: $text-grey;
-  line-height: 3.75rem;
+  line-height: 3.25rem;
   cursor: pointer;
   border-top: 1px solid $light-grey;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  span {
+    display: inline-block;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 
   svg {
     width: 1rem;

@@ -1,11 +1,5 @@
 /* third lib*/
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from "react";
+import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 /* material-ui */
@@ -158,11 +152,11 @@ function ForceGraph(
       event.subject.fy = event.y;
     }
 
-    function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
+    // function dragended(event) {
+    //   if (!event.active) simulation.alphaTarget(0);
+    //   event.subject.fx = null;
+    //   event.subject.fy = null;
+    // }
 
     return d3
       .drag()
@@ -535,21 +529,21 @@ const Visualisation = () => {
         { source: "Mme.Hucheloup", target: "Enjolras", value: 1 },
       ],
     };
-    const data = {
-      nodes: [
-        { id: "Myriel", group: 1 },
-        { id: "Mlle.Baptistine", group: 1 },
-        { id: "Mme.Magloire", group: 1 },
-        { id: "Labarre", group: 2 },
-        { id: "Valjean", group: 2 },
-      ],
-      links: [
-        { source: "Valjean", target: "Labarre", value: 1 },
-        { source: "Valjean", target: "Mme.Magloire", value: 3 },
-        { source: "Valjean", target: "Mlle.Baptistine", value: 3 },
-        { source: "Valjean", target: "Myriel", value: 5 },
-      ],
-    };
+    // const data = {
+    //   nodes: [
+    //     { id: "Myriel", group: 1 },
+    //     { id: "Mlle.Baptistine", group: 1 },
+    //     { id: "Mme.Magloire", group: 1 },
+    //     { id: "Labarre", group: 2 },
+    //     { id: "Valjean", group: 2 },
+    //   ],
+    //   links: [
+    //     { source: "Valjean", target: "Labarre", value: 1 },
+    //     { source: "Valjean", target: "Mme.Magloire", value: 3 },
+    //     { source: "Valjean", target: "Mlle.Baptistine", value: 3 },
+    //     { source: "Valjean", target: "Myriel", value: 5 },
+    //   ],
+    // };
     let chart = ForceGraph(dd, {
       nodeId: (d) => d.id,
       nodeGroup: (d) => d.group,

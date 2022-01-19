@@ -8,12 +8,12 @@ import { useNavigate } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 
 /* local components & methods */
-import Loading from "src/icons/Loading";
-import Button from "@comp/basics/Button";
-import TextEdit from "@comp/basics/TextEdit";
+import Loading from "@assets/icons/Loading";
+import Button from "@basics/Button";
+import TextEdit from "@basics/TextEdit";
 import FormItem from "@comp/FormItem";
 import styles from "./styles.module.scss";
-import CallModal from "@comp/basics/CallModal";
+import CallModal from "@basics/CallModal";
 import { getQueryString } from "src/utils/url-util.js";
 import {
   getFormItem,
@@ -28,12 +28,12 @@ import { useGlobalContext } from "src/context";
 
 const defaultIndex = -1;
 
-const FormManagement = () => {
+const FormManagement = ({ tagTemplate }) => {
   const { formListContext } = useGlobalContext();
 
   const { control } = useForm(); // initialise the hook
   const [formData, setFormData] = useState(null);
-  const [formId, setFormId] = useState(null);
+  const [formId, setFormId] = useState(getQueryString("formId") || null);
   const [editModuleIndex, setEditModuleIndex] = useState(-1);
   const [formLoading, setFormLoading] = useState(true);
   const navigate = useNavigate();
@@ -48,10 +48,6 @@ const FormManagement = () => {
   const formList = useMemo(() => {
     return formListContext?.managementList || [];
   }, [formListContext]);
-
-  const tagTemplate = useMemo(() => {
-    return getQueryString("tag_template");
-  }, []);
 
   const currentModule = useMemo(() => {
     return editModuleIndex !== defaultIndex

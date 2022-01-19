@@ -2,15 +2,14 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import Scrollbar from "react-perfect-scrollbar";
-import { Link } from "react-router-dom";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Loading from "src/icons/Loading";
-import Button from "@comp/basics/Button";
-import TextEdit from "@comp/basics/TextEdit";
+import Loading from "@assets/icons/Loading";
+import Button from "@basics/Button";
+import TextEdit from "@basics/TextEdit";
 import { DragDropContext } from "react-beautiful-dnd";
-import CallModal from "@comp/basics/CallModal";
+import CallModal from "@basics/CallModal";
 import { getWorkflowData, saveWorkflowData, getFormItem } from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
 import { sendNotify } from "src/utils/systerm-error";
@@ -118,21 +117,6 @@ const Workflow = ({ flowId, droppableItems }) => {
   const flow = useMemo(() => {
     return workflowData ? workflowData.stages : [];
   }, [workflowData]);
-
-  const currentStep = useMemo(() => {
-    let typeList = flow.map((item) => {
-      return item.flowType;
-    });
-    if (typeList.includes("System")) {
-      return "System";
-    } else if (typeList.includes("GoogleCloud")) {
-      return "GoogleCloud";
-    } else if (typeList.includes("Approval")) {
-      return "Approval";
-    } else {
-      return "";
-    }
-  }, [flow]);
 
   const editFlow = useMemo(() => {
     if (editIndex !== null) {

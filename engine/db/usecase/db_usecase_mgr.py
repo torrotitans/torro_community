@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: db_usecase_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 from common.common_input_form_status import status as Status
 from db.base import DbBase
@@ -13,13 +19,14 @@ from config import configuration
 from db.workspace.db_workspace_mgr import workspace_mgr
 import json
 from utils.ldap_helper import Ldap
+from common.common_input_form_status import status
+
 
 class DbUseCaseMgr(DbBase):
     """
     用户相关数据库表操作类
     """
     resource_list = ['jupyter', 'datastudio']
-
 
     def __set_usecase(self, usecase_info, usecase_id=None):
 
@@ -36,6 +43,7 @@ class DbUseCaseMgr(DbBase):
             allow_cross_region = bool(usecase_info['allow_cross_region'])
             usecase_name = usecase_info['usecase_name']
             create_time = usecase_info['create_time']
+            input_form = usecase_info.get('uc_input_form', -1)
             jupyter_access, studio_access = usecase_info['resources_access'].split(',')
             resources_access = {'jupyter': jupyter_access, 'datastudio': studio_access}
 
@@ -43,23 +51,23 @@ class DbUseCaseMgr(DbBase):
 
             # insert workspace
             if usecase_id is not None:
-                fields = ('ID', 'WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET',
+                fields = ('ID', 'WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT',
-                            'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (usecase_id, workspace_id, usecase_name, validity_date, budget, region_country,
+                          'CROSS_REGION', 'CREATE_TIME', 'DES')
+                values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
                           json.dumps(resources_access), admin_sa, allow_cross_region, create_time, des)
             else:
-                fields = ('WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET',
+                fields = ('WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT',
-                            'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (workspace_id, usecase_name, validity_date, budget, region_country,
+                          'CROSS_REGION', 'CREATE_TIME', 'DES')
+                values = (workspace_id, usecase_name, validity_date, budget, input_form, region_country,
                           json.dumps(resources_access), admin_sa, allow_cross_region, create_time, des)
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
             # print('usecaseTable sql:', sql)
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
 
             # insert group info
-            ad_group_fields = ('GROUP_MAIL','CREATE_TIME', 'DES')
+            ad_group_fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
             for ad_group_name in group_dict:
                 role_list = group_dict[ad_group_name]
                 label_list = group_label[ad_group_name]
@@ -70,13 +78,15 @@ class DbUseCaseMgr(DbBase):
                     group_id = ad_group_info['ID']
                 else:
                     values = (ad_group_name, create_time, des)
-                    sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(ad_group_fields)), values)
+                    sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(ad_group_fields)),
+                                                 values)
                     # print('adgroupTable sql:', sql)
                     group_id = self.insert_exec(conn, sql, return_insert_id=True)
                 # insert workspace_to_adgroupTable
                 w2a_fields = ('USECASE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
                 values = (usecase_id, json.dumps(label_list), group_id, json.dumps(role_list))
-                sql = self.create_insert_sql(db_name, 'usecase_to_adgroupTable', '({})'.format(', '.join(w2a_fields)), values)
+                sql = self.create_insert_sql(db_name, 'usecase_to_adgroupTable', '({})'.format(', '.join(w2a_fields)),
+                                             values)
                 # print('usecase_to_adgroupTable sql:', sql)
                 self.insert_exec(conn, sql, return_insert_id=True)
 
@@ -104,6 +114,7 @@ class DbUseCaseMgr(DbBase):
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
+
     def __delete_2ad_to_usecase(self, id):
         conn = MysqlConn()
         try:
@@ -151,12 +162,12 @@ class DbUseCaseMgr(DbBase):
             usecase_info['resources_access'] = usecase['resources_access']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['create_time'] = create_time
-
+            usecase_info['uc_input_form'] = usecase['uc_input_form']
             usecase_info['group_dict'] = {}
             usecase_info['group_label'] = {}
             group_mapping = [
-                (usecase['uc_team_group'], 'vistor', 'uc_team_group'),
-                (usecase['uc_owner_group'], 'admin', 'uc_owner_group'),
+                (usecase['uc_team_group'], 'USER', 'uc_team_group'),
+                (usecase['uc_owner_group'], 'GOVERNOR', 'uc_owner_group'),
             ]
             for group_item in group_mapping:
                 ad_group = group_item[0]
@@ -171,7 +182,7 @@ class DbUseCaseMgr(DbBase):
                 else:
                     usecase_info['group_label'][ad_group].append(label)
 
-            condition = 'USECASE_NAME="%s"' % usecase_name
+            condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseTable', '*', condition)
             # print('usecaseTable: ', sql)
             usecase_infos = self.execute_fetch_all(conn, sql)
@@ -203,14 +214,15 @@ class DbUseCaseMgr(DbBase):
             usecase_id_set = set()
             for ad_group_name in ad_group_list:
                 condition = "GROUP_MAIL='%s' " % (ad_group_name)
-                relations = [{"table_name": "usecase_to_adgroupTable", "join_condition": "usecase_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
+                relations = [{"table_name": "usecase_to_adgroupTable",
+                              "join_condition": "usecase_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
                 sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
                 uc_ad_info = self.execute_fetch_all(conn, sql)
                 usecase_id_set = usecase_id_set | set([str(wp_ad['USECASE_ID']) for wp_ad in uc_ad_info])
             # # print('usecase_id_set:', usecase_id_set)
             if 'None' in usecase_id_set:
                 usecase_id_set.remove('None')
-            # print('usecase_id_set:', usecase_id_set)
+            print('usecase_id_set:', usecase_id_set)
 
             if not usecase_id_set:
                 data = response_code.SUCCESS
@@ -222,16 +234,16 @@ class DbUseCaseMgr(DbBase):
             sql = self.create_select_sql(db_name, 'usecaseTable',
                                          'ID,WORKSPACE_ID,USECASE_NAME,VALIDITY_TILL,RESOURCES_ACCESS_LIST,CREATE_TIME',
                                          condition)
-            # # print('sql:', sql)
+            print('usecaseTable sql:', sql)
             usecase_infos = self.execute_fetch_all(conn, sql)
             return_infos = []
             for index, usecase_info in enumerate(usecase_infos):
                 usecase_id = usecase_info['ID']
 
                 one_usecase = {'id': usecase_id, 'workspace_id': usecase_info['WORKSPACE_ID'],
-                                 'usecase_name': usecase_info['USECASE_NAME'],
-                                 'validity_date': usecase_info['VALIDITY_TILL'],
-                                'create_time': usecase_info['CREATE_TIME']}
+                               'usecase_name': usecase_info['USECASE_NAME'],
+                               'validity_date': usecase_info['VALIDITY_TILL'],
+                               'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
                 # print('resource_list:', self.resource_list)
@@ -242,7 +254,8 @@ class DbUseCaseMgr(DbBase):
                 # print('one_usecase:', one_usecase)
                 # db_name = configuration.get_database_name()
                 condition = "USECASE_ID='%s' " % (usecase_id)
-                relations = [{"table_name": "adgroupTable", "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
+                relations = [{"table_name": "adgroupTable",
+                              "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
                 sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group_info in ad_group_infos:
@@ -365,21 +378,69 @@ class DbUseCaseMgr(DbBase):
         finally:
             conn.close()
 
-    def get_usecase_details_info_by_id(self, usecase_id):
+    def get_usecase_details_info_by_id(self, workspace_id, usecase_id):
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
             data = self.get_usecase_info_by_id(usecase_id)
             if data['code'] != 200:
                 return response_code.GET_DATA_FAIL
+            # get usecase
+            usecase_info = data['data']
+            usecase_name = usecase_info['USECASE_NAME']
+            relations = [
+                {"table_name": "dynamicFieldTable",
+                 "join_condition": "dynamicFieldValueTable.dynamic_field_id=dynamicFieldTable.id"}]
+            condition = "form_id=%s and option_label='%s' and workspace_id='%s'" % (status.system_form_id['usecase'], usecase_name, workspace_id)
+            sql = self.create_get_relation_sql(db_name, 'dynamicFieldValueTable', 'dynamicFieldTable.id, option_label',
+                                               relations, condition)
+            print('dynamicFieldTable sql:', sql)
+            dynamic_field_infos = self.execute_fetch_all(conn, sql)
+            user_input_form_id = []
+            user_infos = []
+            for dynamic_field_info in dynamic_field_infos:
+                dy_id = 'd' + str(dynamic_field_info['id'])
+                dy_label = dynamic_field_info['option_label']
+                input_form_cond = "dynamic_field_id='%s' and option_label='%s' and using_form_id=%s" % (dy_id,
+                                                                                                        dy_label,
+                                                                                                        status.system_form_id[
+                                                                                                            'add_user'])
+                sql = self.create_select_sql(db_name, 'dynamicField_to_inputFormTable', '*', input_form_cond)
+                print('dynamicField_to_inputFormTable sql:', sql)
+                input_form_infos = self.execute_fetch_all(conn, sql)
+                for input_form_info in input_form_infos:
+                    user_input_form_id.append(input_form_info['using_input_form_id'])
+            # get user info
+            user_form_comd = "id=%s" % status.system_form_id['add_user']
+            sql = self.create_select_sql(db_name, 'formTable', 'id, fields_list', condition=user_form_comd)
+            # get label - field id mapping
+            field_name_id_mapping = {}
+            user_form_fields = json.loads(self.execute_fetch_one(conn, sql)['fields_list'])
+            for field_info in user_form_fields:
+                id = field_info['id']
+                label = field_info['label']
+                field_name_id_mapping[id] = label
+            # get user infos
+            for input_form_id in user_input_form_id:
+                user_info = {}
+                user_input_form_comd = "id=%s" % input_form_id
+                sql = self.create_select_sql(db_name, 'inputFormTable', 'id, form_field_values_dict', condition=user_input_form_comd)
+                user_input_form_fields = json.loads(self.execute_fetch_one(conn, sql)['form_field_values_dict'])
+                for field_id in user_input_form_fields:
+                    if field_id in field_name_id_mapping:
+                        user_info[field_name_id_mapping[field_id]] = user_input_form_fields[field_id]['value']
+                    else:
+                        user_info[field_name_id_mapping[field_id]] = ''
+                user_infos.append(user_info)
             # # print(usecase_id_set)
             # print('data', data)
-            usecase_info = data['data']
+
             return_info = {}
             usecase_id = usecase_info['ID']
             return_info['id'] = usecase_id
+            return_info['user_infos'] = user_infos
             return_info['workspace_id'] = usecase_info['WORKSPACE_ID']
-            return_info['usecase_name'] = usecase_info['USECASE_NAME']
+            return_info['usecase_name'] = usecase_name
             return_info['validity_date'] = usecase_info['VALIDITY_TILL']
             return_info['budget'] = usecase_info['BUDGET']
             return_info['region_country'] = usecase_info['REGION_COUNTRY']
@@ -400,7 +461,8 @@ class DbUseCaseMgr(DbBase):
             # db_name = configuration.get_database_name()
             # print(return_info)
             condition = "USECASE_ID='%s' " % (usecase_id)
-            relations = [{"table_name": "adgroupTable", "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
+            relations = [
+                {"table_name": "adgroupTable", "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
             sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
             # # print(sql)
             ad_group_infos = self.execute_fetch_all(conn, sql)
@@ -408,6 +470,16 @@ class DbUseCaseMgr(DbBase):
                 label_list = json.loads(ad_group_info['LABEL_LIST'])
                 for label in label_list:
                     return_info[label] = ad_group_info['GROUP_MAIL']
+            # get usecase data info
+            condition = "workspace_id='%s' and usecase_id='%s'" % (workspace_id, usecase_id)
+            relations = [
+                {"table_name": "dataOnboardTable", "join_condition": "dataOnboardTable.input_form_id=dataAccessTable.data_input_form_id"}]
+            sql = self.create_get_relation_sql(db_name, 'dataAccessTable', 'project_id,location,dataset_id,table_id,dataAccessTable.fields,dataAccessTable.create_time', relations, condition)
+
+            data_access_infos = self.execute_fetch_all(conn, sql)
+            for index in range(len(data_access_infos)):
+                data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'])
+            return_info['data_access'] = data_access_infos
 
             # print('last:', return_info)
             data = response_code.SUCCESS
@@ -415,8 +487,10 @@ class DbUseCaseMgr(DbBase):
             return data
         except Exception as e:
             import traceback
-            # print(traceback.format_exc())
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
+
+
 usecase_mgr = DbUseCaseMgr()

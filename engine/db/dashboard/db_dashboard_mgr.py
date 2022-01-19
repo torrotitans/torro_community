@@ -1,7 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
-
+@author：li-boss
+@file_name: db_department_mgr.py
+@create date: 2019-10-27 15:05
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 
 from config import configuration
@@ -10,7 +15,7 @@ from db.connection_pool import MysqlConn
 import json
 from utils.status_code import response_code
 from utils.log_helper import lg
-
+from common.common_input_form_status import status
 
 class DbDashboardMgr(DbBase):
 
@@ -26,13 +31,15 @@ class DbDashboardMgr(DbBase):
             db_name = configuration.get_database_name()
             # fetch adgroup info
             condition = 'ID="%s"' % user_id
-            user_fields = 'ID'
+            user_fields = 'ID,ACCOUNT_ID'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(db_conn, sql)
             if not user_info:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'cannot find users, please login in again'
                 return data
+            account_id = user_info['ACCOUNT_ID']
+            del user_info['ACCOUNT_ID']
             condition = 'USER_ID="%s"' % user_id
             relation_tables = [
                 {'table_name': 'user_to_adgroupTable', 'join_condition': 'adgroupTable.ID=user_to_adgroupTable.AD_GROUP_ID'}
@@ -51,6 +58,7 @@ class DbDashboardMgr(DbBase):
                 approverView = True
             else:
                 approverView = False
+
             table_name = 'inputFormTable'
             max_history_condiction = ' GROUP BY id'
             fields = 'id,max(history_id)'
@@ -60,10 +68,28 @@ class DbDashboardMgr(DbBase):
                               {"table_name": "inputFormTable", "join_condition": "inputFormTable.id=approvalTable.input_form_id"}]
             condition_list = []
             if 'approverView' in condition_dict:
-                condition = "(inputFormTable.id, history_id) in (%s) and ad_group in ('%s')" % (max_history_sql, "', '".join(adgroup_list))
+                condition = "ad_group in ('%s') and (inputFormTable.id, history_id) in (%s) " % ("', '".join(adgroup_list), max_history_sql)
                 del condition_dict['approverView']
-                if 'form_status' not in condition_dict:
-                    condition_list.append("(now_approval=1)")
+                if 'form_status' in condition_dict:
+                    form_status = []
+                    option = condition_dict['form_status'][-1]
+                    if isinstance(option, str):
+                        form_status_length = len(condition_dict['form_status']) - 1
+                    else:
+                        form_status_length = len(condition_dict['form_status'])
+                    for i in range(form_status_length):
+                        form_status.append(int(condition_dict['form_status'][i][0]))
+                    print('form_status:', form_status)
+                    if status.pending_approval in form_status:
+                        condition_list.append("(now_approval=1)")
+                    else:
+                        condition_list.append("(approvalTable.account_id='{}')".format(account_id))
+                    if status.approved in form_status:
+                        condition_dict['form_status'] = [[status.completed, '=']] + condition_dict['form_status']
+                        condition_list.append("(approvalTable.is_approved=1)")
+                    print('condition_dict:', condition_dict['form_status'] )
+                else:
+                    condition_list.append("(approvalTable.account_id='{}')".format(account_id))
             else:
                 condition = "(inputFormTable.id, history_id) in (%s) and inputFormIndexTable.creator_id='%s'" % (max_history_sql, user_id)
 
@@ -91,12 +117,39 @@ class DbDashboardMgr(DbBase):
                     condition_list.append(key_condition)
             condition += ' and '
             condition += ' and '.join(condition_list)
+            condition += ' order by inputFormTable.create_time desc'
             # print('condition:', condition)
-            fields = 'inputFormTable.id,history_id,form_id,workflow_id,creator_id,account_id as approver_id,workflow_name,fields_num,stages_num,form_status,ad_group,inputFormTable.create_time,inputFormTable.updated_time'
+            fields = 'inputFormTable.id,history_id,form_id,workflow_id,creator_id,account_id as approver_id,workflow_name,fields_num,stages_num,form_status,ad_group,inputFormTable.create_time,inputFormTable.updated_time,inputFormTable.form_field_values_dict'
             role_name_query_sql = self.create_get_relation_sql(db_name, "approvalTable", fields, role_relations,
                                                                condition=condition)
             # print('role_name_query_sql: ', role_name_query_sql)
             # exit(0)
+
+            # get usecase field info
+            # print(status.system_form_id, workspace_id)
+            dy_condition = "form_id=%s" % (status.system_form_id['usecase'])
+            sql = self.create_select_sql(db_name, 'dynamicFieldTable',
+                                         'id,label',
+                                         condition=dy_condition)
+            field_info = self.execute_fetch_one(db_conn, sql)
+            if field_info:
+                dy_field_id = 'd'+str(field_info['id'])
+                dy_field_label = field_info['label']
+            else:
+                dy_field_id = None
+                dy_field_label = None
+            # dy_value_cond = 'dynamic_field_id=%s' % field_info['id']
+            # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'option_label, option_value', condition=dy_value_cond)
+            # dy_value_infos = self.execute_fetch_all(db_conn, sql)
+            # dy_label_value_dict = {}
+            # for dy_value_info in dy_value_infos:
+            #     option_label = dy_value_info['option_label']
+            #     option_value = dy_value_info['option_value']
+            #     if option_value not in dy_label_value_dict:
+            #         dy_label_value_dict[option_value] = option_label
+            # print('dy_label_value_dict:', dy_label_value_dict)
+            # fetch duplicate form
+            print('role_name_query_sql:', role_name_query_sql)
             result = self.execute_fetch_all(db_conn, role_name_query_sql)
             return_result = []
             return_result_keys = []
@@ -113,16 +166,28 @@ class DbDashboardMgr(DbBase):
                     condition = 'ID="%s"' % user_id
                     user_fields = 'ACCOUNT_ID'
                     sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+                    print('user Table:', sql)
                     user_info = self.execute_fetch_one(db_conn, sql)
                     raw_result['creator_id'] = user_info['ACCOUNT_ID']
+                    # get uasecase field value
+                    form_field_values_dict = json.loads(raw_result['form_field_values_dict'])
+                    raw_result[dy_field_label] = ''
+                    # print('form_field_values_dict:', form_field_values_dict, dy_field_id)
+                    if dy_field_id in form_field_values_dict:
+                        dy_label_value = form_field_values_dict[dy_field_id]['value']
+                        # if dy_value in dy_label_value_dict:
+                        raw_result[dy_field_label] = dy_label_value
+                    del raw_result['form_field_values_dict']
+                    if None in raw_result:
+                        del raw_result[None]
                     return_result.append(raw_result)
+
             data = response_code.SUCCESS
             data['data'] = return_result
             return data
         except Exception as e:
-            lg.error(e)
             import traceback
-            # print(traceback.format_exc())
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()

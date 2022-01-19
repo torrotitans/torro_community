@@ -176,6 +176,7 @@ class interfaceInputForm(Resource):
             return response_result_process(error_data, xml=xml)
 
     # delete the workspace info
+    @login_required
     def delete(self,):
         xml = request.args.get('format')
         try:
@@ -206,3 +207,77 @@ class interfaceInputForm(Resource):
             # # print(traceback.format_exc())
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
+
+class interfaceInputFormList(Resource):
+    # @api_version
+    @login_required
+    def post(self,):
+        xml = request.args.get('format')
+        request_data = req.request_process(request, xml, modelEnum.department.value)
+        # # print('request: ', request_data)
+
+        if isinstance(request_data, bool):
+            request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
+            return response_result_process(request_data, xml=xml)
+
+        workspace_id = req.get_workspace_id()
+        try:
+            user_key = req.get_user_key()
+            # print('user id:', user_key)
+        except:
+            data = response_code.GET_DATA_FAIL
+            # print(traceback.format_exc())
+            data['msg'] = 'Token error or expired, please login again.'
+            return response_result_process(data, xml=xml)
+        try:
+            data_list = request_data.get('data', [])
+            output_data = response_code.SUCCESS
+            output_data['data'] = []
+            for one_data in data_list:
+                one_data = req.verify_all_param(one_data, inputFormApiPara.input_form_data_POST_request)
+                form_id = one_data['form_id']
+                form_data = formSingleton_singleton.get_details_form_by_id(form_id)
+                field_ids = {}
+                if form_data['code'] == 200:
+                    for field in form_data["data"]["fieldList"]:
+                        field_id = field['id']
+                        field_style = field['style']
+                        field_ids[field_id] = field_style
+
+                file_list = request.files.items()
+                # # print('request_data: ', request_data)
+                # # print('request.form:', request.form)
+                # # print('request.files: ', request.files)
+
+                # # print('file_list: ', file_list)
+                for file in file_list:
+                    file_id = file[0][:2]
+                    # print("file_id:", file_id)
+                    if file_id not in one_data['form_field_values_dict']:
+                        one_data['form_field_values_dict'][file_id] = []
+                    file_contents = file[1]
+                    # print('file_contents: ', type(file_contents), file_contents)
+
+                    if not isinstance(file_contents, list):
+                        file_contents = [file_contents]
+                    for file in file_contents:
+                        t = int(time.time())
+                        upload_path = './data/input_form_file/%s/%s-%s-%s/' % (user_key, form_id, file_id, t)
+                        if not os.path.exists(upload_path):
+                            os.makedirs(upload_path)
+                        upload_path += file.filename
+                        file.save(upload_path)
+                        # print('file_contents: ', type(file_contents), file_contents)
+                        one_data['form_field_values_dict'][file_id].append(upload_path)
+                one_data['field_ids'] = field_ids
+
+                data = input_form_singleton.input_form_data(user_key, one_data, workspace_id)
+                output_data['data'].append(data)
+
+            return output_data
+        except:
+            data = response_code.ADD_DATA_FAIL
+            data['msg'] = 'Something went wrong. Please double check your input.'
+            print(traceback.format_exc())
+            return response_result_process(data, xml=xml)

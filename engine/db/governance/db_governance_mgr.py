@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: db_department_mgr.py
+@create date: 2019-10-27 15:05
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 from string import Template
 from db.gcp.task_operator import taskFetcher
@@ -86,132 +92,166 @@ class DbGovernanceMgr(DbBase):
                 sql = self.create_insert_sql(db_name, 'inputCommentTable', '({})'.format(', '.join(fields)), values)
                 comment_id = self.insert_exec(conn, sql, return_insert_id=True)
 
-            if form_status_code == Status.approved:
-                # 3.change approval process
-                all_approval_flag = 0
-                miss_role_flag = 0
+            # check the approval condition
+            if form_status_code not in (Status.completed, Status.pending_approval):
                 approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
                 sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
                 print('approvalTable: ', sql)
                 approval_infos = self.execute_fetch_all(conn, sql)
                 if not approval_infos:
                     data = response_code.UPDATE_DATA_FAIL
-                    data['msg'] = 'update status failed.'
+                    data['msg'] = 'you do not in the approval ad group.'
                     return data
-                approval_num = int(approval_infos[0]['approval_num']) + 1
+                now_approval_num = int(approval_infos[0]['approval_num'])
+                next_approval_num = now_approval_num + 1
 
-                # if it is the last approval
-                approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, approval_num)
-                sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                print('approvalTable: ', sql)
-                last_approval_info = self.execute_fetch_one(conn, sql)
-                if not last_approval_info:
-                    all_approval_flag = 1
+                if form_status_code == Status.approved:
+                    # 3.change approval process
+                    all_approval_flag = 0
+                    miss_role_flag = 0
 
-                # if it is the last approval, check the service account have enough right to execute the tasks
-                gcp_tasks = []
-                if all_approval_flag == 1:
-                    workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
-                    workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
-                    # # print('workflow_stages_id_list:', workflow_stages_id_list)
-                    input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
-                    sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
-                                                 input_stage_condition)
-                    # print('inputStageTable: ', sql)
-                    stage_infos = self.execute_fetch_all(conn, sql)
-                    tasks = []
-                    for stage_info in stage_infos:
-                        tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
-                                      "stages": json.loads(stage_info['condition_value_dict'])})
-                    # print('tasks: ', tasks)
-                    torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
-                                                                        taskFetcher.service_account)
-                    for task in tasks:
-                        task_name = task['name']
-                        stage_dict = task['stages']
-                        task = taskFetcher.build_task_object(task_name, stage_dict)
-                        gcp_tasks.append(task)
-                        task_type = task.api_type
-                        if task_type == 'gcp':
-                            task_project_id = task.target_project
-                            sa_roles = None
-                            if task_project_id == taskFetcher.project_id:
-                                sa_roles = torro_roles
-                            access_flag = taskFetcher.check_roles(task,
-                                                                  default_service_account=None,
-                                                                  default_project_sa_roles=sa_roles)
-                            if access_flag == 0:
-                                miss_role_list.append('-- '+task_name+': ['+', '.join(task.role_list)+']')
-                    if len(miss_role_list) != 0:
-                        miss_role_flag = 1
-                # have all the gcp permission or it is not the last approval, approved successful
-                if miss_role_flag == 0 or all_approval_flag == 0:
-                    # change status
+                    # if it is the last approval
+                    approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
+                    sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
+                    print('approvalTable: ', sql)
+                    last_approval_info = self.execute_fetch_one(conn, sql)
+                    # if cannot find the next approval task, is the last approval status
+                    if not last_approval_info:
+                        all_approval_flag = 1
+
+                    # if it is the last approval, check the service account have enough right to execute the tasks
+                    gcp_tasks = []
+                    if all_approval_flag == 1:
+                        workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
+                        workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
+                        # # print('workflow_stages_id_list:', workflow_stages_id_list)
+                        input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
+                        sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
+                                                     input_stage_condition)
+                        # print('inputStageTable: ', sql)
+                        stage_infos = self.execute_fetch_all(conn, sql)
+                        tasks = []
+                        for stage_info in stage_infos:
+                            tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
+                                          "stages": json.loads(stage_info['condition_value_dict'])})
+                        print('taskFetcher.project_id&service_account: ', taskFetcher.project_id, taskFetcher.service_account)
+                        torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
+                                                                            taskFetcher.service_account)
+                        for task in tasks:
+                            task_name = task['name']
+                            stage_dict = task['stages']
+                            task = taskFetcher.build_task_object(task_name, stage_dict)
+                            gcp_tasks.append(task)
+                            task_type = task.api_type
+                            if task_type == 'gcp':
+                                task_project_id = task.target_project
+                                sa_roles = None
+                                if task_project_id == taskFetcher.project_id:
+                                    sa_roles = torro_roles
+                                access_flag = taskFetcher.check_roles(task,
+                                                                      default_service_account=None,
+                                                                      default_project_sa_roles=sa_roles)
+                                if access_flag == 0:
+                                    miss_role_list.append('-- '+task_name+': ['+', '.join(task.role_list)+']')
+                        if len(miss_role_list) != 0:
+                            miss_role_flag = 1
+                    # have all the gcp permission or it is not the last approval, approved successful
+                    if miss_role_flag == 0 or all_approval_flag == 0:
+                        # change approval status
+                        fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
+                        values = (0, 1, account_id, comment, now)
+                        approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s and ad_group in ('%s')" % (input_form_id,
+                                                                                                                                   now_approval_num,
+                                                                                                                                   "', '".join(adgroup_list)
+                                                                                                                                   )
+                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                        sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
+                        # # print('approvalTable update_sql: ', sql)
+                        return_count = self.updete_exec(conn, sql)
+                        if return_count == 0:
+                            data = response_code.SUCCESS
+                            data['msg'] = 'the %s level approval task has already been approved.' % now_approval_num
+                            return data
+                        # close all the same num approval task
+                        fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
+                        values = (0, 0, 'this approval num has been approved', now)
+                        approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s" % (input_form_id, now_approval_num)
+                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                        sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
+                        # # print('approvalTable update_sql: ', sql)
+                        _ = self.updete_exec(conn, sql)
+
+                        # next approval task
+                        fields = ('now_approval', 'is_approved')
+                        values = (1, 0)
+                        approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
+                        sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
+                        # print('approvalTable update_sql: ', sql)
+                        return_count = self.updete_exec(conn, sql)
+                        # print('return_count:', return_count)
+                        # if return_count == 0:
+                        #     all_approval_flag = 1
+
+                        # 4.change status
+                        # insert form
+                        if all_approval_flag == 1:
+
+                            form_status_code = Status.in_porgress
+                            fields = ('form_status', 'updated_time')
+                            values = (form_status_code, now)
+                            update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
+                            sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
+                            # print('update_sql: ', sql)
+                            return_count = self.updete_exec(conn, sql)
+
+                            # 6.notice user or notice next approvers
+                            notice_ids = [user_key]
+                            # adgroup_list = self.__get_adgroup_member(notice_ids)
+                            data = response_code.SUCCESS
+                            data['data'] = {'id': input_form_id, 'count': return_count, 'tasks': tasks,
+                                            'gcp_tasks': gcp_tasks, 'notice_ids': notice_ids, 'is_approved': all_approval_flag}
+                        else:
+                            data = response_code.SUCCESS
+                            data['data'] = 'approved.'
+                            return data
+                    else:
+                        data = response_code.UPDATE_DATA_FAIL
+                        data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
+                        return data
+                elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
+                    # update status
                     fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
-                    values = (0, 1, account_id, comment, now)
-                    approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                    values = (0, 0, account_id, comment, now)
+                    approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s and ad_group in ('%s')" % (input_form_id,
+                                                                                                                               now_approval_num,
+                                                                                                                               "', '".join(adgroup_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                    # # print('approvalTable update_sql: ', sql)
+                    print('approvalTable rejected sql: ', sql)
                     return_count = self.updete_exec(conn, sql)
                     if return_count == 0:
                         data = response_code.SUCCESS
-                        data['msg'] = 'you have already approved.'
+                        data['msg'] = 'the %s level approval task has already been changed.' % now_approval_num
                         return data
-                    # # print('return_count:', return_count)
-
-                    fields = ('now_approval', 'is_approved')
-                    values = (1, 0)
-                    approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, approval_num)
+                    # close the other same level task
+                    fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
+                    values = (0, 0, 'this approval num has been modified', now)
+                    approval_condition = "input_form_id='%s' and approval_num=%s and now_approval=1" % (input_form_id, now_approval_num)
+                    # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                    # print('approvalTable update_sql: ', sql)
+                    # # print('approvalTable update_sql: ', sql)
+                    _ = self.updete_exec(conn, sql)
+                    # changes inputform status
+                    fields = ('form_status', 'updated_time')
+                    values = (form_status_code, now)
+                    update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
+                    sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
+                    print('update_sql: ', sql)
                     return_count = self.updete_exec(conn, sql)
-                    # print('return_count:', return_count)
-                    # if return_count == 0:
-                    #     all_approval_flag = 1
-
-                    # 4.change status
-                    # insert form
-                    if all_approval_flag == 1:
-
-                        form_status_code = Status.in_porgress
-                        fields = ('form_status', 'updated_time')
-                        values = (form_status_code, now)
-                        update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
-                        sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                        # print('update_sql: ', sql)
-                        return_count = self.updete_exec(conn, sql)
-
-                        # 6.notice user or notice next approvers
-                        notice_ids = [user_key]
-                        # adgroup_list = self.__get_adgroup_member(notice_ids)
-                        data = response_code.SUCCESS
-                        data['data'] = {'id': input_form_id, 'count': return_count, 'tasks': tasks,
-                                        'gcp_tasks': gcp_tasks, 'notice_ids': notice_ids, 'is_approved': all_approval_flag}
-                    else:
-                        data = response_code.SUCCESS
-                        data['data'] = 'approved.'
-                        return data
+                    data = response_code.SUCCESS
+                    data['data'] = 'update form status to: ' + form_status
                 else:
                     data = response_code.UPDATE_DATA_FAIL
-                    data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
-                    return data
-            elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
-
-                fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
-                values = (0, 0, account_id, comment, now)
-                approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
-                sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                print('approvalTable rejected sql: ', sql)
-                _ = self.updete_exec(conn, sql)
-
-                fields = ('form_status', 'updated_time')
-                values = (form_status_code, now)
-                update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
-                sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                print('update_sql: ', sql)
-                return_count = self.updete_exec(conn, sql)
-                data = response_code.SUCCESS
-                data['data'] = 'update form status to: ' + form_status
+                    data['data'] = 'Does not support this status option.'
             elif form_status_code == Status.pending_approval:
                 fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
                 values = (0, 0, None, '', None)
@@ -222,46 +262,56 @@ class DbGovernanceMgr(DbBase):
 
                 fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
                 values = (1, 0, None, '', None)
-                approval_condition = "input_form_id='%s' and approval_num=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                approval_condition = "input_form_id='%s' and approval_num=1 " % (input_form_id)
+                # approval_condition = "input_form_id='%s' and approval_num=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                 # print('approvalTable update_sql: ', sql)
                 _ = self.updete_exec(conn, sql)
 
-
+                # changes inputform stauts
                 fields = ('form_status', 'updated_time')
                 values = (form_status_code, now)
                 update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                 sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
                 # print('update_sql: ', sql)
-                return_count = self.updete_exec(conn, sql)
+                _ = self.updete_exec(conn, sql)
                 data = response_code.SUCCESS
                 data['data'] = 'update form status to: ' + form_status
-
-            elif form_status_code == Status.completed:
+            else:
+                # change status
                 fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
                 values = (0, 0, account_id, comment, now)
-                approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                approval_condition = "input_form_id='%s' and now_approval=1" % (input_form_id)
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                 print('approvalTable completed sql: ', sql)
-                _ = self.updete_exec(conn, sql)
-
+                return_count = self.updete_exec(conn, sql)
+                # if return_count == 0:
+                #     data = response_code.SUCCESS
+                #     data['msg'] = 'the %s level approval task has already been changed.' % now_approval_num
+                #     return data
+                # # close the other same level task
+                # fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
+                # values = (0, 0, 'this approval num has been modified', now)
+                # approval_condition = "input_form_id='%s' and now_approval=1" % (input_form_id)
+                # # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                # sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
+                # # # print('approvalTable update_sql: ', sql)
+                # _ = self.updete_exec(conn, sql)
+                # update input form task
                 fields = ('form_status', 'updated_time')
                 values = (form_status_code, now)
                 update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                 sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                # print('update_sql: ', sql)
-                return_count = self.updete_exec(conn, sql)
+                print('inputFormTable update_sql: ', sql)
+                _ = self.updete_exec(conn, sql)
                 data = response_code.SUCCESS
                 data['data'] = 'update form status to: ' + form_status
 
-            else:
-                data = response_code.UPDATE_DATA_FAIL
-                data['data'] = 'Does not support this status option.'
             return data
 
         except Exception as e:
             error = traceback.format_exc()
-            # print(error)
+            lg.error(error)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -293,7 +343,7 @@ class DbGovernanceMgr(DbBase):
             form_status_code = Status.completed
             now = str(datetime.datetime.now())
             # print('update_sql: ', sql)
-            return_count = self.updete_exec(conn, sql)
+            # return_count = self.updete_exec(conn, sql)
             for i in range(len(tasks)):
                 input_stage_id = tasks[i]['id']
                 comment = return_msg_list[i][1]
@@ -321,8 +371,8 @@ class DbGovernanceMgr(DbBase):
             # sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
 
 
-            data = response_code.SUCCESS
-            data['data'] = {'history_id': history_id}
+            # data = response_code.SUCCESS
+            # data['data'] = {'history_id': history_id}
             return data
         except Exception as e:
             error = traceback.format_exc()

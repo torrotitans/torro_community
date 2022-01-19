@@ -7,19 +7,18 @@ import cn from "classnames";
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
 import TablePagination from "@material-ui/core/TablePagination";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
 import TableView from "./TableView";
 import FormItem from "@comp/FormItem";
-import HeadLine from "@comp/basics/HeadLine";
-import Search from "@comp/basics/Search";
-import Text from "@comp/basics/Text";
-import CallModal from "@comp/basics/CallModal";
-import Loading from "src/icons/Loading";
+import HeadLine from "@basics/HeadLine";
+import Search from "@basics/Search";
+import Text from "@basics/Text";
+import CallModal from "@basics/CallModal";
+import Loading from "@assets/icons/Loading";
 import { getTableData } from "@lib/api";
-import Button from "@comp/basics/Button";
+import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import {
   Table,
@@ -28,7 +27,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const tableForm = [
   {

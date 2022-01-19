@@ -1,6 +1,4 @@
 /* third lib */
-import React from "react";
-import cn from "classnames";
 
 /* material-ui */
 import { withStyles } from "@material-ui/core/styles";
@@ -12,8 +10,6 @@ import TableHeadR from "@material-ui/core/TableHead";
 import TableRowR from "@material-ui/core/TableRow";
 
 /* local components and methods */
-import styles from "./styles.module.scss";
-
 export const Table = TableR;
 export const TableBody = TableBodyR;
 export const TableContainer = TableContainerR;

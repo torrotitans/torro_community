@@ -15,21 +15,22 @@ import Delete from "@material-ui/icons/Close";
 import styles from "./styles.module.scss";
 /* local components & methods */
 import FormItem from "@comp/FormItem";
-import HeadLine from "@comp/basics/HeadLine";
-import Text from "@comp/basics/Text";
-import CallModal from "@comp/basics/CallModal";
-import Loading from "src/icons/Loading";
+import HeadLine from "@basics/HeadLine";
+import Text from "@basics/Text";
+import CallModal from "@basics/CallModal";
+import Loading from "@assets/icons/Loading";
 import DesignPanel from "./DesignPanel";
-import TableTagDisplay from "@comp/TableTagDisplay";
+import TableTagDisplay from "@comp/TableTag";
 import {
   getOnBoardDataForm,
+  getRequiredTableTag,
   getTableSchema,
   getTags,
   getPolicys,
   raiseFormRequest,
 } from "@lib/api";
 import { SUCCESS } from "src/lib/data/callStatus";
-import Button from "@comp/basics/Button";
+import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import {
   Table,
@@ -38,7 +39,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-} from "@comp/basics/Table";
+} from "@basics/Table";
 
 const DataOnBoarding = () => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
@@ -61,6 +62,7 @@ const DataOnBoarding = () => {
   const [tagTemplateList, setTagTempalteList] = useState([]);
   const [submitData, setSubmitData] = useState(null);
   const [onBoardDataForm, setOnBoardDataForm] = useState(null);
+  const [requiredTableTag, setRequiredTableTag] = useState([]);
 
   const [modalData, setModalData] = useState({
     open: false,
@@ -93,6 +95,10 @@ const DataOnBoarding = () => {
 
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
+  }, [tableData]);
+
+  const tableTags = useMemo(() => {
+    return tableData?.tags || [];
   }, [tableData]);
 
   const tagTemplateMap = useMemo(() => {
@@ -139,14 +145,14 @@ const DataOnBoarding = () => {
 
   const checkedTagList = useMemo(() => {
     if (type === 1) {
-      return tableData.tags;
+      return tableTags;
     }
     if (tableList && type === 2 && selectedList.length === 1) {
       return tableList[selectedList[0]].tags;
     }
 
     return [];
-  }, [selectedList, tableList, type, tableData]);
+  }, [selectedList, tableList, type, tableTags]);
 
   const haveTableTag = useMemo(() => {
     return tableData?.tags.length > 0;
@@ -326,21 +332,37 @@ const DataOnBoarding = () => {
 
   const onBoardHandle = useCallback(
     (data) => {
-      setModalData({
-        open: true,
-        status: 1,
-        content: <Intl id="confirmOnboard" />,
+      let avaliable = true;
+
+      tableData.tags.forEach((item) => {
+        if (!item.data) {
+          sendNotify({
+            msg: "Table tag have empty value, please check your input.",
+            status: 3,
+            show: true,
+          });
+          avaliable = false;
+        }
       });
-      setSubmitData({
-        form_id: "107",
-        form_field_values_dict: {
-          u1: tableData?.tableReference.projectId,
-          u2: tableData?.tableReference.datasetId,
-          u3: tableData?.tableReference.tableId,
-          u4: tableData?.schema?.fields,
-          u5: tableData?.tags,
-        },
-      });
+
+      if (avaliable) {
+        setModalData({
+          open: true,
+          status: 1,
+          content: <Intl id="confirmOnboard" />,
+        });
+        setSubmitData({
+          form_id: "107",
+          form_field_values_dict: {
+            u1: tableData?.tableReference.projectId,
+            u2: tableData?.location,
+            u3: tableData?.tableReference.datasetId,
+            u4: tableData?.tableReference.tableId,
+            u5: tableData?.schema?.fields,
+            u6: tableData?.tags,
+          },
+        });
+      }
     },
     [tableData]
   );
@@ -351,7 +373,33 @@ const DataOnBoarding = () => {
       getTableSchema(searchQuery)
         .then((res) => {
           if (res.data) {
-            setTableData(res.data);
+            let tmpData = res.data;
+
+            /* deal with require Table Tag */
+            tmpData.tags = tmpData?.tags || [];
+            let tagFormIdList = [];
+            let concatList = [];
+
+            tmpData.tags = tmpData.tags.map((item) => {
+              tagFormIdList.push(item.tag_template_form_id);
+              if (requiredTableTag.includes(item.tag_template_form_id)) {
+                return { ...item, required: true };
+              } else {
+                return item;
+              }
+            });
+
+            requiredTableTag.forEach((id) => {
+              if (!tagFormIdList.includes(id)) {
+                concatList.push({
+                  tag_template_form_id: id,
+                  data: null,
+                  required: true,
+                });
+              }
+            });
+            tmpData.tags = concatList.concat(tmpData.tags);
+            setTableData(tmpData);
             setFormLoading(false);
           }
         })
@@ -359,7 +407,7 @@ const DataOnBoarding = () => {
           sendNotify({ msg: e.message, status: 3, show: true });
         });
     }
-  }, [searchQuery]);
+  }, [searchQuery, requiredTableTag]);
 
   useEffect(() => {
     getPolicys()
@@ -392,11 +440,29 @@ const DataOnBoarding = () => {
   useEffect(() => {
     getOnBoardDataForm()
       .then((res) => {
-        setOnBoardDataForm(res);
+        if (res.data) {
+          setOnBoardDataForm(res.data);
+        }
       })
       .catch((e) => {
         sendNotify({
           msg: "Get Policy tags error.",
+          status: 3,
+          show: true,
+        });
+      });
+  }, []);
+
+  useEffect(() => {
+    getRequiredTableTag()
+      .then((res) => {
+        if (res.data) {
+          setRequiredTableTag(res.data);
+        }
+      })
+      .catch((e) => {
+        sendNotify({
+          msg: "System error",
           status: 3,
           show: true,
         });
@@ -466,13 +532,13 @@ const DataOnBoarding = () => {
                   </div>
                 </div>
               </div>
-              {tableData.tags && tableData.tags.length > 0 && (
+              {tableTags && tableTags.length > 0 && (
                 <div>
-                  <div className={styles.designerTitle}>
-                    <Text type="title">Tags ({tableData.tags.length})</Text>
+                  <div className={styles.secondTitle}>
+                    <Text type="title">Tags ({tableTags.length})</Text>
                   </div>
                   <div className={styles.tableTagList}>
-                    {tableData.tags.map((tag, index) => {
+                    {tableTags.map((tag, index) => {
                       return <TableTagDisplay key={index} tagData={tag} />;
                     })}
                   </div>

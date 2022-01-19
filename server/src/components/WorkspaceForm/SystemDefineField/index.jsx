@@ -10,19 +10,19 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 
-import Button from "@comp/basics/Button";
+import Button from "@basics/Button";
 import FormItem from "@comp/FormItem";
-import CheckBoxIcon from "src/icons/moduleIcon/CheckBoxIcon";
-import DropdownIcon from "src/icons/moduleIcon/DropdownIcon";
-import TextIcon from "src/icons/moduleIcon/TextIcon";
-import UploadIcon from "src/icons/moduleIcon/UploadIcon";
-import ToggleIcon from "src/icons/moduleIcon/ToggleIcon";
-import DatePickerIcon from "src/icons/moduleIcon/DatePickerIcon";
+import CheckBoxIcon from "@assets/icons/moduleIcon/CheckBoxIcon";
+import DropdownIcon from "@assets/icons/moduleIcon/DropdownIcon";
+import TextIcon from "@assets/icons/moduleIcon/TextIcon";
+import UploadIcon from "@assets/icons/moduleIcon/UploadIcon";
+import ToggleIcon from "@assets/icons/moduleIcon/ToggleIcon";
+import DatePickerIcon from "@assets/icons/moduleIcon/DatePickerIcon";
 import styles from "./styles.module.scss";
 import {} from "@lib/api";
 import DesignPanel from "./DesignPanel";
-import Text from "@comp/basics/Text";
-import HeadLine from "@comp/basics/HeadLine";
+import Text from "@basics/Text";
+import HeadLine from "@basics/HeadLine";
 
 const moduleTypeList = [
   { style: 1, icon: CheckBoxIcon, cls: "checkbox", temp: "text" },
@@ -94,7 +94,6 @@ const SystemDefineField = ({
     return items.map((item, index) => {
       return (
         <FormItem
-          enableEdit={item.edit === "1"}
           key={index}
           data={item}
           index={index}

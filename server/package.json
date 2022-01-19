@@ -1,5 +1,5 @@
 {
-  "name": "react-material-dashboard",
+  "name": "Torro",
   "author": "DeviasIO",
   "licence": "MIT",
   "version": "1.0.0",
@@ -11,7 +11,7 @@
     "build:SIT": "set REACT_APP_ENV=SIT&& node scripts/build.js",
     "build:PROD": "set REACT_APP_ENV=PROD&& node scripts/build.js",
     "test": "node scripts/test.js",
-    "test:build": "cd server && node server.js"
+    "test:build": "cd build && node server"
   },
   "eslintConfig": {
     "extends": "react-app"

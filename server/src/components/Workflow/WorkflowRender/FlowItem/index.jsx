@@ -9,7 +9,7 @@ import Delete from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 import { Droppable } from "react-beautiful-dnd";
 import ConditionItem from "./ConditionItem";

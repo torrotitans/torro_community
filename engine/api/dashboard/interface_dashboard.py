@@ -63,6 +63,7 @@ class interfaceDashboard(Resource):
                 workspace_id = req.get_workspace_id()
                 # print('user id:', user_key)
                 data = dashboard_singleton.get_data(user_key, request_data, workspace_id)
+                print('data:', data)
                 if data['code'] == 200:
                     response_data = data['data']
                     data['data'] = req.verify_all_param(response_data, dashboardApiPara.get_input_form_data_POST_response)
@@ -72,7 +73,7 @@ class interfaceDashboard(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             # print(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)

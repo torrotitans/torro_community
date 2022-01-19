@@ -1,6 +1,5 @@
 /* third lib*/
-import React, { useState, useEffect, useMemo } from "react";
-import { FormattedMessage as Intl } from "react-intl";
+import React, { useState, useEffect } from "react";
 
 /* material-ui */
 
@@ -10,10 +9,8 @@ import styles from "./styles.module.scss";
 import Workflow from "@comp/Workflow";
 import { getAllStages } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import { useGlobalContext } from "src/context";
 
 const WorkflowPage = () => {
-  const { authContext } = useGlobalContext();
   const workflowId = getQueryString("id");
 
   const [droppableItems, setDroppableItems] = useState(null);
@@ -26,7 +23,7 @@ const WorkflowPage = () => {
       .catch((e) => {
         sendNotify({ msg: e.message, status: 3, show: true });
       });
-  }, []);
+  }, [workflowId]);
 
   return (
     <div className={styles.WorkflowPage}>

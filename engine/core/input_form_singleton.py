@@ -28,9 +28,9 @@ class inputFormSingleton():
         return input_form_mgr.deleteDataBranch(user_key, inputData)
 
 
-    def get_input_form_data(self, user_id, input_form_id):
+    def get_input_form_data(self, account_id, input_form_id, approver_view=False):
 
-        return input_form_mgr.get_input_form_data(user_id, input_form_id)
+        return input_form_mgr.get_input_form_data(account_id, input_form_id, approver_view)
 
 
 input_form_singleton = inputFormSingleton()

@@ -1,6 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
+@author：li-boss
+@file_name: db_org_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 from common.common_time import get_system_datetime
 from db.base import DbBase
@@ -409,6 +415,24 @@ class DbOrgMgr(DbBase):
         except Exception as e:
             lg.error(e)
             return response_code.GET_DATA_FAIL
+        finally:
+            conn.close()
+
+    def offline_ad_group(self, account_id):
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            # db_name2 = configuration.get_database_name('DB')
+            condition = 'ACCOUNT_ID="%s"' % (account_id)
+            user_fields = '*'
+            sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            user_info = self.execute_fetch_one(conn, sql)
+            ad_group_list = json.loads(user_info.get('GROUP_LIST', []))
+            print('ad_group_list:', ad_group_list)
+            return ad_group_list
+        except Exception as e:
+            lg.error(e)
+            return None, None
         finally:
             conn.close()
 org_mgr = DbOrgMgr()

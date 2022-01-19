@@ -30,6 +30,11 @@
   border-radius: $rbwmspace8;
   cursor: pointer;
 
+  &.alert {
+    background-color: $main-red;
+    color: $white;
+  }
+
   .delete {
     position: absolute;
     top: -$rbwmspace12;

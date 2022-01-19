@@ -10,6 +10,12 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
+process.argv.forEach((item) => {
+  if (item.startsWith("REACT_APP_API_URL")) {
+    process.env.REACT_APP_API_URL = item.split("=")[1];
+  }
+});
+
 // Ensure environment variables are read.
 require("../config/env");
 
@@ -42,7 +48,9 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 }
 
 // Generate configuration
-const config = configFactory("production");
+let configList = configFactory("production");
+const config = configList[0];
+const serverConfig = configList[1];
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
@@ -59,6 +67,7 @@ checkBrowsers(paths.appPath, isInteractive)
     fs.emptyDirSync(paths.appBuild);
     // Merge with the public folder
     copyPublicFolder();
+    buildServer();
     // Start the webpack build
     return build(previousFileSizes);
   })
@@ -89,7 +98,6 @@ checkBrowsers(paths.appPath, isInteractive)
         WARN_AFTER_BUNDLE_GZIP_SIZE,
         WARN_AFTER_CHUNK_GZIP_SIZE
       );
-      console.log();
 
       const appPackage = require(paths.appPackageJson);
       const publicUrl = paths.publicUrlOrPath;
@@ -206,4 +214,10 @@ function copyPublicFolder() {
     dereference: true,
     filter: (file) => file !== paths.appHtml,
   });
+}
+
+function buildServer() {
+  let configList = configFactory("production");
+  const serverConfig = configList[1];
+  webpack(serverConfig).run();
 }

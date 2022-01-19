@@ -11,6 +11,7 @@ class GrantRoleForGCSBucket(baseTask):
 
     def __init__(self, stage_dict):
         super(GrantRoleForGCSBucket, self).__init__(stage_dict)
+        self.target_project = stage_dict['project_id']
 
     def execute(self):
         missing_set = set()

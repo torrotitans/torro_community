@@ -1,7 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 """
-
+@author：li-boss
+@file_name: db_workspace_mgr.py
+@create date: 2019-10-27 15:07 
+@blog https://leezhonglin.github.io
+@csdn https://blog.csdn.net/qq_33196814
+@file_description：
 """
 from common.common_input_form_status import status as Status
 from db.base import DbBase
@@ -506,7 +511,7 @@ class DbWorkspaceMgr(DbBase):
                 if local_taxonomy_id not in taxonomy_dict:
                     taxonomy_info['taxonomy_display_name'] = taxonomy_info['display_name']
                     del taxonomy_info['display_name']
-                    taxonomy_dict[local_taxonomy_id] = taxonomy_info.copy()
+                    taxonomy_dict[local_taxonomy_id] = copy.deepcopy(taxonomy_info)
                     taxonomy_dict[local_taxonomy_id]['policy_tags_list'] = []
                 sql = self.create_select_sql(db_name, 'policyTagsTable', '*',
                                              condition='local_taxonomy_id=%s order by id' % local_taxonomy_id)
@@ -532,7 +537,7 @@ class DbWorkspaceMgr(DbBase):
                 policy_tags_nodes = {}
 
                 def add_node(tree, nodes, data):
-                    obj = data.copy()
+                    obj = copy.deepcopy(data)
                     obj['taxonomy_display_name'] = taxonomy_info['taxonomy_display_name']
                     # obj['gcp_taxonomy_id'] = taxonomy_info['gcp_taxonomy_id']
                     del obj['parent_local_id']
@@ -650,7 +655,7 @@ class DbWorkspaceMgr(DbBase):
             sql = self.create_select_sql(db_name, 'tagTemplatesTable',
                                          'input_form_id,display_name,workspace_id,tag_template_id,description,project_id,location,'
                                          'tag_template_form_id,creator_id,create_time',
-                                         condition='workspace_id=%s' % workspace_id)
+                                         condition='workspace_id=%s or workspace_id=0' % workspace_id)
             # print('taxonomyTable sql:', sql)
             taxonomy_infos = self.execute_fetch_all(conn, sql)
 

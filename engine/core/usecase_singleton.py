@@ -22,9 +22,9 @@ class usecaseSingleton():
     def update_usecase(self, usecase):
         return usecase_mgr.update_usecase_info(usecase)
 
-    def get_usecase_details_info_by_id(self, id):
+    def get_usecase_details_info_by_id(self, workspace_id, id):
 
-        return usecase_mgr.get_usecase_details_info_by_id(id)
+        return usecase_mgr.get_usecase_details_info_by_id(workspace_id, id)
 usecaseSingleton_singleton = usecaseSingleton()
 
 

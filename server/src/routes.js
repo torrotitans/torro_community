@@ -2,11 +2,11 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "src/layouts/DashboardLayout";
 import MainLayout from "src/layouts/MainLayout";
-import NotFoundView from "src/views/errors/NotFoundView";
-import NoWorkspace from "src/views/errors/NoWorkspace";
+import NotFoundView from "src/views/Errors/NotFoundView";
+import NoWorkspace from "src/views/Errors/NoWorkspace";
 import LoginPage from "src/views/Login";
 import RoleSelection from "src/views/RoleSelection";
-import DataUserView from "src/views/Dashboard/DataUserView";
+import Dashboard from "src/views/Dashboard";
 import FormPage from "src/views/FormPage";
 import WorkflowManagement from "src/views/WorkflowManagement";
 import BashCommand from "src/views/BashCommand";
@@ -14,7 +14,6 @@ import FormManagement from "src/views/FormManagement";
 import OrgSetting from "src/views/OrgSetting";
 import WorkspaceCreation from "src/views/WorkspaceCreation";
 import WorkspaceManage from "src/views/WorkspaceManage";
-import UseCaseCreation from "src/views/UseCaseCreation";
 import PolicyCreation from "src/views/PolicyCreation";
 import DataOnBoarding from "src/views/DataOnBoarding";
 import DataDiscovery from "src/views/DataDiscovery";
@@ -46,14 +45,14 @@ const routes = (language, isLoggedIn, haveRole) => {
       path: lanPrefix + "/app",
       element: <DashboardLayout />,
       children: [
-        { path: "/dashboard", element: <DataUserView /> },
+        { path: "/dashboard", element: <Dashboard /> },
         { path: "/forms", element: <FormPage /> },
         { path: "/formManagement", element: <FormManagement /> },
+        { path: "/createTagTemplate", element: <FormManagement tagTemplate /> },
         { path: "/workflowManagement", element: <WorkflowManagement /> },
         { path: "/bashCommand", element: <BashCommand /> },
         { path: "/WorkspaceManage", element: <WorkspaceManage /> },
         { path: "/WorkspaceCreation", element: <WorkspaceCreation /> },
-        { path: "/useCaseCreation", element: <UseCaseCreation /> },
         { path: "/policyCreation", element: <PolicyCreation /> },
         { path: "/dataOnboarding", element: <DataOnBoarding /> },
         { path: "/dataDiscovery", element: <DataDiscovery /> },

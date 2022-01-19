@@ -5,7 +5,7 @@ import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import FlowItemGroup from "./FlowItemGroup";
 const WorkflowDesginPanel = ({ dropOptions }) => {
   const { type, data } = dropOptions;

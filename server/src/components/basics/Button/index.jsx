@@ -3,7 +3,7 @@ import React from "react";
 import cn from "classnames";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 
 const CustomButton = ({

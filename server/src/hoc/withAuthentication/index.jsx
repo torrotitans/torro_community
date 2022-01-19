@@ -7,7 +7,7 @@ import { useGlobalContext } from "src/context";
 import UserSessionBar from "src/layouts/UserSessionBar";
 
 const withAuthentication = (VerificationPage) => (props) => {
-  const { authContext, languageContext } = useGlobalContext();
+  const { authContext } = useGlobalContext();
   let firstInit = String(authContext.init) === "true";
   let isLoggedIn = authContext.userId && authContext.userId !== "null";
   let haveRole = !!authContext.role && authContext.role !== "null";
@@ -33,7 +33,7 @@ const withAuthentication = (VerificationPage) => (props) => {
       if (window.location.pathname.indexOf("/roleSelect") === -1 && !haveRole) {
         return <Navigate to="/roleSelect" />;
       }
-      if (haveWs && window.location.pathname.indexOf("/noWorkspace") != -1) {
+      if (haveWs && window.location.pathname.indexOf("/noWorkspace") !== -1) {
         return <Navigate to="/app/dashboard" />;
       }
       if (

@@ -4,7 +4,7 @@
 from flask_restful import Api
 
 from api.form.interface_base_form import interfaceBaseForm
-from api.form.interface_detail_form import interfaceDetailForm
+from api.form.interface_detail_form import interfaceDetailForm, interfaceDetailFormList
 from api.form.interface_edit_form import interfaceEditForm
 from api.form.interface_field_template import interfaceFieldTemplate
 from api.workflow.interface_stages import interfaceStages
@@ -20,14 +20,16 @@ from api.usecase.interface_usecase_setting import interfaceUseCaseSetting
 from api.login.interface_login import interfaceLogin
 # from api.login.interface_offine import interfaceOffine
 from api.it.interface_debug import interfaceDebug
+from api.it.interface_torro_config import interfaceTorroConfig
+
 from api.org.interface_role_info import interfaceRoleInfo
 from api.gcp.interface_gcp_execute import interfaceGCPExecute
 from api.gcp.interface_table_schema import interfaceTableSchema
 
 from api.dashboard.interface_dashboard import interfaceDashboard
-from api.input_form.interface_input_form import interfaceInputForm
-from api.input_form.interface_input_form_details import interfaceInputFormDetails
-from api.governance.interface_governance import interfaceGovernance
+from api.input_form.interface_input_form import interfaceInputForm, interfaceInputFormList
+from api.input_form.interface_input_form_details import interfaceInputFormDetails, interfaceInputFormDetailsList
+from api.governance.interface_governance import interfaceGovernance, interfaceGovernanceBatch
 from api.user.interface_user_info import interfaceUserInfo
 from api.dashboard.interface_options import interfaceOptions
 from api.input_form.interface_comment import interfaceComment
@@ -57,6 +59,15 @@ api.add_resource(
     interfaceInputFormDetails,
     '/api/getInputFormDetails',
 )
+api.add_resource(
+    interfaceInputFormDetailsList,
+    '/api/getInputFormDetailsList',
+)
+
+api.add_resource(
+    interfaceTorroConfig,
+    '/api/torroConfig/<string:configName>',
+)
 
 api.add_resource(
     interfaceBaseForm,
@@ -71,6 +82,10 @@ api.add_resource(
 api.add_resource(
     interfaceDetailForm,
     '/api/getFormData',
+)
+api.add_resource(
+    interfaceDetailFormList,
+    '/api/getFormDataList',
 )
 # post: {'id': int}
 
@@ -168,10 +183,17 @@ api.add_resource(
     interfaceInputForm,
     '/api/inputFormData',
 )
-
+api.add_resource(
+    interfaceInputFormList,
+    '/api/inputFormDataList',
+)
 api.add_resource(
     interfaceGovernance,
     '/api/changeStatus',
+)
+api.add_resource(
+    interfaceGovernanceBatch,
+    '/api/changeStatusList',
 )
 # tbc: org admin, group checking
 # workspace:sa, group checking

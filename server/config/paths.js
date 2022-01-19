@@ -65,6 +65,7 @@ module.exports = {
   proxySetup: resolveApp("src/setupProxy.js"),
   appNodeModules: resolveApp("node_modules"),
   appComponets: resolveApp("src/components"),
+  basicsComponent: resolveApp("src/components/Basics"),
   appLib: resolveApp("src/lib"),
   appAssets: resolveApp("src/assets"),
   appContext: resolveApp("src/context"),

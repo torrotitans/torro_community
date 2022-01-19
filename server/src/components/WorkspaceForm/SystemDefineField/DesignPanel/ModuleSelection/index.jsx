@@ -1,10 +1,8 @@
 /* third lib*/
-import React, { useEffect, useMemo, useState } from "react";
-import cn from "classnames";
-import { FormattedMessage as Intl } from "react-intl";
+import React, { useMemo } from "react";
 
 /* local components & methods */
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 import styles from "./styles.module.scss";
 
 /* moduleDesigb */

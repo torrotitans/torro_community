@@ -8,7 +8,9 @@ export const setCookie = (name, value, time) => {
 export const getCookie = (name) => {
   var arr,
     reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+  /* eslint-disable */
   return (arr = document.cookie.match(reg)) ? unescape(arr[2]) : null;
+  /* eslint-disable */
 };
 
 export const delCookie = (name) => {

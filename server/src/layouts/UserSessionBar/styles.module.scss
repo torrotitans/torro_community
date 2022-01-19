@@ -1,6 +1,6 @@
 .UserSessionBar {
   width: 100%;
-  height: 3rem;
+  height: 2.5rem;
   background-color: $dark-purple;
   position: relative;
   padding: 0 $rbwmspace32 0 $rbwmspace20;
@@ -8,7 +8,7 @@
 }
 .UserSessionContent {
   width: 100%;
-  height: 3rem;
+  height: 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -98,8 +98,8 @@
 }
 
 .optionsBox {
-  height: 3rem;
-  div {
+  height: 2.5rem;
+  > div {
     color: $white !important;
     background: transparent !important;
     height: 100%;
@@ -108,6 +108,11 @@
 
     svg {
       color: $white;
+    }
+    > div {
+      padding: 0 1rem;
+      line-height: 2.5rem;
+      background-color: transparent !important;
     }
   }
 }

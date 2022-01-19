@@ -46,6 +46,7 @@ class system_add_new_usecase(baseTask, DbBase):
             usecase_info['resources_access'] = self.stage_dict['resources_access']
             usecase_info['uc_team_group'] = self.stage_dict['uc_team_group']
             usecase_info['uc_owner_group'] = self.stage_dict['uc_owner_group']
+            usecase_info['uc_input_form'] = input_form_id
 
             data = usecase_mgr.add_new_usecase_setting(usecase_info)
 

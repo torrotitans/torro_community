@@ -9,7 +9,7 @@ import AddIcon from "@material-ui/icons/Add";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import Text from "@comp/basics/Text";
+import Text from "@basics/Text";
 
 const FlowItemGroup = ({ column }) => {
   const itemList = column.itemList;

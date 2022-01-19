@@ -6,20 +6,13 @@ import { IntlProvider } from "react-intl";
 
 /*local component & methods*/
 import routes from "src/routes";
-import "src/components/GlobalStyles.css";
-import "src/components/comCover.scss";
+import "@assets/GlobalStyles.css";
+import "@assets/comCover.scss";
 import { useGlobalContext } from "src/context";
 
 /* language config*/
 import CN from "src/language/CN.js";
 import US from "src/language/US.js";
-
-const checkLan = () => {
-  const firstRoute = window.location.pathname.replace(/^\/([^\/]*).*$/, "$1");
-  if (["en", "cn"].includes(firstRoute)) {
-    return firstRoute;
-  }
-};
 
 const App = () => {
   const { languageContext } = useGlobalContext();

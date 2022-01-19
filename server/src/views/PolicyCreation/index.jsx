@@ -1,11 +1,12 @@
 /* third lib*/
 import React, { useState } from "react";
+import Scrollbar from "react-perfect-scrollbar";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
 import TagTemplateList from "./TagTemplateList";
 import PolicyTagTable from "./PolicyTagTable";
-import CallModal from "@comp/basics/CallModal";
+import CallModal from "@basics/CallModal";
 import Policy from "./Policy";
 
 const PolicyCreation = () => {
@@ -25,29 +26,31 @@ const PolicyCreation = () => {
 
   return (
     <div className={styles.policyCreation}>
-      {step === 0 && (
-        <div className={styles.policyContainer}>
-          <TagTemplateList setStep={setStep} setCurrentId={setCurrentId} />
-          <PolicyTagTable setStep={setStep} setCurrentId={setCurrentId} />
-        </div>
-      )}
-      {step === 1 && (
-        <Policy
-          onBack={() => {
-            setStep(0);
-            setCurrentId(null);
-          }}
-          currentId={currentId}
-        />
-      )}
+      <Scrollbar>
+        {step === 0 && (
+          <div className={styles.policyContainer}>
+            <TagTemplateList setStep={setStep} setCurrentId={setCurrentId} />
+            <PolicyTagTable setStep={setStep} setCurrentId={setCurrentId} />
+          </div>
+        )}
+        {step === 1 && (
+          <Policy
+            onBack={() => {
+              setStep(0);
+              setCurrentId(null);
+            }}
+            currentId={currentId}
+          />
+        )}
 
-      <CallModal
-        open={modalData.open}
-        content={modalData.content}
-        status={modalData.status}
-        buttonClickHandle={modalData.cb}
-        handleClose={closeModal}
-      />
+        <CallModal
+          open={modalData.open}
+          content={modalData.content}
+          status={modalData.status}
+          buttonClickHandle={modalData.cb}
+          handleClose={closeModal}
+        />
+      </Scrollbar>
     </div>
   );
 };

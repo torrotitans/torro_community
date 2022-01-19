@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Scrollbar from "react-perfect-scrollbar";
 
 /* local components & methods */

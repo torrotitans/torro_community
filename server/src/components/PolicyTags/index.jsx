@@ -12,7 +12,6 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 
 /* local component */
 import styles from "./styles.module.scss";
-import Text from "@comp/basics/Text";
 
 const SubTagList = ({ subTagList, level, onChange, displayView }) => {
   const handleChange = useCallback(

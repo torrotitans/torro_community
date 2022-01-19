@@ -11,18 +11,18 @@ from config import configuration
 class CreatePolicyTagsV1(baseTask, DbBase):
     api_type = 'gcp'
     api_name = 'CreatePolicyTagsV1'
-    arguments = {"project_id": {"type": str, "default": ''},
+    arguments = {"porject_id": {"type": str, "default": ''},
                  "policy_location": {"type": str, "default": ''},
                  "taxonomy_display_name": {"type": str, "default": ''},
                  "taxonomy_ad_group": {"type": str, "default": ''},
                  "description": {"type": str, "default": ''},
                  "activated_policy_types": {"type": str, "default": [1]},
                  "policy_tags_list": {"type": list, "default": []}}
-    role_list = ['roles/datacatalog.categoryAdmin']
+    role_list = ['roles/datacatalog.categoryAdmin', 'roles/datacatalog.admin']
 
     def __init__(self, stage_dict):
         super(CreatePolicyTagsV1, self).__init__(stage_dict)
-        # # print('self.stage_dict:', self.stage_dict)
+        print('self.stage_dict:', self.stage_dict)
 
         self.full_resource_name = None
         self.target_project = stage_dict['porject_id']
