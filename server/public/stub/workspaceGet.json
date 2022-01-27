@@ -1,0 +1,95 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "id": 1,
+      "title": "New workspace",
+      "it_group": "xxxxx",
+      "dg_group": "xxxxx",
+      "ws_name": "New workspace",
+      "ws_des": "New workspace",
+      "ws_head_group": "xxxxx",
+      "ws_team_group": "xxxxx",
+      "cycle": "xxxxx",
+      "approval": "xxxxx",
+      "regions": [],
+      "system": {
+        "1": [
+          {
+            "default": "true,false",
+            "des": "staff name",
+            "edit": 1,
+            "id": "s1",
+            "label": "CheckBox",
+            "options": [{ "label": "true" }, { "label": "false" }],
+            "placeholder": "placeholder",
+            "style": 1
+          }
+        ],
+        "2": [
+          {
+            "default": "Use case1",
+            "des": "staff name",
+            "edit": 1,
+            "id": "s2",
+            "label": "Use case",
+            "options": [
+              { "label": "Use case1", "value": "Use case1" },
+              { "label": "Use case2", "value": "Use case2" }
+            ],
+            "placeholder": "placeholder",
+            "style": 2
+          }
+        ],
+        "3": [
+          {
+            "default": "",
+            "des": "staff name",
+            "edit": 1,
+            "id": "s3",
+            "label": "User",
+            "options": [],
+            "placeholder": "user",
+            "style": 3
+          }
+        ],
+        "4": [
+          {
+            "default": "",
+            "des": "staff name",
+            "edit": 1,
+            "id": "s4",
+            "label": "Upload",
+            "options": [{ "label": "true" }, { "label": "false" }],
+            "placeholder": "",
+            "style": 4
+          }
+        ],
+        "5": [
+          {
+            "default": true,
+            "des": "staff name",
+            "edit": 1,
+            "id": "s5",
+            "label": "Auto open222",
+            "options": [],
+            "placeholder": "",
+            "style": 5
+          }
+        ],
+        "6": [
+          {
+            "default": "",
+            "des": "staff name",
+            "edit": 1,
+            "id": "s6",
+            "label": "DatePicker",
+            "options": [],
+            "placeholder": "",
+            "style": 6
+          }
+        ]
+      }
+    }
+  ]
+}

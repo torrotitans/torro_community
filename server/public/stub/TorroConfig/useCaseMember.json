@@ -1,0 +1,11 @@
+{
+  "code": 200,
+  "data": [
+    "Staff Email",
+    "Staff ID",
+    "Employment Type",
+    "Access Duration",
+    "Business Justification"
+  ],
+  "msg": "request successfully"
+}

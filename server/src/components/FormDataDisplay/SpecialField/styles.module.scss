@@ -1,0 +1,40 @@
+.viewIcon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    svg {
+      color: $main-purple;
+    }
+  }
+}
+.form {
+  position: relative;
+}
+.formOptions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mask {
+  z-index: 998;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.modalContent {
+  margin-top: $rbwmspace20;
+}
+.specialField {
+  display: flex;
+  justify-content: center;
+  .specialStr {
+    margin-right: $rbwmspace8;
+    color: $main-purple;
+    text-decoration: underline;
+  }
+}

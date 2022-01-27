@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="182" viewBox="0 0 300 182">
+  <g id="IT_ADMIN" data-name="IT ADMIN" transform="translate(-1254 -480)">
+    <text id="IT_Admin-2" data-name="IT Admin" transform="translate(1340 654)" fill="#001e1d" font-size="30" font-family="SegoeUI, Segoe UI"><tspan x="0" y="0">IT ADMIN</tspan></text>
+    <g id="IT_Admin-3" data-name="IT Admin" transform="translate(1254 480)">
+      <rect id="Rectangle_3" data-name="Rectangle 3" width="120" height="300" rx="60" transform="translate(300 0) rotate(90)" fill="#e16162"/>
+      <g id="组_64" data-name="组 64" transform="translate(-810 -480)">
+        <path id="多边形_1" data-name="多边形 1" d="M15,0,30,30H0Z" transform="translate(850 507)" fill="#fff"/>
+        <path id="多边形_2" data-name="多边形 2" d="M15,0,30,30H0Z" transform="translate(891 543)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

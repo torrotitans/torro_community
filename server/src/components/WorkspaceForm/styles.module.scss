@@ -1,0 +1,89 @@
+.workspaceForm {
+  display: flex;
+  height: 100%;
+}
+
+.formView {
+  width: 100%;
+  flex: 1;
+  height: 100%;
+}
+.formControl {
+  background-color: $white;
+  min-height: 100%;
+  width: 100%;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  color: $main-purple;
+  .formTitle {
+    font-weight: bold;
+    font-size: $fontSize1;
+    color: $dark-purple;
+  }
+  .formDes {
+    color: $color12;
+    font-size: $fontSize3;
+  }
+}
+
+.form {
+  margin-top: 3rem;
+  flex: 1;
+  position: relative;
+}
+
+.formOptions {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.formItemLine {
+  padding: $rbwmspace16;
+}
+.formItemTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $rbwmspace16;
+}
+
+.fieldTitle {
+  display: inline-block;
+  color: $main-purple !important;
+}
+
+.addRegionBtn {
+  display: inline-block;
+  text-align: center;
+  padding: 0.5rem;
+  min-width: unset;
+  height: auto;
+  line-height: 1;
+  border-width: 1px;
+  background-color: $main-purple;
+  color: $white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.systemField {
+  color: $text-grey;
+  display: flex;
+  align-items: center;
+}
+.currentField {
+  margin-bottom: $rbwmspace20;
+  font-size: $fontSize3;
+}
+
+.buttonWrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  button:nth-child(1) {
+    margin-right: $rbwmspace20;
+  }
+}

@@ -1,0 +1,55 @@
+.designerTitle {
+  margin-top: 3.125rem;
+  margin-bottom: $rbwmspace20;
+  color: $text-grey;
+}
+
+.buttonWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.selectTagTemplate {
+  margin-bottom: $rbwmspace40;
+}
+
+.tagList {
+  margin-bottom: $rbwmspace20;
+}
+
+.tagDisplay {
+  padding: $rbwmspace8;
+  background: gainsboro;
+  border-radius: 4px;
+  display: inline-block;
+  margin: $rbwmspace4;
+  min-width: $rbwmspace16;
+  min-height: $rbwmspace12;
+  position: relative;
+  border-radius: $rbwmspace8;
+  cursor: pointer;
+
+  &.alert {
+    background-color: $main-red;
+    color: $white;
+  }
+
+  .delete {
+    position: absolute;
+    top: -$rbwmspace12;
+    right: -$rbwmspace12;
+    cursor: pointer;
+    display: none;
+    svg {
+      width: $rbwmspace20;
+      height: $rbwmspace20;
+    }
+  }
+
+  &:hover {
+    .delete {
+      display: block;
+    }
+  }
+}

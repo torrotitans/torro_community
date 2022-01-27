@@ -1,0 +1,49 @@
+.customButton {
+  min-width: 12.5rem;
+  height: 3.75rem;
+  padding: 1.125rem;
+  margin-right: $rbwmspace32;
+  color: $main-purple;
+  border: 2px solid $main-purple;
+  background-color: transparent;
+  border-radius: 4px;
+
+  cursor: pointer;
+  margin: 0;
+  display: inline-flex;
+  outline: 0;
+  position: relative;
+  align-items: center;
+  user-select: none;
+  vertical-align: middle;
+  -moz-appearance: none;
+  justify-content: center;
+  text-decoration: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  &:hover:not(.disbaled) {
+    background-color: $main-purple;
+    color: $white;
+  }
+
+  &.filled {
+    background-color: $main-purple;
+    color: $white;
+  }
+
+  &.small {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    min-width: unset;
+    height: auto;
+    line-height: 1;
+    border-width: 1px;
+  }
+
+  &.disbaled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

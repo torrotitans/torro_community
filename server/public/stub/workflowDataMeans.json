@@ -1,0 +1,135 @@
+{
+  "create_time": "2021-05-03",
+  "creator_id": "",
+  "des": "",
+  "field_id_list": [],
+  "form_id": 2,
+  "id": 407,
+  "last_modify_id": "",
+  "stage_hash": "NJNbJHuNH6yAmnlbcDcVTB7kZbppFvw7",
+  "stage_num": 1,
+  "stages": [
+    {
+      "apiTaskName": "",
+      "condition": [
+        {
+          "id": "s1",
+          "style": 2,
+          "options": [
+            { "label": "Asian", "value": "Asian" },
+            { "label": "China", "value": "ss44432" },
+            { "label": "North America", "value": "North America" },
+            { "label": "Canada", "value": "bb" }
+          ],
+          "label": "region_country",
+          "placeholder": "",
+          "value": "ss44432",
+          "conditionType": "0"
+        },
+        {
+          "id": "u5",
+          "style": 3,
+          "options": [],
+          "label": "usecase_name",
+          "placeholder": "Use case name",
+          "value": "use Case 1",
+          "conditionType": "0"
+        }
+      ],
+      "flowType": "Trigger",
+      "id": 2,
+      "label": "Form | Create UseCase"
+    },
+    {
+      "apiTaskName": "",
+      "condition": [
+        {
+          "id": "regionCountry",
+          "label": "region / Country approval",
+          "value": "region"
+        },
+        {
+          "id": "wsHeadApproval",
+          "label": "workspace owner approval",
+          "value": "wsOwner"
+        }
+      ],
+      "flowType": "Approval",
+      "id": "approval",
+      "label": "Approval Process"
+    },
+    {
+      "apiTaskName": "CreateBQDataset",
+      "condition": [
+        {
+          "des": "input your project id",
+          "id": "porject_id",
+          "label": "Porject ID",
+          "regExp": "",
+          "style": 3,
+          "value": ""
+        },
+        {
+          "des": "choose your dataset region",
+          "id": "dataset_location",
+          "label": "DataSet Location",
+          "regExp": "",
+          "style": 3,
+          "value": ""
+        },
+        {
+          "des": "input your dataset name",
+          "id": "dataset_name",
+          "label": "DataSet Name",
+          "regExp": "",
+          "style": 3,
+          "value": ""
+        },
+        {
+          "des": "input your dataset cmek, will use the default gcp key if no input",
+          "id": "dataset_cmek",
+          "label": "DataSet CMEK",
+          "regExp": "",
+          "style": 3,
+          "value": ""
+        },
+        {
+          "des": "input n days your table expiration, default is None",
+          "id": "table_expiration",
+          "label": "Table Expiration",
+          "regExp": "",
+          "style": 1,
+          "value": ""
+        },
+        {
+          "des": "input your dataset label, for example: dataset_owner=second,dataset_expire=9days",
+          "id": "dataset_label",
+          "label": "DataSet Label",
+          "regExp": "",
+          "style": 3,
+          "value": ""
+        }
+      ],
+      "create_time": "Sun, 09 May 2021 00:00:00 GMT",
+      "des": "Create bigquery dataset",
+      "flowType": "GoogleCloud",
+      "id": 27,
+      "label": "Create Bigquery Dataset",
+      "stage_group": "GoogleCloud",
+      "updated_time": "Sun, 09 May 2021 00:00:00 GMT"
+    },
+    {
+      "apiTaskName": "system_define_field",
+      "condition": [
+        { "id": "FieldLabel", "label": "Field Label", "value": "Use case" },
+        { "id": "optionLabel", "label": "Option Label", "value": "u5" },
+        { "id": "optionsValue", "label": "Option Value", "value": "u2" }
+      ],
+      "flowType": "System",
+      "id": 14,
+      "label": "System Define Label"
+    }
+  ],
+  "updated_time": "2021-05-03",
+  "workflow_name": "new workFlow"
+}

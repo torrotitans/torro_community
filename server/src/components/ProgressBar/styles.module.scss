@@ -1,0 +1,73 @@
+.progressBar {
+  position: relative;
+  width: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.flowDotList {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 99;
+  flex-direction: column;
+  .flowItem {
+    color: $main-purple;
+    line-height: 2rem;
+    font-weight: $medium-font-weight;
+    flex: 1;
+    position: relative;
+    min-height: 8rem;
+  }
+  .dot {
+    display: flex;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: $main-purple;
+    position: absolute;
+    bottom: 0;
+  }
+}
+
+.progressItem {
+  position: absolute;
+  left: $rbwmspace44;
+  white-space: pre-wrap;
+  width: 16rem;
+  .progressName {
+    margin-left: $rbwmspace20;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.progressLine {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+}
+.progressLineHolder {
+  width: 4px;
+  overflow: hidden;
+  position: relative;
+  background-color: $light-grey;
+  height: 100%;
+  border-radius: 2px;
+}
+.cover {
+  height: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  transition: transform 0.2s linear;
+  transform-origin: left;
+  background-color: $main-purple;
+}

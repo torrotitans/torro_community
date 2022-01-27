@@ -1,0 +1,116 @@
+{
+  "id": 1,
+  "it_group": "xxxxx", // IT admin AD group
+  "dg_group": "xxxxx", //Data Governance AD Group
+  "ws_name": "New workspace",
+  "ws_des": "New workspace",
+  "ws_head_group": "xxxxx", //WS head AD group
+  "ws_team_group": "xxxxx",
+  "cycle": "xxxxx",
+  "approval": "true,true", // Use case approval flow  Both Need workspace IT approval, Need workspace Head approval
+  "regions": [
+    /* region / country structure*/
+    {
+      "region": "Asian",
+      "group": "xxxxx",
+      "workflow": "China",
+      "countryList": [{ "country": "", "group": "", "workflow": "" }]
+    }
+  ],
+  "system": [
+    // system defind field  style 对应的是 formitem component 的总类， fieldlist是种类下面，user自己设计的field，一共6种
+    {
+      "style": 1,
+      "fieldList": [
+        {
+          "default": "true,false",
+          "des": "staff name",
+          "edit": 1,
+          "id": "u6",
+          "label": "CheckBox",
+          "options": [{ "label": "true" }, { "label": "false" }],
+          "placeholder": "placeholder",
+          "style": 1
+        }
+      ]
+    },
+    {
+      "style": 2,
+      "fieldList": [
+        {
+          "default": "Use case1",
+          "des": "staff name",
+          "edit": 1,
+          "id": "u2",
+          "label": "Use case",
+          "options": [
+            { "label": "Use case1", "value": "Use case1" },
+            { "label": "Use case2", "value": "Use case2" }
+          ],
+          "placeholder": "placeholder",
+          "style": 2
+        }
+      ]
+    },
+    {
+      "style": 3,
+      "fieldList": [
+        {
+          "default": "",
+          "des": "staff name",
+          "edit": 1,
+          "id": "u1",
+          "label": "User",
+          "options": [],
+          "placeholder": "user",
+          "style": 3
+        }
+      ]
+    },
+    {
+      "style": 4,
+      "fieldList": [
+        {
+          "default": "",
+          "des": "staff name",
+          "edit": 1,
+          "id": "u3",
+          "label": "Upload file",
+          "options": [{ "label": "true" }, { "label": "false" }],
+          "placeholder": "",
+          "style": 4
+        }
+      ]
+    },
+    {
+      "style": 5,
+      "fieldList": [
+        {
+          "default": true,
+          "des": "staff name",
+          "edit": 1,
+          "id": "u5",
+          "label": "Auto open",
+          "options": [],
+          "placeholder": "",
+          "style": 5
+        }
+      ]
+    },
+    {
+      "style": 6,
+      "fieldList": [
+        {
+          "default": "",
+          "des": "staff name",
+          "edit": 1,
+          "id": "u4",
+          "label": "DatePicker",
+          "options": [],
+          "placeholder": "",
+          "style": 6
+        }
+      ]
+    }
+  ]
+}

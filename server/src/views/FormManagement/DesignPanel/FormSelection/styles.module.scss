@@ -1,0 +1,73 @@
+.formSelection {
+  height: 100%;
+  width: 23.75rem;
+  background-color: $white;
+  margin-right: $rbwmspace16;
+  margin-left: $rbwmspace24;
+  display: flex;
+  flex-direction: column;
+}
+
+.designerTitle {
+  margin-top: 3.125rem;
+  color: $text-grey;
+  margin: 3.125rem $rbwmspace40 0 $rbwmspace40;
+}
+
+.createdFrom {
+  color: $text-grey;
+  line-height: 3.25rem;
+  cursor: pointer;
+  border-top: 1px solid $light-grey;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  span {
+    display: inline-block;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    display: none;
+  }
+
+  &:hover {
+    svg {
+      display: inline-block;
+    }
+  }
+
+  &.active {
+    color: $main-purple;
+  }
+}
+
+.createdFormList {
+  padding: 2.5rem;
+  padding-bottom: 0;
+}
+
+.addForm {
+  border: 1px solid $main-purple;
+  border-radius: 4px;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $main-purple;
+  margin: $rbwmspace24 $rbwmspace16;
+  cursor: pointer;
+
+  &.active {
+  }
+
+  svg {
+    margin-right: 8px;
+  }
+}

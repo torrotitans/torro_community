@@ -1,0 +1,187 @@
+{
+  "kind": "bigquery#table",
+  "etag": "uE6+N2uxjl5jdOMM5lF+Pg==",
+  "id": "principal-yen-328302:austin_311.311_service_request",
+  "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/principal-yen-328302/datasets/austin_311/tables/311_service_request",
+  "tableReference": {
+    "projectId": "principal-yen-328302",
+    "datasetId": "austin_311",
+    "tableId": "311_service_request"
+  },
+  "description": "Updated Policy Tags.",
+  "schema": {
+    "fields": [
+      {
+        "name": "unique_key",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "The service request tracking number.",
+        "policyTags": {
+          "names": [
+            "projects/principal-yen-328302/locations/us/taxonomies/3180233960818548921/policyTags/4851542792588671512"
+          ]
+        }
+      },
+      {
+        "name": "complaint_type",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": ""
+      },
+      {
+        "name": "complaint_description",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service request type",
+        "policyTags": {
+          "names": [
+            "projects/principal-yen-328302/locations/us/taxonomies/3180233960818548921/policyTags/3872684989860216074"
+          ]
+        }
+      },
+      {
+        "name": "owning_department",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Owning department of Service request type.",
+        "policyTags": {
+          "names": [
+            "projects/principal-yen-328302/locations/us/taxonomies/3180233960818548921/policyTags/4851542792588671512"
+          ]
+        }
+      },
+      {
+        "name": "source",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Contact method Service request was received from. Mass entry requests are submitted by dept. in groups after work is completed.",
+        "policyTags": {
+          "names": [
+            "projects/principal-yen-328302/locations/us/taxonomies/3180233960818548921/policyTags/8911273612755473989"
+          ]
+        }
+      },
+      {
+        "name": "status",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service request status. Duplicate statuses indicate that issue had previously been reported recently."
+      },
+      {
+        "name": "status_change_date",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Date of last Service request status change. Status changes occur when service request moves from one status to another. I.E. new to open, open to closed."
+      },
+      {
+        "name": "created_date",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Date Service request was created."
+      },
+      {
+        "name": "last_update_date",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Date Service request was updated. Last date Service request received updates. Updates may include creation, status changes, or changes to data in Service request."
+      },
+      {
+        "name": "close_date",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE",
+        "description": "Date Service request was closed."
+      },
+      {
+        "name": "incident_address",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service location of Service request."
+      },
+      {
+        "name": "street_number",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Parsed location information. Street number."
+      },
+      {
+        "name": "street_name",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Parsed location information. Street name."
+      },
+      {
+        "name": "city",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Parsed location information. City."
+      },
+      {
+        "name": "incident_zip",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Parsed location information. Zip code."
+      },
+      {
+        "name": "county",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Parsed location information. County."
+      },
+      {
+        "name": "state_plane_x_coordinate",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "State plane X coordinate."
+      },
+      {
+        "name": "state_plane_y_coordinate",
+        "type": "FLOAT",
+        "mode": "NULLABLE",
+        "description": "State plane Y coordinate."
+      },
+      {
+        "name": "latitude",
+        "type": "FLOAT",
+        "mode": "NULLABLE",
+        "description": "Service request location latitude coordinate."
+      },
+      {
+        "name": "longitude",
+        "type": "FLOAT",
+        "mode": "NULLABLE",
+        "description": "Service request location longitude coordinate."
+      },
+      {
+        "name": "location",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service request location latitude and longitude coordinates."
+      },
+      {
+        "name": "council_district_code",
+        "type": "INTEGER",
+        "mode": "NULLABLE",
+        "description": "Council district corresponding to Service request location. Locations outside of the City of Austin jurisdiction will not have a council district."
+      },
+      {
+        "name": "map_page",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service request location corresponding map page."
+      },
+      {
+        "name": "map_tile",
+        "type": "STRING",
+        "mode": "NULLABLE",
+        "description": "Service request location corresponding map tile."
+      }
+    ]
+  },
+  "numBytes": "328346077",
+  "numLongTermBytes": "0",
+  "numRows": "1134506",
+  "creationTime": "1633848330318",
+  "lastModifiedTime": "1634449530498",
+  "type": "TABLE",
+  "location": "US"
+}

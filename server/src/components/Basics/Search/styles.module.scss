@@ -1,0 +1,37 @@
+.search {
+  display: flex;
+  align-items: center;
+  width: 23.25rem;
+  height: 3rem;
+
+  &.fullWidth {
+    width: 100%;
+  }
+
+  .iconButton {
+    padding: 10px 10px 10px 20px;
+  }
+
+  div[class*="Mui-focus"] {
+    svg {
+      color: $main-purple;
+    }
+    input {
+      color: $main-purple;
+    }
+  }
+}
+
+.input {
+  width: 100%;
+  padding-right: $rbwmspace20;
+  box-sizing: border-box;
+}
+
+.iconButton {
+  padding: $rbwmspace12 $rbwmspace20;
+}
+
+.searchId {
+  width: 100%;
+}

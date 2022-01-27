@@ -1,0 +1,25 @@
+.textEditor {
+  display: inline-block;
+}
+.textEditorBox {
+  display: flex;
+  align-items: center;
+  .icon {
+    width: 2rem;
+    height: 2rem;
+    color: $text-grey;
+    margin-right: $rbwmspace12;
+    display: none;
+  }
+  &:hover,
+  &.editState {
+    .icon {
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
+}
+.label {
+  margin-right: $rbwmspace24;
+  outline: 0;
+}

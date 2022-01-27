@@ -1,0 +1,78 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "formId": null,
+      "label": "Use case",
+      "comp": "UseCase",
+      "showValue": true
+    },
+    {
+      "formId": 101,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 102,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 103,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 104,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 105,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 106,
+      "label": "fieldList",
+      "comp": "Form",
+      "showValue": ""
+    },
+    {
+      "formId": 3,
+      "label": "policy_data_structure",
+      "comp": "PolicyTree",
+      "showValue": ""
+    },
+    {
+      "formId": 108,
+      "label": "Fields",
+      "comp": "TableDisplay",
+      "showValue": ""
+    },
+    {
+      "formId": 107,
+      "label": "Fields",
+      "comp": "TableDisplay",
+      "showValue": ""
+    },
+    {
+      "formId": 108,
+      "label": "Table Tags",
+      "comp": "TableTags",
+      "showValue": ""
+    },
+    {
+      "formId": 107,
+      "label": "Table Tags",
+      "comp": "TableTags",
+      "showValue": ""
+    }
+  ],
+  "msg": "request successfully"
+}

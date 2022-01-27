@@ -1,0 +1,16 @@
+{
+  "code": 200,
+  "msg": "request successfully",
+  "data": {
+    "ID": 354,
+    "ACCOUNT_NAME": "torroAdmin",
+    "ACCOUNT_ID": "torroAdmin@torro.ai",
+    "CREATE_TIME": "2021-06-06 08:04:14",
+    "DES": "new user",
+    "role_list": ["ADMIN", "IT", "GOVERNOR", "USER"],
+    "user_role": "",
+    "workspace_list": [{ "label": "Torro", "value": 362 }],
+    "workspace_id": 362,
+    "ad_group_list": ["Torro@torro.ai", "Engineer@torro.ai"]
+  }
+}

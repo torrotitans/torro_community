@@ -1,0 +1,45 @@
+{
+  "code": 200,
+  "data": [
+    {
+      "create_time": "Wed, 17 Nov 2021 10:22:58 GMT",
+      "creator_id": "354",
+      "description": "data tags",
+      "display_name": "data tags1688",
+      "id": 26,
+      "input_form_id": 470,
+      "location": "asia-east2",
+      "project_id": "principal-yen-328302",
+      "tag_template_form_id": 408,
+      "tag_template_id": "data_tags1688",
+      "workspace_id": 362
+    },
+    {
+      "create_time": "Sun, 21 Nov 2021 02:42:37 GMT",
+      "creator_id": "354",
+      "description": "data tags",
+      "display_name": "tag template  1031",
+      "id": 27,
+      "input_form_id": 472,
+      "location": "asia-east2",
+      "project_id": "principal-yen-328302",
+      "tag_template_form_id": 409,
+      "tag_template_id": "tag_template__1031",
+      "workspace_id": 362
+    },
+    {
+      "create_time": "Sun, 21 Nov 2021 07:33:32 GMT",
+      "creator_id": "354",
+      "description": "Tag template description",
+      "display_name": "Tag template name",
+      "id": 28,
+      "input_form_id": 478,
+      "location": "asia-east2",
+      "project_id": "principal-yen-328302",
+      "tag_template_form_id": 410,
+      "tag_template_id": "tag_template_name",
+      "workspace_id": 362
+    }
+  ],
+  "msg": "request successfully"
+}
