@@ -87,7 +87,6 @@ CREATE TABLE `fieldTable` (
 DROP TABLE IF EXISTS `dynamicFieldTable`;
 CREATE TABLE `dynamicFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
-  `workspace_id` int NOT NULL COMMENT 'workspace id',
   `style` int DEFAULT NULL COMMENT 'field type',
   `form_id` int NOT NULL COMMENT 'form_id',
   `label` varchar(64) DEFAULT NULL COMMENT 'field type name',
@@ -96,7 +95,7 @@ CREATE TABLE `dynamicFieldTable` (
   `value_num` int DEFAULT NULL COMMENT 'how many value of this fields',
   `des` varchar(1024) DEFAULT NULL COMMENT 'description',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
-  PRIMARY KEY (`id`,`workspace_id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 insert into dynamicFieldTable values (15, 2, 2, 'Use case', '', '', 0, 'default usecase dynamic field', '2021-12-08 10:17:00');
 DROP TABLE IF EXISTS `dynamicFieldValueTable`;
