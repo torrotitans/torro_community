@@ -87,6 +87,7 @@ CREATE TABLE `fieldTable` (
 DROP TABLE IF EXISTS `dynamicFieldTable`;
 CREATE TABLE `dynamicFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
+  `workspace_id` int NOT NULL COMMENT 'workspace id',
   `style` int DEFAULT NULL COMMENT 'field type',
   `form_id` int NOT NULL COMMENT 'form_id',
   `label` varchar(64) DEFAULT NULL COMMENT 'field type name',
