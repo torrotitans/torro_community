@@ -54,11 +54,11 @@ echo 'export PATH=$PATH:/home/torro_admin/nodejs/bin' >> /etc/profile
 source /etc/profile
 
 cd /home/torro_admin/torro_backend
-mysql –uroot –p123456 -Dtorro_api<./dbsql/data_api.sql
-mysql –uroot –p123456 -Dtorro_api<./dbsql/form_api.sql
-mysql –uroot –p123456 -Dtorro_api<./dbsql/org_api.sql
-mysql –uroot –p123456 -Dtorro_api<./dbsql/user_api.sql
-mysql –uroot –p123456 -Dtorro_api<./dbsql/data_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/form_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/org_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/user_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
 
 pip3 install -r requirements.txt
 python3 init_torro.py
