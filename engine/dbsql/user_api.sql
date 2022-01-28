@@ -50,7 +50,7 @@ CREATE TABLE `userTable` (
   `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-insert into userTable values (1, 'TorroAdmin', 'TorroAdmin', 'torro123456', '2021-05-29', 'the first user');
+insert into userTable values (1, 'TorroAdmin', 'TorroAdmin', 'torro123456', [],'2021-05-29', 'the first user');
 
 DROP TABLE IF EXISTS `user_to_adgroupTable`;
 CREATE TABLE `user_to_adgroupTable` (
