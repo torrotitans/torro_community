@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: db_user_mgr.py
-@create date: 2019-10-27 15:07 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 import datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
@@ -24,7 +17,7 @@ from db.workflow.db_workflow_mgr import workflow_mgr
 
 class DbFormMgr(DbBase):
     """
-    用户相关数据库表操作类
+    DB Form Operation
     """
 
     # form list
@@ -329,7 +322,7 @@ class DbFormMgr(DbBase):
     # delete one form
     def delete_form(self, form):
         """
-        删除表
+        Delete Form
         :return:
         """
         conn = MysqlConn()

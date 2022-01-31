@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 import json
 from common.common_response_process import DateEncoder
 from flask import make_response

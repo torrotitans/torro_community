@@ -1,19 +1,10 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: status_code.py
-@create date: 2019-10-27 14:21 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
-
 
 class responseCode(object):
     @property
     def SUCCESS(self):
-        return {'code': 200, 'msg': 'request successfully'}
+        return {'code': 200, 'msg': 'request success!'}
     @property
     def TOKEN_ERROR(self):
         return {'code': 401, 'msg': 'token error'}
@@ -45,7 +36,7 @@ class responseCode(object):
 
     @property
     def IMPORT_CSV_SUCCESS(self):
-        return {'code': 1009, 'msg': 'import data successfully'}
+        return {'code': 1009, 'msg': 'import data success!'}
 
     @property
     def RECORD_EXIST(self):
@@ -81,19 +72,19 @@ class responseCode(object):
 
     @property
     def REQUEST_PARAM_MISSED(self):
-        return {'code': 1018, 'msg': '请求参数缺失'}
+        return {'code': 1018, 'msg': 'Request Parameters are missing'}
 
     @property
     def REQUEST_PARAM_FORMAT_ERROR(self):
-        return {'code': 1019, 'msg': '请求参数格式错误'}
+        return {'code': 1019, 'msg': 'Request Parameters format error'}
 
     @property
     def OPENTSDB_ERROR(self):
-        return {'code': 1020, 'msg': 'opentsdb服务器错误'}
+        return {'code': 1020, 'msg': 'opentsdb error'}
 
     @property
     def DATA_BASE_ERROR(self):
-        return {'code': 1021, 'msg': "数据库连接失败"}
+        return {'code': 1021, 'msg': "DB Connection failed"}
 
     @property
     def NOT_FOUND(self):
@@ -109,15 +100,15 @@ class responseCode(object):
 
     @property
     def WRONGVALUE(self):
-        return {'code': 1022, 'msg': '参数值超出规定范围'}
+        return {'code': 1022, 'msg': 'Wrong input value'}
 
     @property
     def CHECK_EXIST_ERROR(self):
-        return {'code': 1023, 'msg': '验证数据错误'}
+        return {'code': 1023, 'msg': 'Data exist error'}
 
     @property
     def EXCEPTION_DB(self):
-        return {'code': 1024, 'msg': '数据库操作异常'}
+        return {'code': 1024, 'msg': 'DB exceptional error'}
 
 
 response_code = responseCode()

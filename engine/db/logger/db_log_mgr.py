@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: db_log_mgr.py
-@create date: 2019-10-27 14:45 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 import json
 
 from common.common_time import get_system_datetime
@@ -20,13 +13,9 @@ from utils.status_code import response_code
 
 
 class DbLogMgr(DbBase):
-    """
-    日志相关数据库表操作类
-    """
 
     def get_pages_operation_log(self, current_page, page_size, search_data, time_scope):
         """
-        获取日志信息
         :param current_page:
         :param page_size:
         :param search_data:

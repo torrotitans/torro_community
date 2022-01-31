@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: interface_login.py
-@create date: 2019-10-27 14:36 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 from common.common_login_helper import login_required
 from flask import request
 from flask_restful import Resource
@@ -18,7 +11,6 @@ from common.common_response_process import response_result_process
 from utils.log_helper import lg
 from utils.status_code import response_code
 from flask import g
-
 
 class interfaceDebug(Resource):
 

@@ -1,17 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: interface_login.py
-@create date: 2019-10-27 14:36 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 
 from flask import request, g, make_response
 from flask_restful import Resource
-
 # from common.common_log import operation_log
 from common.common_model_enum import modelEnum
 from common.common_request_process import req

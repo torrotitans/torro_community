@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: db_department_mgr.py
-@create date: 2019-10-27 15:05
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 from string import Template
 from db.gcp.task_operator import taskFetcher
 from config import configuration

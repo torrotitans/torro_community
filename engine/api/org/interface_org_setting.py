@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 import os
 from utils.api_version_verify import api_version
 from utils.auth_helper import Auth
@@ -19,7 +17,6 @@ from common.common_request_process import req
 from db.org.db_org_parameter import orgApiPara
 
 class interfaceOrgSetting(Resource):
-
 
     def get(self):
         xml = request.args.get('format')

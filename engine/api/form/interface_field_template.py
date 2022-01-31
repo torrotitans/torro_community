@@ -1,10 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 from utils.api_version_verify import api_version
-
 from flask import request
 from flask_restful import Resource
 from core.form_singleton import formSingleton_singleton

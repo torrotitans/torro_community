@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_response_code.py
-@create date: 2019-10-27 14:10 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 from enum import Enum, unique
 
 
@@ -47,47 +40,47 @@ class responseCode(object):
 
     @property
     def SUCCESS(self):
-        return {'code': 200, 'msg': '请求成功'}
+        return {'code': 200, 'msg': 'Request Success!'}
 
     @property
     def LOGIN_IS_FAIL(self):
-        return {'code': 1001, 'msg': '用户名或者密码错误'}
+        return {'code': 1001, 'msg': 'Login failed, please check your username or password'}
 
     @property
     def PASS_WORD_INFO_NOT_FILL(self):
-        return {'code': 1002, 'msg': '密码信息填写完整'}
+        return {'code': 1002, 'msg': 'Password is missing or wrong'}
 
     @property
     def TWO_PASS_WORD_DIFFERENT(self):
-        return {'code': 1003, 'msg': '两次密码不一致'}
+        return {'code': 1003, 'msg': 'Password does not match'}
 
     @property
     def OLD_PASS_WORD_IS_NOT_FAIL(self):
-        return {'code': 1004, 'msg': '旧密码不正确'}
+        return {'code': 1004, 'msg': 'old password is incorrect'}
 
     @property
     def LOGIN_FAIL(self):
-        return {'code': 1005, 'msg': '登录失败请联系管理员'}
+        return {'code': 1005, 'msg': 'Login fail, please check with your system admin'}
 
     @property
     def PASS_WORD_RESET_FAIL(self):
-        return {'code': 1006, 'msg': '密码重置失败'}
+        return {'code': 1006, 'msg': 'Password reset fail'}
 
     @property
     def USER_NOT_EXIST(self):
-        return {'code': 1007, 'msg': '用户不存在'}
+        return {'code': 1007, 'msg': 'User 404'}
 
     @property
     def IMPORT_CSV_FAIL(self):
-        return {'code': 1008, 'msg': '导入数据失败'}
+        return {'code': 1008, 'msg': 'Import CSV failed'}
 
     @property
     def IMPORT_CSV_SUCCESS(self):
-        return {'code': 1009, 'msg': '导入数据成功'}
+        return {'code': 1009, 'msg': 'CSV imported successfully'}
 
     @property
     def RECORD_EXIST(self):
-        return {'code': 1010, 'msg': '记录已存在'}
+        return {'code': 1010, 'msg': 'Record exist'}
 
     @property
     def ADD_DATA_FAIL(self):

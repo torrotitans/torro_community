@@ -1,15 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_log.py
-@create date: 2019-10-27 14:40 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
-
-
 
 from functools import wraps
 from flask import request, g, jsonify
@@ -21,7 +11,6 @@ from utils.status_code import response_code
 
 def operation_log(description=''):
     """
-    操作日志记录
     :param description:
     :return:
     """

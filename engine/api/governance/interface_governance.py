@@ -1,10 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 from utils.smtp_helper import notify_approvers
-
 from utils.api_version_verify import api_version
 import traceback
 from flask import request

@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_time.py
-@create date: 2019-10-27 14:46 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 from datetime import datetime
 
 from functools import wraps
@@ -20,7 +13,6 @@ def get_max_time():
 
 def string_to_date(string):
     """
-    #把字符串转成date
     :param string:
     :return:
     """
@@ -29,7 +21,6 @@ def string_to_date(string):
 
 def string_to_datetime(string):
     """
-    #把字符串转成datetime
     :param string:
     :return:
     """
@@ -38,7 +29,6 @@ def string_to_datetime(string):
 
 def date_to_time(timestring):
     """
-    date转时间戳
     :param timestring:
     :return:
     """
@@ -47,7 +37,6 @@ def date_to_time(timestring):
 
 def datetime_to_time(timestring):
     """
-    datetime转时间戳
     :param timestring:
     :return:
     """
@@ -56,7 +45,6 @@ def datetime_to_time(timestring):
 
 def get_system_datetime():
     """
-    获取系统当前时间
     :return:
     """
     sys_time = time.time()
@@ -66,25 +54,20 @@ def get_system_datetime():
 
 def get_system_datetime_str():
     """
-    获取系统当前时间
     :return:
     """
     str_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
     return str_time
 
 
-# 把时间戳转成字符串形式
 def time_to_datetime(stamp):
     """
-    时间戳转datetime
     :param stamp:
     :return:
     """
     time_stamp = int(stamp / 1000)
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time_stamp))
 
-
-#####计算函数耗时装饰圈
 def fun_time(func):
     @wraps(func)
     def wrapper(*args, **kargs):

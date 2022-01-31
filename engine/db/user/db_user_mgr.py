@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: db_user_mgr.py
-@create date: 2019-10-27 15:07 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
+
 from utils.ldap_helper import Ldap
 from db.base import DbBase
 from db.connection_pool import MysqlConn
@@ -516,14 +509,6 @@ class DbUserMgr(DbBase):
             return None, (None, None)
         finally:
             conn.close()
-
-
-
-
-
-
-
-
 
 
 user_mgr = DbUserMgr()

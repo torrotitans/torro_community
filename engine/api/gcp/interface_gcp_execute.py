@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-"""
+
 from core.gcp_singleton import gcpSingleton_singleton
 from utils.log_helper import lg
 from utils.status_code import response_code

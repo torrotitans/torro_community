@@ -1,20 +1,16 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 import traceback
 from flask import request
 from flask_restful import Resource
 from core.workspace_singleton import workspace_singleton
 from utils.log_helper import lg
 from utils.status_code import response_code
-
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.workspace.db_workspace_parameter import workspaceApiPara
-
 
 class interfaceTagTemplateList(Resource):
 

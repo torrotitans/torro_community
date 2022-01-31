@@ -19,34 +19,22 @@ class workflowSingleton():
         return workflow_mgr.get_detail_workflow_by_workflow_id(workflow_id)
 
     def get_all_stages(self):
-        """
-        获取所有的stages信息
-        :return:
-        """
+
         return workflow_mgr.get_all_stages()
 
     def get_all_stages_v2(self, workflow_id):
 
         return workflow_mgr.get_all_stages_v2(workflow_id)
     def delete_workflow(self, workflow):
-        """
 
-        :return:
-        """
         return workflow_mgr.delete_workflow(workflow)
 
     def add_new_workflow(self, workflow):
-        """
 
-        :return:
-        """
         return workflow_mgr.add_new_workflow(workflow)
 
     def update_workflow(self, workflow):
-        """
 
-        :return:
-        """
         return workflow_mgr.update_workflow(workflow)
 
     # def get_stages_by_(self, value):

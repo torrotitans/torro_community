@@ -10,10 +10,7 @@ __all__ = {"governanceSingleton"}
 class governanceSingleton():
 
     def change_status(self, user_key, account_id, inputData):
-        """
-        获取所有的部门信息
-        :return:
-        """
+
         return governance_mgr.change_status(user_key, account_id, inputData)
 
     def updateTask(self, user_key, account_id, input_form_id, tasks, return_msg_list):

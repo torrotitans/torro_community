@@ -1,13 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: api_version_verify.py
-@create date: 2019-10-27 14:15 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：api版本验证
-"""
 
 from functools import wraps
 
@@ -18,7 +10,6 @@ from common.common_request_process import req
 
 def api_version(func):
     """
-    API版本验证装饰器
     :param func:
     :return:
     """

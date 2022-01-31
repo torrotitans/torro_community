@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 import traceback
 from flask import request
 from flask_restful import Resource
@@ -11,7 +9,6 @@ from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_request_process import req
-
 
 class interfaceUserLogin(Resource):
 

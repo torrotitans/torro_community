@@ -1,8 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-
-"""
 
 from utils.api_version_verify import api_version
 import traceback

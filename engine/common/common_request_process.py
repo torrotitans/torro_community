@@ -1,17 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_request_process.py
-@create date: 2019-10-27 14:08 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：请求处理
-"""
 
 import json
 from json import JSONDecodeError
-
 from common.common_api_version import apiVersion
 from common.common_response_code import response_code
 from common.common_response_log import ResponseLog
@@ -21,9 +12,7 @@ from utils.xml_json_process import xml_to_json, is_none
 from flask import g
 
 class requestProcess(object):
-    """
-    请求处理
-    """
+
     def get_user_key(self):
         try:
             user_key = g.user_key
@@ -52,8 +41,7 @@ class requestProcess(object):
 
     def _xml_request(self, request, model_json=None):
         """
-        处理xml请求参数为json格式
-        :param data: 请求
+        :param data: request
         :return:
         """
         try:
@@ -94,8 +82,7 @@ class requestProcess(object):
 
     def _json_request(self, request):
         """
-        处理json请求参数问题
-        :param request: 请求
+        :param request: request
         :return:
         """
         try:
@@ -120,10 +107,9 @@ class requestProcess(object):
 
     def verify_one_param_type(self, param_name, value, type=None):
         """
-        验证某个参数的类型
-        :param param_name: 验证的参数名称
-        :param value: 验证的参数的值
-        :param type: 验证的参数的类型
+        :param param_name: verification param name
+        :param value: verification param value
+        :param type: verification param type
         :return:
         """
         try:
@@ -199,12 +185,7 @@ class requestProcess(object):
             return code
 
     def verify_one_param_must(self, request_data: dict, param):
-        """
-        验证某个参数是否必填
-        :param data: 请求的数据
-        :param param: 本验证的字段
-        :return:
-        """
+
         if request_data.get(param) is None:
             code = response_code.BAD_REQUEST
             code['msg'] = ResponseLog.wrong_param_must(param)
@@ -213,12 +194,7 @@ class requestProcess(object):
             pass
 
     def verify_one_param(self, request_data: dict, param):
-        """
-        验证某个参数是否必填
-        :param data: 请求的数据
-        :param param: 本验证的字段
-        :return:
-        """
+
         if request_data.get(param) is None:
             return True
         else:
@@ -226,12 +202,7 @@ class requestProcess(object):
 
 
     def verify_param_page(self, data, param):
-        """
-        验证是否有分页信息
-        :param data:  验证的请求数据
-        :param param: 是否有page字段
-        :return:
-        """
+
         page_data = data.get(param)
         if page_data.get('page_size') is not None:
             if page_data.get('current_page') is None:
@@ -246,9 +217,8 @@ class requestProcess(object):
 
     def request_process(self, request, xml=None, model_json=None):
         """
-        请求参数获取
-        :param request: 请求
-        :param xml:  请求响应类型 是否是xml 默认是json
+        :param request: request
+        :param xml:  Check return as or xml?  Default is json
         :return:
         """
         if xml is None:
@@ -258,8 +228,7 @@ class requestProcess(object):
 
     def verify_all_param_must(self, request_data: dict, fields: list):
         """
-        批量验证是否是必传参数
-        :param request_data: 请求的参数数据
+        :param request_data: request param data
         :param fields: ['a','b']
         :return:
         """
@@ -272,8 +241,7 @@ class requestProcess(object):
 
     def verify_all_param(self, request_data: dict, fields: dict):
         """
-        批量验证是否是必传参数
-        :param request_data: 请求的参数数据
+        :param request_data: request param data
         :param fields: ['a','b']
         :return:
         """
@@ -291,8 +259,7 @@ class requestProcess(object):
 
     def verify_all_param_type(self, request_data: dict, fields: dict):
         """
-        批量验证参数的类型
-        :param request_data: 请求的参数数据
+        :param request_data: request param data
         :param fields: {'a':str,'b':int}
         :return:
         """
@@ -306,9 +273,8 @@ class requestProcess(object):
 
     def verify_version(self, version, xml=None):
         """
-        API版本验证
-        :param version: 版本信息
-        :param xml: 是否是xml
+        :param version:
+        :param xml: Check xml
         :return:
         """
         if version == apiVersion.version1.value:

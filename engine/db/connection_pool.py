@@ -1,13 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: connection_pool.py
-@create date: 2019-10-27 14:29 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 
 import pymysql
 from DBUtils.PooledDB import PooledDB
@@ -15,12 +7,10 @@ from config import configuration
 
 
 class MysqlConn(object):
-    """
-    MySql线程池
-    """
+
     __my_pool = None
 
-    ###以何种方式返回数据集
+    ### what kind of format to return the data
     TUPLE_CURSOR_MODE = pymysql.cursors.Cursor
     DICT_DICTCURSOR_MODE = pymysql.cursors.DictCursor
     TUPLE_SSCURSOR_MODE = pymysql.cursors.SSCursor
@@ -33,7 +23,6 @@ class MysqlConn(object):
     @staticmethod
     def get_connection(database_name):
         """
-        获取数据库连接
         :return:
         """
         database = configuration.get_database_configuration(database_name)
@@ -50,7 +39,6 @@ class MysqlConn(object):
 
     def close(self):
         """
-        释放当前连接
         :return:
         """
         self.conn.close()

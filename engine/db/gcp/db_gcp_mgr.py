@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 from db.gcp.task_operator import taskFetcher
 from config import configuration
 from db.base import DbBase

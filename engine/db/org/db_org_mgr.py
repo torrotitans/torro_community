@@ -1,13 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: db_org_mgr.py
-@create date: 2019-10-27 15:07 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 from common.common_time import get_system_datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
@@ -61,7 +53,7 @@ class DbOrgMgr(DbBase):
             host = ldap_info['host']
             port = ldap_info['port']
             cer_path = ldap_info['cer_path']
-            use_sll = ldap_info['use_sll']
+            use_ssl = ldap_info['use_ssl']
             admin = ldap_info['admin_dn']
             admin_pwd = ldap_info['admin_pwd']
 
@@ -83,11 +75,11 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
 
             # insert form
-            fields = ('HOST', 'PORT', 'CER_PATH', 'USE_SLL', 'ADMIN_DN', 'ADMIN_PWD',
+            fields = ('HOST', 'PORT', 'CER_PATH', 'USE_SSL', 'ADMIN_DN', 'ADMIN_PWD',
                       'USER_SEARCH_BASE', 'USER_SERACH_FILTER', 'DISPLAY_NAME_LDAP_ATTRIBUTE', 'EMAIL_ADDRESS_LDAP_ATTRIBUTE', 'USER_ADGROUP_ATTRIBUTE',
                       'GROUP_SEARCH_BASE', 'GROUP_SERACH_FILTER', 'GROUP_MEMBER_ATTRIBUTE', 'GROUP_EMAIL_SUFFIX',
                       'CREATE_TIME', 'TIME_MODIFY')
-            values = (host, port, cer_path, use_sll, admin, admin_pwd,
+            values = (host, port, cer_path, use_ssl, admin, admin_pwd,
                       user_search_base, user_search_filter, display_name_attribute, email_address_attribute, adgroup_attribute,
                       group_search_base, group_search_filter, group_member_attribute, email_suffix,
                       create_time, time_modify)
@@ -248,7 +240,7 @@ class DbOrgMgr(DbBase):
             ldap_info['host'] = org['host']
             ldap_info['port'] = org['port']
             ldap_info['cer_path'] = org['cer_path']
-            ldap_info['use_sll'] = org['use_sll']
+            ldap_info['use_ssl'] = org['use_ssl']
             ldap_info['admin_dn'] = org['admin_dn']
             ldap_info['admin_pwd'] = org['admin_pwd']
 
@@ -384,7 +376,7 @@ class DbOrgMgr(DbBase):
             ldap_info['host'] = org['host']
             ldap_info['port'] = org['port']
             ldap_info['cer_path'] = org['cer_path']
-            ldap_info['use_sll'] = org['use_sll']
+            ldap_info['use_ssl'] = org['use_ssl']
             ldap_info['admin_dn'] = org['admin_dn']
             ldap_info['admin_pwd'] = org['admin_pwd']
 

@@ -11,10 +11,10 @@ class Ldap():
         ldap_info = ldap_info['data']
         host = ldap_info['HOST']
         port = ldap_info['PORT']
-        if int(ldap_info['USE_SLL']) == 1:
-            use_sll = True
+        if int(ldap_info['USE_SSL']) == 1:
+            use_ssl = True
         else:
-            use_sll = False
+            use_ssl = False
         ADMIN_DN = ldap_info['ADMIN_DN']
         ADMIN_PASSWORD = ldap_info['ADMIN_PWD']
 
@@ -33,7 +33,7 @@ class Ldap():
     else:
         host = ''
         port = ''
-        use_sll = True
+        use_ssl = True
         ADMIN_DN = ''
         ADMIN_PASSWORD = ''
 
@@ -159,13 +159,13 @@ class Ldap():
             return False
 
     @staticmethod
-    def service_account_login(account_dn, password, host, port, use_sll=False):
+    def service_account_login(account_dn, password, host, port, use_ssl=False):
         pwd = prpcrypt.decrypt(password)
-        # print('ldap info:', Ldap.host, Ldap.use_sll, Ldap.port)
+        # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
 
-            servers = Server(host, use_ssl=use_sll, get_info=ALL, port=port)
+            servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
             conn = Connection(servers, account_dn, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
             conn.bind()
@@ -183,11 +183,11 @@ class Ldap():
     @staticmethod
     def ldap_auth(account_cn, password):
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
-        # print('ldap info:', Ldap.host, Ldap.use_sll, Ldap.port)
+        # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
 
-            servers = Server(Ldap.host, use_ssl=Ldap.use_sll, get_info=ALL, port=Ldap.port)
+            servers = Server(Ldap.host, use_ssl=Ldap.use_ssl, get_info=ALL, port=Ldap.port)
             conn = Connection(servers, Ldap.ADMIN_DN, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
             conn.bind()
@@ -227,7 +227,7 @@ class Ldap():
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
             if offline_flag == 0:
-                servers = Server(Ldap.host, use_ssl=Ldap.use_sll, get_info=ALL, port=Ldap.port)
+                servers = Server(Ldap.host, use_ssl=Ldap.use_ssl, get_info=ALL, port=Ldap.port)
                 conn = Connection(servers, Ldap.ADMIN_DN, pwd, check_names=True, lazy=False, raise_exceptions=True)
                 conn.open()
                 conn.bind()
@@ -255,7 +255,7 @@ class Ldap():
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
-            servers = Server(Ldap.host, use_ssl=Ldap.use_sll, get_info=ALL, port=Ldap.port)
+            servers = Server(Ldap.host, use_ssl=Ldap.use_ssl, get_info=ALL, port=Ldap.port)
             conn = Connection(servers, Ldap.ADMIN_DN, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
             conn.bind()

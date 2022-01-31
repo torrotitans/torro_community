@@ -1,23 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_response_log.py
-@create date: 2019-10-27 14:11 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：响应日志处理
-"""
 
 class ResponseLog:
-    """
-    响应提示信息公共类
-    """
+
 
     @staticmethod
     def null_value(param):
         """
-        参数值为空时，提示信息
         :param param:
         :return:
         """
@@ -26,7 +15,6 @@ class ResponseLog:
     @staticmethod
     def wrong_value(param, value):
         """
-        参数值无效时，提示信息
         :param param:
         :param value:
         :return:
@@ -36,7 +24,6 @@ class ResponseLog:
     @staticmethod
     def record_exist(unique_key, value):
         """
-        参数值已经存在时，提示信息
         :param unique_key:
         :param value:
         :return:
@@ -46,7 +33,6 @@ class ResponseLog:
     @staticmethod
     def delete_record_in_use(code, value):
         """
-        删除的数据在使用时，提示信息
         :param code:
         :param value:
         :return:
@@ -56,9 +42,8 @@ class ResponseLog:
     @staticmethod
     def wrong_time_format(key, value):
         """
-        时间格式错误，提示信息
-        :param key: 字段名称
-        :param value: 时间戳
+        :param key: key phases
+        :param value: time
         :return:
         """
         return "improper time format: param '%s:[%s]'." % (key, value)
@@ -66,9 +51,8 @@ class ResponseLog:
     @staticmethod
     def wrong_param_type(key, value):
         """
-        参数类型错误提示消息
-        :param key: 参数名称
-        :param value: 参数类型
+        :param key: Input name
+        :param value: Input value
         :return:
         """
         return "The argument '%s must be %s'." % (key, value)
@@ -76,7 +60,6 @@ class ResponseLog:
     @staticmethod
     def wrong_param_must(key):
         """
-        验证参数是否必填
         :param key:
         :return:
         """
@@ -85,7 +68,6 @@ class ResponseLog:
     @staticmethod
     def database_exception(error_code=None):
         """
-        数据库操作异常，提示信息
         :return:
         """
         if error_code:
@@ -102,7 +84,6 @@ class ResponseLog:
     @staticmethod
     def operation_success(data_name=None, operation_name=None):
         """
-        添加数据成功，提示消息
         :param data_name:
         :param operation_name:
         :return:
@@ -112,7 +93,6 @@ class ResponseLog:
     @staticmethod
     def record_not_exist(data, value):
         """
-        数据不存在，提示消息
         :param data:
         :param value:
         :return:
@@ -122,7 +102,6 @@ class ResponseLog:
     @staticmethod
     def mission_db_exist(sat_code):
         """
-        与卫星代号同名的任务数据库存在，提示消息
         :param sat_code:
         :return:
         """
@@ -131,7 +110,6 @@ class ResponseLog:
     @staticmethod
     def relation_not_exist(v1, v2):
         """
-        数据关联关系不存在，提示消息
         :param data:
         :param value:
         :return:

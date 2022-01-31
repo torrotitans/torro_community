@@ -1,10 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 from utils.api_version_verify import api_version
-
 from utils.api_version_verify import api_version
 import traceback
 from flask import request
@@ -17,7 +14,6 @@ from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.dashboard.db_dashboard_parameter import dashboardApiPara
-
 
 class interfaceDashboard(Resource):
     # @api_version

@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
 
-"""
 import traceback
 from flask import request
 from flask_restful import Resource

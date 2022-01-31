@@ -74,7 +74,7 @@ CREATE TABLE `ldapTable` (
   `HOST` varchar(64) DEFAULT NULL COMMENT 'ldap host',
   `PORT` int DEFAULT NULL COMMENT 'ldap port',
   `CER_PATH` varchar(512) DEFAULT NULL COMMENT 'save ldap cer path',
-  `USE_SLL` tinyint(1) DEFAULT '1' COMMENT 'permission type',
+  `USE_SSL` tinyint(1) DEFAULT '1' COMMENT 'permission type',
   `ADMIN_DN` varchar(64) DEFAULT NULL COMMENT 'admin dn',
   `ADMIN_PWD` varchar(512) DEFAULT NULL COMMENT 'admin password',
 
@@ -102,7 +102,7 @@ CREATE TABLE `smtpTable` (
   `MAIL_USER` varchar(64) DEFAULT NULL COMMENT 'smtp user',
   `MAIL_PASS` varchar(64) DEFAULT NULL COMMENT 'smtp pwd',
   `PORT` int(11) DEFAULT NULL COMMENT 'ldap port',
-  `USE_SLL` boolean DEFAULT true COMMENT 'permission type',
+  `USE_SSL` boolean DEFAULT true COMMENT 'permission type',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
   PRIMARY KEY (`ID`) USING BTREE

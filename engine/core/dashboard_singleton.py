@@ -10,10 +10,7 @@ __all__ = {"dashboardSingleton"}
 class dashboardSingleton():
 
     def get_data(self, user_id, condiction_dict, workspace_id):
-        """
-        获取所有的部门信息
-        :return:
-        """
+
         return dashboard_mgr.get_data(user_id, condiction_dict, workspace_id)
 
     def get_options(self, user_id, workspace_id):

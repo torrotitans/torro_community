@@ -1,13 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_response_process.py
-@create date: 2019-10-27 14:38 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 
 from flask import jsonify, Response
 import json
@@ -18,8 +10,7 @@ from utils.xml_json_process import json_to_xml
 
 def response_json(data):
     """
-    json响应处理
-    :param data: json数据
+    :param data: json data
     :return:
     """
     # return data
@@ -27,9 +18,8 @@ def response_json(data):
 
 def response_xml(data,root=None):
     """
-    xml响应处理
-    :param data: json数据
-    :param root: xml数据的根
+    :param data: json data
+    :param root: xml data root
     :return:
     """
     if root is not None:
@@ -43,10 +33,9 @@ def response_xml(data,root=None):
 
 def response_result_process(data,xml_structure_str=None,xml=None):
     """
-    响应数据处理
-    :param data: 响应数据
-    :param xml_structure_str: 响应为xml结构的时候 有数据结构的时候需要传,无数据结构的时候就不需要传
-    :param xml: 是否是xml响应
+    :param data: response data
+    :param xml_structure_str: If response in xml structure, the structure need to be uploaded. if no data structure, structure is not needed
+    :param xml: Check if xml response
     :return:
     """
     if xml is None and xml_structure_str is not None:

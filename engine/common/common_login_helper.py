@@ -1,20 +1,10 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: common_login_helper.py
-@create date: 2019-10-27 14:49 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 
 from functools import wraps
 from os import abort
 from flask import request, g
-
 from utils.auth_helper import Auth
-
 
 def login_required(func):
     @wraps(func)

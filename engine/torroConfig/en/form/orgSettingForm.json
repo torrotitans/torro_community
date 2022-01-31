@@ -25,10 +25,10 @@
     },
     {
       "default": "",
-      "des": "Use SLL",
+      "des": "Use SSL",
       "edit": 1,
-      "id": "use_sll",
-      "label": "Use SLL",
+      "id": "use_ssl",
+      "label": "Use SSL",
       "options": [
         {
           "label": "True",
@@ -39,7 +39,7 @@
           "value": false
         }
       ],
-      "placeholder": "Use SLL",
+      "placeholder": "Use SSL",
       "style": 2,
       "required": true
     },
