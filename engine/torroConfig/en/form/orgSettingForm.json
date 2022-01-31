@@ -1,0 +1,216 @@
+{
+  "des": "Please enter the following information to create your project.",
+  "fieldList": [
+    {
+      "default": "",
+      "des": "Host",
+      "edit": 1,
+      "id": "host",
+      "label": "Host",
+      "options": [],
+      "placeholder": "Host",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "port",
+      "edit": 1,
+      "id": "port",
+      "label": "Port",
+      "options": [],
+      "placeholder": "Port",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Use SLL",
+      "edit": 1,
+      "id": "use_sll",
+      "label": "Use SLL",
+      "options": [
+        {
+          "label": "True",
+          "value": true
+        },
+        {
+          "label": "False",
+          "value": false
+        }
+      ],
+      "placeholder": "Use SLL",
+      "style": 2,
+      "required": true
+    },
+    {
+      "default": "cn=admin,dc=torro,dc=ai",
+      "des": "Admin DN",
+      "edit": 1,
+      "id": "admin_dn",
+      "label": "Admin DN",
+      "options": [],
+      "placeholder": "Admin DN",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Admin password",
+      "edit": 1,
+      "id": "admin_pwd",
+      "label": "Admin password",
+      "options": [],
+      "placeholder": "Admin password",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Admin group",
+      "edit": 1,
+      "id": "admin_group",
+      "label": "Admin group",
+      "options": [],
+      "placeholder": "Admin group",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "User group",
+      "edit": 1,
+      "id": "base_group",
+      "label": "User group",
+      "options": [],
+      "placeholder": "User group",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Organization name",
+      "edit": 1,
+      "id": "org_name",
+      "label": "Organization name",
+      "options": [],
+      "placeholder": "Organization name",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Description",
+      "edit": 1,
+      "id": "des",
+      "label": "Description",
+      "options": [],
+      "placeholder": "Description",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "cn=users,dc=torro,dc=ai",
+      "des": "User search base",
+      "edit": 1,
+      "id": "user_search_base",
+      "label": "User Search base",
+      "options": [],
+      "placeholder": "User search base",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "cn={0}",
+      "des": "User search filter",
+      "edit": 1,
+      "id": "user_search_filter",
+      "label": "User search filter",
+      "options": [],
+      "placeholder": "User search filter",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "displayName",
+      "des": "User display name ldap attribute",
+      "edit": 1,
+      "id": "display_name_attribute",
+      "label": "User display name ldap attribute",
+      "options": [],
+      "placeholder": "User display name ldap attribute",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "mail",
+      "des": "User e-mail address ldap attribute",
+      "edit": 1,
+      "id": "email_address_attribute",
+      "label": "User e-mail address ldap attribute",
+      "options": [],
+      "placeholder": "User e-mail address ldap attribute",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "memberOf",
+      "des": "User ad group ldap attribute",
+      "edit": 1,
+      "id": "adgroup_attribute",
+      "label": "User ad group ldap attribute",
+      "options": [],
+      "placeholder": "User ad group ldap attribute",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": ",ou=Group,dc=torro,dc=ai",
+      "des": "Group search base",
+      "edit": 1,
+      "id": "group_search_base",
+      "label": "Group Search base",
+      "options": [],
+      "placeholder": "Group search base",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "cn={0}",
+      "des": "Group search filter",
+      "edit": 1,
+      "id": "group_search_filter",
+      "label": "Group search filter",
+      "options": [],
+      "placeholder": "Group search filter",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "memberUid",
+      "des": "Group member ldap attribute",
+      "edit": 1,
+      "id": "group_member_attribute",
+      "label": "Group member ldap attribute",
+      "options": [],
+      "placeholder": "Group member ldap attribute",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "@torro.ai",
+      "des": "Group e-mail suffix",
+      "edit": 1,
+      "id": "email_suffix",
+      "label": "Group e-mail suffix",
+      "options": [],
+      "placeholder": "Group e-mail suffix",
+      "style": 3,
+      "required": true
+    }
+  ],
+  "fields_num": 18,
+  "id": 777,
+  "title": "Project setup config",
+  "u_max_id": 0
+}

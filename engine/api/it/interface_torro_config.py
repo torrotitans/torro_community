@@ -21,7 +21,7 @@ import traceback
 
 class interfaceTorroConfig(Resource):
     base_dir = 'torroConfig/'
-    @login_required
+    # @login_required
     def get(self, configName=None):
 
         """Get config json (just support getting json file)

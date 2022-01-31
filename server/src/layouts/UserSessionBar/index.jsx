@@ -11,7 +11,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 /* local components & methods */
 import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
-import { USER, GOVERNOR, IT } from "src/lib/data/roleType.js";
+import { USER, GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
 import LANGUAGE from "src/lib/data/languageType";
 import Model from "@basics/Modal";
 import DoubleSquare from "@assets/icons/DoubleSquare";
@@ -96,14 +96,25 @@ const UserSessionBar = () => {
     return !!authContext.role && authContext.role !== "null";
   }, [authContext]);
 
+  const serviceAdmin = useMemo(() => {
+    return authContext.serviceAdmin;
+  }, [authContext]);
+
   const handleWsChange = useCallback(
     (value) => {
-      updateLogin({ workspace_id: value })
+      let postData = {
+        workspace_id: value,
+        role_name: authContext.role !== ADMIN ? "" : ADMIN,
+      };
+      updateLogin(postData)
         .then((res) => {
           if (res.data) {
             setAuth({
               ...authContext,
-              wsId: value,
+              role: res.data.role_name,
+              roleList: res.data.role_list,
+              wsId: Number(res.data.workspace_id),
+              wsList: res.data.workspace_list,
             });
             setTimeout(() => {
               window.location.reload();
@@ -117,6 +128,14 @@ const UserSessionBar = () => {
     [setAuth, authContext]
   );
 
+  const haveWs = useMemo(() => {
+    return authContext.wsList.length > 0 && authContext.wsId;
+  }, [authContext]);
+
+  const displayNav = useMemo(() => {
+    return isLogin && (haveRole || serviceAdmin) && haveWs;
+  }, [isLogin, haveRole, serviceAdmin, haveWs]);
+
   useEffect(() => {
     setNotifyNum(1);
   }, []);
@@ -126,7 +145,7 @@ const UserSessionBar = () => {
       <div className={styles.UserSessionBar}>
         <div className={styles.UserSessionContent}>
           <div className={styles.leftBox}>
-            {isLogin && haveRole && (
+            {displayNav && (
               <div
                 className={styles.menu}
                 onClick={() => {
@@ -201,9 +220,7 @@ const UserSessionBar = () => {
           </Model>
         </div>
 
-        {isLogin && haveRole && (
-          <LeftNav open={showNav} closeHandle={handleClose} />
-        )}
+        {displayNav && <LeftNav open={showNav} closeHandle={handleClose} />}
       </div>
     </ClickAwayListener>
   );

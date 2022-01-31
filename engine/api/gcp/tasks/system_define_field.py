@@ -48,7 +48,7 @@ class system_define_field(baseTask, DbBase):
                 dynamic_field_id = self.insert_exec(conn, sql, return_insert_id=True)
             else:
                 dynamic_field_id = dynamic_field_info['id']
-                condition = "workspace_id=%s and dynamic_field_id=%s and option_label='%s'" % (workspace_id, dynamic_field_id, option_label)
+                condition = "workspace_id='%s' and dynamic_field_id=%s and option_label='%s'" % (workspace_id, dynamic_field_id, option_label)
                 sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'id', condition)
                 dynamic_field_value_info = self.execute_fetch_one(conn, sql)
                 if dynamic_field_value_info:

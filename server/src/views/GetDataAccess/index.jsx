@@ -118,7 +118,6 @@ const GetDataAccess = () => {
 
         raiseFormRequestList(submitData)
           .then((res) => {
-            console.log(res);
             setModalData({
               open: true,
               status: 2,

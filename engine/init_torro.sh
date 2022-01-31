@@ -45,21 +45,19 @@ openssl req -new -x509 -key /home/torro_admin/nginx/conf/crt/server.key -subj "/
 cd /home/torro_admin/nginx/sbin/
 ./nginx
 
-cd /home/torro_admin
-wget https://nodejs.org/dist/v14.17.6/node-v14.17.6-linux-x64.tar.xz
-tar -xvf node-v14.17.6-linux-x64.tar.xz
-mv node-v14.17.6-linux-x64 nodejs
-cp /etc/profile /etc/profile.bak
-echo 'export PATH=$PATH:/home/torro_admin/nodejs/bin' >> /etc/profile
-source /etc/profile
+yum install -y nodejs
 
 cd /home/torro_admin/torro_backend
 mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/form_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/org_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/user_api.sql
-mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
+mysql -uroot -p123456 -Dtorro_api<./dbsql/workflow_api.sql
 
+export FLASK_CONFIG=production
+
+pip3 install --upgrade pip
+python3 -m pip install --upgrade setuptools
 pip3 install -r requirements.txt
 python3 init_torro.py
-nohup gunicorn -b 0.0.0.0:3128 main:app &
+nohup gunicorn -b 0.0.0.0:8080 main:app &

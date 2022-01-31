@@ -22,10 +22,13 @@ from utils.auth_helper import Auth
 from utils.log_helper import lg
 from utils.status_code import response_code
 import json
-
+from config import config
+import os
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
 class interfaceLogin(Resource):
 
-    allow_origins = ['http://34.92.243.193:9000', 'http://localhost:8080']
+    allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
     # @api_version
     def post(self):
         xml = request.args.get('format')
@@ -44,7 +47,9 @@ class interfaceLogin(Resource):
             # # print('login: ', login_name, login_password)
             # 对登录情况进行验证
             dict_user = Auth.authenticate(login_name, login_password, offline_flag)
-            print(dict_user)
+            print('dict_user:', dict_user)
+            if 'token' not in dict_user:
+                return response_code.LOGIN_FAIL
             # exit(0)
             # 将用户信息写到全局
             user_key = dict_user.get('ID')
@@ -70,11 +75,13 @@ class interfaceLogin(Resource):
             resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
             resp.headers['Access-Control-Allow-Credentials'] = 'true'
             resp.headers['Access-Control-Allow-Methods'] = "GET,POST,PUT,DELETE,OPTIONS"
-            # resp.set_cookie("token", token)
-            # resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-            # resp.set_cookie("Secure", samesite=None, secure=None)
+            if config_name == 'production':
+                resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(token))
+            else:
+                resp.set_cookie("token", token)
+                resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                resp.set_cookie("Secure", samesite=None, secure=None)
 
-            resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(token))
 
             return resp
         except Exception as e:
@@ -112,11 +119,12 @@ class interfaceLogin(Resource):
                 resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
                 resp.headers['Access-Control-Allow-Credentials'] = 'true'
                 resp.headers['Access-Control-Allow-Methods'] = "GET,POST,PUT,DELETE,OPTIONS"
-                # resp.set_cookie("token", new_token)
-                # resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-                # resp.set_cookie("Secure", samesite=None, secure=None)
-
-                resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                if config_name == 'production':
+                    resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                else:
+                    resp.set_cookie("token", new_token)
+                    resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                    resp.set_cookie("Secure", samesite=None, secure=None)
                 return resp
 
             else:
@@ -125,8 +133,8 @@ class interfaceLogin(Resource):
                 resp.set_cookie("token", '')
                 return resp
         except Exception as e:
-            lg.error(e)
+            # lg.error(e)
             import traceback
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
             error_data = response_code.LOGIN_FAIL
             return response_result_process(error_data, xml=xml)

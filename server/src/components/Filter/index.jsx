@@ -11,7 +11,7 @@ import MenuList from "@material-ui/core/MenuList";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import FilterIcon from "@assets/icons/Filter";
+import FilterIcon from "@assets/icons/FilterIcon";
 import { startsWith } from "lodash";
 
 const Filter = ({ id, value, options, onChange }) => {
@@ -65,14 +65,7 @@ const Filter = ({ id, value, options, onChange }) => {
         onChange={handleInputChange}
         fullWidth
         placeholder={"Filter"}
-        startAdornment={
-          <img
-            src={FilterIcon}
-            className={styles.iconButton}
-            aria-label="search"
-            alt=""
-          />
-        }
+        startAdornment={<FilterIcon />}
         onClick={handleClick}
         className={styles.input}
       />

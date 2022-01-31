@@ -15,7 +15,7 @@ from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.form.db_form_parameter import formApiPara
-
+import traceback
 class interfaceFieldTemplate(Resource):
 
     # @api_version
@@ -28,7 +28,7 @@ class interfaceFieldTemplate(Resource):
             body = modelEnum.form.value.get('body')
             return response_result_process(data, xml_structure_str=body, xml=xml)
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 

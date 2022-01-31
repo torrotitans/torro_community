@@ -1,12 +1,9 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-
-
 import configparser
 
 
 class Configuration():
-
     def __init__(self, config_file_path='./config.ini'):
         try:
             self.config_file_path = config_file_path
@@ -14,37 +11,62 @@ class Configuration():
             self.conf.read(config_file_path)
             # # print('conf: ',  self.conf.sections())
         except Exception as e:
-            # 文件不存在或者读取失败
             print(str(e))
 
     def write_file(self):
+        """
+        :return:
+        """
         self.conf.write(open(self.config_file_path, 'r+'))
 
     def get_version(self):
+        """
+        :return:
+        """
         return self.conf.get('Version', 'version')
 
     def get_build(self):
+        """
+        Get build info
+        :return:
+        """
         return self.conf.get('Version', 'build')
 
     def get_database_name(self, database_section='DB'):
-
+        """
+        Get DB Config
+        :param database_section
+        :return:
+        """
         if self.conf.has_section(database_section):
             return self.conf.get(database_section, 'name')
         return None
 
     def get_option(self, section, option):
-
+        """
+        Get config options
+        :param section:
+        :param option:
+        :return:
+        """
         return self.conf.get(section, option)
 
     def set_option(self, section, option, value):
-
-        # 修改选项
+        """
+        Set config options
+        :param section
+        :param option
+        :param value
+        :return:
+        """
         self.conf.set(section, option, value)
-        # 保存修改
         self.write_file()
 
     def get_database_configuration(self, database_section):
-
+        """
+        :param database_section
+        :return:
+        """
         return {
             'name': self.conf.get(database_section, 'name'),
             'type':self.conf.get(database_section, 'type'),
@@ -55,6 +77,10 @@ class Configuration():
         }
 
     def get_start_config(self, section='IPCONFIG'):
+        """
+        :param role_section:
+        :return:
+        """
 
         host = self.conf.get(section, 'host')
         port = self.conf.get(section, 'port')
@@ -98,10 +124,11 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
 
-    DEFAULT_BUCEKT = 'torro_landing_bucket_dev_v2'
-    DEFAULT_PROJECT = 'geometric-ocean-333410'
+    FRONTEND_URL = 'http://35.220.239.54:9000'
+    DEFAULT_BUCEKT = 'torro_landing_bucket_dev_337903'
+    DEFAULT_PROJECT = 'ninth-iris-337903'
     DEFAULT_REGION = 'asia-east2'
-    DEFAULT_SA = '580079130038-compute@developer.gserviceaccount.com'
+    DEFAULT_SA = '848522805991-compute@developer.gserviceaccount.com'
     BUCEKT_CMKE = None
     pass
 
@@ -109,6 +136,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = False
 
+    FRONTEND_URL = 'http://34.92.243.193:9000'
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_testing'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'
@@ -120,6 +148,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
+    FRONTEND_URL = 'http://34.92.243.193:9000'
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'

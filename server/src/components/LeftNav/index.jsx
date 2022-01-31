@@ -15,25 +15,26 @@ import Terminal from "@assets/icons/Terminal";
 import { getFormList } from "@lib/api";
 import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
-import { GOVERNOR, IT } from "src/lib/data/roleType.js";
+import { GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
 import { SUCCESS } from "src/lib/data/callStatus";
+import { sendNotify } from "src/utils/systerm-error";
 
 const ROOT = "/app";
+const wsCreate = {
+  id: "wsCreate",
+  title: <Intl id="createWs" />,
+  link: `${ROOT}/WorkspaceCreation`,
+};
 const wsItemList = [
-  {
-    id: "createUc",
-    title: <Intl id="createUc" />,
-    link: `${ROOT}/forms?id=2`,
-  },
   {
     id: "wsMan",
     title: <Intl id="wsMan" />,
     link: `${ROOT}/WorkspaceManage`,
   },
   {
-    id: "wsCreate",
-    title: <Intl id="createWs" />,
-    link: `${ROOT}/WorkspaceCreation`,
+    id: "createUc",
+    title: <Intl id="createUc" />,
+    link: `${ROOT}/forms?id=2`,
   },
   {
     id: "policyMan",
@@ -76,7 +77,7 @@ const LeftNav = ({ open, closeHandle }) => {
 
   const navList = useMemo(() => {
     switch (authContext.role) {
-      case GOVERNOR:
+      case ADMIN:
         return [
           {
             link: `${ROOT}/dashboard`,
@@ -88,7 +89,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "wsManagement",
             leftPanel: true,
             icon: RaiseTicket,
-            list: wsItemList,
+            list: [wsCreate].concat(wsItemList),
           },
           {
             link: `${ROOT}/formManagement`,
@@ -145,6 +146,38 @@ const LeftNav = ({ open, closeHandle }) => {
             icon: Terminal,
           },
         ];
+      case GOVERNOR:
+        return [
+          {
+            link: `${ROOT}/dashboard`,
+            id: "dashboard",
+            icon: Dashboard,
+          },
+          {
+            link: "",
+            id: "wsManagement",
+            leftPanel: true,
+            icon: RaiseTicket,
+            list: wsItemList,
+          },
+          {
+            link: `${ROOT}/formManagement`,
+            id: "formManagement",
+            icon: FormManagement,
+          },
+          {
+            link: "",
+            id: "raiseTicket",
+            leftPanel: true,
+            icon: RaiseTicket,
+            list: formList || [],
+          },
+          {
+            link: `${ROOT}/workflowManagement`,
+            id: "workflowManagement",
+            icon: WorkflowManagement,
+          },
+        ];
       default:
         return [
           {
@@ -164,11 +197,19 @@ const LeftNav = ({ open, closeHandle }) => {
   }, [authContext.role, formList]);
 
   useEffect(() => {
-    getFormList().then((res) => {
-      if (res && res.code === SUCCESS) {
-        setFormContext(res.data);
-      }
-    });
+    getFormList()
+      .then((res) => {
+        if (res && res.code === SUCCESS) {
+          setFormContext(res.data);
+        }
+      })
+      .catch((e) => {
+        sendNotify({
+          msg: e.message,
+          status: 3,
+          show: true,
+        });
+      });
 
     /* eslint-disable */
   }, []);

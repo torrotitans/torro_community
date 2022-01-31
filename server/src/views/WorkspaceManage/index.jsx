@@ -27,7 +27,6 @@ import CallModal from "@basics/CallModal";
 import Loading from "@assets/icons/Loading";
 import WorkspaceForm from "@comp/WorkspaceForm";
 import {
-  getWsList,
   wsDelete,
   deleteFormRequest,
   getUseCaseList,
@@ -281,37 +280,17 @@ const WorkspaceManage = () => {
 
   useEffect(() => {
     if (step === 0) {
-      Promise.all([
-        getWsList(),
-        getUseCaseList(),
-        getWsDetail({ id: authContext.wsId }),
-      ])
+      Promise.all([getUseCaseList(), getWsDetail({ id: authContext.wsId })])
         .then((res) => {
           let res1 = res[0];
           let res2 = res[1];
-          let res3 = res[2];
-
-          if (res1.data && res2.data && res3.data) {
-            let ws_uc_map = {};
-            res2.data.forEach((item) => {
-              if (ws_uc_map[item.workspace_id]) {
-                ws_uc_map[item.workspace_id].push(item);
-              } else {
-                ws_uc_map[item.workspace_id] = [item];
-              }
-            });
-            let tmpList = res1.data.map((item) => {
-              return {
-                ...item,
-                ucList: ws_uc_map[item.id] || [],
-              };
-            });
-            let tmpData = tmpList.filter(
-              (item) => item.id === authContext.wsId
-            )[0];
+          if (res1.data && res2.data) {
+            let ucList = res1.data.map(
+              (item) => item.workspace_id === authContext.wsId
+            );
             setWsData({
-              ...res3.data,
-              ...tmpData,
+              ...res2.data,
+              ucList: ucList,
             });
             setFormLoading(false);
           }
@@ -363,9 +342,7 @@ const WorkspaceManage = () => {
                           <Intl id="workspaceName" />
                         </Text>
                       </div>
-                      <div className={styles.detailValue}>
-                        {wsData.workspace_name}
-                      </div>
+                      <div className={styles.detailValue}>{wsData.ws_name}</div>
                     </div>
                     <div className={styles.detailItem}>
                       <div className={styles.detailLabel}>

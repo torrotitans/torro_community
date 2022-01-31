@@ -33,8 +33,14 @@ class DbWorkspaceMgr(DbBase):
             group_dict = workspace_info['group_dict']
             group_label = workspace_info['group_label']
             workspace_name = workspace_info['workspace_name']
-            it_approval = bool(workspace_info['it_approval'])
-            head_approval = bool(workspace_info['head_approval'])
+            if workspace_info['it_approval'] == '':
+                it_approval = False
+            else:
+                it_approval = True
+            if workspace_info['head_approval'] == '':
+                head_approval = False
+            else:
+                head_approval = True
             cycle = workspace_info['cycle']
             regions = workspace_info['regions']
             system = workspace_info['system']
@@ -62,8 +68,8 @@ class DbWorkspaceMgr(DbBase):
             # insert group info
             ad_group_fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
             for ad_group_name in group_dict:
-                role_list = group_dict[ad_group_name]
-                label_list = group_label[ad_group_name]
+                role_list = list(group_dict[ad_group_name])
+                label_list = list(group_label[ad_group_name])
                 select_condition = "GROUP_MAIL='%s' " % ad_group_name
                 select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
                 ad_group_info = self.execute_fetch_one(conn, select_table_sql)
@@ -86,7 +92,7 @@ class DbWorkspaceMgr(DbBase):
             # insert system fields
             system_id_dict = {}
 
-            condition = "id=%s and workspace_id=%s" % ('1', workspace_id)
+            condition = "id=%s and workspace_id='%s'" % ('1', workspace_id)
             sql = self.create_select_sql(db_name, 'fieldTable', '*', condition)
             region_country_info = self.execute_fetch_one(conn, sql)
             if len(region_country_info) == 0:
@@ -154,7 +160,7 @@ class DbWorkspaceMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
 
-            condition = "workspace_id=%s" % id
+            condition = "workspace_id='%s'" % id
             delete_table_sql = self.create_delete_sql(db_name, "fieldTable", condition)
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
@@ -169,7 +175,7 @@ class DbWorkspaceMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
 
-            condition = "WORKSPACE_ID=%s" % id
+            condition = "WORKSPACE_ID='%s'" % id
             # select_table_sql = self.create_select_sql(db_name, "workspace_to_adgroupTable", '*', condition)
             # wp_ad_info = self.delete_exec(conn, select_table_sql)
             # for wp_ad in wp_ad_info:
@@ -195,28 +201,35 @@ class DbWorkspaceMgr(DbBase):
             workspace_info = {}
             workspace_name = workspace['ws_name']
             workspace_info['des'] = workspace['ws_des']
-            workspace_info['it_approval'], workspace_info['head_approval'] = workspace['approval'].split(',')
+            approval_item = workspace['approval'].split(',')
+            workspace_info['head_approval'] = ''
+            workspace_info['it_approval'] = ''
+            for item_info in approval_item:
+                if 'Head' in item_info:
+                    workspace_info['head_approval'] = item_info
+                if 'IT' in item_info:
+                    workspace_info['it_approval'] = item_info
             workspace_info['cycle'] = workspace['cycle']
             workspace_info['group_dict'] = {}
             workspace_info['group_label'] = {}
             group_mapping = [
-                (workspace['ws_team_group'], 'admin', 'ws_team_group'),
+                (workspace['ws_team_group'], 'USER', 'ws_team_group'),
                 (workspace['dg_group'], 'GOVERNOR', 'dg_group'),
                 (workspace['it_group'], 'IT', 'it_group'),
-                (workspace['ws_head_group'], 'visitor', 'ws_head_group'),
+                (workspace['ws_head_group'], 'GOVERNOR', 'ws_head_group'),
             ]
             for group_item in group_mapping:
                 ad_group = group_item[0]
                 role = group_item[1]
                 label = group_item[2]
                 if ad_group not in workspace_info['group_dict']:
-                    workspace_info['group_dict'][ad_group] = [role]
+                    workspace_info['group_dict'][ad_group] = set([role])
                 else:
-                    workspace_info['group_dict'][ad_group].append(role)
+                    workspace_info['group_dict'][ad_group].add(role)
                 if ad_group not in workspace_info['group_label']:
-                    workspace_info['group_label'][ad_group] = [label]
+                    workspace_info['group_label'][ad_group] = set([label])
                 else:
-                    workspace_info['group_label'][ad_group].append(label)
+                    workspace_info['group_label'][ad_group].add(label)
             # workspace_info['group_dict'] = {workspace['ws_team_group']: ['admin'],
             #                                 workspace['dg_group']: ['GOVERNOR'],
             #                                 workspace['it_group']: ['IT'],
@@ -353,23 +366,23 @@ class DbWorkspaceMgr(DbBase):
             workspace_info['group_dict'] = {}
             workspace_info['group_label'] = {}
             group_mapping = [
-                (workspace['ws_team_group'], 'admin', 'ws_team_group'),
+                (workspace['ws_team_group'], 'USER', 'ws_team_group'),
                 (workspace['dg_group'], 'GOVERNOR', 'dg_group'),
                 (workspace['it_group'], 'IT', 'it_group'),
-                (workspace['ws_head_group'], 'visitor', 'ws_head_group'),
+                (workspace['ws_head_group'], 'GOVERNOR', 'ws_head_group'),
             ]
             for group_item in group_mapping:
                 ad_group = group_item[0]
                 role = group_item[1]
                 label = group_item[2]
                 if ad_group not in workspace_info['group_dict']:
-                    workspace_info['group_dict'][ad_group] = [role]
+                    workspace_info['group_dict'][ad_group] = set([role])
                 else:
-                    workspace_info['group_dict'][ad_group].append(role)
+                    workspace_info['group_dict'][ad_group].add(role)
                 if ad_group not in workspace_info['group_label']:
-                    workspace_info['group_label'][ad_group] = [label]
+                    workspace_info['group_label'][ad_group] = set([label])
                 else:
-                    workspace_info['group_label'][ad_group].append(label)
+                    workspace_info['group_label'][ad_group].add(label)
             # workspace_info['group_dict'] = {workspace['ws_team_group']: ['admin'],
             #                                 workspace['dg_group']: ['GOVERNOR'],
             #                                 workspace['it_group']: ['IT'],
@@ -440,15 +453,14 @@ class DbWorkspaceMgr(DbBase):
             return_info['cycle'] = workspace_info['RECERTIFICATION_CYCLE']
             IT_APPROVAL = workspace_info['IT_APPROVAL']
             HEAD_APPROVAL = workspace_info['HEAD_APPROVAL']
+            approval_item = []
             if int(IT_APPROVAL) == 1:
-                IT_APPROVAL = 'true'
-            else:
-                IT_APPROVAL = 'false'
+                IT_APPROVAL = 'Need workspace IT approval'
+                approval_item.append(IT_APPROVAL)
             if int(HEAD_APPROVAL) == 1:
-                HEAD_APPROVAL = 'true'
-            else:
-                HEAD_APPROVAL = 'false'
-            return_info['approval'] = '{},{}'.format(IT_APPROVAL, HEAD_APPROVAL)
+                HEAD_APPROVAL = 'Need workspace Head approval'
+                approval_item.append(HEAD_APPROVAL)
+            return_info['approval'] = ','.join(approval_item)
             return_info['regions'] = json.loads(workspace_info['REGOINS'])
             # db_name = configuration.get_database_name()
             # print(return_info)
@@ -497,12 +509,12 @@ class DbWorkspaceMgr(DbBase):
         try:
             data = workspace_mgr.get_workspace_info_by_id(workspace_id)
             if data['code'] != 200:
-                data = response_code.UPDATE_DATA_FAIL
-                data['msg'] = 'the workspace does not exists, update failed'
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'the workspace does not exists, get data failed'
                 return data
 
             db_name = configuration.get_database_name()
-            sql = self.create_select_sql(db_name, 'taxonomyTable', '*', condition='workspace_id=%s' % workspace_id)
+            sql = self.create_select_sql(db_name, 'taxonomyTable', '*', condition='workspace_id="%s"' % workspace_id)
             # print('taxonomyTable sql:', sql)
             taxonomy_infos = self.execute_fetch_all(conn, sql)
             taxonomy_dict = {}
@@ -648,14 +660,14 @@ class DbWorkspaceMgr(DbBase):
             data = workspace_mgr.get_workspace_info_by_id(workspace_id)
             if data['code'] != 200:
                 data = response_code.UPDATE_DATA_FAIL
-                data['msg'] = 'the workspace does not exists, update failed'
+                data['msg'] = 'the workspace does not exists, get tag template failed'
                 return data
 
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'tagTemplatesTable',
                                          'input_form_id,display_name,workspace_id,tag_template_id,description,project_id,location,'
                                          'tag_template_form_id,creator_id,create_time',
-                                         condition='workspace_id=%s or workspace_id=0' % workspace_id)
+                                         condition='workspace_id="%s" or workspace_id=0' % workspace_id)
             # print('taxonomyTable sql:', sql)
             taxonomy_infos = self.execute_fetch_all(conn, sql)
 

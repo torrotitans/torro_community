@@ -19,7 +19,8 @@ from common.common_request_process import req
 from db.workspace.db_workspace_parameter import workspaceApiPara
 from utils.auth_helper import Auth
 from api.login.interface_login import interfaceLogin
-
+import os
+config_name = os.getenv('FLASK_CONFIG') or 'default'
 class interfaceWorkspaceSetting(Resource):
 
     @login_required
@@ -96,11 +97,12 @@ class interfaceWorkspaceSetting(Resource):
                     resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
                     resp.headers['Access-Control-Allow-Credentials'] = 'true'
                     resp.headers['Access-Control-Allow-Methods'] = "GET,POST,PUT,DELETE,OPTIONS"
-                    # resp.set_cookie("token", new_token)
-                    # resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-                    # resp.set_cookie("Secure", samesite=None, secure=None)
-
-                    resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                    if config_name == 'production':
+                        resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                    else:
+                        resp.set_cookie("token", new_token)
+                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                        resp.set_cookie("Secure", samesite=None, secure=None)
                     return resp
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, workspaceApiPara.setWorkspace_POST_response)
@@ -180,11 +182,12 @@ class interfaceWorkspaceSetting(Resource):
                     resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
                     resp.headers['Access-Control-Allow-Credentials'] = 'true'
                     resp.headers['Access-Control-Allow-Methods'] = "GET,POST,PUT,DELETE,OPTIONS"
-                    # resp.set_cookie("token", new_token)
-                    # resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-                    # resp.set_cookie("Secure", samesite=None, secure=None)
-
-                    resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                    if config_name == 'production':
+                        resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                    else:
+                        resp.set_cookie("token", new_token)
+                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                        resp.set_cookie("Secure", samesite=None, secure=None)
                     return resp
 
                 response_data = data['data']

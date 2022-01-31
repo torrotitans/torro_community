@@ -18,6 +18,10 @@ from utils.status_code import response_code
 from config import configuration
 import traceback
 import json
+import os
+from config import config
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
 
 class DbOrgMgr(DbBase):
     """
@@ -58,25 +62,44 @@ class DbOrgMgr(DbBase):
             port = ldap_info['port']
             cer_path = ldap_info['cer_path']
             use_sll = ldap_info['use_sll']
-            admin = ldap_info['admin']
+            admin = ldap_info['admin_dn']
             admin_pwd = ldap_info['admin_pwd']
+
+            user_search_base = ldap_info['user_search_base']
+            user_search_filter = ldap_info['user_search_filter']
+            display_name_attribute = ldap_info['display_name_attribute']
+            email_address_attribute = ldap_info['email_address_attribute']
+            adgroup_attribute = ldap_info['adgroup_attribute']
+
+            group_search_base = ldap_info['group_search_base']
+            group_search_filter = ldap_info['group_search_filter']
+            group_member_attribute = ldap_info['group_member_attribute']
+            email_suffix = ldap_info['email_suffix']
+
             create_time = ldap_info['create_time']
             time_modify = ldap_info['time_modify']
-            search_base = ldap_info['search_base']
+
+
             db_name = configuration.get_database_name()
 
             # insert form
-            fields = ('HOST', 'PORT', 'CER_PATH', 'USE_SLL', 'ADMIN', 'ADMIN_PWD', 'CREATE_TIME', 'TIME_MODIFY', 'SEARCH_BASE')
-            values = (host, port, cer_path, use_sll, admin, admin_pwd, create_time, time_modify, search_base)
+            fields = ('HOST', 'PORT', 'CER_PATH', 'USE_SLL', 'ADMIN_DN', 'ADMIN_PWD',
+                      'USER_SEARCH_BASE', 'USER_SERACH_FILTER', 'DISPLAY_NAME_LDAP_ATTRIBUTE', 'EMAIL_ADDRESS_LDAP_ATTRIBUTE', 'USER_ADGROUP_ATTRIBUTE',
+                      'GROUP_SEARCH_BASE', 'GROUP_SERACH_FILTER', 'GROUP_MEMBER_ATTRIBUTE', 'GROUP_EMAIL_SUFFIX',
+                      'CREATE_TIME', 'TIME_MODIFY')
+            values = (host, port, cer_path, use_sll, admin, admin_pwd,
+                      user_search_base, user_search_filter, display_name_attribute, email_address_attribute, adgroup_attribute,
+                      group_search_base, group_search_filter, group_member_attribute, email_suffix,
+                      create_time, time_modify)
             sql = self.create_insert_sql(db_name, 'ldapTable', '({})'.format(', '.join(fields)), values)
-            # print('ldapTable sql:', sql)
+            print('ldapTable sql:', sql)
             ldap_id = self.insert_exec(conn, sql, return_insert_id=True)
             ldap_info['id'] = ldap_id
             data = response_code.SUCCESS
             data['data'] = ldap_info
             return data
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -110,8 +133,8 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
 
             # insert org
-            fields = ('ORG_NAME', 'CREATE_TIME', 'DES')
-            values = (org_name, create_time, des)
+            fields = ('ORG_NAME', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
+            values = (org_name, create_time, des, Config.DEFAULT_PROJECT)
             sql = self.create_insert_sql(db_name, 'orgTable', '({})'.format(', '.join(fields)), values)
             # print('orgTable sql:', sql)
             org_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -130,7 +153,7 @@ class DbOrgMgr(DbBase):
                 admin_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
-            values = (org_id, admin_group_id, json.dumps(['GOVERNOR', 'IT']))
+            values = (org_id, admin_group_id, json.dumps(['admin']))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
             # print('admin org_to_adgroupTable sql:', sql)
             self.insert_exec(conn, sql, return_insert_id=True)
@@ -149,7 +172,7 @@ class DbOrgMgr(DbBase):
                 visitor_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
-            values = (org_id, visitor_group_id, json.dumps(['USER']))
+            values = (org_id, visitor_group_id, json.dumps(['viewer']))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
             # print('visitor org_to_adgroupTable sql:', sql)
             self.insert_exec(conn, sql, return_insert_id=True)
@@ -226,9 +249,20 @@ class DbOrgMgr(DbBase):
             ldap_info['port'] = org['port']
             ldap_info['cer_path'] = org['cer_path']
             ldap_info['use_sll'] = org['use_sll']
-            ldap_info['admin'] = org['admin']
+            ldap_info['admin_dn'] = org['admin_dn']
             ldap_info['admin_pwd'] = org['admin_pwd']
-            ldap_info['search_base'] = org['search_base']
+
+            ldap_info['user_search_base'] = org['user_search_base']
+            ldap_info['user_search_filter'] = org['user_search_filter']
+            ldap_info['display_name_attribute'] = org['display_name_attribute']
+            ldap_info['email_address_attribute'] = org['email_address_attribute']
+            ldap_info['adgroup_attribute'] = org['adgroup_attribute']
+
+            ldap_info['group_search_base'] = org['group_search_base']
+            ldap_info['group_search_filter'] = org['group_search_filter']
+            ldap_info['group_member_attribute'] = org['group_member_attribute']
+            ldap_info['email_suffix'] = org['email_suffix']
+
             ldap_info['create_time'] = create_time
             ldap_info['time_modify'] = create_time
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
@@ -254,7 +288,7 @@ class DbOrgMgr(DbBase):
             data['data'] = org
             return data
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -273,7 +307,7 @@ class DbOrgMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -351,9 +385,20 @@ class DbOrgMgr(DbBase):
             ldap_info['port'] = org['port']
             ldap_info['cer_path'] = org['cer_path']
             ldap_info['use_sll'] = org['use_sll']
-            ldap_info['admin'] = org['admin']
+            ldap_info['admin_dn'] = org['admin_dn']
             ldap_info['admin_pwd'] = org['admin_pwd']
-            ldap_info['search_base'] = org['search_base']
+
+            ldap_info['user_search_base'] = org['user_search_base']
+            ldap_info['user_search_filter'] = org['user_search_filter']
+            ldap_info['display_name_attribute'] = org['display_name_attribute']
+            ldap_info['email_address_attribute'] = org['email_address_attribute']
+            ldap_info['adgroup_attribute'] = org['adgroup_attribute']
+
+            ldap_info['group_search_base'] = org['group_search_base']
+            ldap_info['group_search_filter'] = org['group_search_filter']
+            ldap_info['group_member_attribute'] = org['group_member_attribute']
+            ldap_info['email_suffix'] = org['email_suffix']
+
             ldap_info['create_time'] = create_time
             ldap_info['time_modify'] = create_time
 
@@ -430,6 +475,24 @@ class DbOrgMgr(DbBase):
             ad_group_list = json.loads(user_info.get('GROUP_LIST', []))
             print('ad_group_list:', ad_group_list)
             return ad_group_list
+        except Exception as e:
+            lg.error(e)
+            return None, None
+        finally:
+            conn.close()
+
+    def get_user_cn(self, account_id):
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            # db_name2 = configuration.get_database_name('DB')
+            condition = 'ACCOUNT_ID="%s"' % (account_id)
+            user_fields = '*'
+            sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            user_info = self.execute_fetch_one(conn, sql)
+            account_cn = user_info.get('ACCOUNT_CN', None)
+            print('ACCOUNT_CN:', account_cn)
+            return account_cn
         except Exception as e:
             lg.error(e)
             return None, None

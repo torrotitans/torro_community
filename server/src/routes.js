@@ -69,11 +69,7 @@ const routes = (language, isLoggedIn, haveRole) => {
         { path: "404", element: <NotFoundView /> },
         {
           path: "/",
-          element: haveRole ? (
-            <Navigate to="./app/dashboard" />
-          ) : (
-            <Navigate to="./roleSelect" />
-          ),
+          element: <Navigate to="./app/dashboard" />,
         },
         { path: "*", element: <Navigate to="./404" /> },
       ],

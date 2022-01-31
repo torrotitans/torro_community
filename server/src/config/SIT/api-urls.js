@@ -1,7 +1,7 @@
 import { DELETE, GET, POST, PUT } from "@lib/data/api-types";
 
 /* eslint-disable no-undef */
-const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://34.92.243.193";
+const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://35.220.239.54";
 /* eslint-disable no-new */
 
 const config = {
@@ -145,7 +145,7 @@ const config = {
   },
 
   allStageGet: {
-    url: `http://34.92.243.193/api/getAllStages`,
+    url: `${BASE_API_URL}/api/getAllStages`,
     method: POST,
   },
 

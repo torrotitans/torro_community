@@ -258,7 +258,7 @@ class DbFormMgr(DbBase):
                     dynamic_field_id = dynamic_field_info['id']
                     # get dynamicFieldValue
                     if wp_id != 0:
-                        condition = "workspace_id=%s and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
+                        condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
                     else:
                         condition = "dynamic_field_id='%s'" % dynamic_field_id
                     sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
@@ -461,7 +461,7 @@ class DbFormMgr(DbBase):
                     sql = self.create_update_sql(db_name, 'workflowTable', column, values, condition)
                     _ = self.updete_exec(conn, sql)
                     # print('workflow sql:', sql)
-                    condition = 'form_id=%s and workspace_id=%s' % (form_id, workspace_id)
+                    condition = 'form_id=%s and workspace_id="%s"' % (form_id, workspace_id)
                     sql = self.create_select_sql(db_name, 'inputFormIndexTable', 'id', condition)
                     # print('inputFormIndexTable sql:', sql)
                     # 3.2disable all input form
@@ -583,17 +583,19 @@ class DbFormMgr(DbBase):
             }
         }
         templateTypeList = form_mgr.get_field_template(0, workspace_id)
-        # print('templateTypeList:', templateTypeList['data']['templateTypeList'][0]['fieldlist'])
+        print('templateTypeList:', templateTypeList['data']['templateTypeList'])
         for index, field_info in enumerate(templateTypeList['data']['templateTypeList'][0]['fieldlist']):
-            field_style = int(field_info['style'])
-            if field_style not in system:
-                system[field_style] = []
-            system[field_style].append(field_info)
+            if field_info:
+                field_style = int(field_info['style'])
+                if field_style not in system:
+                    system[field_style] = []
+                system[field_style].append(field_info)
         for index, field_info in enumerate(templateTypeList['data']['templateTypeList'][-1]['fieldlist']):
-            field_style = int(field_info['style'])
-            if field_style not in dynamic:
-                dynamic[field_style] = []
-            dynamic[field_style].append(field_info)
+            if field_info:
+                field_style = int(field_info['style'])
+                if field_style not in dynamic:
+                    dynamic[field_style] = []
+                dynamic[field_style].append(field_info)
         data = response_code.SUCCESS
         data['data'] = {'system': system, 'dynamic': dynamic, 'default': default}
         return data

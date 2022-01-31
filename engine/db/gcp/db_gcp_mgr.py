@@ -117,7 +117,7 @@ class DbGCPMgr(DbBase):
             # workspace_id | project_id | dataset_id | table_id
             # check if it is alreadys in torro
             if from_torro:
-                cond = "workspace_id=%s and project_id='%s' and dataset_id='%s' and table_id='%s'" % (workspace_id, project_id, dataset_id, table_id)
+                cond = "workspace_id='%s' and project_id='%s' and dataset_id='%s' and table_id='%s'" % (workspace_id, project_id, dataset_id, table_id)
                 sql = self.create_select_sql(db_name, 'dataOnboardTable', 'input_form_id', cond)
                 table_info = self.execute_fetch_one(conn, sql)
                 if not table_info:
@@ -145,7 +145,7 @@ class DbGCPMgr(DbBase):
                 tag_tempalte_header, tag_template_locations = tag_tempalte_header.split('/locations/')
                 tag_template_project = tag_tempalte_header.replace('projects/', '')
                 relations = [{"table_name": "formTable", "join_condition": "tagTemplatesTable.tag_template_form_id=formTable.id"}]
-                condition = 'tag_template_id="%s" and project_id="%s" and location="%s" and (tagTemplatesTable.workspace_id=%s or tagTemplatesTable.workspace_id=0)' % (tag_template_id, tag_template_project,tag_template_locations, workspace_id)
+                condition = 'tag_template_id="%s" and project_id="%s" and location="%s" and (tagTemplatesTable.workspace_id="%s" or tagTemplatesTable.workspace_id=0)' % (tag_template_id, tag_template_project,tag_template_locations, workspace_id)
                 sql = self.create_get_relation_sql(db_name, 'tagTemplatesTable', 'tag_template_form_id, fields_list', relations=relations, condition=condition)
                 print('tagTemplatesTable relation sql:', sql)
                 data = self.execute_fetch_one(conn, sql)

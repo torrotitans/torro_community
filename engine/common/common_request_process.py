@@ -44,8 +44,10 @@ class requestProcess(object):
             user_key = g.user_key
             # # print(user_key)
             workspace_id = g.workspace_id
+            if not isinstance(workspace_id, int):
+                workspace_id = 0
         except:
-            workspace_id = 362
+            workspace_id = 0
         return workspace_id
 
     def _xml_request(self, request, model_json=None):

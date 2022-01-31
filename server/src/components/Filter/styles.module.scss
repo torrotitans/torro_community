@@ -20,8 +20,16 @@
 
 .input {
   width: 100%;
+
+  svg {
+    margin: 0 $rbwmspace8;
+  }
 }
 
 .poppup {
   width: 22rem;
+}
+
+.filterIcon {
+  margin-left: $rbwmspace8;
 }

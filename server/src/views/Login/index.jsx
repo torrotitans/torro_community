@@ -55,23 +55,12 @@ const LoginPage = () => {
               userId: data.ID,
               accountId: data.ACCOUNT_ID,
               roleList: data.role_list,
-              role: "",
+              role: data.user_role,
               wsList: data.workspace_list,
-              wsId: data.workspace_id,
+              wsId: Number(data.workspace_id),
               ad_group_list: data.ad_group_list,
             };
-
-            if (data.role_list.length > 1) {
-              setAuth(tmpAuth);
-              navigate("/roleSelect", { replace: true });
-            } else {
-              tmpAuth = {
-                ...tmpAuth,
-                role: data.role_list[0],
-              };
-              setAuth(tmpAuth);
-              navigate("/", { replace: true });
-            }
+            setAuth(tmpAuth);
           }
         })
         .catch((e) => {

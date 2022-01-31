@@ -88,7 +88,7 @@ class DbUserMgr(DbBase):
             # db_name2 = configuration.get_database_name('DB')
             user_mail = ldap_usernames[0]
             user_display_name = ldap_usernames[1]
-            condition = 'ACCOUNT_CN="%s"' % user_mail
+            condition = 'ACCOUNT_CN="%s"' % cn_name
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(conn, sql)
@@ -181,14 +181,14 @@ class DbUserMgr(DbBase):
         utils_info = self.execute_fetch_one(conn, sql)
         if utils_info:
             utils_permissions = {}
-            utils_id = utils_info[table_id_field_name]
+            utils_id = str(utils_info[table_id_field_name])
             role_list = json.loads(utils_info['ROLE_LIST'])
             utils_permissions[utils_id] = {}
             for role_name in role_list:
                 condition = 'NAME="%s"' % role_name
                 role_fields = '*'
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
-                # # print('roleTable', sql)
+                print('roleTable sql', sql)
                 role_info = self.execute_fetch_one(conn, sql)
                 utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'])
             return set(role_list), utils_permissions
@@ -207,6 +207,7 @@ class DbUserMgr(DbBase):
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(conn, sql)
             user_info['permissions'] = {'usecase': {}, 'workspace': {}, 'org': {}}
+            org_admin = False
             role_set = set()
             workspace_id_set = set()
             # # print('user_info', user_info)
@@ -233,20 +234,18 @@ class DbUserMgr(DbBase):
                         continue
                     # print('adgroup:', ad_group)
                     ad_group_id = ad_group_info['ID']
-                    # get workspace id
-                    condition = 'AD_GROUP_ID="%s"' % ad_group_id
-                    workspace_id_field = 'WORKSPACE_ID'
-                    sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field, condition=condition)
-                    # # print('2222', sql)
-                    workspace_id_dict = self.execute_fetch_all(conn, sql)
-                    # # print('1111111', workspace_id_dict)
-                    workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
 
                     # get org permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID', db_name, conn)
+                    # if 'admin' in utils_role_set:
+                    #     role_set = set(['admin'])
+                    # else:
                     role_set = utils_role_set | role_set
+                    if 'admin' in role_set:
+                        org_admin = True
                     # print('org_to_adgroupTable:', permissions)
                     for item_id in permissions:
+                        item_id = str(item_id)
                         if item_id in user_info['permissions']['org']:
                             for role_name in permissions[item_id]:
                                 role_permissions = user_info['permissions']['org'][item_id].get(role_name, [])
@@ -254,23 +253,54 @@ class DbUserMgr(DbBase):
                                 user_info['permissions']['org'][item_id][role_name] = role_permissions
                         else:
                             user_info['permissions']['org'][item_id] = permissions[item_id]
-                    # get workspace permissions
-                    utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'workspace_to_adgroupTable', 'WORKSPACE_ID', db_name, conn)
-                    role_set = utils_role_set | role_set
-                    # print('workspace_to_adgroupTable:', permissions)
-                    for item_id in permissions:
-                        if item_id in user_info['permissions']['workspace']:
-                            for role_name in permissions[item_id]:
-                                role_permissions = user_info['permissions']['workspace'][item_id].get(role_name, [])
-                                role_permissions = list(set(role_permissions + permissions[item_id][role_name]))
-                                user_info['permissions']['workspace'][item_id][role_name] = role_permissions
-                        else:
-                            user_info['permissions']['workspace'][item_id] = permissions[item_id]
+                    if org_admin:
+                        # get workspace id
+                        condition = '1=1'
+                        workspace_id_field = 'WORKSPACE_ID'
+                        sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field,
+                                                     condition=condition)
+                        # # print('2222', sql)
+                        workspace_id_dict = self.execute_fetch_all(conn, sql)
+                        # # print('1111111', workspace_id_dict)
+                        workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
+
+                        # workspace permissions up to all
+                        # print('workspace_to_adgroupTable:', permissions)
+                        for item_id in workspace_id_set:
+                            item_id = str(item_id)
+                            if item_id not in user_info['permissions']['workspace']:
+                                user_info['permissions']['workspace'][item_id] = {'admin': ['*-*']}
+
+                    else:
+                        # get workspace id
+                        condition = 'AD_GROUP_ID="%s"' % ad_group_id
+                        workspace_id_field = 'WORKSPACE_ID'
+                        sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field, condition=condition)
+                        # # print('2222', sql)
+                        workspace_id_dict = self.execute_fetch_all(conn, sql)
+                        # # print('1111111', workspace_id_dict)
+                        workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
+
+                        # get workspace permissions
+                        print("fn:get_user_permissions id:{}, ad_group_id:{}".format(id,ad_group_id))
+                        utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'workspace_to_adgroupTable', 'WORKSPACE_ID', db_name, conn)
+                        # role_set = utils_role_set | role_set
+                        # print('workspace_to_adgroupTable:', permissions)
+                        for item_id in permissions:
+                            item_id = str(item_id)
+                            if item_id in user_info['permissions']['workspace']:
+                                for role_name in permissions[item_id]:
+                                    role_permissions = user_info['permissions']['workspace'][item_id].get(role_name, [])
+                                    role_permissions = list(set(role_permissions + permissions[item_id][role_name]))
+                                    user_info['permissions']['workspace'][item_id][role_name] = role_permissions
+                            else:
+                                user_info['permissions']['workspace'][item_id] = permissions[item_id]
                     # get usecase permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'usecase_to_adgroupTable', 'USECASE_ID', db_name, conn)
-                    role_set = utils_role_set | role_set
+                    # role_set = utils_role_set | role_set
                     # print('usecase_to_adgroupTable:', permissions)
                     for item_id in permissions:
+                        item_id = str(item_id)
                         if item_id in user_info['permissions']['usecase']:
                             for role_name in permissions[item_id]:
                                 role_permissions = user_info['permissions']['usecase'][item_id].get(role_name, [])
@@ -278,18 +308,12 @@ class DbUserMgr(DbBase):
                                 user_info['permissions']['usecase'][item_id][role_name] = role_permissions
                         else:
                             user_info['permissions']['usecase'][item_id] = permissions[item_id]
-                user_info['role_list'] = list(role_set)
                 # print('workspace_id_set:', workspace_id_set)
                 workspace_list = list(workspace_id_set)
-                # print('role_set:', role_set)
-                if len(role_set) == 1:
-                    user_info['user_role'] = user_info['role_list'][0]
-                else:
-                    user_info['user_role'] = ''
-                # print('workspace_list:', workspace_list)
+                print('workspace_list:', workspace_list)
                 if len(workspace_list) != 0:
                     user_info['workspace_list'] = []
-                    user_info['workspace_id'] = workspace_list[0]
+                    user_info['workspace_id'] = str(workspace_list[0])
                     condition = 'ID in (%s)' % ','.join([str(w) for w in workspace_list])
                     workspace_info_field = 'ID,WORKSPACE_NAME'
                     sql = self.create_select_sql(db_name, 'workspaceTable', workspace_info_field, condition=condition)
@@ -298,12 +322,37 @@ class DbUserMgr(DbBase):
                     for workspace in workspace_name_dict:
                         user_info['workspace_list'].append({'label': workspace['WORKSPACE_NAME'],
                                                             'value': workspace['ID']})
+                    workspace_id = str(user_info['workspace_id'])
+                    user_info['role_list'] = []
+                    user_info['user_role'] = ''
+                    if workspace_id in user_info['permissions']['workspace']:
+                        for role_name in user_info['permissions']['workspace'][workspace_id]:
+                            user_info['role_list'].append(role_name)
+                        if len(user_info['role_list']) == 0:
+                            user_info['user_role'] = ''
+                        elif len(user_info['role_list']) == 1:
+                            user_info['user_role'] = user_info['role_list'][0]
                 else:
                     # print('workspace sql: 1111')
-
                     user_info['workspace_id'] = ''
                     user_info['workspace_list'] = []
-                # print(" user_info['workspace_list']: ",  user_info['workspace_list'])
+                    user_info['role_list'] = []
+                    user_info['user_role'] = ''
+
+                # print('role_set:', role_set)
+                if org_admin:
+                    user_info['role_list'] = ['admin']
+                    user_info['user_role'] = 'admin'
+                # else:
+                #     if len(role_set) == 1:
+                #         user_info['user_role'] = user_info['role_list'][0]
+                #     else:
+                #         user_info['user_role'] = ''
+                #         # no need the viewer role
+                #         if 'viewer' in user_info['role_list']:
+                #             user_info['role_list'].remove('viewer')
+
+                print(" user_info['workspace_list']: ",  user_info['workspace_list'])
                 return user_info
             else:
                 return {}
@@ -450,17 +499,21 @@ class DbUserMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             # db_name2 = configuration.get_database_name('DB')
-            condition = 'ACCOUNT_CN="%s" and PASS_WORD="%s"' % (username, password)
+            condition = 'ACCOUNT_ID="%s" and PASS_WORD="%s"' % (username, password)
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(conn, sql)
-            ad_group_list = json.loads(user_info.get('GROUP_LIST', None))
+            if not user_info:
+                return None, (None, None)
+            ad_group_list = json.loads(user_info.get('GROUP_LIST', '[]'))
             ldap_username = user_info.get('ACCOUNT_NAME', None)
+            user_mail = user_info.get('ACCOUNT_ID', None)
 
-            return ad_group_list, ldap_username
+            return ad_group_list, (user_mail, ldap_username)
         except Exception as e:
-            lg.error(e)
-            return None, None
+            import traceback
+            lg.error(traceback.format_exc())
+            return None, (None, None)
         finally:
             conn.close()
 

@@ -2,7 +2,7 @@ export const setCookie = (name, value, time) => {
   var exp = new Date();
   exp.setTime(time || exp.getTime() + 60 * 60 * 1000);
   document.cookie =
-    name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+    name + "=" + escape(value) + ";expires=" + exp.toGMTString() + ";path=/";
 };
 
 export const getCookie = (name) => {

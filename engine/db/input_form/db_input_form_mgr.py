@@ -40,7 +40,7 @@ class DbInputFormMgr(DbBase):
             db_name = configuration.get_database_name()
             ad_group_set = set()
             ad_group_id_set = set()
-            condition = "WORKSPACE_ID=%s" % workspace_id
+            condition = "WORKSPACE_ID='%s'" % workspace_id
             select_table_sql = self.create_select_sql(db_name, "workspace_to_adgroupTable", 'LABEL_LIST,AD_GROUP_ID',
                                                       condition)
             # print('workspace_to_adgroupTable_sql:', select_table_sql)
@@ -902,7 +902,7 @@ class DbInputFormMgr(DbBase):
                 location = form_field_values_dict.get(status.system_form_field_id['data_access']['location'], '')
                 dataset_id = form_field_values_dict.get(status.system_form_field_id['data_access']['dataset_id'], '')
                 table_id = form_field_values_dict.get(status.system_form_field_id['data_access']['table_id'], '')
-            dy_condition = "workspace_id=%s and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (
+            dy_condition = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (
             workspace_id, project_id, location, dataset_id, table_id)
             sql = self.create_select_sql(db_name, 'dataOnboardTable',
                                          'input_form_id,data_owner',

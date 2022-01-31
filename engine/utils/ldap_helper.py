@@ -46,10 +46,10 @@ class Ldap():
         GROUP_MEMBER_ATTRIBUTE = ''
 
     @staticmethod
-    def __get_user(username, conn):
+    def __get_user(account_cn, conn):
         res = conn.search(
             search_base=Ldap.USER_SEARCH_BASE,
-            search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(username)),
+            search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
             search_scope=SUBTREE,
             attributes=['*'],
             paged_size=5
@@ -143,10 +143,11 @@ class Ldap():
         # # print('member_mails:', member_mails)
         return member_mails
     @staticmethod
-    def __login_with_user_pwd(username, password, servers):
+    def __login_with_user_pwd(account_cn, password, servers):
         # return True
         # print(username, password)
-        conn = Connection(servers, '{},{}'.format(Ldap.USER_SERACH_FILTER.format(username), Ldap.USER_SEARCH_BASE),
+        print('user cn:', '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE))
+        conn = Connection(servers, '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE),
                           password, check_names=True, lazy=False, raise_exceptions=True)
         conn.open()
         conn.bind()
@@ -158,7 +159,29 @@ class Ldap():
             return False
 
     @staticmethod
-    def ldap_auth(username, password):
+    def service_account_login(account_dn, password, host, port, use_sll=False):
+        pwd = prpcrypt.decrypt(password)
+        # print('ldap info:', Ldap.host, Ldap.use_sll, Ldap.port)
+        # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
+        try:
+
+            servers = Server(host, use_ssl=use_sll, get_info=ALL, port=port)
+            conn = Connection(servers, account_dn, pwd, check_names=True, lazy=False, raise_exceptions=True)
+            conn.open()
+            conn.bind()
+            if conn.result["description"] == "success":
+                # print("auth success:", conn.result)
+                return True
+            else:
+                # print("auth fail:", conn.result)
+                return False
+
+        except:
+            print(traceback.format_exc())
+            return False
+
+    @staticmethod
+    def ldap_auth(account_cn, password):
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # print('ldap info:', Ldap.host, Ldap.use_sll, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
@@ -169,23 +192,24 @@ class Ldap():
             conn.open()
             conn.bind()
             # username is cn name.
-            res = Ldap.__get_user(username, conn)
+            res = Ldap.__get_user(account_cn, conn)
             # ldap_server_pool = ServerPool(LDAP_SERVER_POOL)
             # conn = Connection(ldap_server_pool, user=ADMIN_DN, password=ADMIN_PASSWORD, check_names=True, lazy=False, raise_exceptions=False)
             # conn.open()
             # conn.bind()
             # exit(0)
-            # print('res ', res)
+            print('res ', account_cn, res)
             if res:
                 entry = conn.response[0]
-                # print('entry:', entry)
+                print('entry:', entry)
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
                 user_mail = attr_dict[Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE][0]
                 user_dispaly_name = attr_dict[Ldap.DISPLAY_NAME_LDAP_ATTRIBUTE][0]
                 # check password by dn, get displayname and email
-                login_flag = Ldap.__login_with_user_pwd(username, password, servers)
+                login_flag = Ldap.__login_with_user_pwd(account_cn, password, servers)
+                print('login_flag:', login_flag)
                 if login_flag:
                     ad_group_list = Ldap.__get_member_ad_group(entry, conn)
                     return ad_group_list, (user_mail, user_dispaly_name)
@@ -194,10 +218,11 @@ class Ldap():
             else:
                 return None, (None, None)
         except:
-            # print(traceback.format_exc())
+            print(traceback.format_exc())
             return None, (None, None)
     @staticmethod
-    def get_member_ad_group(username, offline_flag=0):
+    def get_member_ad_group(account_id, offline_flag=0):
+        account_cn = org_mgr.get_user_cn(account_id)
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
@@ -206,7 +231,7 @@ class Ldap():
                 conn = Connection(servers, Ldap.ADMIN_DN, pwd, check_names=True, lazy=False, raise_exceptions=True)
                 conn.open()
                 conn.bind()
-                res = Ldap.__get_user(username, conn)
+                res = Ldap.__get_user(account_cn, conn)
                 # print('conn.result:', conn.result)
                 # print('res ', res)
                 if res:
@@ -218,7 +243,7 @@ class Ldap():
                 else:
                     return []
             else:
-                ad_group_list = org_mgr.offline_ad_group(username)
+                ad_group_list = org_mgr.offline_ad_group(account_id)
                 return  ad_group_list
         except:
             # print(traceback.format_exc())

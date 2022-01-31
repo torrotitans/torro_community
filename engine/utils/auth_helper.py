@@ -1,13 +1,5 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
-"""
-@author：li-boss
-@file_name: auth_helper.py
-@create date: 2019-10-27 14:17 
-@blog https://leezhonglin.github.io
-@csdn https://blog.csdn.net/qq_33196814
-@file_description：
-"""
 import json
 import sys
 
@@ -41,6 +33,11 @@ class Auth(object):
         return Ldap.ldap_auth(username, password)
 
     @staticmethod
+    def service_account_login(account_dn, password, host, port, use_sll=True):
+
+        return Ldap.service_account_login(account_dn, password, host, port, use_sll)
+
+    @staticmethod
     def __encode_pwd(pwd):
         pwd = jwt.encode(
             pwd,
@@ -68,7 +65,7 @@ class Auth(object):
             ##aud: 接收者
             ##iat: 发行时间
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60*60*1000),
                 'iat': datetime.datetime.utcnow(),
                 'iss': 'ken',
                 'data': {
@@ -99,20 +96,20 @@ class Auth(object):
         """
         try:
             ###30分钟无访问token过期
-            payload = jwt.decode(auth_token, api.Config.SECRET_KEY, leeway=datetime.timedelta(seconds=30))
+            # payload = jwt.decode(auth_token, api.Config.SECRET_KEY, leeway=datetime.timedelta(seconds=60*60*1000))
             # # print("payload:", payload)
             # 取消过期时间验证
-            # payload = jwt.decode(auth_token, api.Config.SECRET_KEY, options={'verify_exp': False})
+            payload = jwt.decode(auth_token, api.Config.SECRET_KEY, options={'verify_exp': False})
             if ('data' in payload and 'user_key' in payload['data'] and 'permissions' in payload['data']):
                 return payload
             else:
                 raise jwt.InvalidTokenError
         except jwt.ExpiredSignatureError:
-            return 'Token过期'
+            return 'Token Expired'
         except jwt.InvalidTokenError:
-            return '无效Token'
+            return 'Invalid Token'
         except TypeError:
-            return '无效Token'
+            return 'Token Error'
         except:
             print(sys.exc_info()[1])
 
@@ -121,11 +118,11 @@ class Auth(object):
         try:
             user = user_mgr.get_user_by_name(username)
             user_base_data = user.get('data', None)
-            mail_host = "smtp.gmail.com"  # 设置服务器
+            mail_host = "smtp.gmail.com"  # Set Mail Server
 
-            mail_user = "torroai@gmail.com"  # 用户名
-            mail_pass = ""  # 口令
-            sender = 'torroai@gmail.com'
+            mail_user = "torroai@gmail.com"  # Set User Name
+            mail_pass = ""  # Password
+            sender = 'torroai@gmail.com' # Set Sender
 
             if user_base_data:
                 new_password = secret_key(username, 32)
@@ -144,11 +141,24 @@ class Auth(object):
     @classmethod
     def authenticate(cls, username, password, offline_flag):
         """
-        用户登录，登录成功返回token，写将登录时间写入数据库；登录失败返回失败原因
+        When user login, successful login will return the token, and the login time will be inserted into DB.
+        If login failed, return the login failure reason.
         :param password:
         :return: json
         """
         password = prpcrypt.decrypt(password)
+        # ldap:
+        if username == 'TorroAdmin':
+            user = user_mgr.get_user_by_name(username)
+            user_base_data = user.get('data')
+            if user_base_data and password == user_base_data['PASS_WORD']:
+                print('admin login')
+                data = response_code.SUCCESS
+                data['msg'] = '[ORG_SETTING]'
+                data['token'] = prpcrypt.encrypt('[SETTING]')
+                return data
+            else:
+                return response_code.LOGIN_FAIL
         if offline_flag == 1:
             ad_group_list, ldap_usernames = user_mgr.offline_login(username, password)
         else:
@@ -164,12 +174,6 @@ class Auth(object):
         if (user_base_data is None):
             return response_code.LOGIN_FAIL
         if user_base_data:
-            # ldap:
-            if username == 'TorroAdmin' and password == user_base_data['PASS_WORD']:
-                data = response_code.SUCCESS
-                data['msg'] = '[ORG_SETTING]'
-                data['token'] = prpcrypt.encrypt('[SETTING]')
-                return data
             # print('ad_group_list', ad_group_list)
             if not ad_group_list:
                 return response_code.LOGIN_IS_FAIL
@@ -182,7 +186,7 @@ class Auth(object):
             # 生成token
             token = cls.__encode_auth_token(cls, user_data.get('ID'), user_data.get('ACCOUNT_ID'), user_data.get('permissions'),
                                             user_data['role_list'], user_data['user_role'],
-                                            user_data['workspace_list'], user_data['workspace_id'],
+                                            user_data['workspace_list'], str(user_data['workspace_id']),
                                             login_time)
             # print('token', token)
             user_data['ad_group_list'] = user_data['GROUP_LIST']
@@ -197,7 +201,7 @@ class Auth(object):
 
     @staticmethod
     def __check_permission(user_role, permissions, request_id, api_endpoint, method):
-        # # print('permissions:', permissions)
+        # print('permissions:', permissions)
         api_permission = '{}-{}'.format(api_endpoint, method)
         all_method_permission = '*-{}'.format(method)
         all_endpoint_permission = '{}-*'.format(api_endpoint)
@@ -205,6 +209,7 @@ class Auth(object):
         permission_allow = 0
         print('user_role:', user_role)
         print('permissions:', permissions)
+        print('api_endpoint:', request_id, api_endpoint, method)
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
@@ -216,42 +221,91 @@ class Auth(object):
         return permission_allow
     @classmethod
     def refresh_token(cls, request, role_name, workspace_id, new_workspace_id_dict=None, remove_workspace_id_dict=None):
+        # workspace_item_list: all the worksapce
+        # role list: all the role list
+        # role_name: chosen role
+        # workspace_id: chosen workspace id
+        # workspace_list: the workspace list under chosen role
         login_time = int(time.time())
         auth_token = request.cookies.get('token')
         # # print('auth_token', auth_token)
         payload = cls.__decode_auth_token(cls, auth_token)
-        # print('payload:', payload)
-        role_list = payload['data']['role_list']
+        print('payload:', payload)
+        # role_list = payload['data']['role_list']
+        old_role = payload['data']['user_role']
+        old_workspace_id = payload['data']['workspace_id']
+        print('111workspace_id:', workspace_id)
+        # get default role&workspace
+        if workspace_id is None and role_name is None:
+            role_name = old_role
+            workspace_id = old_workspace_id
+        workspace_id = str(workspace_id)
+        # choose workspace id
         workspace_item_list = payload['data']['workspace_list']
+        # workspace_name_list = []
+        # print('-1workspace_item_list:', workspace_item_list)
+        workspace_permissions = payload['data']['permissions']['workspace']
+        # get all workspace id
+        # for item_id in workspace_permissions:
+        #     workspace_name_list.append(str(item_id))
+        # get workspace id
+        if workspace_id is None or workspace_id not in workspace_permissions:
+            if old_workspace_id:
+                workspace_id = old_workspace_id
+            else:
+                workspace_id = ''
+
+        print('workspace id:', workspace_id, workspace_permissions)
+        # # choose role
+        role_name_list = []
+        if workspace_id is not None and workspace_id in workspace_permissions:
+            print('11111111111111')
+            for wp_role_name in workspace_permissions[workspace_id]:
+                print('222222222222222')
+
+                role_name_list.append(wp_role_name)
+        print('role_name_list:', role_name_list, role_name)
+
+        # update workspace when add/delete workspace
+        # print('-0workspace_item_list:', workspace_item_list)
+
         if new_workspace_id_dict:
             workspace_item_list.append(new_workspace_id_dict)
-        workspace_list = []
         remove_workspace_index_list = []
         remove_workspace_list = []
         if remove_workspace_id_dict:
             for workspace in remove_workspace_id_dict:
                 remove_workspace_list.append(workspace['value'])
+        print('0workspace_item_list:', workspace_item_list)
         for index, workspace in enumerate(workspace_item_list):
-            if workspace['value'] not in remove_workspace_list:
-                workspace_list.append(workspace['value'])
-            else:
+            if workspace['value'] in remove_workspace_list:
                 remove_workspace_index_list.append(index)
+            # remove_workspace_index_list.append(index)
+        # print('remove_workspace_index_list:', remove_workspace_index_list)
+        # print('1workspace_item_list:', workspace_item_list)
         for i in range(len(remove_workspace_index_list) - 1, -1, -1):
+            # print('iiiii:', i)
             workspace_item_list.pop(remove_workspace_index_list[i])
+        # print('2workspace_item_list:', workspace_item_list)
+        # workspace_name_list = list(set(workspace_name_list))
+        # print(role_name, role_list)
+        # print(workspace_id, workspace_name_list)
+        # fix error role&workspace selection
+        if role_name is None or role_name not in role_name_list:
+            if len(role_name_list) == 1:
+                role_name = role_name_list[0]
+            else:
+                role_name = ''
+
 
         # print(role_name, role_list)
-        # print(workspace_id, workspace_list)
-        if role_name is None or role_name not in role_list:
-            role_name = payload['data']['user_role']
-        if workspace_id is None or workspace_id not in workspace_list:
-            workspace_id = workspace_list[0]
-        # print(role_name, role_list)
-        # print(workspace_id, workspace_list)
+        # print(workspace_id, workspace_name_list)
         token = cls.__encode_auth_token(cls, payload['data']['user_key'], payload['data']['account_id'], payload['data']['permissions'],
-                                        role_list, role_name,
+                                        role_name_list, role_name,
                                         workspace_item_list, workspace_id, login_time)
         # print('token:', token)
-        return token.decode(), role_name, role_list, workspace_id, workspace_list
+
+        return token.decode(), role_name, role_name_list, workspace_id, workspace_item_list
 
 
     @classmethod
@@ -288,12 +342,13 @@ class Auth(object):
 
                     api_endpoint = request.endpoint
                     method = request.method
-                    # # print('payload: ', payload)
+                    print('payload: ', payload, api_endpoint)
                     if (userInfo is None):
                         abort(401, 'user not found')
                     else:
                         # print('org permission:')
                         permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint, method)
+                        print('org permission_allow:', permission_allow)
                         if permission_allow == 0:
                             # print('workspace permission:')
                             permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id, api_endpoint, method)
@@ -303,15 +358,16 @@ class Auth(object):
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
+                        print('wp permission_allow:', permission_allow)
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:
                             data = response_code.TOKEN_ERROR
-                            data['msg'] = 'Your login status has expired. Please login again'
+                            data['msg'] = 'Permission denied.'
                             return data, None, None
                 else:
                     data = response_code.TOKEN_ERROR
-                    data['msg'] = 'Your login status has expired. Please login again'
+                    data['msg'] = 'Payload error'
                     return data, None, None
         else:
             data = response_code.TOKEN_ERROR

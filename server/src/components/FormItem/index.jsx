@@ -111,12 +111,9 @@ const FormItem = ({
 
   const defaultValue = useMemo(() => {
     let type = Number(data.style);
-    console.log();
     switch (type) {
       case 1:
-        return data.default
-          ? data.default
-          : data.options.map(() => "false").join(",");
+        return data.default ? data.default : "";
       case 5:
         return data.default ? data.default : "false";
       case 6:

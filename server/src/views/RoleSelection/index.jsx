@@ -1,5 +1,5 @@
 /* third lib*/
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
 
@@ -14,7 +14,6 @@ import { USER, GOVERNOR, IT } from "src/lib/data/roleType.js";
 import withAuthentication from "src/hoc/withAuthentication";
 import { updateLogin } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import { useMemo } from "react";
 
 const RoleSelection = () => {
   const { setAuth, authContext } = useGlobalContext();
@@ -27,7 +26,10 @@ const RoleSelection = () => {
         if (res.data) {
           setAuth({
             ...authContext,
-            role: role,
+            role: res.data.role_name,
+            roleList: res.data.role_list,
+            wsId: Number(res.data.workspace_id),
+            wsList: res.data.workspace_list,
           });
           navigate("/app/dashboard");
         }
@@ -50,6 +52,18 @@ const RoleSelection = () => {
       return [];
     }
   }, [authContext.roleList]);
+
+  const wsName = useMemo(() => {
+    let ws_name = "";
+    if (authContext.wsId && authContext?.wsList.length > 0) {
+      authContext.wsList.forEach((ws) => {
+        if (ws.value === authContext.wsId) {
+          ws_name = ws.label;
+        }
+      });
+    }
+    return ws_name;
+  }, [authContext]);
   /* temp logic end*/
 
   return (
@@ -58,6 +72,12 @@ const RoleSelection = () => {
       <div className={styles.messageBox}>
         <div className={styles.userName}>Hi, {authContext.userName}.</div>
         <div className={styles.message}>
+          {wsName && (
+            <span>
+              <Intl id="uAreIn" />
+              <span className={styles.wsName}>{wsName}</span>,
+            </span>
+          )}
           <Intl id="plsSelectRole" />
         </div>
       </div>

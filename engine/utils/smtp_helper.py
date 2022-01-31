@@ -38,10 +38,10 @@ class Smtp(object):
 
 def notify_approvers(input_form_id, approvers):
 
-    mail_host = "smtp.gmail.com"  # 设置服务器
-    mail_user = "q347962882@gmail.com"  # 用户名
-    mail_pass = "pngnwqqvnalovghv"  # 口令
-    sender = 'q347962882@gmail.com'
+    mail_host = "smtp.torro.ai"  # 设置服务器
+    mail_user = "torroAdmin@torro.ai"  # 用户名
+    mail_pass = "xxxxxxxxxx"  # 口令
+    sender = 'torroAdmin@torro.ai'
     smtp = Smtp(mail_host, mail_user, mail_pass)
     subject = 'Torro - You have an approval ticket.'
     text = 'the waiting for approval form id is: %s' % input_form_id

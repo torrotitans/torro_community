@@ -10,10 +10,10 @@
 }
 
 .messageBox {
-  width: 29.125rem;
+  width: 48rem;
   height: 5.625rem;
   position: absolute;
-  left: calc(50% - 14.6rem);
+  left: calc(50% - 24rem);
   top: 15.3125rem;
   text-align: center;
 }
@@ -27,6 +27,10 @@
   font-size: $fontSize3;
   line-height: 2.5rem;
   color: $color11;
+  margin-top: $rbwmspace20;
+}
+.wsName {
+  color: $main-purple;
 }
 
 .roleGroup {

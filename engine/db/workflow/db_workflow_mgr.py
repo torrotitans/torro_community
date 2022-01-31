@@ -265,7 +265,7 @@ class DbWorkflowMgr(DbBase):
             db_name = configuration.get_database_name()
             # get all workspace form
             sql = self.create_select_sql(db_name, 'formTable',
-                                         'id', condition='hide=0 and (workspace_id=%s or workspace_id=0)' % workspace_id)
+                                         'id', condition='hide=0 and (workspace_id="%s" or workspace_id=0)' % workspace_id)
             forms_info = self.execute_fetch_all(conn, sql)
             form_id_set = set()
             for form_info in forms_info:
