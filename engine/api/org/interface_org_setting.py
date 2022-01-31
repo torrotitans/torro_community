@@ -54,16 +54,16 @@ class interfaceOrgSetting(Resource):
                 request_data['cer_path'] = upload_path
             except:
                 pass
-            use_sll = request_data['use_sll']
-            # use_sll = False
-            # request_data['use_sll'] = False
+            use_ssl = request_data['use_ssl']
+            # use_ssl = False
+            # request_data['use_ssl'] = False
             account_dn = request_data['admin_dn']
             password = request_data['admin_pwd']
 
             host = request_data['host']
             port = request_data['port']
 
-            login_flag = Auth.service_account_login(account_dn, password, host, port, use_sll)
+            login_flag = Auth.service_account_login(account_dn, password, host, port, use_ssl)
             if not login_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'LDAP VERIFY FAILED.'

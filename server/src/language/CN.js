@@ -28,7 +28,7 @@ export default {
   setupDes: "请输入以下信息来创建您的项目。",
   host: "Host",
   port: "Port",
-  use_sll: "Use SLL",
+  use_ssl: "Use SSL",
   admin: "Admin",
   admin_pwd: "Admin password",
   cer_path: "Certification path",

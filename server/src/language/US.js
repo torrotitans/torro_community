@@ -169,7 +169,7 @@ export default {
   setupDes: "Please enter the following information to create your project.",
   host: "Host",
   port: "Port",
-  use_sll: "Use SLL",
+  use_ssl: "Use SSL",
   admin: "Admin",
   admin_pwd: "Admin password",
   cer_path: "Certification path",

@@ -18,7 +18,7 @@ import traceback
 
 class Auth(object):
     """
-    权限校验、token帮助类
+    Authorization and token support
     """
     # host = "23.101.10.96"
     # port = 636
@@ -33,9 +33,9 @@ class Auth(object):
         return Ldap.ldap_auth(username, password)
 
     @staticmethod
-    def service_account_login(account_dn, password, host, port, use_sll=True):
+    def service_account_login(account_dn, password, host, port, use_ssl=True):
 
-        return Ldap.service_account_login(account_dn, password, host, port, use_sll)
+        return Ldap.service_account_login(account_dn, password, host, port, use_ssl)
 
     @staticmethod
     def __encode_pwd(pwd):
@@ -53,7 +53,7 @@ class Auth(object):
 
     def __encode_auth_token(self, user_key, account_id, permissions, role_list, role, workspace_list, workspace_id, login_time):
         """
-        生成认证Token
+        Token Generation
         :param USER_KEY: int
         :param login_time: int(timestamp)
         :return: string
@@ -90,7 +90,7 @@ class Auth(object):
 
     def __decode_auth_token(self, auth_token):
         """
-        验证Token
+        Verify Token
         :param auth_token:
         :return: integer|string
         """
@@ -311,7 +311,7 @@ class Auth(object):
     @classmethod
     def identify(cls, request):
         """
-        用户鉴权
+        Identify User
         :return: list
         """
         auth_token = request.cookies.get('token')
