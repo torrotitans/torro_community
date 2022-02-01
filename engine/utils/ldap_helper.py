@@ -192,7 +192,8 @@ class Ldap():
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
 
-            servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
+            # servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
+            servers = Server(host, use_ssl=False, get_info=ALL, port=port) # Added tmp False until frontend has fixed the bug
             conn = Connection(servers, account_dn, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
             conn.bind()
