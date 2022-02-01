@@ -164,7 +164,7 @@ class Ldap():
         # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
-
+            print("FN:svc_acc_login:acc{}, pw{}, host{}, port{}, use_ssl{}".format(account_dn, password, host, port, use_ssl))
             servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
             conn = Connection(servers, account_dn, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
