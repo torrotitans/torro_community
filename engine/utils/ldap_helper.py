@@ -46,6 +46,33 @@ class Ldap():
         GROUP_MEMBER_ATTRIBUTE = ''
 
     @staticmethod
+    def __refresh_ldap():
+        ldap_info = org_mgr.get_ldap_info()
+        # # print('ldap_info', ldap_info)
+        if ldap_info['code'] == 200:
+            ldap_info = ldap_info['data']
+            Ldap.host = ldap_info['HOST']
+            Ldap.port = ldap_info['PORT']
+            if int(ldap_info['USE_SSL']) == 1:
+                Ldap.use_ssl = True
+            else:
+                Ldap.use_ssl = False
+            Ldap.ADMIN_DN = ldap_info['ADMIN_DN']
+            Ldap.ADMIN_PASSWORD = ldap_info['ADMIN_PWD']
+
+            Ldap.USER_SEARCH_BASE = ldap_info['USER_SEARCH_BASE']
+            Ldap.USER_SERACH_FILTER = ldap_info['USER_SERACH_FILTER']
+
+            Ldap.DISPLAY_NAME_LDAP_ATTRIBUTE = ldap_info['DISPLAY_NAME_LDAP_ATTRIBUTE']
+            Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE = ldap_info['EMAIL_ADDRESS_LDAP_ATTRIBUTE']
+            Ldap.USER_ADGROUP_ATTRIBUTE = ldap_info['USER_ADGROUP_ATTRIBUTE']
+
+            Ldap.GROUP_SEARCH_BASE = ldap_info['GROUP_SEARCH_BASE']
+            Ldap.GROUP_SERACH_FILTER = ldap_info['GROUP_SERACH_FILTER']
+            Ldap.GROUP_MEMBER_ATTRIBUTE = ldap_info['GROUP_MEMBER_ATTRIBUTE']
+            Ldap.GROUP_EMAIL_SUFFIX = ldap_info['GROUP_EMAIL_SUFFIX']
+
+    @staticmethod
     def __get_user(account_cn, conn):
         res = conn.search(
             search_base=Ldap.USER_SEARCH_BASE,
@@ -164,10 +191,8 @@ class Ldap():
         # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
-            print("FN:svc_acc_login:acc{}, pw{}, host{}, port{}, use_ssl{}".format(account_dn, password, host, port, use_ssl))
-            print("Check use_ssl{}".format(use_ssl==True))
-            # servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
-            servers = Server(host, use_ssl=False, get_info=ALL, port=port) # Tmp changed to false
+
+            servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
             conn = Connection(servers, account_dn, pwd, check_names=True, lazy=False, raise_exceptions=True)
             conn.open()
             conn.bind()
@@ -184,6 +209,8 @@ class Ldap():
 
     @staticmethod
     def ldap_auth(account_cn, password):
+
+        Ldap.__refresh_ldap()
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
@@ -224,6 +251,7 @@ class Ldap():
             return None, (None, None)
     @staticmethod
     def get_member_ad_group(account_id, offline_flag=0):
+        Ldap.__refresh_ldap()
         account_cn = org_mgr.get_user_cn(account_id)
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
@@ -253,6 +281,7 @@ class Ldap():
 
     @staticmethod
     def get_ad_group_member(ad_group_mail):
+        Ldap.__refresh_ldap()
         ad_group_name = ad_group_mail.replace(Ldap.GROUP_EMAIL_SUFFIX, '')
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
