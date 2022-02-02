@@ -45,9 +45,7 @@ const LoginPage = () => {
             navigate("/orgSetting", {
               replace: true,
             });
-          }
-
-          if (res.msg === "request successfully" && res.data) {
+          } else if (res.data && res.code === 200) {
             let data = res.data;
             let tmpAuth = {
               ...authContext,
