@@ -229,10 +229,10 @@ class Ldap():
             # conn.open()
             # conn.bind()
             # exit(0)
-            print('res ', account_cn, res)
+            print('FN:ldap_auth acc:{} ldap_return:{}'.format(account_cn, res))
             if res:
                 entry = conn.response[0]
-                print('entry:', entry)
+                print('FN:ldap_auth ldap_entry:', entry)
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
@@ -243,6 +243,7 @@ class Ldap():
                 print('login_flag:', login_flag)
                 if login_flag:
                     ad_group_list = Ldap.__get_member_ad_group(entry, conn)
+                    print('FN:ldap_auth ldap_ad_group_list:', ad_group_list)
                     return ad_group_list, (user_mail, user_dispaly_name)
                 else:
                     return None, (None, None)
