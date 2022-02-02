@@ -85,9 +85,9 @@ class DbUserMgr(DbBase):
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             user_info = self.execute_fetch_one(conn, sql)
-            # print('user_info:', user_info)
-            # print('ad_group_list: ', ad_group_list)
-            # print((user_info and ad_group_list), (user_info and ldap_username))
+            print('FN:get_user_by_name user_info:', user_info)
+            print('FN:get_user_by_name ad_group_list: ', ad_group_list)
+            print((user_info and ad_group_list), (user_info and ldap_username))
             # if exist, update ad_group_list
             user_id = None
             if user_info and ad_group_list:
@@ -96,7 +96,7 @@ class DbUserMgr(DbBase):
                 # values = (json.dumps(ad_group_list),)
                 # # update workflow
                 # sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
-                # # print('update_sql: ', sql)
+                # print('update_sql: ', sql)
                 # return_count = self.updete_exec(conn, sql)
                 # # print('return_count: ', return_count)
             if (not user_info) and user_mail:
@@ -110,29 +110,32 @@ class DbUserMgr(DbBase):
                 fields = list(user_info.keys())
                 values = tuple(user_info.values())
                 sql = self.create_insert_sql(db_name, 'userTable', '({})'.format(', '.join(fields)), values)
-                # print('userTable insert sql:', sql)
+                print('FN:get_user_by_name userTable_insert_sql:', sql)
                 user_id = self.insert_exec(conn, sql, return_insert_id=True)
                 user_info['ID'] = user_id
             # add ad_group
             if ad_group_list is not None and user_id is not None:
                 condition = 'USER_ID="%s"' % user_id
                 sql = self.create_delete_sql(db_name, 'user_to_adgroupTable', condition=condition)
-                # print('user_to_adgroupTable delete sql:', sql)
+                print('FN:get_user_by_name user_to_adgroupTable_delete_sql:', sql)
                 _ = self.execute_del_data(conn, sql)
                 ad_group_id_list = []
                 for ad_group in ad_group_list:
+                    print("FN:get_user_by_name getAdGroupById:",ad_group)
                     condition = 'GROUP_MAIL="%s"' % ad_group
                     ad_group_fields = '*'
                     # # print('131232sql', sql)
                     sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
+                    print("FN:get_user_by_name getAdGroupById_sql:",sql)
                     ad_group_info = self.execute_fetch_one(conn, sql)
                     if ad_group_info:
                         ad_group_id_list.append(ad_group_info['ID'])
                 for ad_group_id in ad_group_id_list:
+                    print("FN:get_user_by_name update_user_to_adgroup")
                     fields = ('USER_ID', 'AD_GROUP_ID')
                     values = (user_id, ad_group_id)
                     user_to_adgroup_insert_sql = self.create_insert_sql(db_name, 'user_to_adgroupTable', '({})'.format(', '.join(fields)), values)
-                    # print('user_to_adgroup_insert_sql:', user_to_adgroup_insert_sql)
+                    print('FN:get_user_by_name user_to_adgroup_insert_sql:', user_to_adgroup_insert_sql)
                     self.insert_exec(conn, user_to_adgroup_insert_sql, return_insert_id=True)
             data = response_code.SUCCESS
             data['data'] = user_info
