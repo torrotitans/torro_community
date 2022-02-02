@@ -114,7 +114,7 @@ class DbUserMgr(DbBase):
                 user_id = self.insert_exec(conn, sql, return_insert_id=True)
                 user_info['ID'] = user_id
             # add ad_group
-            if ad_group_list and user_id is not None:
+            if ad_group_list is not None and user_id is not None:
                 condition = 'USER_ID="%s"' % user_id
                 sql = self.create_delete_sql(db_name, 'user_to_adgroupTable', condition=condition)
                 # print('user_to_adgroupTable delete sql:', sql)
