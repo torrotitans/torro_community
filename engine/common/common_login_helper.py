@@ -10,7 +10,7 @@ def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         user_key, account_id, workspace_id = Auth.identify(request)
-        print('user_key:', user_key, account_id, workspace_id)
+        print('FN:Login_requred: func: 'func.__name__,' user_key: ', user_key, account_id, workspace_id)
         if user_key > 0:
             g.user_key = user_key
             g.account_id = account_id
