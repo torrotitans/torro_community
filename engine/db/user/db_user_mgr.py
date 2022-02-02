@@ -87,7 +87,7 @@ class DbUserMgr(DbBase):
             user_info = self.execute_fetch_one(conn, sql)
             print('FN:get_user_by_name user_info:', user_info)
             print('FN:get_user_by_name ad_group_list: ', ad_group_list)
-            print((user_info and ad_group_list), (user_info and ldap_username))
+            # print((user_info and ad_group_list), (user_info and ldap_username))
             # if exist, update ad_group_list
             user_id = None
             if user_info and ad_group_list:
