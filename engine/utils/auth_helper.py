@@ -163,13 +163,13 @@ class Auth(object):
             ad_group_list, ldap_usernames = user_mgr.offline_login(username, password)
         else:
             ad_group_list, ldap_usernames = Auth.ldap_auth(username, password)
-        print('ad_group_list, ldap_username:', ad_group_list, ldap_usernames)
+        print('FN:authenticate ad_group_list:{}, ldap_username:{}'.format(ad_group_list, ldap_usernames))
         if ldap_usernames[0] is not None:
             user = user_mgr.get_user_by_name(username, ldap_usernames, ad_group_list)
         else:
             user = user_mgr.get_user_by_name(username)
         user_base_data = user.get('data')
-        print('user_base_data: ', user_base_data, user)
+        print('FN:authenticate user_base_data:', user_base_data, user)
         # 判断是有这个用户
         if (user_base_data is None):
             return response_code.LOGIN_FAIL
