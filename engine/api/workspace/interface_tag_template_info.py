@@ -72,7 +72,7 @@ class interfaceTagTemplateList(Resource):
         """
         xml = request.args.get('format')
         print("FN:getTagTemplateList xml:{}".format(xml))
-        print("FN:getTagTemplateList global:{}".format(g))
+        print("FN:getTagTemplateList global:{}".format(g.user_key))
         try:
             try:
                 user_key = req.get_user_key()
