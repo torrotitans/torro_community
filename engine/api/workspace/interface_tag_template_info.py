@@ -70,6 +70,7 @@ class interfaceTagTemplateList(Resource):
         ```
         @@@
         """
+        print("FN:getTagTemplateList request:{}".format(request))
         xml = request.args.get('format')
         try:
             try:
@@ -93,6 +94,7 @@ class interfaceTagTemplateList(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
+            print("FN:getTagTemplateList error:{}".format(e))
             lg.error(e)
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)

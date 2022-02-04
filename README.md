@@ -63,7 +63,12 @@ bash init_torro.sh
 ### 2.1 Step by step installation for engine
 2.1.1. Install the OS yum packages:
 ```bash
-yum install -y mysql nginx python3-devel python3-setuptools gcc-c++ tmux wget coreutils openssl openssl-devel lsof nano nodejs
+yum install -y nginx python3-devel python3-setuptools gcc-c++ tmux wget coreutils openssl openssl-devel lsof nano nodejs
+
+wget https://repo.mysql.com//mysql80-community-release-el8-1.noarch.rpm
+rpm -ivh mysql80-community-release-el8-1.noarch.rpm
+
+yum install -y mysql-server
 systemctl enable mysqld.service
 systemctl start mysqld.service
 ```
