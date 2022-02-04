@@ -70,8 +70,8 @@ class interfaceTagTemplateList(Resource):
         ```
         @@@
         """
-        print("FN:getTagTemplateList req_args:{}".format(request.args))
         xml = request.args.get('format')
+        print("FN:getTagTemplateList req_args:{}".format(xml))
         try:
             try:
                 user_key = req.get_user_key()
