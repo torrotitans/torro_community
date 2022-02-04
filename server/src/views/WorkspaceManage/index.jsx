@@ -40,16 +40,9 @@ import { useGlobalContext } from "src/context";
 import FormRender from "@comp/FormRender";
 import FormItem from "@comp/FormItem";
 import UsecaseInfo from "@comp/UsecaseInfo";
+import { GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
 
 const USE_CASE_FORM_ID = 2;
-// const UC_FLOW_OPTIONS = [
-//   {
-//     label: "Need workspace IT approval",
-//   },
-//   {
-//     label: "Need workspace Head approval",
-//   },
-// ];
 
 const WorkspaceManage = () => {
   const { authContext } = useGlobalContext();
@@ -72,7 +65,7 @@ const WorkspaceManage = () => {
   });
 
   const disableEditWs = useMemo(() => {
-    return authContext.role !== "IT";
+    return ![ADMIN, GOVERNOR, IT].includes(authContext.role);
   }, [authContext.role]);
 
   const useCaseList = useMemo(() => {

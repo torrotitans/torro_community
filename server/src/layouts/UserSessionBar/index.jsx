@@ -1,10 +1,12 @@
 /* third lib*/
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { useNavigate } from "react-router-dom";
+import { FormattedMessage as Intl } from "react-intl";
 
 /* material-ui */
 import MenuIcon from "@material-ui/icons/Menu";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
@@ -20,10 +22,10 @@ import DoubleTriangle from "@assets/icons/DoubleTriangle";
 import LeftNav from "src/components/LeftNav";
 import Text from "@basics/Text";
 import Torro from "@assets/icons/Torrotext";
+import CallModal from "@basics/CallModal";
 import Select from "@basics/Select";
 import { sendNotify } from "src/utils/systerm-error";
 import { updateLogin } from "@lib/api";
-import { useEffect } from "react";
 
 const UserTag = ({ role }) => {
   const { setAuth, authContext } = useGlobalContext();
@@ -72,21 +74,28 @@ const UserSessionBar = () => {
     languageContext,
     setLanguage,
   } = useGlobalContext();
+
   const [notifyNum, setNotifyNum] = useState(1);
   const [openModel, setOpenModel] = useState(false);
-
   const [showNav, setShowNav] = useState(false);
 
-  const handleClose = () => {
-    setShowNav(false);
-  };
+  const [modalData, setModalData] = useState({
+    open: false,
+    status: 0,
+    content: "",
+  });
 
-  const notifyClickHandle = () => {
+  const handleClose = useCallback(() => {
+    setShowNav(false);
+  }, []);
+
+  const notifyClickHandle = useCallback(() => {
     setOpenModel(true);
-  };
-  const closeHandle = () => {
+  }, []);
+
+  const closeHandle = useCallback(() => {
     setOpenModel(false);
-  };
+  }, []);
 
   const isLogin = useMemo(() => {
     return authContext.userId && authContext.userId !== "null";
@@ -127,6 +136,29 @@ const UserSessionBar = () => {
     },
     [setAuth, authContext]
   );
+
+  const signOut = useCallback(() => {
+    setAuth({
+      userName: "",
+      userId: "",
+      accountId: "",
+      roleList: [],
+      role: "",
+      init: false,
+      wsList: [],
+      wsId: "",
+      ad_group_list: [],
+    });
+  }, [setAuth]);
+
+  const exitHandle = useCallback(() => {
+    setModalData({
+      open: true,
+      status: 1,
+      content: <Intl id="confirmLogout" />,
+      cb: signOut,
+    });
+  }, [signOut]);
 
   const haveWs = useMemo(() => {
     return authContext.wsList.length > 0 && authContext.wsId;
@@ -210,6 +242,12 @@ const UserSessionBar = () => {
                     <div className={styles.userName}>
                       <Text>{authContext.userName}</Text>
                     </div>
+                    <div className={styles.toolIcon} title="Exit">
+                      <ExitToAppIcon
+                        onClick={exitHandle}
+                        className={styles.svgIcon}
+                      />
+                    </div>
                   </>
                 )}
               </div>
@@ -218,6 +256,15 @@ const UserSessionBar = () => {
           <Model open={openModel} handleClose={closeHandle}>
             <div>11</div>
           </Model>
+          <CallModal
+            open={modalData.open}
+            content={modalData.content}
+            status={modalData.status}
+            handleClose={() => {
+              setModalData({ ...modalData, open: false });
+            }}
+            buttonClickHandle={modalData.cb}
+          />
         </div>
 
         {displayNav && <LeftNav open={showNav} closeHandle={handleClose} />}

@@ -47,6 +47,7 @@ export default {
   newRequestSubmit: "New Request is submitted.",
   selectedUc: "Select use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
+  confirmLogout: "Are you sure to exit the App?",
 
   // workspace
   wsCreate: "Create new worp",
