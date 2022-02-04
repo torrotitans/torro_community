@@ -70,7 +70,7 @@ class interfaceTagTemplateList(Resource):
         ```
         @@@
         """
-        print("FN:getTagTemplateList request:{}".format(request))
+        print("FN:getTagTemplateList req_args:{}".format(request.args))
         xml = request.args.get('format')
         try:
             try:
