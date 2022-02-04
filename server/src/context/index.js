@@ -6,20 +6,6 @@ const GlobalContext = createContext(globalData);
 const { Encrypt, Decrypt } = decode;
 
 const Identity = (() => {
-  // let Idata = {
-  //   userName: "TorroAdmin",
-  //   userId: "1",
-  //   accountId: "torroAdmin@torro.ai",
-  //   roleList: ["IT", "GOVERNOR", "USER"],
-  //   role: "IT",
-  //   init: false,
-  //   wsList: [
-  //     { label: "New workspace1", value: 361 },
-  //     { label: "Torro", value: 362 },
-  //   ],
-  //   wsId: 362,
-  //   ad_group_list: ["Engineer@torro.ai", "Torro@torro.ai"],
-  // };
   let Idata = {
     userName: "",
     userId: "",
