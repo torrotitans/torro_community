@@ -72,15 +72,15 @@ class interfaceTagTemplateList(Resource):
         """
         xml = request.args.get('format')
         print("FN:getTagTemplateList xml:{}".format(xml))
-        print("FN:getTagTemplateList global:{}".format(g.workspace_id))
+        
         try:
             try:
                 user_key = req.get_user_key()
                 account_id = req.get_user_account_id()
                 workspace_id = req.get_workspace_id()
-                # print('user id:', user_key)
-                # print('account_id:', account_id)
-                # print('workspace_id:', workspace_id)
+                print('FN:getTagTemplateList user_key:', user_key)
+                print('FN:getTagTemplateList account_id:', account_id)
+                print('FN:getTagTemplateList workspace_id:', workspace_id)
             except:
                 data = response_code.GET_DATA_FAIL
                 # print(traceback.format_exc())
