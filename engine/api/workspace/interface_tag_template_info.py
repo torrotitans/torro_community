@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*
 
 import traceback
-from flask import request
+from flask import request, g
 from flask_restful import Resource
 from core.workspace_singleton import workspace_singleton
 from utils.log_helper import lg
@@ -71,7 +71,8 @@ class interfaceTagTemplateList(Resource):
         @@@
         """
         xml = request.args.get('format')
-        print("FN:getTagTemplateList req_args:{}".format(xml))
+        print("FN:getTagTemplateList xml:{}".format(xml))
+        print("FN:getTagTemplateList global:{}".format(g))
         try:
             try:
                 user_key = req.get_user_key()
