@@ -194,7 +194,7 @@ class interfaceWorkspaceSetting(Resource):
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             # # print(traceback.format_exc())
-            error_data = response_code.ADD_DATA_FAIL
+            error_data = response_code.DELETE_DATA_FAIL
             return response_result_process(error_data, xml=xml)

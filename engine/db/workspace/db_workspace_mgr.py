@@ -19,7 +19,7 @@ class DbWorkspaceMgr(DbBase):
     用户相关数据库表操作类
     """
 
-    def __set_workspace(self, workspace_info, workspace_id=None):
+    def __set_workspace(self, workspace_info, workspace_id=None, update_flag=0):
 
         conn = MysqlConn()
         try:
@@ -155,6 +155,21 @@ class DbWorkspaceMgr(DbBase):
 
             condition = "workspace_id='%s'" % id
             delete_table_sql = self.create_delete_sql(db_name, "fieldTable", condition)
+            self.delete_exec(conn, delete_table_sql)
+            return response_code.SUCCESS
+        except Exception as e:
+            lg.error(e)
+            return response_code.DELETE_DATA_FAIL
+        finally:
+            conn.close()
+
+    def __update_system_fields(self, id):
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+
+            condition = "workspace_id='%s'" % id
+            delete_table_sql = self.create_update_sql(db_name, "fieldTable", condition)
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
@@ -348,9 +363,9 @@ class DbWorkspaceMgr(DbBase):
                 data['msg'] = 'the workspace does not exists, update failed'
                 return data
 
-            self.__delete_2ad_to_workspace(workspace_id)
-            self.__delete_workspace(workspace_id)
-            self.__delete_system_fields(workspace_id)
+            # self.__delete_2ad_to_workspace(workspace_id)
+            # self.__delete_workspace(workspace_id)
+            # self.__update_system_fields(workspace_id)
             workspace_info = {}
             workspace_name = workspace['ws_name']
             workspace_info['des'] = workspace['ws_des']
@@ -393,7 +408,7 @@ class DbWorkspaceMgr(DbBase):
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             workspace_info['create_time'] = create_time
 
-            workspace_insert = self.__set_workspace(workspace_info, workspace_id)
+            workspace_insert = self.__set_workspace(workspace_info, workspace_id, update_flag=1)
             data = response_code.SUCCESS
             workspace['workspace_id'] = workspace_insert['data']['workspace_id']
             data['data'] = workspace

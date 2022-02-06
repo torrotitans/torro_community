@@ -235,18 +235,42 @@ class Auth(object):
         old_role = payload['data']['user_role']
         old_workspace_id = payload['data']['workspace_id']
         workspace_item_list = payload['data']['workspace_list']
+
+        # update workspace when add/delete workspace
+        # add workspace
         if new_workspace_id_dict and 'value' in new_workspace_id_dict:
             workspace_item_list.append(new_workspace_id_dict)
             # change new workspace
             workspace_id = new_workspace_id_dict['value']
             # create workspace and get the admin role
             payload['data']['permissions']['workspace'][str(workspace_id)] = {'admin': ['*-*']}
+        # delete workspace
+        remove_workspace_index_list = []
+        remove_workspace_list = []
+        if remove_workspace_id_dict:
+
+            old_workspace_id = None
+            for workspace in remove_workspace_id_dict:
+                remove_workspace_list.append(workspace['value'])
+            print('0workspace_item_list:', workspace_item_list)
+            for index, workspace in enumerate(workspace_item_list):
+                if workspace['value'] in remove_workspace_list:
+                    remove_workspace_index_list.append(index)
+            for i in range(len(remove_workspace_index_list) - 1, -1, -1):
+                # print('iiiii:', i)
+                workspace_item_list.pop(remove_workspace_index_list[i])
+            if len(workspace_item_list) > 0:
+                workspace_id = workspace_item_list[0]['value']
+            else:
+                workspace_id = None
+
         print('111workspace_id:', workspace_id)
         # get default role&workspace
         if workspace_id is None and role_name is None:
             role_name = old_role
             workspace_id = old_workspace_id
-        workspace_id = str(workspace_id)
+        if workspace_id is not None:
+            workspace_id = str(workspace_id)
         # choose workspace id
 
         # workspace_name_list = []
@@ -273,24 +297,6 @@ class Auth(object):
                 role_name_list.append(wp_role_name)
         print('role_name_list:', role_name_list, role_name)
 
-        # update workspace when add/delete workspace
-        # print('-0workspace_item_list:', workspace_item_list)
-
-        remove_workspace_index_list = []
-        remove_workspace_list = []
-        if remove_workspace_id_dict:
-            for workspace in remove_workspace_id_dict:
-                remove_workspace_list.append(workspace['value'])
-        print('0workspace_item_list:', workspace_item_list)
-        for index, workspace in enumerate(workspace_item_list):
-            if workspace['value'] in remove_workspace_list:
-                remove_workspace_index_list.append(index)
-            # remove_workspace_index_list.append(index)
-        # print('remove_workspace_index_list:', remove_workspace_index_list)
-        # print('1workspace_item_list:', workspace_item_list)
-        for i in range(len(remove_workspace_index_list) - 1, -1, -1):
-            # print('iiiii:', i)
-            workspace_item_list.pop(remove_workspace_index_list[i])
         # print('2workspace_item_list:', workspace_item_list)
         # workspace_name_list = list(set(workspace_name_list))
         # print(role_name, role_list)
