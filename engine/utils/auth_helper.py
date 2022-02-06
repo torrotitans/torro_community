@@ -234,6 +234,13 @@ class Auth(object):
         # role_list = payload['data']['role_list']
         old_role = payload['data']['user_role']
         old_workspace_id = payload['data']['workspace_id']
+        workspace_item_list = payload['data']['workspace_list']
+        if new_workspace_id_dict and 'value' in new_workspace_id_dict:
+            workspace_item_list.append(new_workspace_id_dict)
+            # change new workspace
+            workspace_id = new_workspace_id_dict['value']
+            # create workspace and get the admin role
+            payload['data']['permissions']['workspace'][str(workspace_id)] = {'admin': ['*-*']}
         print('111workspace_id:', workspace_id)
         # get default role&workspace
         if workspace_id is None and role_name is None:
@@ -241,7 +248,7 @@ class Auth(object):
             workspace_id = old_workspace_id
         workspace_id = str(workspace_id)
         # choose workspace id
-        workspace_item_list = payload['data']['workspace_list']
+
         # workspace_name_list = []
         # print('-1workspace_item_list:', workspace_item_list)
         workspace_permissions = payload['data']['permissions']['workspace']
@@ -269,8 +276,6 @@ class Auth(object):
         # update workspace when add/delete workspace
         # print('-0workspace_item_list:', workspace_item_list)
 
-        if new_workspace_id_dict:
-            workspace_item_list.append(new_workspace_id_dict)
         remove_workspace_index_list = []
         remove_workspace_list = []
         if remove_workspace_id_dict:
