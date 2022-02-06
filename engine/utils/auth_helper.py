@@ -261,7 +261,7 @@ class Auth(object):
                 workspace_item_list.pop(remove_workspace_index_list[i])
             role_name_list = []
             if len(workspace_item_list) > 0:
-                workspace_id = workspace_item_list[0]['value']
+                workspace_id = str(workspace_item_list[0]['value'])
                 for wp_role_name in workspace_permissions[workspace_id]:
                     role_name_list.append(wp_role_name)
 
