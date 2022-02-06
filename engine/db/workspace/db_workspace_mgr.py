@@ -43,18 +43,19 @@ class DbWorkspaceMgr(DbBase):
 
             # insert workspace
             if workspace_id is not None:
-                fields = ('ID',
-                          'WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGOINS',
+
+                condition = "ID='%s'" % workspace_id
+
+                fields = ('WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGOINS',
                           'CREATE_TIME',
                           'DES')
-                values = (
-                workspace_id, workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
+                values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
 
-                sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition='')
+                sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition=condition)
                 # print('workspaceTable sql:', sql)
                 workspace_id = self.updete_exec(conn, sql)
 
-                # insert group info
+                # update group info
                 ad_group_fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
                 for ad_group_name in group_dict:
                     role_list = list(group_dict[ad_group_name])
@@ -70,6 +71,7 @@ class DbWorkspaceMgr(DbBase):
                                                      values)
                         # print('adgroupTable sql:', sql)
                         group_id = self.insert_exec(conn, sql, return_insert_id=True)
+
                     # insert workspace_to_adgroupTable
                     w2a_fields = ('WORKSPACE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
                     values = (workspace_id, json.dumps(label_list), group_id, json.dumps(role_list))
@@ -79,9 +81,8 @@ class DbWorkspaceMgr(DbBase):
                     # print('workspace_to_adgroupTable sql:', sql)
                     self.insert_exec(conn, sql, return_insert_id=True)
 
-                # insert system fields
+                # update system fields
                 system_id_dict = {}
-
                 condition = "id=%s and workspace_id='%s'" % ('1', workspace_id)
                 sql = self.create_select_sql(db_name, 'fieldTable', '*', condition)
                 region_country_info = self.execute_fetch_one(conn, sql)
@@ -95,8 +96,9 @@ class DbWorkspaceMgr(DbBase):
                     self.insert_exec(conn, sql, return_insert_id=True)
                 system_id_dict['s1'] = 's1'
 
-                # insert group info
-                field_fields = ('workspace_id', 'u_id', 'style', 'label', 'default_value', 'placeholder',
+                # update group info
+                condition = "workspace_id='%s'" % workspace_id
+                field_fields = ('u_id', 'style', 'label', 'default_value', 'placeholder',
                                 'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
                 for system_style in system:
                     for system_item in system[system_style]:
@@ -111,13 +113,15 @@ class DbWorkspaceMgr(DbBase):
                         value_list = system_item.get('options', [])
                         value_num = len(value_list)
 
-                        values = (workspace_id, u_id, system_style, label, default_value, placeholder, value_num,
+                        values = (u_id, system_style, label, default_value, placeholder, value_num,
                                   json.dumps(value_list), edit, des, create_time, create_time)
-                        sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)),
-                                                     values)
+                        sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
                         # print('fieldTable sql:', sql)
-                        system_id = self.insert_exec(conn, sql, return_insert_id=True)
-                        system_id_dict[system_item['id']] = 's' + str(system_id)
+                        _ = self.updete_exec(conn, sql)
+                    sql = self.create_select_sql(db_name, 'fieldTable', '*', condition=condition)
+                    field_infos = self.execute_fetch_all(conn, sql)
+                    for field_info in field_infos:
+                        system_id_dict[field_info['id']] = 's' + str(field_info['id'])
             else:
                 fields = (
                 'WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGOINS', 'CREATE_TIME',
@@ -433,7 +437,7 @@ class DbWorkspaceMgr(DbBase):
                 data['msg'] = 'the workspace does not exists, update failed'
                 return data
 
-            # self.__delete_2ad_to_workspace(workspace_id)
+            self.__delete_2ad_to_workspace(workspace_id)
             # self.__delete_workspace(workspace_id)
             # self.__update_system_fields(workspace_id)
             workspace_info = {}
