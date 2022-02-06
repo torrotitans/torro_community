@@ -499,10 +499,10 @@ class DbWorkspaceMgr(DbBase):
                 data['msg'] = 'the workspace does not exists, update failed'
                 return data
             workspace['ws_name'] = data['data']['WORKSPACE_NAME']
-            # self.__delete_2ad_to_workspace(workspace_id)
-            # self.__delete_workspace(workspace_id)
-            # # delete
-            # self.__delete_system_fields(workspace_id)
+            self.__delete_2ad_to_workspace(workspace_id)
+            self.__delete_workspace(workspace_id)
+            # delete
+            self.__delete_system_fields(workspace_id)
             data = response_code.SUCCESS
             data['data'] = workspace
             return data
