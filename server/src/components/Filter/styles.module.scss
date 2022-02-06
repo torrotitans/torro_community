@@ -1,0 +1,35 @@
+.filter {
+  align-items: center;
+  display: flex;
+  position: relative;
+  width: 22rem;
+  height: 3rem;
+}
+
+.list {
+  width: 22rem;
+}
+
+.iconButton {
+  color: $color12;
+  margin-right: $rbwmspace8;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: $rbwmspace12;
+}
+
+.input {
+  width: 100%;
+
+  svg {
+    margin: 0 $rbwmspace8;
+  }
+}
+
+.poppup {
+  width: 22rem;
+}
+
+.filterIcon {
+  margin-left: $rbwmspace8;
+}

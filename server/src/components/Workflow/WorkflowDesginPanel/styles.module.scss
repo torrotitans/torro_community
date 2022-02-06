@@ -1,0 +1,16 @@
+.designerPanel {
+  height: 100%;
+  width: 23.75rem;
+  background-color: $white;
+  display: flex;
+  flex-direction: column;
+}
+
+.designerTitle {
+  margin-top: 3.125rem;
+  color: $text-grey;
+  margin-left: $rbwmspace40;
+}
+.workflowOptionsType {
+  padding: $rbwmspace40;
+}

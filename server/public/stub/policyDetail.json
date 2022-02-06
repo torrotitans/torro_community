@@ -1,0 +1,72 @@
+{
+  "data": {
+    "p_name": "policy",
+    "p_des": "haha",
+    "p_approval": "torro",
+    "p_ref_num": "22222",
+    "policy_tags": [
+      {
+        "display_name": "p1",
+        "description": "",
+        "ad_group": "",
+        "sub_tags": [
+          {
+            "display_name": "p1_1",
+            "description": "",
+            "ad_group": "",
+            "sub_tags": [
+              {
+                "display_name": "p1_1_1",
+                "description": "",
+                "ad_group": "",
+                "sub_tags": [
+                  {
+                    "display_name": "p1_1_1_1",
+                    "description": "",
+                    "ad_group": "",
+                    "sub_tags": [
+                      {
+                        "display_name": "p1_1_1_1_1",
+                        "description": "",
+                        "ad_group": "",
+                        "sub_tags": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "display_name": "p1_2",
+            "description": ""
+          }
+        ]
+      },
+      {
+        "display_name": "p2",
+        "description": "",
+        "ad_group": "",
+        "sub_tags": [
+          {
+            "display_name": "p2_1",
+            "description": "",
+            "ad_group": "",
+            "sub_tags": [
+              {
+                "display_name": "p2_1_1",
+                "description": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "display_name": "p3",
+        "description": "",
+        "ad_group": "",
+        "sub_tags": []
+      }
+    ]
+  }
+}

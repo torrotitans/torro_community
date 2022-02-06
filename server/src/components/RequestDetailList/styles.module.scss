@@ -1,0 +1,102 @@
+.requestDetail {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.detailContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: $light-grey;
+}
+
+.form {
+  flex: 1;
+  background-color: $white;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.onBack {
+  cursor: pointer;
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  color: $main-purple;
+  margin: $rbwmspace16 0 0 $rbwmspace12;
+  svg {
+    margin-right: $rbwmspace12;
+  }
+}
+
+.requestList {
+  width: 30rem;
+  margin-left: $rbwmspace20;
+  height: 100%;
+  padding: $rbwmspace20 0 0 0;
+  background-color: $white;
+
+  color: $main-purple;
+}
+
+.requestContent {
+  margin-left: $rbwmspace20;
+  height: 100%;
+  position: relative;
+}
+
+.requestTable {
+  margin-top: $rbwmspace40;
+  color: #333;
+
+  .active {
+    color: $main-purple;
+    svg {
+      color: $main-purple;
+    }
+  }
+  svg {
+    cursor: pointer;
+  }
+}
+
+.timeStamp {
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: $rbwmspace12;
+  }
+}
+
+.requestItem {
+  cursor: pointer;
+}
+
+.svg {
+  color: $dark-purple !important;
+}
+
+.checkbox {
+  padding: 0 !important;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  bottom: $rbwmspace20;
+  width: 100%;
+
+  button {
+    margin-right: $rbwmspace20;
+  }
+  button:last-child(1) {
+    margin-right: 0;
+  }
+}

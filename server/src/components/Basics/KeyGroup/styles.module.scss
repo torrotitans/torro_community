@@ -1,0 +1,32 @@
+.editInput {
+  flex: 1;
+  width: 12rem;
+  input {
+    border: 1px solid $text-grey;
+    padding: 0.5rem 1rem;
+    height: 1.5rem;
+    border-radius: 4px;
+
+    &:focus,
+    &:active {
+      border-color: $main-purple;
+    }
+  }
+}
+
+.keypairItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: $rbwmspace20;
+}
+
+.icon {
+  color: $text-grey;
+  cursor: pointer;
+}
+
+.operaction {
+  margin-left: $rbwmspace8;
+  display: flex;
+  align-items: center;
+}

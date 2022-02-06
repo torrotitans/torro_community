@@ -1,0 +1,73 @@
+.workflow {
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
+.workflowview {
+  flex: 1;
+  height: 100%;
+  margin-right: $rbwmspace24;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: $white;
+}
+
+.nameEditBar {
+  width: 100%;
+  height: 7.75rem;
+  background-color: $white;
+  border-radius: 4px;
+  box-sizing: border-box;
+  padding: $rbwmspace32;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.button {
+  margin-left: $rbwmspace20;
+}
+
+.label {
+  color: $dark-purple;
+  margin-right: $rbwmspace24;
+  outline: 0;
+  font-size: $fontSize2;
+  font-family: Roboto;
+  font-weight: 500;
+}
+.textEditor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: $fontSize1;
+  color: $dark-purple;
+  font-family: Comfortaa;
+
+  .customInput {
+    color: $main-purple;
+    font-size: $fontSize2;
+    font-weight: 500;
+  }
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  color: $text-grey;
+  margin-right: $rbwmspace12;
+}
+
+.workflowPanel {
+  position: relative;
+  height: calc(100% - 10rem);
+}
+.flowContainerScrollbar {
+  width: 100%;
+}
+.flowContainer {
+  margin-top: $rbwmspace36;
+  height: 100%;
+}

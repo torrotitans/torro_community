@@ -1,0 +1,21 @@
+.dashboardLayout {
+  display: flex;
+  background-color: $light-grey;
+  width: 100%;
+  height: calc(100vh - 2.5rem);
+  min-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.wrapper {
+  width: 100%;
+  margin: $rbwmspace16 0;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.content {
+  height: 100%;
+  background-color: $light-grey;
+}

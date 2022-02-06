@@ -1,0 +1,25 @@
+.checkbox {
+  padding: $rbwmspace4 !important;
+  margin-right: $rbwmspace4 !important;
+}
+.checked {
+  svg {
+    color: $main-purple;
+  }
+}
+
+.filterBox {
+  padding: $rbwmspace8 0;
+  margin: 0 $rbwmspace16;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $main-purple;
+
+  svg {
+    margin-left: $rbwmspace8;
+  }
+}
+
+.filterInput {
+  margin-left: $rbwmspace4;
+}

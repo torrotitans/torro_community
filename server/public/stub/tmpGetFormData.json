@@ -1,0 +1,156 @@
+{
+  "code": 200,
+  "data": {
+    "create_time": "Sun, 22 Aug 2021 00:00:00 GMT",
+    "creator_id": "",
+    "des": "Create UseCase",
+    "fieldList": [
+      {
+        "create_time": "Fri, 16 Apr 2021 14:30:00 GMT",
+        "default": "",
+        "des": "",
+        "edit": "0",
+        "id": "s1",
+        "label": "region_country",
+        "options": [
+          {
+            "label": "Asian",
+            "value": "Asian"
+          }
+        ],
+        "placeholder": "",
+        "style": 2,
+        "updated_time": "Sat, 17 Apr 2021 14:30:00 GMT",
+        "required": true,
+        "value_num": 1
+      },
+      {
+        "default": "",
+        "des": "Use case owner AD group",
+        "edit": 1,
+        "id": "u2",
+        "label": "uc_owner_group",
+        "options": [],
+        "placeholder": "Use case owner AD group",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 2
+      },
+      {
+        "default": "",
+        "des": "Use case team AD group",
+        "edit": 1,
+        "id": "u3",
+        "label": "uc_team_group",
+        "options": [],
+        "placeholder": "Use case team AD group",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 0
+      },
+      {
+        "default": "2021-08-21T10:59:53.020Z",
+        "des": "Use case validity till date",
+        "edit": 1,
+        "id": "u4",
+        "label": "validity_date",
+        "options": [],
+        "placeholder": "Use case validity till date",
+        "style": 6,
+        "required": true
+      },
+      {
+        "default": "",
+        "des": "Use case name",
+        "edit": 1,
+        "id": "u5",
+        "label": "usecase_name",
+        "options": [],
+        "placeholder": "Use case name",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 0
+      },
+      {
+        "default": "",
+        "des": "Use case description",
+        "edit": 1,
+        "id": "u6",
+        "label": "uc_des",
+        "options": [],
+        "placeholder": "Use case description",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 0
+      },
+      {
+        "default": "",
+        "des": "Use case total budget",
+        "edit": 1,
+        "id": "u7",
+        "label": "budget",
+        "options": [],
+        "placeholder": "Use case total budget",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 0
+      },
+      {
+        "default": "",
+        "des": "Service account",
+        "edit": 1,
+        "id": "u8",
+        "label": "admin_sa",
+        "options": [],
+        "placeholder": "Service account",
+        "style": 3,
+        "maxLength": 25,
+        "required": true,
+        "rule": 0
+      },
+      {
+        "default": "",
+        "des": "Use case resources access",
+        "edit": 1,
+        "id": "u9",
+        "label": "resources_access",
+        "options": [
+          {
+            "label": "Jupyter",
+            "value": "Jupyter"
+          },
+          {
+            "label": "Datastudio",
+            "value": "Datastudio"
+          }
+        ],
+        "placeholder": "Use case resources access",
+        "style": 1
+      },
+      {
+        "default": "",
+        "des": "Allow cross region support",
+        "edit": 1,
+        "id": "u10",
+        "label": "allow_cross_region",
+        "options": [],
+        "placeholder": "Allow cross region support",
+        "style": 5
+      }
+    ],
+    "fields_list": [],
+    "fields_num": 10,
+    "id": 2,
+    "title": "Create UseCase",
+    "u_max_id": 0,
+    "updated_time": "Sun, 19 Sep 2021 04:33:42 GMT",
+    "usecase_id": 0,
+    "workspace_id": 0
+  },
+  "msg": "request successfully"
+}

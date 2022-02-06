@@ -1,0 +1,72 @@
+.filter {
+  align-items: center;
+  display: flex;
+  position: relative;
+  width: 25rem;
+  height: 3rem;
+}
+
+.list {
+  width: 25rem;
+}
+
+.iconButton {
+  color: $color12;
+  margin-right: $rbwmspace8;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: $rbwmspace12;
+}
+
+.input {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+
+  svg {
+    margin: 0 $rbwmspace8;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: $text-grey;
+  }
+}
+
+.poppup {
+  width: 25rem;
+}
+
+.filterBox {
+  width: 100%;
+  padding: $rbwmspace12;
+}
+
+.filterItem {
+  margin-bottom: $rbwmspace12;
+
+  .label {
+    color: $main-purple;
+    margin-bottom: $rbwmspace8;
+  }
+
+  .detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .sep {
+      margin: 0 $rbwmspace8;
+    }
+  }
+}
+
+.buttonRow {
+  margin: $rbwmspace20 0 $rbwmspace12 0;
+  display: flex;
+  justify-content: flex-end;
+
+  .clear {
+    margin-right: $rbwmspace12;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "label": "Approval",
+  "group": "Approval",
+  "itemList": [
+    { "id": 5, "label": "Approval Level 1", "group": "Approval" },
+    { "id": 6, "label": "Approval Level 2", "group": "Approval" },
+    { "id": 7, "label": "Approval Level 3", "group": "Approval" },
+    { "id": 8, "label": "Approval Level 4", "group": "Approval" },
+    { "id": 9, "label": "Approval Level 5", "group": "Approval" }
+  ]
+}

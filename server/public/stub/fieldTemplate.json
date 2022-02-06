@@ -1,0 +1,118 @@
+[
+  {
+    "style": 1,
+    "default": {
+      "style": 1,
+      "label": "CheckBox",
+      "default": "true,false",
+      "options": [{ "label": "true" }, { "label": "false" }]
+    },
+    "templateTypeList": []
+  },
+  {
+    "style": 2,
+    "default": {
+      "style": 2,
+      "label": "Dropdown",
+      "default": "Option1",
+      "options": [
+        { "label": "Option1", "value": "Option1" },
+        { "label": "Option2", "value": "Option2" }
+      ]
+    },
+    "templateTypeList": [
+      {
+        "templateTypeName": "System-defined Field",
+        "templateList": [
+          {
+            "name": "Region",
+            "data": {
+              "style": 2,
+              "label": "Region",
+              "default": "Asian Pacific",
+              "options": [
+                { "label": "Asian Pacific", "value": "Asian Pacific" },
+                { "label": "UK Pacific", "value": "UK Pacific" }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "style": 3,
+    "default": {
+      "style": 3,
+      "label": "Text",
+      "placeholder": "",
+      "default": ""
+    },
+    "templateTypeList": [
+      {
+        "templateTypeName": "System-defined Field",
+        "templateList": [
+          {
+            "name": "Staff mane",
+            "data": {
+              "id": 1,
+              "style": 3,
+              "label": "Staff Name",
+              "placeholder": "",
+              "default": ""
+            }
+          },
+          {
+            "name": "Staff ID",
+            "data": {
+              "id": 1,
+              "style": 3,
+              "label": "Staff ID",
+              "placeholder": ""
+            }
+          },
+          {
+            "name": "Staff mane",
+            "data": {
+              "id": 1,
+              "style": 3,
+              "label": "StaffName",
+              "placeholder": ""
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "style": 4,
+    "default": {
+      "style": 4,
+      "label": "Upload",
+      "placeholder": "",
+      "default": "",
+      "multiple": false
+    },
+    "templateTypeList": []
+  },
+  {
+    "style": 5,
+    "default": {
+      "style": 5,
+      "label": "Switch",
+      "default": true,
+      "placeholder": ""
+    },
+    "templateTypeList": []
+  },
+  {
+    "style": 6,
+    "default": {
+      "style": 6,
+      "label": "DatePicker",
+      "placeholder": "",
+      "default": ""
+    },
+    "templateTypeList": []
+  }
+]

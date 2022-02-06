@@ -1,0 +1,37 @@
+.ModuleEdit {
+  margin-top: $rbwmspace40;
+
+  .title {
+    text-align: center;
+    color: $main-purple;
+    margin-bottom: $rbwmspace40;
+  }
+}
+.editItem {
+  display: flex;
+  align-items: center;
+  margin: $rbwmspace20 0;
+  svg {
+    color: $main-purple;
+  }
+}
+.label {
+  color: $text-grey;
+  margin-right: 1rem;
+  text-align: right;
+}
+
+.editInput {
+  flex: 1;
+  input {
+    border: 1px solid $text-grey;
+    padding: 0.5rem 1rem;
+    height: 1.5rem;
+    border-radius: 4px;
+
+    &:focus,
+    &:active {
+      border-color: $main-purple;
+    }
+  }
+}

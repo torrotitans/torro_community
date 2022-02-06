@@ -1,0 +1,73 @@
+.requestDetail {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.detailContent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: $light-grey;
+}
+
+.form {
+  flex: 1;
+  background-color: $white;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.onBack {
+  cursor: pointer;
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  color: $main-purple;
+  margin: $rbwmspace16 0 0 $rbwmspace12;
+  svg {
+    margin-right: $rbwmspace12;
+  }
+}
+
+.history {
+  width: 30rem;
+  margin-left: $rbwmspace20;
+  height: 100%;
+  padding: $rbwmspace20 0 0 0;
+  background-color: $white;
+
+  color: $main-purple;
+}
+
+.historyContent {
+  margin-left: $rbwmspace20;
+}
+
+.historyTable {
+  margin-top: $rbwmspace40;
+  color: #333;
+
+  .active {
+    color: $main-purple;
+    svg {
+      color: $main-purple;
+    }
+  }
+  svg {
+    cursor: pointer;
+  }
+}
+
+.timeStamp {
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: $rbwmspace12;
+  }
+}

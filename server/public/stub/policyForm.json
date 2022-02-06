@@ -1,0 +1,49 @@
+{
+  "code": 200,
+  "data": {
+    "fieldList": [
+      {
+        "default": "",
+        "des": "Policy Name",
+        "edit": 1,
+        "id": "p_name",
+        "label": "Policy Name",
+        "options": [],
+        "placeholder": "Policy Name",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Policy Description",
+        "edit": 1,
+        "id": "p_des",
+        "label": "Policy Description",
+        "options": [],
+        "placeholder": "Policy Description",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Policy approval AD Group",
+        "edit": 1,
+        "id": "p_approval",
+        "label": "Policy approval AD Group",
+        "options": [],
+        "placeholder": "Policy approval AD Group",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Policy reference number",
+        "edit": 1,
+        "id": "p_ref_num",
+        "label": "Policy reference number",
+        "options": [],
+        "placeholder": "Policy reference number",
+        "style": 3
+      }
+    ],
+    "id": 372,
+    "title": "Create Policy"
+  }
+}

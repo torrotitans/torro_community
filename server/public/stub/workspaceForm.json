@@ -1,0 +1,102 @@
+{
+  "code": 200,
+  "data": {
+    "des": "Create workspace",
+    "fieldList": [
+      {
+        "default": "",
+        "des": "IT admin AD group",
+        "edit": 1,
+        "id": "it_group",
+        "label": "IT admin AD group",
+        "options": [],
+        "placeholder": "IT admin AD group",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Data Governance AD Group",
+        "edit": 1,
+        "id": "dg_group",
+        "label": "Data Governance AD Group",
+        "options": [],
+        "placeholder": "Data Governance AD Group",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Workspace Name",
+        "edit": 1,
+        "id": "ws_name",
+        "label": "Workspace Name",
+        "options": [],
+        "placeholder": "Workspace Name",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "Workspace Description",
+        "edit": 1,
+        "id": "ws_des",
+        "label": "Workspace Description",
+        "options": [],
+        "placeholder": "Workspace Description",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "WS head AD group",
+        "edit": 1,
+        "id": "ws_owner_group",
+        "label": "WS head AD group",
+        "options": [],
+        "placeholder": "WS head AD group",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "WS Team AD group",
+        "edit": 1,
+        "id": "ws_team_group",
+        "label": "WS Team AD group",
+        "options": [],
+        "placeholder": "WS Team AD group",
+        "style": 3
+      },
+      {
+        "default": "",
+        "des": "User recertification cycle",
+        "edit": 1,
+        "id": "cycle",
+        "label": "User recertification cycle",
+        "options": [
+          { "label": "Monthly", "value": "Monthly" },
+          { "label": "Quarterly", "value": "Quarterly" },
+          { "label": "Semi Annually", "value": "Semi Annually" },
+          { "label": "Annually", "value": "Annually" }
+        ],
+        "placeholder": "",
+        "style": 2
+      },
+      {
+        "default": "",
+        "des": "Use case approval flow",
+        "edit": 1,
+        "id": "approval",
+        "label": "Use case approval flow",
+        "options": [
+          {
+            "label": "Need workspace IT approval"
+          },
+          {
+            "label": "Need workspace Head approval"
+          }
+        ],
+        "placeholder": "",
+        "style": 1
+      }
+    ],
+    "fields_num": 6,
+    "title": "Create workspace"
+  }
+}
