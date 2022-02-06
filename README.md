@@ -97,6 +97,33 @@ mysql -uroot -p123456 -Dtorro_api<./dbsql/workflow_api.sql
 
 2.1.5. Provision the nginx server
 ```bash
+nano nginx.conf
+```
+
+```squidconf 
+user root;
+...
+        root         /root/torro_community/server/build;
+        location / {
+            try_files $uri /index.html;
+        }
+```
+
+If above conf faced Nginx 403 forbidden, then do the following 
+```
+nano /etc/selinux/config
+```
+```bash
+#SELINUX=enforcing
+SELINUX=disabled
+```
+```bash
+# Restart the VM
+reboot
+```
+
+2.1.6. Start the nginx server
+```bash
 systemctl enable nginx.service
 systemctl start nginx.service
 cp torro_community/engine/nginx.conf /
