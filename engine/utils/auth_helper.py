@@ -235,6 +235,7 @@ class Auth(object):
         old_role = payload['data']['user_role']
         old_workspace_id = payload['data']['workspace_id']
         workspace_item_list = payload['data']['workspace_list']
+        workspace_permissions = payload['data']['permissions']['workspace']
 
         # update workspace when add/delete workspace
         # add workspace
@@ -248,21 +249,28 @@ class Auth(object):
         remove_workspace_index_list = []
         remove_workspace_list = []
         if remove_workspace_id_dict:
-
+            # set role and workspace to None
             old_workspace_id = None
-            for workspace in remove_workspace_id_dict:
-                remove_workspace_list.append(workspace['value'])
+            old_role = None
+            remove_workspace_list.append(remove_workspace_id_dict['value'])
             print('0workspace_item_list:', workspace_item_list)
             for index, workspace in enumerate(workspace_item_list):
                 if workspace['value'] in remove_workspace_list:
                     remove_workspace_index_list.append(index)
             for i in range(len(remove_workspace_index_list) - 1, -1, -1):
-                # print('iiiii:', i)
                 workspace_item_list.pop(remove_workspace_index_list[i])
+            role_name_list = []
             if len(workspace_item_list) > 0:
                 workspace_id = workspace_item_list[0]['value']
+                for wp_role_name in workspace_permissions[workspace_id]:
+                    role_name_list.append(wp_role_name)
+
             else:
                 workspace_id = None
+            if len(role_name_list)> 0:
+                role_name = role_name_list[0]
+            else:
+                role_name = None
 
         print('111workspace_id:', workspace_id)
         # get default role&workspace
@@ -275,7 +283,6 @@ class Auth(object):
 
         # workspace_name_list = []
         # print('-1workspace_item_list:', workspace_item_list)
-        workspace_permissions = payload['data']['permissions']['workspace']
         # get all workspace id
         # for item_id in workspace_permissions:
         #     workspace_name_list.append(str(item_id))
