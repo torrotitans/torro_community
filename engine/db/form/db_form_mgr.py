@@ -106,7 +106,7 @@ class DbFormMgr(DbBase):
             # condition = 'workspace_id="%s" and usecase_id="%s" and id="%s"' % (wp_id, uc_id, id)
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'formTable', '*', condition=condition)
-            # print(sql)
+            print(sql)
             form_info = self.execute_fetch_one(conn, sql)
             if not form_info:
                 data = response_code.GET_DATA_FAIL
