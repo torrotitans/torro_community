@@ -111,7 +111,7 @@ class DbFormMgr(DbBase):
             if not form_info:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'cannot find form id: {}'.format(str(id))
-                return response_code.GET_DATA_FAIL
+                return data
             print('form_info:', form_info)
             form_info['fieldList'] = json.loads(form_info['fields_list'])
             del form_info['fields_list']
