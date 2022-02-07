@@ -38,9 +38,11 @@ class DbGovernanceMgr(DbBase):
 
         try:
             miss_role_list = []
-            # 1.get ad_group from ldap
-            adgroup_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
-            # print('adgroup_list:', adgroup_list)
+            # 1.get the approver's ad_group from ldap
+            checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+            #  2.Also put the approver's email into the checking group
+            checking_list.append(account_id)
+            # print('checking_list:', checking_list)
             # 2.get inputform id
             # do the form exists
             input_form_id = inputData['id']
@@ -87,7 +89,7 @@ class DbGovernanceMgr(DbBase):
 
             # check the approval condition
             if form_status_code not in (Status.completed, Status.pending_approval):
-                approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
                 print('approvalTable: ', sql)
                 approval_infos = self.execute_fetch_all(conn, sql)
@@ -155,9 +157,9 @@ class DbGovernanceMgr(DbBase):
                         values = (0, 1, account_id, comment, now)
                         approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s and ad_group in ('%s')" % (input_form_id,
                                                                                                                                    now_approval_num,
-                                                                                                                                   "', '".join(adgroup_list)
+                                                                                                                                   "', '".join(checking_list)
                                                                                                                                    )
-                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # # print('approvalTable update_sql: ', sql)
                         return_count = self.updete_exec(conn, sql)
@@ -169,7 +171,7 @@ class DbGovernanceMgr(DbBase):
                         fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
                         values = (0, 0, 'this approval num has been approved', now)
                         approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s" % (input_form_id, now_approval_num)
-                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                        # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # # print('approvalTable update_sql: ', sql)
                         _ = self.updete_exec(conn, sql)
@@ -198,8 +200,8 @@ class DbGovernanceMgr(DbBase):
                             return_count = self.updete_exec(conn, sql)
 
                             # 6.notice user or notice next approvers
-                            notice_ids = [user_key]
-                            # adgroup_list = self.__get_adgroup_member(notice_ids)
+                            notice_ids = [account_id]
+                            # checking_list = self.__get_adgroup_member(notice_ids)
                             data = response_code.SUCCESS
                             data['data'] = {'id': input_form_id, 'count': return_count, 'tasks': tasks,
                                             'gcp_tasks': gcp_tasks, 'notice_ids': notice_ids, 'is_approved': all_approval_flag}
@@ -217,7 +219,7 @@ class DbGovernanceMgr(DbBase):
                     values = (0, 0, account_id, comment, now)
                     approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s and ad_group in ('%s')" % (input_form_id,
                                                                                                                                now_approval_num,
-                                                                                                                               "', '".join(adgroup_list))
+                                                                                                                               "', '".join(checking_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                     print('approvalTable rejected sql: ', sql)
                     return_count = self.updete_exec(conn, sql)
@@ -229,7 +231,7 @@ class DbGovernanceMgr(DbBase):
                     fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
                     values = (0, 0, 'this approval num has been modified', now)
                     approval_condition = "input_form_id='%s' and approval_num=%s and now_approval=1" % (input_form_id, now_approval_num)
-                    # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                    # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                     # # print('approvalTable update_sql: ', sql)
                     _ = self.updete_exec(conn, sql)
@@ -256,7 +258,7 @@ class DbGovernanceMgr(DbBase):
                 fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
                 values = (1, 0, None, '', None)
                 approval_condition = "input_form_id='%s' and approval_num=1 " % (input_form_id)
-                # approval_condition = "input_form_id='%s' and approval_num=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                # approval_condition = "input_form_id='%s' and approval_num=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                 # print('approvalTable update_sql: ', sql)
                 _ = self.updete_exec(conn, sql)
@@ -286,7 +288,7 @@ class DbGovernanceMgr(DbBase):
                 # fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
                 # values = (0, 0, 'this approval num has been modified', now)
                 # approval_condition = "input_form_id='%s' and now_approval=1" % (input_form_id)
-                # # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(adgroup_list))
+                # # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 # sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                 # # # print('approvalTable update_sql: ', sql)
                 # _ = self.updete_exec(conn, sql)

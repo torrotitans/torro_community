@@ -136,7 +136,7 @@ class DbInputFormMgr(DbBase):
         try:
 
 
-            adgroup_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+            # adgroup_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
 
             input_form_list = []
             db_name = configuration.get_database_name()
@@ -181,8 +181,13 @@ class DbInputFormMgr(DbBase):
                 approver_time = approval_info['updated_time']
                 approver_comment = approval_info['comment']
                 now_approval_flag = approval_info['now_approval']
-                print('now_approval:', now_approval_flag, approver_group, adgroup_list)
-                if int(now_approval_flag) == 1 and approver_view and approver_group not in adgroup_list:
+                # get all user email from ad group
+                if int(now_approval_flag) == 1:
+                    member_list = Ldap.get_ad_group_member(approver_group)
+                else:
+                    member_list = []
+                print('now_approval:', now_approval_flag, approver_group, member_list)
+                if int(now_approval_flag) == 1 and approver_view and account_id not in member_list:
                     data = response_code.GET_DATA_FAIL
                     data['msg'] = 'you do not have access to view this page.'
                     return data
