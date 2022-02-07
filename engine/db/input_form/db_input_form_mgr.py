@@ -186,7 +186,7 @@ class DbInputFormMgr(DbBase):
                     member_list, _ = Ldap.get_ad_group_member(approver_group)
                 else:
                     member_list = []
-                print('now_approval:', now_approval_flag, account_id, member_list, account_id)
+                print('now_approval:', now_approval_flag, account_id, member_list, approver_group)
                 if int(now_approval_flag) == 1 and approver_view and account_id not in member_list:
                     data = response_code.GET_DATA_FAIL
                     data['msg'] = 'you do not have access to view this page.'
