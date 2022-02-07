@@ -107,6 +107,17 @@ user root;
         location / {
             try_files $uri /index.html;
         }
+        
+        # This part is for the API connection to backend
+        location ^~/api/{
+            proxy_pass http://127.0.0.1:8080;
+            proxy_redirect off;
+            proxy_set_header Host \$http_host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+            error_log /var/log/nginx/error.log warn;
+        }
 ```
 
 If above conf faced Nginx 403 forbidden, then do the following 
