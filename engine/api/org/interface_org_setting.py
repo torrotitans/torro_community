@@ -55,6 +55,7 @@ class interfaceOrgSetting(Resource):
             except:
                 pass
             use_ssl = request_data['use_ssl']
+            print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             # use_ssl = False
             # request_data['use_ssl'] = False
             account_dn = request_data['admin_dn']
