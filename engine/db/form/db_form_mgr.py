@@ -37,7 +37,7 @@ class DbFormMgr(DbBase):
             else:
                 condition_list = ["available=1", "hide=0"]
             if wp_id != 0:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if uc_id != 0:
                 condition_list.append('usecase_id="%s"' % (uc_id))
             if len(condition_list) == 0:
@@ -201,7 +201,7 @@ class DbFormMgr(DbBase):
             return_info = {'style': style}
             condition_list = []
             if wp_id != 0:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if style != 0:
                 condition_list.append('style="%s"' % (style))
             if len(condition_list) == 0:
