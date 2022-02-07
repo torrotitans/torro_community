@@ -96,7 +96,7 @@ class DbFormMgr(DbBase):
         try:
             condition_list = ['id="%s"' % id]
             if wp_id != 0 and id > 350:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if uc_id != 0:
                 condition_list.append('usecase_id="%s"' % (uc_id))
             if len(condition_list) == 0:
