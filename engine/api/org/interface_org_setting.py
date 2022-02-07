@@ -56,6 +56,13 @@ class interfaceOrgSetting(Resource):
                 pass
             use_ssl = request_data['use_ssl']
             print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
+            
+            # Since the Flag is a true false, will convert them into int
+            if use_ssl == "True":
+                use_ssl = 1
+            else:
+                use_ssl = 0
+            
             # use_ssl = False
             # request_data['use_ssl'] = False
             account_dn = request_data['admin_dn']
