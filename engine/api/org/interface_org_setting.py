@@ -40,9 +40,9 @@ class interfaceOrgSetting(Resource):
             # if not request_data:
             #     data = response_code.REQUEST_PARAM_MISSED
             #     return response_result_process(data, xml=xml)
-            # # print(request_data)
+            print("FN:interfaceOrgSetting_POST request_data:",request_data)
             # form/w/u-t-adjij+team.xeex
-            # # print('orgApiPara.setOrg_POST_request', orgApiPara.setOrg_POST_request)
+            print('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:', orgApiPara.setOrg_POST_request)
             request_data = req.verify_all_param(request_data, orgApiPara.setOrg_POST_request)
             try:
                 f = request.files['cer_path']
