@@ -32,11 +32,11 @@
       "options": [
         {
           "label": "True",
-          "value": true
+          "value": "True"
         },
         {
           "label": "False",
-          "value": false
+          "value": "False"
         }
       ],
       "placeholder": "Use SSL",
