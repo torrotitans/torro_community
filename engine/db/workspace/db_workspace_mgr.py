@@ -737,7 +737,7 @@ class DbWorkspaceMgr(DbBase):
 
     def get_tag_template_info(self, workspace_id):
         
-        print("FN:get_tag_template_info ws_id:".format(workspace_id))
+        print("FN:get_tag_template_info ws_id: {}".format(workspace_id))
 
         conn = MysqlConn()
         try:

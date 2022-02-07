@@ -44,7 +44,7 @@ class interfaceDetailForm(Resource):
             request_data = req.verify_all_param(request_data, formApiPara.getFormData_POST_request)
 
             workspace_id = req.get_workspace_id()
-            wp_id = request_data.get('workspace_id', workspace_id)
+            # wp_id = request_data.get('workspace_id', workspace_id)
             uc_id = request_data.get('usecase_id', 0)
             form_id = request_data.get('id')
             data = formSingleton_singleton.get_details_form_by_id(form_id, workspace_id, uc_id)
@@ -54,7 +54,7 @@ class interfaceDetailForm(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            lg.error(traceback.format_exc())
             # print(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
