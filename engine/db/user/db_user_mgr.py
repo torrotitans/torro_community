@@ -184,7 +184,7 @@ class DbUserMgr(DbBase):
                 condition = 'NAME="%s"' % role_name
                 role_fields = '*'
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
-                print('roleTable sql', sql)
+                print('FN:__get_util_permission roleTable_sql:', sql)
                 role_info = self.execute_fetch_one(conn, sql)
                 utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'])
             return set(role_list), utils_permissions
