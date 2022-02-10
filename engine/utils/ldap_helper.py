@@ -214,7 +214,7 @@ class Ldap():
 
         Ldap.__refresh_ldap()
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
-        # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
+        print('FN:ldap_auth ldap_host:{} ldap_use_ssl:{} ldap.port:{}'.format(Ldap.host, Ldap.use_ssl, Ldap.port))
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
 

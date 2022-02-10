@@ -36,7 +36,8 @@ const DesignPanel = ({
                 default: "",
                 options: [{ label: "true" }, { label: "false" }],
               },
-              systemList: [...dynamic[1], ...system[1]],
+              systemList: system[1],
+              dynamicList: dynamic[1],
             },
             {
               style: 2,
@@ -49,7 +50,8 @@ const DesignPanel = ({
                   { label: "Option2", value: "Option2" },
                 ],
               },
-              systemList: [...dynamic[2], ...system[2]],
+              systemList: system[2],
+              dynamicList: dynamic[2],
             },
             {
               style: 3,
@@ -59,7 +61,8 @@ const DesignPanel = ({
                 placeholder: "",
                 default: "",
               },
-              systemList: [...dynamic[3], ...system[3]],
+              systemList: system[3],
+              dynamicList: dynamic[3],
             },
             {
               style: 4,
@@ -70,7 +73,8 @@ const DesignPanel = ({
                 default: "",
                 multiple: false,
               },
-              systemList: [...dynamic[4], ...system[4]],
+              systemList: system[4],
+              dynamicList: dynamic[4],
             },
             {
               style: 5,
@@ -80,7 +84,8 @@ const DesignPanel = ({
                 default: true,
                 placeholder: "",
               },
-              systemList: [...dynamic[5], ...system[5]],
+              systemList: system[5],
+              dynamicList: dynamic[5],
             },
             {
               style: 6,
@@ -90,7 +95,8 @@ const DesignPanel = ({
                 placeholder: "",
                 default: "",
               },
-              systemList: [...dynamic[6], ...system[6]],
+              systemList: system[6],
+              dynamicList: dynamic[6],
             },
           ]);
         }
