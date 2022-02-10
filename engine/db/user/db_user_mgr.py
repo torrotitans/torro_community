@@ -306,7 +306,7 @@ class DbUserMgr(DbBase):
                             user_info['permissions']['usecase'][item_id] = permissions[item_id]
                 # print('workspace_id_set:', workspace_id_set)
                 workspace_list = list(workspace_id_set)
-                print('workspace_list:', workspace_list)
+                print('FN:get_user_permissions workspace_list:', workspace_list)
                 if len(workspace_list) != 0:
                     user_info['workspace_list'] = []
                     user_info['workspace_id'] = str(workspace_list[0])
@@ -348,7 +348,7 @@ class DbUserMgr(DbBase):
                 #         if 'viewer' in user_info['role_list']:
                 #             user_info['role_list'].remove('viewer')
 
-                print(" user_info['workspace_list']: ",  user_info['workspace_list'])
+                print("FN:get_user_permissions user_info['workspace_list']: ",  user_info['workspace_list'])
                 return user_info
             else:
                 return {}
