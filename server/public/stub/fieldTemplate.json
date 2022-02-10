@@ -22,7 +22,7 @@
     },
     "templateTypeList": [
       {
-        "templateTypeName": "System-defined Field",
+        "templateTypeName": "System defined field",
         "templateList": [
           {
             "name": "Region",
@@ -50,7 +50,7 @@
     },
     "templateTypeList": [
       {
-        "templateTypeName": "System-defined Field",
+        "templateTypeName": "System defined field",
         "templateList": [
           {
             "name": "Staff mane",
