@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import Scrollbar from "react-perfect-scrollbar";
@@ -13,86 +13,17 @@ import FormItem from "@comp/FormItem";
 import Button from "@basics/Button";
 import Text from "@basics/Text";
 import styles from "./styles.module.scss";
-import { wsPut, wsPost, getPolicyDetail, getPolicyForm } from "@lib/api";
+import { getPolicyForm, getPolicys } from "@lib/api";
 import Loading from "@assets/icons/Loading";
-import CallModal from "@basics/CallModal";
-import { SUCCESS } from "src/lib/data/callStatus";
 import { sendNotify } from "src/utils/systerm-error";
-import PolicyTags from "../PolicyTags";
+import PolicyTags from "@comp/PolicyTags";
 
 const Policy = ({ currentId, onBack }) => {
-  const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const { control, register } = useForm(); // initialise the hook
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
 
-  const [currentData, setCurrentData] = useState(null);
   const [policTags, setPolicTags] = useState([]);
-  const [submitData, setSubmitData] = useState(null);
-  const [policyId, setPolicyId] = useState(currentId);
-  const [modalData, setModalData] = useState({
-    open: false,
-    status: 0,
-    content: "",
-  });
-
-  const buttonClickHandle = useCallback(() => {
-    let apiCall = policyId ? wsPut : wsPost;
-    let postData = submitData;
-    switch (modalData.status) {
-      case 1:
-      case 3:
-        setModalData({
-          ...modalData,
-          status: 0,
-          content: <Intl id="loadNpatience" />,
-        });
-        apiCall(postData)
-          .then((res) => {
-            if (res.code === SUCCESS) {
-              setModalData({
-                open: true,
-                status: 2,
-                content: policyId ? (
-                  <Intl id="wsUpdated" />
-                ) : (
-                  <Intl id="wsIsAdd" />
-                ),
-              });
-            }
-          })
-          .catch(() => {
-            setModalData({
-              ...modalData,
-              status: 3,
-              content: <Intl id="checkInput" />,
-            });
-          });
-        break;
-      default:
-        setModalData({ ...modalData, open: false });
-        break;
-    }
-  }, [modalData, submitData, policyId]);
-
-  const submitHandle = useCallback(
-    (data) => {
-      setModalData({
-        open: true,
-        status: 1,
-        content: policyId ? (
-          <Intl id="confirmUpdatePolicy" />
-        ) : (
-          <Intl id="confirmAddPolicy" />
-        ),
-      });
-      setSubmitData({
-        ...currentData,
-        ...data,
-        policy_tags: policTags,
-      });
-    },
-    [policTags, currentData, policyId]
-  );
 
   const renderFormItem = (items, disabled) => {
     return items.map((item, index) => {
@@ -110,30 +41,36 @@ const Policy = ({ currentId, onBack }) => {
   };
 
   useEffect(() => {
-    setPolicyId(currentId);
     getPolicyForm()
       .then((res) => {
         if (res.data) {
           let policyForm = res.data;
-          getPolicyDetail({ id: currentId }).then((res) => {
-            let data = res.data;
-            let tmp = JSON.parse(JSON.stringify(policyForm));
-            let tmpFieldList = tmp.fieldList.map((item) => {
-              if (item.id && data[item.id]) {
-                item.default = data[item.id];
-              }
-              return item;
+
+          getPolicys()
+            .then((res) => {
+              let policyTagData = res.data.filter(
+                (item) => item.id === currentId
+              )[0];
+
+              let tmp = JSON.parse(JSON.stringify(policyForm));
+              let tmpFieldList = tmp.fieldList.map((item) => {
+                if (item.id && policyTagData[item.id]) {
+                  item.default = policyTagData[item.id];
+                }
+                return item;
+              });
+
+              setPolicTags(policyTagData.policy_tags_list);
+              setFormData({
+                ...tmp,
+                fieldList: tmpFieldList,
+                title: "Polciy Tag",
+              });
+              setFormLoading(false);
+            })
+            .catch((e) => {
+              sendNotify({ msg: e.message, status: 3, show: true });
             });
-            setPolicTags(data.policy_tags);
-            setFormData({
-              ...tmp,
-              fieldList: tmpFieldList,
-              title: data.ws_name,
-              des: data.ws_des,
-            });
-            setCurrentData(data);
-            setFormLoading(false);
-          });
         }
       })
       .catch((e) => {
@@ -148,17 +85,11 @@ const Policy = ({ currentId, onBack }) => {
           {formLoading && <Loading />}
           {!formLoading && formData && (
             <div className={styles.formControl}>
-              <HeadLine>
-                {policyId ? (
-                  <Intl id="createPolicy" />
-                ) : (
-                  <Intl id="createPolicy" />
-                )}
-              </HeadLine>
+              <HeadLine>{formData.title}</HeadLine>
               <form
                 className={styles.form}
                 id={`currentForm${formData.id}`}
-                onSubmit={handleSubmit(submitHandle)}
+                // onSubmit={handleSubmit(submitHandle)}
               >
                 <div className={styles.formOptions}>
                   {renderFormItem(formData.fieldList)}
@@ -172,10 +103,11 @@ const Policy = ({ currentId, onBack }) => {
                     </FormLabel>
                   </div>
                   <PolicyTags
-                    policTags={policTags}
+                    value={policTags}
                     onChange={(data) => {
                       setPolicTags(data);
                     }}
+                    displayView={true}
                   />
                 </div>
                 <div className={styles.buttonWrapper}>
@@ -188,30 +120,8 @@ const Policy = ({ currentId, onBack }) => {
                   >
                     <Intl id="back" />
                   </Button>
-                  <Button
-                    className={styles.button}
-                    type="submit"
-                    variant="contained"
-                  >
-                    <Intl id="submit" />
-                  </Button>
                 </div>
               </form>
-              <CallModal
-                open={modalData.open}
-                content={modalData.content}
-                status={modalData.status}
-                buttonClickHandle={() => {
-                  if (!modalData.cb) {
-                    buttonClickHandle();
-                  } else {
-                    modalData.cb();
-                  }
-                }}
-                handleClose={() => {
-                  setModalData({ ...modalData, open: false });
-                }}
-              />
             </div>
           )}
         </Scrollbar>

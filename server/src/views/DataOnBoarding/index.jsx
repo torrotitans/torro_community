@@ -758,6 +758,7 @@ const DataOnBoarding = () => {
           open={modalData.open}
           content={modalData.content}
           status={modalData.status}
+          successCb={modalData.successCb}
           buttonClickHandle={buttonClickHandle}
           handleClose={closeModal}
         />
