@@ -184,7 +184,7 @@ class DbUserMgr(DbBase):
                 condition = 'NAME="%s"' % role_name
                 role_fields = '*'
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
-                print('roleTable sql', sql)
+                print('FN:__get_util_permission roleTable_sql:', sql)
                 role_info = self.execute_fetch_one(conn, sql)
                 utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'])
             return set(role_list), utils_permissions
@@ -306,7 +306,7 @@ class DbUserMgr(DbBase):
                             user_info['permissions']['usecase'][item_id] = permissions[item_id]
                 # print('workspace_id_set:', workspace_id_set)
                 workspace_list = list(workspace_id_set)
-                print('workspace_list:', workspace_list)
+                print('FN:get_user_permissions workspace_list:', workspace_list)
                 if len(workspace_list) != 0:
                     user_info['workspace_list'] = []
                     user_info['workspace_id'] = str(workspace_list[0])
@@ -348,7 +348,7 @@ class DbUserMgr(DbBase):
                 #         if 'viewer' in user_info['role_list']:
                 #             user_info['role_list'].remove('viewer')
 
-                print(" user_info['workspace_list']: ",  user_info['workspace_list'])
+                print("FN:get_user_permissions user_info['workspace_list']: ",  user_info['workspace_list'])
                 return user_info
             else:
                 return {}

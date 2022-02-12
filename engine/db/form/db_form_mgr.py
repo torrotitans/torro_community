@@ -37,7 +37,7 @@ class DbFormMgr(DbBase):
             else:
                 condition_list = ["available=1", "hide=0"]
             if wp_id != 0:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if uc_id != 0:
                 condition_list.append('usecase_id="%s"' % (uc_id))
             if len(condition_list) == 0:
@@ -96,7 +96,7 @@ class DbFormMgr(DbBase):
         try:
             condition_list = ['id="%s"' % id]
             if wp_id != 0 and id > 350:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if uc_id != 0:
                 condition_list.append('usecase_id="%s"' % (uc_id))
             if len(condition_list) == 0:
@@ -106,12 +106,12 @@ class DbFormMgr(DbBase):
             # condition = 'workspace_id="%s" and usecase_id="%s" and id="%s"' % (wp_id, uc_id, id)
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'formTable', '*', condition=condition)
-            # print(sql)
+            print(sql)
             form_info = self.execute_fetch_one(conn, sql)
             if not form_info:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'cannot find form id: {}'.format(str(id))
-                return response_code.GET_DATA_FAIL
+                return data
             print('form_info:', form_info)
             form_info['fieldList'] = json.loads(form_info['fields_list'])
             del form_info['fields_list']
@@ -201,7 +201,7 @@ class DbFormMgr(DbBase):
             return_info = {'style': style}
             condition_list = []
             if wp_id != 0:
-                condition_list.append('workspace_id="%s"' % (wp_id))
+                condition_list.append('(workspace_id="%s" or workspace_id=0)' % (wp_id))
             if style != 0:
                 condition_list.append('style="%s"' % (style))
             if len(condition_list) == 0:

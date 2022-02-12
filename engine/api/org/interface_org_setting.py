@@ -40,9 +40,9 @@ class interfaceOrgSetting(Resource):
             # if not request_data:
             #     data = response_code.REQUEST_PARAM_MISSED
             #     return response_result_process(data, xml=xml)
-            # # print(request_data)
+            print("FN:interfaceOrgSetting_POST request_data:",request_data)
             # form/w/u-t-adjij+team.xeex
-            # # print('orgApiPara.setOrg_POST_request', orgApiPara.setOrg_POST_request)
+            print('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:', orgApiPara.setOrg_POST_request)
             request_data = req.verify_all_param(request_data, orgApiPara.setOrg_POST_request)
             try:
                 f = request.files['cer_path']
@@ -55,6 +55,14 @@ class interfaceOrgSetting(Resource):
             except:
                 pass
             use_ssl = request_data['use_ssl']
+            print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
+            
+            # Since the Flag is a true false, will convert them into int
+            if use_ssl == "True":
+                use_ssl = 1
+            else:
+                use_ssl = 0
+            
             # use_ssl = False
             # request_data['use_ssl'] = False
             account_dn = request_data['admin_dn']

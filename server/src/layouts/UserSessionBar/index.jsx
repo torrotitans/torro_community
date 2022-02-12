@@ -29,7 +29,6 @@ import { updateLogin } from "@lib/api";
 
 const UserTag = ({ role }) => {
   const { setAuth, authContext } = useGlobalContext();
-  console.log(authContext.userName);
   let navigate = useNavigate();
 
   const navigateToRoleSelect = useCallback(() => {

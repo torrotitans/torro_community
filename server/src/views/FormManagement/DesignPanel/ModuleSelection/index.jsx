@@ -24,6 +24,7 @@ import DatePickerDesign from "../ModuleDesign/DatePickerDesign";
 
 const ModuleTemplate = ({ templateData, setTemplate }) => {
   let systemList = templateData.systemList;
+  let dynamicList = templateData.dynamicList;
 
   return (
     <>
@@ -41,6 +42,23 @@ const ModuleTemplate = ({ templateData, setTemplate }) => {
       {systemList && systemList.length > 0 && (
         <Collapse title={<Intl id="sysField" />}>
           {systemList.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className={styles.templateItem}
+                onClick={() => {
+                  setTemplate(item);
+                }}
+              >
+                {item.label}
+              </div>
+            );
+          })}
+        </Collapse>
+      )}
+      {dynamicList && dynamicList.length > 0 && (
+        <Collapse title={<Intl id="dynamicApproval" />}>
+          {dynamicList.map((item, index) => {
             return (
               <div
                 key={index}
