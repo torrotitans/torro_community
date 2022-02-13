@@ -41,7 +41,7 @@ from api.system.interface_system_notify import interfaceSystemNotify
 api = Api()
 
 api.add_resource(
-    interfaceSystemTrigger,
+    interfaceSystemNotify,
     '/api/systemTrigger',
 )
 api.add_resource(
