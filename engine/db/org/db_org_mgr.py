@@ -319,6 +319,7 @@ class DbOrgMgr(DbBase):
                 self.__delete_adgroup_to_org()
                 self.__delete_ldap()
                 self.__delete_org()
+                self.__delete_smtp()
                 # data = response_code.ADD_DATA_FAIL
                 # return data
             # sql = self.create_select_sql(db_name, 'orgTable', '*')
