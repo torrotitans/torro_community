@@ -45,6 +45,16 @@ class Ldap():
         GROUP_SERACH_FILTER = ''
         GROUP_MEMBER_ATTRIBUTE = ''
 
+
+    @staticmethod
+    def get_line_manager(account_name, account_id, account_cn):
+        Ldap.__refresh_ldap()
+        # get line managers
+        line_managers = []
+        line_manager = 'xxxx@mail.com'
+        line_managers.append(line_manager)
+        return line_managers
+
     @staticmethod
     def __refresh_ldap():
         ldap_info = org_mgr.get_ldap_info()
@@ -163,7 +173,11 @@ class Ldap():
             if res:
                 entry = conn.response[0]
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
-                member_mail = entry['attributes'][Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE][0]
+                mail_info = entry['attributes'][Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
+                if isinstance(mail_info, list):
+                    member_mail = mail_info[0]
+                else:
+                    member_mail = mail_info
                 # print('member_mail:', member_mail)
                 if member_mail:
                     member_mails.append(member_mail)
@@ -236,8 +250,16 @@ class Ldap():
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
-                user_mail = attr_dict[Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE][0]
-                user_dispaly_name = attr_dict[Ldap.DISPLAY_NAME_LDAP_ATTRIBUTE][0]
+                mail_info = attr_dict[Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
+                if isinstance(mail_info, list):
+                    user_mail = mail_info[0]
+                else:
+                    user_mail = mail_info
+                dispaly_name_info = attr_dict[Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
+                if isinstance(dispaly_name_info, list):
+                    user_dispaly_name = dispaly_name_info[0]
+                else:
+                    user_dispaly_name = dispaly_name_info
                 # check password by dn, get displayname and email
                 login_flag = Ldap.__login_with_user_pwd(account_cn, password, servers)
                 print('login_flag:', login_flag)

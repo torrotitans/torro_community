@@ -191,7 +191,6 @@ class DbUserMgr(DbBase):
         else:
             return set(), {}
 
-
     def get_user_permissions(self, id, ad_group_list):
 
         conn = MysqlConn()

@@ -64,32 +64,20 @@ class interfaceGovernance(Resource):
             #     and data['data']['gcp_tasks']:
                 gcp_tasks = data['data'].get('gcp_tasks', [])
                 tasks = data['data'].get('tasks', [])
-                # gcp_tasks = []
-                # miss_role_list = []
-                # # print('tasks: ', tasks)
-                # for task in tasks:
-                #     task_name = task['name']
-                #     stage_dict = task['stages']
-                #     task = taskFetcher.build_task_object(task_name, stage_dict)
-                #     access_flag, role_list = taskOperator.check_roles(task)
-                #     miss_role_list.extend(role_list)
-                #     gcp_tasks.append(task)
-                # if len(miss_role_list) != 0:
-                #
-                #     data1 = governance_singleton.change_status(user_key, account_id, request_data)
-                # else:
-                #     return_msg_list = taskOperator.execute_tasks(gcp_tasks)
                 return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
                 data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
             else:
                 return response_result_process(data, xml=xml)
 
-            return response_result_process(data1, xml=xml)
+            # return response_result_process(data1, xml=xml)
 
             # email notification
-            if data['code'] == 200 and data1['code'] == 200:
+            if 'data' in data and 'notice_ids' in data['data']:
                 notice_ids = data['data']['notice_ids']
-                data2 = notify_approvers(data1['data']['history_id'], notice_ids)
+                text = ''
+                if 'msg' in data:
+                    text = data['msg']
+                data2 = notify_approvers(data1['data']['history_id'], notice_ids, text=text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
                 else:

@@ -14,10 +14,12 @@ from common.common_crypto import prpcrypt
 from common.common_input_form_status import status as Status
 import datetime
 import traceback
+import time
 import os
 from common.common_input_form_status import status
 from config import config
 from utils.ldap_helper import Ldap
+from utils.airflow_helper import system_approval
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -412,7 +414,7 @@ class DbInputFormMgr(DbBase):
             # add approval
             # create approval list
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
-                                             form_field_values_dict, db_name, conn)
+                                             form_field_values_dict, user_key,db_name, conn)
 
             # insert form details
             fields = ('id', 'workflow_id', 'workflow_name', 'fields_num', 'stages_num',
@@ -526,7 +528,7 @@ class DbInputFormMgr(DbBase):
             now = str(datetime.datetime.today())
             # get approval
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
-                                             form_field_values_dict, db_name, conn)
+                                             form_field_values_dict, user_key, db_name, conn)
 
             # insert form details
             fields = ('id', 'workflow_id', 'workflow_name', 'fields_num', 'stages_num',
@@ -632,8 +634,8 @@ class DbInputFormMgr(DbBase):
         for stage_info in workflow_stages_list:
             if stage_info['flowType'] == 'Trigger':
                 continue
-            if stage_info['flowType'] == 'System' and stage_info['apiTaskName'] not in self.system_execute_tasks:
-                continue
+            # if stage_info['flowType'] == 'System' and stage_info['apiTaskName'] not in self.system_execute_tasks:
+            #     continue
             elif stage_info['flowType'] == 'Approval':
                 approver_info = stage_info
                 continue
@@ -692,16 +694,18 @@ class DbInputFormMgr(DbBase):
             workflow_stages_id_list.append(input_stage_id)
         return input_form, workflow_stages_id_list, approver_info
 
-    def __get_approvers(self, approver_info, input_form_id, form_id, workspace_id, form_field_values_dict, db_name,
+    def __get_approvers(self, approver_info, input_form_id, form_id, workspace_id, form_field_values_dict, user_key, db_name,
                         conn):
-        # get adroup memebers
+        # get now approvers' email
         approvers = []
         self.__remove_approval(input_form_id)
         index = 1
         # De-duplication dict
         approval_dict = {}
-        for approval_item in approver_info['condition']:
+        for approval_index, approval_item in enumerate(approver_info['condition']):
             approval_label = approval_item['label']
+            # init approver_emails
+            approver_emails = []
             # get workspace owner group
             if int(approval_item['id']) == 1:
                 ad_groups = self.__get_workspace_owner_group(workspace_id, 'ws_owner_group')
@@ -712,7 +716,6 @@ class DbInputFormMgr(DbBase):
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                approvers.append(ad_groups)
                 if ad_groups:
                     index += 1
             # get region group, default id=s1
@@ -731,6 +734,7 @@ class DbInputFormMgr(DbBase):
                     index += 1
             # get dynamic field group
             elif int(approval_item['id']) == 3:
+                ad_groups = []
                 field = approval_item['value']
                 field_id = field.replace('d', '').strip()
                 option_label = form_field_values_dict.get(field, None)
@@ -746,6 +750,7 @@ class DbInputFormMgr(DbBase):
                 dynamic_field_info = self.execute_fetch_one(conn, sql)
 
                 # print('ad_group:', ad_group)
+
                 if dynamic_field_info:
                     ad_group = dynamic_field_info['option_value']
                     if ad_group not in approval_dict:
@@ -753,13 +758,31 @@ class DbInputFormMgr(DbBase):
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                    approvers.append([ad_group])
+                    ad_groups.append(ad_group)
+                    # approvers.append([ad_group])
                     index += 1
+
+            # get line manager ad group
+            elif int(approval_item['id']) == 4:
+                user_condition = "ID='%s'" % (user_key)
+                sql = self.create_select_sql(db_name, 'userTable',
+                                             '*',
+                                             condition=user_condition)
+                print('userTable sql:', sql)
+                field_info = self.execute_fetch_one(conn, sql)
+                account_name = ''
+                account_id = ''
+                account_cn = ''
+                if field_info:
+                    account_name = field_info['ACCOUNT_NAME']
+                    account_id = field_info['ACCOUNT_ID']
+                    account_cn = field_info['ACCOUNT_CN']
+                approver_emails = Ldap.get_line_manager(account_name, account_id, account_cn)
             # get usecase data linear group
             elif int(approval_item['id']) == 5:
-                ad_groups = self.__get_data_linear_approval(form_field_values_dict, workspace_id)
+                approver_emails = self.__get_data_linear_approval(form_field_values_dict, workspace_id)
                 # print('ad_group:', ad_group)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
@@ -769,9 +792,9 @@ class DbInputFormMgr(DbBase):
                     approvers.append([ad_group])
             # get policy tags ad group
             elif int(approval_item['id']) == 6:
-                ad_groups = self.__get_policy_tags_approval(form_field_values_dict, workspace_id)
+                approver_emails = self.__get_policy_tags_approval(form_field_values_dict, workspace_id)
                 # print('ad_group:', ad_group)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
@@ -779,11 +802,11 @@ class DbInputFormMgr(DbBase):
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
                     index += 1
                     approvers.append([ad_group])
-            # get policy tags ad group
+            # get data approval ad group
             elif int(approval_item['id']) == 0:
-                ad_groups = self.__get_data_approval(form_field_values_dict, workspace_id, form_id)
+                approver_emails = self.__get_data_approval(form_field_values_dict, workspace_id, form_id)
                 # print('ad_group:', ad_group)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
@@ -791,14 +814,54 @@ class DbInputFormMgr(DbBase):
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
                     index += 1
                     approvers.append([ad_group])
-            # get line manager ad group
+            # it approval
             elif int(approval_item['id']) == 7:
-                pass
+                approver_emails = self.__get_workspace_owner_group(workspace_id, 'it_group')
+                # print('ad_groups:', ad_groups)
+                for ad_group in approver_emails:
+                    if ad_group not in approval_dict:
+                        approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
+                    else:
+                        approval_dict[ad_group]['label_list'].append(approval_label)
+                    # self.__add_approval(input_form_id, index, ad_group, approval_label)
+                if approver_emails:
+                    index += 1
             # system approval
             elif int(approval_item['id']) == 8:
-                # post request to airflow
-                # token@torro.ai
-                pass
+                # post request to airflow, set the it to be the approval for the manual trigger
+                approver_emails = self.__get_workspace_owner_group(workspace_id, 'it_group')
+                # print('ad_groups:', ad_groups)
+                random_token = prpcrypt.encrypt('{input_form_id}||{form_id}||{approval_order}||{time}'.format(input_form_id = str(input_form_id),
+                                                                                                             form_id=str(form_id),
+                                                                                                             approval_order=str(approval_index),
+                                                                                                             time=str(time.time())))
+                for ad_group in approver_emails+[random_token]:
+                    if ad_group not in approval_dict:
+                        approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
+                    else:
+                        approval_dict[ad_group]['label_list'].append(approval_label)
+                    # self.__add_approval(input_form_id, index, ad_group, approval_label)
+                # trigger airflow
+                retry = 0
+                while retry < 3:
+                    return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
+                    if not return_flag:
+                        retry += 1
+                        time.sleep(1)
+                    else:
+                        break
+                if approver_emails:
+                    index += 1
+            # get now approval group
+            emails_return_item = [4, 8]
+            if approval_index == 0:
+                if approval_item['id'] in emails_return_item:
+                    approvers.extend(approver_emails)
+                else:
+                    user_emails = []
+                    for ad_group in approver_emails:
+                        user_emails.extend(Ldap.get_ad_group_member(ad_group))
+                    approvers.extend(user_emails)
 
         for approval_ad_group in approval_dict:
             approval_index = approval_dict[approval_ad_group]['index']

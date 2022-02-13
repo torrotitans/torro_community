@@ -28,13 +28,14 @@ class taskOperator:
     def execute_tasks(task_object_list, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         return_msg_list = []
         for task_object in task_object_list:
-            api_name = task_object.api_name
+            # api_name = task_object.api_name
             task_object.verify_all_param()
-            if api_name in taskOperator.db_operation:
-                # print('1234task {} will update db'.format(api_name))
-                return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
-            else:
-                return_msg = task_object.execute()
+            return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
+            # if api_name in taskOperator.db_operation:
+            #     # print('1234task {} will update db'.format(api_name))
+            #     return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
+            # else:
+            #     return_msg = task_object.execute()
             comment = task_object.message_tranfer(return_msg)
             return_msg_list.append((return_msg, comment))
         return return_msg_list

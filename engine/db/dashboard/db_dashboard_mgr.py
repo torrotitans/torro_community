@@ -8,6 +8,7 @@ import json
 from utils.status_code import response_code
 from utils.log_helper import lg
 from common.common_input_form_status import status
+# from utils.ldap_helper import Ldap
 
 class DbDashboardMgr(DbBase):
 
@@ -230,4 +231,59 @@ class DbDashboardMgr(DbBase):
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
+
+
+    def get_notify(self, user_key, is_read=None):
+        db_conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+
+            notify_infos = []
+            if is_read:
+                is_read_str = "is_read='%s' and " % is_read
+            else:
+                is_read_str = ""
+
+            condition = is_read_str + "user_id='%s'" % user_key
+            sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
+            return_notify_infos = self.execute_fetch_all(db_conn, sql)
+            if isinstance(return_notify_infos, list):
+                notify_infos.extend(return_notify_infos)
+            notify_id_list = list()
+            return_data = []
+            for notify_info in notify_infos:
+                id = notify_info['id']
+                if id not in notify_id_list:
+                    notify_id_list.extend(id)
+                    return_data.append(notify_info)
+            data = response_code.SUCCESS
+            data['data'] = return_data
+            return data
+        except Exception as e:
+            import traceback
+            lg.error(traceback.format_exc())
+            return response_code.GET_DATA_FAIL
+        finally:
+            db_conn.close()
+
+
+    def read_notify(self, user_key, notify_id, is_read=None):
+        db_conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            if not is_read:
+                is_read = 0
+            condition = "id='%s' and user_id='%s'" % (notify_id, user_key)
+            fields = ('is_read', )
+            values = (is_read, )
+            sql = self.create_update_sql(db_name, 'inputNotifyTable', fields, values, condition=condition)
+            _ = self.updete_exec(db_conn, sql)
+            return response_code.SUCCESS
+        except Exception as e:
+            import traceback
+            lg.error(traceback.format_exc())
+            return response_code.GET_DATA_FAIL
+        finally:
+            db_conn.close()
+
 dashboard_mgr = DbDashboardMgr()

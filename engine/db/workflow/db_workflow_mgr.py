@@ -33,12 +33,15 @@ class DbWorkflowMgr(DbBase):
                         }
                     ],
                     "commonConditions": [
-                        {"id": 0, "label": "Data owner", "value": "", "style": 6},
+                        {"id": 8, "label": "System approval", "value": "", "style": 6},
                         {"id": 1, "label": "Workspace owner", "value": "", "style": 6},
+                        {"id": 7, "label": "Workspace IT approval", "value": "", "style": 6},
                         {"id": 2, "label": "Region / Country owner", "value": "", "style": 6},
                         # {"id": 3, "label": "{ynamic field approval".format(label), "value": field_id, "style": 6}
+                        {"id": 0, "label": "Data owner", "value": "", "style": 6},
+                        {"id": 5, "label": "Use case data approver(s)", "value": "", "style": 6},
                         {"id": 4, "label": "Line manager", "value": "", "style": 6},
-                        {"id": 5, "label": "Use case data approver(s)", "value": "", "style": 6}
+                        # id 6 is policy tag approval task
 
                     ],
                     "label": "Approval Process"
@@ -52,8 +55,14 @@ class DbWorkflowMgr(DbBase):
                     "group": "System",
                     "itemList": [
                         {
-                            "apiTaskName": "EmailNotify",
+                            "apiTaskName": "system_email_notify",
                             "condition": [
+                                {
+                                    "id": "emails",
+                                    "label": "Emails",
+                                    "value": "",
+                                    "style": 1
+                                },
                                 {
                                     "id": "email_msg",
                                     "label": "Email msg",
@@ -66,11 +75,23 @@ class DbWorkflowMgr(DbBase):
                             "label": "Emails Notification"
                         },
                         {
-                            "apiTaskName": "systemNotify",
+                            "apiTaskName": "system_notify",
                             "condition": [
                                 {
-                                    "id": "email_msg",
-                                    "label": "Email msg",
+                                    "id": "groups",
+                                    "label": "Groups",
+                                    "value": "",
+                                    "style": 1
+                                },
+                                {
+                                    "id": "emails",
+                                    "label": "User emails",
+                                    "value": "",
+                                    "style": 1
+                                },
+                                {
+                                    "id": "notify_msg",
+                                    "label": "Notify msg",
                                     "value": "",
                                     "style": 1
                                 }
@@ -79,172 +100,172 @@ class DbWorkflowMgr(DbBase):
                             "id": "system_notify",
                             "label": "System Notification"
                         },
-                        {
-                            "apiTaskName": "system_define_field",
-                            "condition": [
-                                {
-                                    "id": "FieldLabel",
-                                    "label": "Field Label",
-                                    "value": "",
-                                    "style": 1
-                                },
-                                {
-                                    "id": "optionLabel",
-                                    "label": "Option Label",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "optionsValue",
-                                    "label": "Option Value",
-                                    "value": "",
-                                    "style": 5
-                                }
-                            ],
-                            "flowType": "System",
-                            "id": 14,
-                            "label": "Dynamic Approval Field"
-                        },
-                        {
-                            "apiTaskName": "system_create_form",
-                            "condition": [
-                                {
-                                    "id": "form_name",
-                                    "label": "Form Name",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "description",
-                                    "label": "Description",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "field_list",
-                                    "label": "field list",
-                                    "value": "",
-                                    "style": 5
-                                }
-                            ],
-                            "flowType": "System",
-                            "id": 15,
-                            "label": "Create Form"
-                        },
-                        {
-                            "apiTaskName": "system_update_form",
-                            "condition": [
-                                {
-                                    "id": "id",
-                                    "label": "Form ID",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "form_name",
-                                    "label": "Form Name",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "description",
-                                    "label": "Description",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "field_list",
-                                    "label": "field list",
-                                    "value": "",
-                                    "style": 5
-                                }
-                            ],
-                            "flowType": "System",
-                            "id": 16,
-                            "label": "Update Form"
-                        },
-                        {
-                            "apiTaskName": "system_delete_form",
-                            "condition": [
-                                {
-                                    "id": "id",
-                                    "label": "Form ID",
-                                    "value": "",
-                                    "style": 5
-                                },
-                            ],
-                            "flowType": "System",
-                            "id": 17,
-                            "label": "Delete Form"
-                        },
-                        {
-                            "apiTaskName": "system_add_new_usecase",
-                            "condition": [
-                                {
-                                    "id": "usecase_name",
-                                    "label": "Usecase Name",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "region_country",
-                                    "label": "Region/Country",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "validity_date",
-                                    "label": "Validity Date",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "uc_des",
-                                    "label": "Description",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "admin_sa",
-                                    "label": "Admin Service Account",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "budget",
-                                    "label": "Budget",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "allow_cross_region",
-                                    "label": "Allow Cross Region",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "resources_access",
-                                    "label": "Resources Access",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "uc_team_group",
-                                    "label": "Team group",
-                                    "value": "",
-                                    "style": 5
-                                },
-                                {
-                                    "id": "uc_owner_group",
-                                    "label": "Owner group",
-                                    "value": "",
-                                    "style": 5
-                                }
-                            ],
-                            "flowType": "System",
-                            "id": 18,
-                            "label": "Create New Use Case"
-                        }
+                        # {
+                        #     "apiTaskName": "system_define_field",
+                        #     "condition": [
+                        #         {
+                        #             "id": "FieldLabel",
+                        #             "label": "Field Label",
+                        #             "value": "",
+                        #             "style": 1
+                        #         },
+                        #         {
+                        #             "id": "optionLabel",
+                        #             "label": "Option Label",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "optionsValue",
+                        #             "label": "Option Value",
+                        #             "value": "",
+                        #             "style": 5
+                        #         }
+                        #     ],
+                        #     "flowType": "System",
+                        #     "id": 14,
+                        #     "label": "Dynamic Approval Field"
+                        # },
+                        # {
+                        #     "apiTaskName": "system_create_form",
+                        #     "condition": [
+                        #         {
+                        #             "id": "form_name",
+                        #             "label": "Form Name",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "description",
+                        #             "label": "Description",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "field_list",
+                        #             "label": "field list",
+                        #             "value": "",
+                        #             "style": 5
+                        #         }
+                        #     ],
+                        #     "flowType": "System",
+                        #     "id": 15,
+                        #     "label": "Create Form"
+                        # },
+                        # {
+                        #     "apiTaskName": "system_update_form",
+                        #     "condition": [
+                        #         {
+                        #             "id": "id",
+                        #             "label": "Form ID",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "form_name",
+                        #             "label": "Form Name",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "description",
+                        #             "label": "Description",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "field_list",
+                        #             "label": "field list",
+                        #             "value": "",
+                        #             "style": 5
+                        #         }
+                        #     ],
+                        #     "flowType": "System",
+                        #     "id": 16,
+                        #     "label": "Update Form"
+                        # },
+                        # {
+                        #     "apiTaskName": "system_delete_form",
+                        #     "condition": [
+                        #         {
+                        #             "id": "id",
+                        #             "label": "Form ID",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #     ],
+                        #     "flowType": "System",
+                        #     "id": 17,
+                        #     "label": "Delete Form"
+                        # },
+                        # {
+                        #     "apiTaskName": "system_add_new_usecase",
+                        #     "condition": [
+                        #         {
+                        #             "id": "usecase_name",
+                        #             "label": "Usecase Name",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "region_country",
+                        #             "label": "Region/Country",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "validity_date",
+                        #             "label": "Validity Date",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "uc_des",
+                        #             "label": "Description",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "admin_sa",
+                        #             "label": "Admin Service Account",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "budget",
+                        #             "label": "Budget",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "allow_cross_region",
+                        #             "label": "Allow Cross Region",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "resources_access",
+                        #             "label": "Resources Access",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "uc_team_group",
+                        #             "label": "Team group",
+                        #             "value": "",
+                        #             "style": 5
+                        #         },
+                        #         {
+                        #             "id": "uc_owner_group",
+                        #             "label": "Owner group",
+                        #             "value": "",
+                        #             "style": 5
+                        #         }
+                        #     ],
+                        #     "flowType": "System",
+                        #     "id": 18,
+                        #     "label": "Create New Use Case"
+                        # }
                     ],
                     "label": "System Task"
                 }]

@@ -89,6 +89,7 @@ CREATE TABLE `ldapTable` (
   `GROUP_MEMBER_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'group member attribute',
   `GROUP_EMAIL_SUFFIX` varchar(64) DEFAULT NULL COMMENT 'group mail suffix',
 
+  `AIRFLOW_URL` varchar(1024) DEFAULT NULL COMMENT 'aiflow url',
 
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
