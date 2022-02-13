@@ -8,7 +8,7 @@ class stageBase(metaclass=abc.ABCMeta):
                  "apiTaskName": {"type": str, "default": ''},
                  "condition": {"type": list(), "default": []}}
     sql_ignore_set = set(["\"", "\\", "/", "*", "'", "=", "-", "#", ";",
-                          "<", ">", "+", "%", "$", "(", ")", "%", "@","!",
+                          "<", ">", "+", "%", "$", "(", ")", "%", "!",
                           'drop table', 'delete from', 'select *'])
     pattern = '\$\(.*?\)'
 
