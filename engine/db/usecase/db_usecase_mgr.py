@@ -211,6 +211,7 @@ class DbUseCaseMgr(DbBase):
                               "join_condition": "usecase_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
                 sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
                 uc_ad_info = self.execute_fetch_all(conn, sql)
+                print('uc_ad_info sql:', sql)
                 usecase_id_set = usecase_id_set | set([str(wp_ad['USECASE_ID']) for wp_ad in uc_ad_info])
             # # print('usecase_id_set:', usecase_id_set)
             if 'None' in usecase_id_set:
