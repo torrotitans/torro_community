@@ -171,7 +171,7 @@ class DbInputFormMgr(DbBase):
             # get approval data info and check if
             data_access_review = []
             table_name = 'approvalTable'
-            condition = "input_form_id=%s " % (input_form_id)
+            condition = "input_form_id=%s order by approval_num" % (input_form_id)
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields, condition)
             approval_infos = self.execute_fetch_all(db_conn, sql)
@@ -179,6 +179,11 @@ class DbInputFormMgr(DbBase):
             for index, approval_info in enumerate(approval_infos):
                 approver_id = approval_info['account_id']
                 approver_group = approval_info['ad_group']
+                try:
+                    _ = prpcrypt.decrypt(approver_group)
+                    continue
+                except:
+                    pass
                 approver_label = approval_info.get('label', None)
                 approver_time = approval_info['updated_time']
                 approver_comment = approval_info['comment']
