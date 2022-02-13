@@ -73,6 +73,7 @@ class interfaceGovernance(Resource):
 
             # email notification
             if 'data' in data and 'notice_ids' in data['data']:
+                print('response data:', data)
                 notice_ids = data['data']['notice_ids']
                 text = ''
                 if 'msg' in data:
