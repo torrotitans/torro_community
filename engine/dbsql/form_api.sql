@@ -155,7 +155,7 @@ INSERT INTO `inputCommentTable` (`id`, `input_form_id`, `history_id`, `creator_i
 DROP TABLE IF EXISTS `inputNotifyTable`;
 CREATE TABLE `inputNotifyTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'notify_id',
-  `user_id` int NOT NULL COMMENT 'user_id',
+  `account_id` int NOT NULL COMMENT 'account_id',
   `input_form_id` int NOT NULL COMMENT 'input form id',
   `history_id` int NOT NULL COMMENT 'history id',
   `is_read` int(4) DEFAULT 0 COMMENT 'is read',

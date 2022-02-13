@@ -17,11 +17,11 @@ class dashboardSingleton():
 
         return dashboard_mgr.get_options(user_id, workspace_id)
 
-    def get_notify(self, user_key, is_read=None):
+    def get_notify(self, account_id, is_read=None):
 
-        return dashboard_mgr.get_notify(user_key, is_read)
+        return dashboard_mgr.get_notify(account_id, is_read)
 
-    def read_notify(self, user_key, notify_id, is_read=None):
-        return dashboard_mgr.read_notify(user_key, notify_id, is_read)
+    def read_notify(self, account_id, notify_id, is_read=None):
+        return dashboard_mgr.read_notify(account_id, notify_id, is_read)
 
 dashboard_singleton = dashboardSingleton()

@@ -233,7 +233,7 @@ class DbDashboardMgr(DbBase):
             db_conn.close()
 
 
-    def get_notify(self, user_key, is_read=None):
+    def get_notify(self, account_id, is_read=None):
         db_conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
@@ -244,7 +244,7 @@ class DbDashboardMgr(DbBase):
             else:
                 is_read_str = ""
 
-            condition = is_read_str + "user_id='%s'" % user_key
+            condition = is_read_str + "account_id='%s'" % account_id
             sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
             return_notify_infos = self.execute_fetch_all(db_conn, sql)
             if isinstance(return_notify_infos, list):
@@ -267,13 +267,13 @@ class DbDashboardMgr(DbBase):
             db_conn.close()
 
 
-    def read_notify(self, user_key, notify_id, is_read=None):
+    def read_notify(self, account_id, notify_id, is_read=None):
         db_conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
             if not is_read:
                 is_read = 0
-            condition = "id='%s' and user_id='%s'" % (notify_id, user_key)
+            condition = "id='%s' and account_id='%s'" % (notify_id, account_id)
             fields = ('is_read', )
             values = (is_read, )
             sql = self.create_update_sql(db_name, 'inputNotifyTable', fields, values, condition=condition)

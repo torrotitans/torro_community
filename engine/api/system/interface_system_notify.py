@@ -35,7 +35,7 @@ class interfaceSystemNotify(Resource):
                 workspace_id = req.get_workspace_id()
                 # print('user id:', user_key)
                 data = response_code.SUCCESS
-                data['data'] = dashboard_singleton.get_notify(user_key)
+                data['data'] = dashboard_singleton.get_notify(account_id)
             except:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'Token error or expired, please login again.'
@@ -74,7 +74,7 @@ class interfaceSystemNotify(Resource):
                 return data
             # # print('user id:', user_key)
             # change status
-            data = dashboard_singleton.read_notify(user_key, nodify_id, is_read)
+            data = dashboard_singleton.read_notify(account_id, nodify_id, is_read)
 
             return response_result_process(data, xml=xml)
         except Exception as e:

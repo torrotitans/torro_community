@@ -1,5 +1,5 @@
 from api.gcp.tasks.baseTask import baseTask
-from utils.smtp_helper import notify_approvers
+from utils.ldap_helper import Ldap
 from db.base import DbBase
 from utils.log_helper import lg
 from db.connection_pool import MysqlConn
@@ -50,11 +50,17 @@ class system_notify(baseTask, DbBase):
                 create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 if not isinstance(emails, list):
                     groups = groups.split(',')
-                values = (user_id, input_form_id, history_id, json.dumps(groups), json.dumps(emails), notify_msg, 0, create_time)
-                fields = ('user_id', 'input_form_id', 'history_id', 'adgroup_mail_list', 'user_mail_list', 'comment', 'is_read', 'create_time')
-                sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
-                notify_id = self.insert_exec(conn, sql, return_insert_id=True)
-                return 'create notify successfully: id{}'.format(str(notify_id))
+                for group in groups:
+                    mail_list, _ = Ldap.get_ad_group_member(group)
+                    emails.extend(mail_list)
+                notify_id_list = []
+                for email in emails:
+                    values = (email, input_form_id, history_id, notify_msg, 0, create_time)
+                    fields = ('account_id', 'input_form_id', 'history_id', 'comment', 'is_read', 'create_time')
+                    sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
+                    notify_id = self.insert_exec(conn, sql, return_insert_id=True)
+                    notify_id_list.append(str(notify_id))
+                return 'create notify successfully: length{}'.format(str(len(notify_id_list)))
             except Exception as e:
                 import traceback
                 lg.error(traceback.format_exc())
