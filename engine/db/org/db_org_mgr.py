@@ -166,13 +166,14 @@ class DbOrgMgr(DbBase):
             admin_group = org_info['admin_group']
             visitor_group = org_info['base_group']
             org_name = org_info['org_name']
+            airflow_url = org_info['airflow_url']
             create_time = org_info['create_time']
             des = org_info['des']
             db_name = configuration.get_database_name()
 
             # insert org
-            fields = ('ORG_NAME', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
-            values = (org_name, create_time, des, Config.DEFAULT_PROJECT)
+            fields = ('ORG_NAME', 'AIRFLOW_URL', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
+            values = (org_name, airflow_url, create_time, des, Config.DEFAULT_PROJECT)
             sql = self.create_insert_sql(db_name, 'orgTable', '({})'.format(', '.join(fields)), values)
             # print('orgTable sql:', sql)
             org_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -278,6 +279,7 @@ class DbOrgMgr(DbBase):
             org_info['admin_group'] = org['admin_group']
             org_info['base_group'] = org['base_group']
             org_info['org_name'] = org['org_name']
+            org_info['airflow_url'] = org['airflow_url']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             org_info['create_time'] = create_time
             org_info['des'] = org['des']
@@ -426,6 +428,7 @@ class DbOrgMgr(DbBase):
             org_info['admin_group'] = org['admin_group']
             org_info['base_group'] = org['base_group']
             org_info['org_name'] = org['org_name']
+            org_info['airflow_url'] = org['airflow_url']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             org_info['create_time'] = create_time
             org_info['des'] = org['des']
