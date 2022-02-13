@@ -97,6 +97,7 @@ export default {
   wsDes: "Workspace Descrpition",
   userCycle: "User recertification cycle",
   ucFlow: "Use case approval flow",
+  ucNotFound: "Use case not found",
 
   // policy
   confirmUpdatePolicy: "Do you confirm to update this policy?",
