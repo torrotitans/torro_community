@@ -31,7 +31,7 @@ class interfaceSystemNotify(Resource):
             #     return response_result_process(data, xml=xml)
             try:
                 user_key = req.get_user_key()
-                account_id = req.get_user_key()
+                account_id = req.get_user_account_id()
                 workspace_id = req.get_workspace_id()
                 # print('user id:', user_key)
                 data = response_code.SUCCESS
@@ -58,7 +58,7 @@ class interfaceSystemNotify(Resource):
 
             try:
                 user_key = req.get_user_key()
-                account_id = req.get_user_key()
+                account_id = req.get_user_account_id()
                 workspace_id = req.get_workspace_id()
 
             except:
