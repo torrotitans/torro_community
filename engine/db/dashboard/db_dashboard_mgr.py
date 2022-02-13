@@ -246,6 +246,7 @@ class DbDashboardMgr(DbBase):
 
             condition = is_read_str + "account_id='%s'" % account_id
             sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
+            print('inputNotifyTable sql:', sql)
             return_notify_infos = self.execute_fetch_all(db_conn, sql)
             if isinstance(return_notify_infos, list):
                 notify_infos.extend(return_notify_infos)
