@@ -62,7 +62,6 @@ class interfaceOrgSetting(Resource):
                 use_ssl = 1
             else:
                 use_ssl = 0
-            
             # use_ssl = False
             # request_data['use_ssl'] = False
             account_dn = request_data['admin_dn']

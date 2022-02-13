@@ -36,8 +36,18 @@ from api.input_form.interface_comment import interfaceComment
 from api.workspace.interface_policy_tags_info import interfacePolicyTagsList
 from api.workspace.interface_tag_template_info import interfaceTagTemplateList
 
+from api.system.interface_system_trigger import interfaceSystemTrigger
+from api.system.interface_system_notify import interfaceSystemNotify
 api = Api()
 
+api.add_resource(
+    interfaceSystemTrigger,
+    '/api/systemTrigger',
+)
+api.add_resource(
+    interfaceSystemNotify,
+    '/api/systemNotify',
+)
 api.add_resource(
     interfaceTagTemplateList,
     '/api/getTagTemplateList',

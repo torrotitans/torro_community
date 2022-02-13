@@ -79,10 +79,13 @@ class interfaceInputForm(Resource):
             # print('request_data: ', request_data)
             # exit(0)
             data = input_form_singleton.input_form_data(user_key, request_data, workspace_id)
-            return data
+            # return data
             if data['code'] == 200:
                 response_data = data['data']
-                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                text = ''
+                if 'msg' in data:
+                    text = data['msg']
+                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
@@ -152,10 +155,13 @@ class interfaceInputForm(Resource):
                 request_data['field_ids'] = field_ids
                 # print('request_data: ', request_data)
                 data = input_form_singleton.update_form_data(user_key, request_data, workspace_id)
-                return data
+                # return data
                 if data['code'] == 200:
                     response_data = data['data']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                    text = ''
+                    if 'msg' in data:
+                        text = data['msg']
+                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
                     if data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                     else:

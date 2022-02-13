@@ -65,7 +65,7 @@ CREATE TABLE `roleTable` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 insert into roleTable values (1, 'admin', '["*-*"]', '2021-06-06', 'the org admin role');
-insert into roleTable values (2, 'viewer', '[]', '2021-06-06', 'the org viewer role');
+insert into roleTable values (2, 'viewer', '["interfacesystemnotify-*"]', '2021-06-06', 'the org viewer role');
 insert into roleTable values (3, 'GOVERNOR', '["*-*"]', '2021-06-06', 'the governor role');
 insert into roleTable values (4, 'IT', '["*-*"]', '2021-06-06', 'the it role');
 insert into roleTable values (5, 'USER', '["*-*"]', '2021-06-06', 'the user role');
