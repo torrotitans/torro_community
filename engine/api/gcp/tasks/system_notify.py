@@ -41,9 +41,9 @@ class system_notify(baseTask, DbBase):
                 # get history id
                 history_id = input_form_infos[0]['history_id']
                 # get requestor email
-                # print('self.stage_dict:', self.stage_dict)
                 emails = self.stage_dict['emails']
                 notify_msg = str(self.stage_dict['notify_msg'])
+                print('stage_dict:', self.stage_dict)
                 if not isinstance(emails, list):
                     emails = emails.split(',')
                 groups = self.stage_dict['groups']
@@ -52,6 +52,7 @@ class system_notify(baseTask, DbBase):
                     groups = groups.split(',')
                 for group in groups:
                     mail_list, _ = Ldap.get_ad_group_member(group)
+                    print('mail list:', mail_list)
                     if mail_list:
                         emails.extend(mail_list)
                 notify_id_list = []
@@ -61,6 +62,7 @@ class system_notify(baseTask, DbBase):
                     sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
                     notify_id = self.insert_exec(conn, sql, return_insert_id=True)
                     notify_id_list.append(str(notify_id))
+                print('notify_id_list:', notify_id_list)
                 return 'create notify successfully: length{}'.format(str(len(notify_id_list)))
             except Exception as e:
                 import traceback
