@@ -204,6 +204,9 @@ class DbUseCaseMgr(DbBase):
         try:
             ad_group_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
             db_name = configuration.get_database_name()
+            # check workspace and org ad group
+
+
             usecase_id_set = set()
             for ad_group_name in ad_group_list:
                 condition = "GROUP_MAIL='%s' " % (ad_group_name)
@@ -257,7 +260,57 @@ class DbUseCaseMgr(DbBase):
                     for label in label_list:
                         one_usecase[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_usecase)
-            # print('return_infos: ', return_infos)
+            print('return_infos: ', return_infos)
+            data = response_code.SUCCESS
+            data['data'] = return_infos
+            return data
+        except Exception as e:
+            lg.error(e)
+            return response_code.GET_DATA_FAIL
+        finally:
+            conn.close()
+
+    # get usecase info
+    def get_usecase_info_by_workspace(self, workspace_id):
+        conn = MysqlConn()
+        # # print('ad_group_list:', ad_group_list)
+        try:
+
+            condition = "WORKSPACE_ID='%s'" % workspace_id
+            db_name = configuration.get_database_name()
+            sql = self.create_select_sql(db_name, 'usecaseTable',
+                                         'ID,WORKSPACE_ID,USECASE_NAME,VALIDITY_TILL,RESOURCES_ACCESS_LIST,CREATE_TIME',
+                                         condition)
+            print('usecaseTable sql:', sql)
+            usecase_infos = self.execute_fetch_all(conn, sql)
+            return_infos = []
+            for index, usecase_info in enumerate(usecase_infos):
+                usecase_id = usecase_info['ID']
+
+                one_usecase = {'id': usecase_id, 'workspace_id': usecase_info['WORKSPACE_ID'],
+                               'usecase_name': usecase_info['USECASE_NAME'],
+                               'validity_date': usecase_info['VALIDITY_TILL'],
+                               'create_time': usecase_info['CREATE_TIME']}
+                one_usecase['resources_access_list'] = []
+                resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
+                # print('resource_list:', self.resource_list)
+                for item in self.resource_list:
+                    if item in resource_access_items:
+                        one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
+                # print('one_usecase:', one_usecase)
+                # db_name = configuration.get_database_name()
+                condition = "USECASE_ID='%s' " % (usecase_id)
+                relations = [{"table_name": "adgroupTable",
+                              "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
+                sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
+                ad_group_infos = self.execute_fetch_all(conn, sql)
+                for ad_group_info in ad_group_infos:
+                    label_list = json.loads(ad_group_info['LABEL_LIST'])
+                    for label in label_list:
+                        one_usecase[label] = ad_group_info['GROUP_MAIL']
+                return_infos.append(one_usecase)
+            print('return_infos: ', return_infos)
             data = response_code.SUCCESS
             data['data'] = return_infos
             return data
