@@ -233,6 +233,8 @@ class DbGovernanceMgr(DbBase):
                     else:
                         data = response_code.UPDATE_DATA_FAIL
                         data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
+                    if 'data' not in data:
+                        data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
                     return data
                 elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
