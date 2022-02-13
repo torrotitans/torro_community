@@ -255,7 +255,7 @@ class DbDashboardMgr(DbBase):
             for notify_info in notify_infos:
                 id = notify_info['id']
                 if id not in notify_id_list:
-                    notify_id_list.extend(id)
+                    notify_id_list.append(id)
                     return_data.append(notify_info)
             data = response_code.SUCCESS
             data['data'] = return_data
