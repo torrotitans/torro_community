@@ -10,6 +10,10 @@ class Smtp(object):
         self.mail_user = mail_user
         self.mail_pass = mail_pass
         self.port = port
+        if int(is_ssl) == 1:
+            is_ssl = True
+        else:
+            is_ssl = False
         self.is_ssl = is_ssl
 
     def send_email(self, subject, text, receivers, sender=None, sender_name=None):

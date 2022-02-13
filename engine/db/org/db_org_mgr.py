@@ -112,8 +112,8 @@ class DbOrgMgr(DbBase):
 
             # insert form
             fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_SSL', 'CREATE_TIME',
-                      'TIME_MODIFY', )
-            values = (smtp_host, smtp_account, smtp_pwd, 0, smtp_ssl, create_time)
+                      'TIME_MODIFY')
+            values = (smtp_host, smtp_account, smtp_pwd, 0, smtp_ssl, create_time, create_time)
             sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
             print('smtpTable sql:', sql)
             smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
