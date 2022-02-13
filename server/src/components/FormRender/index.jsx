@@ -174,6 +174,7 @@ const FormRender = ({ formId, onBack, defaultData }) => {
         open={modalData.open}
         content={modalData.content}
         status={modalData.status}
+        successCb={modalData.successCb}
         buttonClickHandle={buttonClickHandle}
         handleClose={() => {
           setModalData({ ...modalData, open: false });

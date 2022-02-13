@@ -14,6 +14,8 @@ const withAuthentication = (VerificationPage) => (props) => {
   let haveWs = authContext.wsList && authContext.wsList.length > 0;
   let isServiceAdmin = authContext.roleList.includes("admin");
 
+  console.log(authContext);
+
   if (window.location.pathname.indexOf("/orgSetting") !== -1 && !firstInit) {
     return <Navigate to="/login" />;
   }

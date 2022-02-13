@@ -39,7 +39,7 @@ class interfaceLogin(Resource):
             # # print('login: ', login_name, login_password)
             # 对登录情况进行验证
             dict_user = Auth.authenticate(login_name, login_password, offline_flag)
-            print('dict_user:', dict_user)
+            print('FN:interfaceLogin_post dict_user:', dict_user)
             if 'token' not in dict_user:
                 return response_code.LOGIN_FAIL
             # exit(0)

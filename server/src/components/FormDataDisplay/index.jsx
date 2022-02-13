@@ -237,9 +237,9 @@ const FormDataDisplay = ({
       } else if (typeof defaultValue === "boolean") {
         return String(defaultValue);
       } else {
-        if (row.style === 1) {
-          return renderOption(defaultValue, options);
-        }
+        // if (row.style === 1) {
+        //   return renderOption(defaultValue, options);
+        // }
         return defaultValue;
       }
     },
