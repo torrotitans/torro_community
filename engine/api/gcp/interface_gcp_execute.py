@@ -51,7 +51,7 @@ class interfaceGCPExecute(Resource):
                     form_id = data['data']['form_id']
                     input_form_id = data['data']['input_form_id']
                     return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                    _ = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+                    _ = governance_singleton.updateTask(user_key, account_id, input_form_id,workspace_id, tasks, return_msg_list)
                 else:
                     return data
             return response_code.SUCCESS

@@ -850,14 +850,15 @@ class DbInputFormMgr(DbBase):
                     #     approval_dict[ad_group]['label_list'].append(approval_label)
                     self.__add_approval(input_form_id, index, ad_group, approval_label)
                 # trigger airflow
-                retry = 0
-                while retry < 3:
-                    return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
-                    if not return_flag:
-                        retry += 1
-                        time.sleep(1)
-                    else:
-                        break
+                if approval_index == 0:
+                    retry = 0
+                    while retry < 3:
+                        return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
+                        if not return_flag:
+                            retry += 1
+                            time.sleep(1)
+                        else:
+                            break
                 if approver_emails:
                     index += 1
             # get now approval group

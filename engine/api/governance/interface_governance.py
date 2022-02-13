@@ -49,7 +49,7 @@ class interfaceGovernance(Resource):
             input_form_id = request_data['id']
             # # print('user id:', user_key)
             # change status
-            data = governance_singleton.change_status(user_key, account_id, request_data)
+            data = governance_singleton.change_status(user_key, account_id, workspace_id, request_data)
             # print('change status data: ', data)
             # if begin to execute task
             data1 = response_code.BAD_REQUEST
@@ -65,7 +65,7 @@ class interfaceGovernance(Resource):
                 gcp_tasks = data['data'].get('gcp_tasks', [])
                 tasks = data['data'].get('tasks', [])
                 return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
             else:
                 return response_result_process(data, xml=xml)
 
@@ -128,7 +128,7 @@ class interfaceGovernanceBatch(Resource):
                 input_form_id = status_info['id']
                 # # print('user id:', user_key)
                 # change status
-                one_data = governance_singleton.change_status(user_key, account_id, status_info)
+                one_data = governance_singleton.change_status(user_key, account_id, workspace_id, status_info)
                 # print('change status data: ', data)
                 # if begin to execute task
 
@@ -136,7 +136,7 @@ class interfaceGovernanceBatch(Resource):
                     gcp_tasks = one_data['data'].get('gcp_tasks', [])
                     tasks = one_data['data'].get('tasks', [])
                     return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                    one_data = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+                    one_data = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
                 data['data'].append(one_data)
 
             # # email notification

@@ -9,17 +9,17 @@ __all__ = {"governanceSingleton"}
 
 class governanceSingleton():
 
-    def change_status(self, user_key, account_id, inputData):
+    def change_status(self, user_key, account_id, workspace_id, inputData):
 
-        return governance_mgr.change_status(user_key, account_id, inputData)
+        return governance_mgr.change_status(user_key, account_id, workspace_id, inputData)
 
-    def system_approval_trigger(self, user_key, account_id, inputData):
+    def system_approval_trigger(self, user_key, account_id,  inputData):
 
         return governance_mgr.system_approval_trigger(user_key, account_id, inputData)
 
-    def updateTask(self, user_key, account_id, input_form_id, tasks, return_msg_list):
+    def updateTask(self, user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list):
 
-        return governance_mgr.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+        return governance_mgr.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
 
     def add_new_usecase(self, input_form_id, form_id, user_id, workspace_id):
 

@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*
 
 from string import Template
+from utils.airflow_helper import system_approval
 from db.gcp.task_operator import taskFetcher
 from config import configuration
 from db.base import DbBase
@@ -32,7 +33,7 @@ class DbGovernanceMgr(DbBase):
     def __get_adgroup_member(self, ad_group):
         return []
     # change inputform status
-    def change_status(self, user_key, account_id, inputData):
+    def change_status(self, user_key, account_id, workspace_id, inputData):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -206,6 +207,28 @@ class DbGovernanceMgr(DbBase):
                         fields = ('now_approval', 'is_approved')
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
+                        sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
+                        next_approval_items = self.execute_fetch_all(conn, sql)
+                        # check if it is system approval task
+                        system_approval_trigger_flag = 0
+                        for next_approval_item in next_approval_items:
+                            if next_approval_item and next_approval_item['label'] == 'System approval':
+                                try:
+                                    token = next_approval_item['ad_group']
+                                    token_json = prpcrypt.encrypt(token)
+                                    input_form_id, form_id, approval_order, time = token_json.split('||')
+                                    retry = 0
+                                    while retry < 3:
+                                        return_flag = system_approval(token, input_form_id, form_id,
+                                                                      workspace_id, approval_order)
+                                        if not return_flag:
+                                            retry += 1
+                                            time.sleep(1)
+                                        else:
+                                            break
+                                except:
+                                    lg.error(traceback.format_exc())
+
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # print('approvalTable update_sql: ', sql)
                         return_count = self.updete_exec(conn, sql)
@@ -553,7 +576,7 @@ class DbGovernanceMgr(DbBase):
 
 
     # when finish the workflow task, update the logs
-    def updateTask(self, user_key, account_id, input_form_id, tasks, return_msg_list):
+    def updateTask(self, user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -600,7 +623,7 @@ class DbGovernanceMgr(DbBase):
             # update form
             inputData = {'id': input_form_id, 'form_status': form_status_code, 'comment': ''}
 
-            data = self.change_status(user_key, account_id, inputData)
+            data = self.change_status(user_key, account_id, workspace_id, inputData)
             # fields = ('form_status', 'updated_time')
             # values = (form_status_code, now)
             # update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
