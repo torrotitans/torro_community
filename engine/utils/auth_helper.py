@@ -208,6 +208,9 @@ class Auth(object):
         all_permission = '*-*'
         permission_allow = 0
         print('user_role:', user_role)
+        if user_role == '':
+            user_role = 'viewer'
+        print('default user_role:', user_role)
         print('permissions:', permissions)
         print('api_endpoint:', request_id, api_endpoint, method)
         for id in permissions:
@@ -376,7 +379,7 @@ class Auth(object):
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
-                        print('wp permission_allow:', permission_allow)
+                            print('wp permission_allow:', permission_allow)
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:

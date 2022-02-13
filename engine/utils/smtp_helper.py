@@ -1,13 +1,24 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
-
+from db.org.db_org_mgr import org_mgr
+from utils.status_code import response_code
+from common.common_crypto import prpcrypt
 class Smtp(object):
-    def __init__(self, mail_host, mail_user, mail_pass, is_ssl=True, port=587):
+    def __init__(self, ):
+        mail_host, mail_user, mail_pass, is_ssl, port = org_mgr.get_smtp()
         self.mail_host = mail_host
         self.mail_user = mail_user
-        self.mail_pass = mail_pass
+        try:
+            self.mail_pass = prpcrypt.encrypt(mail_pass)
+        except:
+            print('encrypt: ', mail_pass)
+            self.mail_pass = ''
         self.port = port
+        if int(is_ssl) == 1:
+            is_ssl = True
+        else:
+            is_ssl = False
         self.is_ssl = is_ssl
 
     def send_email(self, subject, text, receivers, sender=None, sender_name=None):
@@ -36,15 +47,13 @@ class Smtp(object):
             # print(traceback.format_exc())
             return False
 
-def notify_approvers(input_form_id, approvers):
-
-    mail_host = "smtp.torro.ai"  # 设置服务器
-    mail_user = "torroAdmin@torro.ai"  # 用户名
-    mail_pass = "xxxxxxxxxx"  # 口令
-    sender = 'torroAdmin@torro.ai'
-    smtp = Smtp(mail_host, mail_user, mail_pass)
-    subject = 'Torro - You have an approval ticket.'
-    text = 'the waiting for approval form id is: %s' % input_form_id
+def notify_approvers(input_form_id, approvers, text=None):
+    print('Email info:', input_form_id, approvers, text)
+    return response_code.SUCCESS
+    smtp = Smtp()
+    subject = 'Torro - You have an new ticket message.'
+    if not text:
+        text = 'The waiting for approval form id is: %s' % input_form_id
     smtp.send_email(subject, text, receivers=approvers)
-    data = {}
+    data = response_code.SUCCESS
     return data

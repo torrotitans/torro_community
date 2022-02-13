@@ -275,7 +275,7 @@ class DbFormMgr(DbBase):
                     dynamic_info.append(new_field_info)
 
             if wp_id != 0:
-                condition = "ID=%s " % (wp_id)
+                condition = "ID='%s' " % (wp_id)
                 sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
                 options = []
                 regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])

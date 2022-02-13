@@ -3,6 +3,7 @@ CREATE TABLE `orgTable` (
   `ID` int(11) NOT NULL AUTO_INCREMENT COMMENT 'org_id',
   `ORG_NAME` varchar(128) DEFAULT NULL COMMENT 'org_name',
   `PROJECT_NAME` varchar(128) DEFAULT NULL COMMENT 'project name',
+  `AIRFLOW_URL` varchar(1024) DEFAULT NULL COMMENT 'aiflow url',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
@@ -88,7 +89,6 @@ CREATE TABLE `ldapTable` (
   `GROUP_SERACH_FILTER` varchar(64) DEFAULT NULL COMMENT 'group search filter',
   `GROUP_MEMBER_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'group member attribute',
   `GROUP_EMAIL_SUFFIX` varchar(64) DEFAULT NULL COMMENT 'group mail suffix',
-
 
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',

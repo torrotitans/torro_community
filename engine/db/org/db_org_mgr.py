@@ -95,6 +95,38 @@ class DbOrgMgr(DbBase):
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
+
+
+    def __set_smtp(self, smtp_info):
+        conn = MysqlConn()
+        try:
+            smtp_host = smtp_info['smtp_host']
+            smtp_account = smtp_info['smtp_account']
+            smtp_pwd = smtp_info['smtp_pwd']
+            # smtp_port = smtp_info['smtp_port']
+            smtp_ssl = smtp_info['smtp_ssl']
+            create_time = smtp_info['create_time']
+
+
+            db_name = configuration.get_database_name()
+
+            # insert form
+            fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_SSL', 'CREATE_TIME',
+                      'TIME_MODIFY')
+            values = (smtp_host, smtp_account, smtp_pwd, 0, smtp_ssl, create_time, create_time)
+            sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
+            print('smtpTable sql:', sql)
+            smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
+            smtp_info['id'] = smtp_id
+            data = response_code.SUCCESS
+            data['data'] = smtp_info
+            return data
+        except Exception as e:
+            lg.error(traceback.format_exc())
+            return response_code.GET_DATA_FAIL
+        finally:
+            conn.close()
+
     def __delete_ldap(self):
 
         conn = MysqlConn()
@@ -111,7 +143,21 @@ class DbOrgMgr(DbBase):
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
+    def __delete_smtp(self):
 
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            condition = "1=1"
+            delete_table_sql = self.create_delete_sql(db_name, "smtpTable", condition)
+            # print('delete_table_sql ', delete_table_sql)
+            self.delete_exec(conn, delete_table_sql)
+            return response_code.SUCCESS
+        except Exception as e:
+            lg.error(e)
+            return response_code.DELETE_DATA_FAIL
+        finally:
+            conn.close()
 
     def __set_org(self, org_info):
 
@@ -120,13 +166,14 @@ class DbOrgMgr(DbBase):
             admin_group = org_info['admin_group']
             visitor_group = org_info['base_group']
             org_name = org_info['org_name']
+            airflow_url = org_info['airflow_url']
             create_time = org_info['create_time']
             des = org_info['des']
             db_name = configuration.get_database_name()
 
             # insert org
-            fields = ('ORG_NAME', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
-            values = (org_name, create_time, des, Config.DEFAULT_PROJECT)
+            fields = ('ORG_NAME', 'AIRFLOW_URL', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
+            values = (org_name, airflow_url, create_time, des, Config.DEFAULT_PROJECT)
             sql = self.create_insert_sql(db_name, 'orgTable', '({})'.format(', '.join(fields)), values)
             # print('orgTable sql:', sql)
             org_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -232,6 +279,7 @@ class DbOrgMgr(DbBase):
             org_info['admin_group'] = org['admin_group']
             org_info['base_group'] = org['base_group']
             org_info['org_name'] = org['org_name']
+            org_info['airflow_url'] = org['airflow_url']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             org_info['create_time'] = create_time
             org_info['des'] = org['des']
@@ -257,12 +305,21 @@ class DbOrgMgr(DbBase):
 
             ldap_info['create_time'] = create_time
             ldap_info['time_modify'] = create_time
+
+            smtp_info = {}
+            smtp_info['smtp_host'] = org['smtp_host']
+            smtp_info['smtp_account'] = org['smtp_account']
+            smtp_info['smtp_pwd'] = org['smtp_pwd']
+            # smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_ssl'] = org['smtp_ssl']
+            smtp_info['create_time'] = create_time
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
             ldap_infos = self.execute_fetch_all(conn, sql)
             if ldap_infos:
                 self.__delete_adgroup_to_org()
                 self.__delete_ldap()
                 self.__delete_org()
+                self.__delete_smtp()
                 # data = response_code.ADD_DATA_FAIL
                 # return data
             # sql = self.create_select_sql(db_name, 'orgTable', '*')
@@ -273,10 +330,14 @@ class DbOrgMgr(DbBase):
 
             org_insert = self.__set_org(org_info)
             ldap_insert = self.__set_ldap(ldap_info)
+            smtp_insert = self.__set_smtp(smtp_info)
+
             data = response_code.SUCCESS
             # self.__delete_admin()
             org['org_id'] = org_insert['data']['org_id']
             org['ldap_id'] = ldap_insert['data']['id']
+            org['smtp_id'] = smtp_insert['data']['id']
+
             data['data'] = org
             return data
         except Exception as e:
@@ -363,11 +424,12 @@ class DbOrgMgr(DbBase):
             self.__delete_adgroup_to_org()
             self.__delete_ldap()
             self.__delete_org()
-
+            self.__delete_smtp()
             org_info = {}
             org_info['admin_group'] = org['admin_group']
             org_info['base_group'] = org['base_group']
             org_info['org_name'] = org['org_name']
+            org_info['airflow_url'] = org['airflow_url']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             org_info['create_time'] = create_time
             org_info['des'] = org['des']
@@ -394,6 +456,14 @@ class DbOrgMgr(DbBase):
             ldap_info['create_time'] = create_time
             ldap_info['time_modify'] = create_time
 
+            smtp_info = {}
+            smtp_info['smtp_host'] = org['smtp_host']
+            smtp_info['smtp_account'] = org['smtp_account']
+            smtp_info['smtp_pwd'] = org['smtp_pwd']
+            # smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_ssl'] = org['smtp_ssl']
+            smtp_info['create_time'] = create_time
+
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
             ldap_infos = self.execute_fetch_all(conn, sql)
             if ldap_infos:
@@ -407,10 +477,12 @@ class DbOrgMgr(DbBase):
 
             org_insert = self.__set_org(org_info)
             ldap_insert = self.__set_ldap(ldap_info)
+            smtp_insert = self.__set_smtp(smtp_info)
             data = response_code.SUCCESS
             self.__delete_admin()
             org['org_id'] = org_insert['data']['org_id']
             org['ldap_id'] = ldap_insert['data']['id']
+            org['smtp_id'] = smtp_insert['data']['id']
             data['data'] = org
             return data
         except Exception as e:
@@ -444,11 +516,14 @@ class DbOrgMgr(DbBase):
             sql = self.create_select_sql(db_name, 'smtpTable', '*')
             smtp_info = self.execute_fetch_all(conn, sql)
             if smtp_info:
-                data = response_code.SUCCESS
-                data['data'] = smtp_info
+                return '', '', '', '', ''
             else:
-                data = response_code.GET_DATA_FAIL
-            return data
+                mail_host = smtp_info['MAIL_HOST']
+                mail_user = smtp_info['MAIL_USER']
+                mail_pass = smtp_info['MAIL_PASS']
+                port = smtp_info['PORT']
+                is_ssl = smtp_info['USE_SSL']
+                return mail_host, mail_user, mail_pass, is_ssl, port
         except Exception as e:
             lg.error(e)
             return response_code.GET_DATA_FAIL
@@ -490,4 +565,22 @@ class DbOrgMgr(DbBase):
             return None, None
         finally:
             conn.close()
+
+    # get airflow info
+    def get_airflow_url(self):
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            sql = self.create_select_sql(db_name, 'orgTable', 'AIRFLOW_URL')
+            org_info = self.execute_fetch_one(conn, sql)
+            if org_info:
+                return org_info['AIRFLOW_URL']
+            else:
+                return ''
+        except Exception as e:
+            lg.error(e)
+            return ''
+        finally:
+            conn.close()
+
 org_mgr = DbOrgMgr()

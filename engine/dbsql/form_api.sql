@@ -151,3 +151,15 @@ CREATE TABLE `inputCommentTable` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 INSERT INTO `inputCommentTable` (`id`, `input_form_id`, `history_id`, `creator_id`, `comment`, `create_time`) VALUES (478,501,498,'354','[|4|]approved','2022-01-04 13:59:27');
+
+DROP TABLE IF EXISTS `inputNotifyTable`;
+CREATE TABLE `inputNotifyTable` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'notify_id',
+  `account_id` varchar(128) NOT NULL COMMENT 'account_id',
+  `input_form_id` int NOT NULL COMMENT 'input form id',
+  `history_id` int NOT NULL COMMENT 'history id',
+  `is_read` int(4) DEFAULT 0 COMMENT 'is read',
+  `comment` text COMMENT 'comment',
+  `create_time` datetime DEFAULT NULL COMMENT 'create_time',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

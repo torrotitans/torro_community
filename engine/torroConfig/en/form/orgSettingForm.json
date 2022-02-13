@@ -207,9 +207,73 @@
       "placeholder": "Group e-mail suffix",
       "style": 3,
       "required": true
+    },
+    {
+      "default": "",
+      "des": "Smtp host",
+      "edit": 1,
+      "id": "smtp_host",
+      "label": "Smtp host",
+      "options": [],
+      "placeholder": "Smtp host",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Smtp account",
+      "edit": 1,
+      "id": "smtp_account",
+      "label": "Smtp account",
+      "options": [],
+      "placeholder": "Smtp account",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "smtp account password",
+      "edit": 1,
+      "id": "smtp_pwd",
+      "label": "Smtp password",
+      "options": [],
+      "placeholder": "Smtp password",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Smtp SSL",
+      "edit": 1,
+      "id": "smtp_ssl",
+      "label": "Smtp SSL",
+      "options": [
+        {
+          "label": "True",
+          "value": "true"
+        },
+        {
+          "label": "False",
+          "value": "false"
+        }
+      ],
+      "placeholder": "Smtp SSL",
+      "style": 2,
+      "required": true
+    },
+    {
+      "default": "",
+      "des": "Airflow Url",
+      "edit": 1,
+      "id": "airflow_url",
+      "label": "Airflow Url",
+      "options": [],
+      "placeholder": "Airflow Url",
+      "style": 3,
+      "required": true
     }
   ],
-  "fields_num": 18,
+  "fields_num": 23,
   "id": 777,
   "title": "Project setup config",
   "u_max_id": 0

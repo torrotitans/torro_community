@@ -17,7 +17,7 @@ class AddTagTemplateToTable(baseTask):
         self.full_resource_name = None
         self.target_project = stage_dict['source_project_id']
 
-    def execute(self):
+    def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         missing_set = set()
         for key in self.arguments:
             # if key == 'bucket_cmek' or key == 'bucket_class' or key == 'bucket_labels':
