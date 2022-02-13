@@ -66,7 +66,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
                 data['msg'] = 'cannot find the status.'
-                return data
+
 
             form_status_code = int(inputData['form_status'])
 
@@ -79,6 +79,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
                 data['msg'] = 'form not found'
+                data['data']['history_id'] = ''
                 return data
             # do the user exist
             creator_id = user_key
@@ -88,6 +89,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
                 data['msg'] = 'user not found'
+                data['data']['history_id'] = ''
                 return data
             # get history id
             history_id = form_infos[0]['history_id']
@@ -116,6 +118,7 @@ class DbGovernanceMgr(DbBase):
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
                     data['msg'] = 'you do not in the approval ad group.'
+                    data['data']['history_id'] = history_id
                     return data
                 now_approval_num = int(approval_infos[0]['approval_num'])
                 next_approval_num = now_approval_num + 1
@@ -188,6 +191,7 @@ class DbGovernanceMgr(DbBase):
                             data['data'] = {}
                             data['data']['notice_ids'] = notice_ids
                             data['msg'] = 'the %s level approval task has already been approved.' % now_approval_num
+                            data['data']['history_id'] = history_id
                             return data
                         # close all the same num approval task
                         fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
@@ -236,6 +240,7 @@ class DbGovernanceMgr(DbBase):
                     if 'data' not in data:
                         data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
+                    data['data']['history_id'] = history_id
                     return data
                 elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
                     # update status
@@ -251,6 +256,7 @@ class DbGovernanceMgr(DbBase):
                         data = response_code.SUCCESS
                         data['data']['notice_ids'] = notice_ids
                         data['msg'] = 'the %s level approval task has already been changed.' % now_approval_num
+                        data['data']['history_id'] = history_id
                         return data
                     # close the other same level task
                     fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
@@ -401,6 +407,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
                 data['msg'] = 'form not found'
+                data['data']['history_id'] = ''
                 return data
 
             # get history id
@@ -415,6 +422,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
                 data['msg'] = 'Airflow trigger failed, token error.'
+                data['data']['history_id'] = history_id
                 return data
             now_approval_num = int(approval_infos[0]['approval_num'])
             next_approval_num = now_approval_num + 1
@@ -485,6 +493,7 @@ class DbGovernanceMgr(DbBase):
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
                     data['msg'] = 'the %s level approval task has already been approved.' % now_approval_num
+                    data['data']['history_id'] = history_id
                     return data
                 # close all the same num approval task
                 fields = ('now_approval', 'is_approved', 'comment', 'updated_time')
@@ -528,7 +537,11 @@ class DbGovernanceMgr(DbBase):
             else:
                 data = response_code.UPDATE_DATA_FAIL
                 data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
-            data['data']['notice_ids'] = notice_ids
+            if 'data' not in data:
+                data['data'] = {}
+            if 'notice_ids' not in data['data']:
+                data['data']['notice_ids'] = []
+            data['data']['history_id'] = history_id
             return data
 
         except Exception as e:

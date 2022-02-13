@@ -72,7 +72,7 @@ class interfaceGovernance(Resource):
             # return response_result_process(data1, xml=xml)
 
             # email notification
-            if 'data' in data and 'notice_ids' in data['data']:
+            if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
                 print('response data:', data)
                 notice_ids = data['data']['notice_ids']
                 text = ''
