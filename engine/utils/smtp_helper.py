@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 from db.org.db_org_mgr import org_mgr
+from utils.status_code import response_code
 
 class Smtp(object):
     def __init__(self, ):
@@ -44,11 +45,11 @@ class Smtp(object):
 
 def notify_approvers(input_form_id, approvers, text=None):
     print('Email info:', input_form_id, approvers, text)
-    return {}
+    return response_code.SUCCESS
     smtp = Smtp()
     subject = 'Torro - You have an new ticket message.'
     if not text:
         text = 'The waiting for approval form id is: %s' % input_form_id
     smtp.send_email(subject, text, receivers=approvers)
-    data = {}
+    data = response_code.SUCCESS
     return data
