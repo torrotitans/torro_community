@@ -208,6 +208,9 @@ class Auth(object):
         all_permission = '*-*'
         permission_allow = 0
         print('user_role:', user_role)
+        if user_role == '':
+            user_role = 'viewer'
+        print('default user_role:', user_role)
         print('permissions:', permissions)
         print('api_endpoint:', request_id, api_endpoint, method)
         for id in permissions:

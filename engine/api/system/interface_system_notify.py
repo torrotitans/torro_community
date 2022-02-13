@@ -47,7 +47,7 @@ class interfaceSystemNotify(Resource):
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
-
+    @login_required
     def post(self,):
         xml = request.args.get('format')
         try:
