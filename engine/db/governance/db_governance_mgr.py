@@ -335,6 +335,11 @@ class DbGovernanceMgr(DbBase):
                 if 'data' not in data:
                     data['data'] = {}
                 data['data']['notice_ids'] = notice_ids
+            if 'data' not in data:
+                data['data'] = {}
+            if 'notice_ids' not in data['data']:
+                data['data']['notice_ids'] = []
+            data['data']['history_id'] = history_id
             return data
 
         except Exception as e:

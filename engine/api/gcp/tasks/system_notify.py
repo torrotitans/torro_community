@@ -52,7 +52,8 @@ class system_notify(baseTask, DbBase):
                     groups = groups.split(',')
                 for group in groups:
                     mail_list, _ = Ldap.get_ad_group_member(group)
-                    emails.extend(mail_list)
+                    if mail_list:
+                        emails.extend(mail_list)
                 notify_id_list = []
                 for email in emails:
                     values = (email, input_form_id, history_id, notify_msg, 0, create_time)
