@@ -81,6 +81,7 @@ class interfaceGovernance(Resource):
                 data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
+                    data = response_code.SUCCESS
                 else:
                     data = response_code.UPDATE_DATA_FAIL
                     data['msg'] = 'Create new form success, fail to send email to approves'
