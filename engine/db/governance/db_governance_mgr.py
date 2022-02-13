@@ -612,7 +612,7 @@ class DbGovernanceMgr(DbBase):
             return data
         except Exception as e:
             error = traceback.format_exc()
-            # print(error)
+            print(error)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
