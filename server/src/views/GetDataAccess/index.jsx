@@ -712,6 +712,7 @@ const GetDataAccess = () => {
         status={modalData.status}
         buttonClickHandle={buttonClickHandle}
         handleClose={closeModal}
+        successCb={modalData.successCb}
       />
     </div>
   );

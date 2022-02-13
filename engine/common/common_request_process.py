@@ -35,9 +35,11 @@ class requestProcess(object):
             workspace_id = g.workspace_id
             
             print("FN:get_workspace_id ws_id:{}, type: {}".format(g.workspace_id,type(g.workspace_id)))
+
             # if not isinstance(workspace_id, (int, str)):
             #     workspace_id = 0
             workspace_id = int(workspace_id)
+
         except:
             workspace_id = 0
         return workspace_id
