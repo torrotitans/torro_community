@@ -835,7 +835,9 @@ class DbInputFormMgr(DbBase):
                                                                                                              form_id=str(form_id),
                                                                                                              approval_order=str(approval_index),
                                                                                                              time=str(time.time())))
-                for ad_group in approver_emails+[random_token]:
+                approval_mails = approver_emails + [random_token]
+                print('approval_mails:', approval_mails)
+                for ad_group in approval_mails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
@@ -853,14 +855,15 @@ class DbInputFormMgr(DbBase):
                 if approver_emails:
                     index += 1
             # get now approval group
-            emails_return_item = [4, 8]
+            emails_return_item = [4]
             if approval_index == 0:
                 if approval_item['id'] in emails_return_item:
                     approvers.extend(approver_emails)
                 else:
                     user_emails = []
                     for ad_group in approver_emails:
-                        user_emails.extend(Ldap.get_ad_group_member(ad_group))
+                        return_member, _ = Ldap.get_ad_group_member(ad_group)
+                        user_emails.extend(return_member)
                     approvers.extend(user_emails)
 
         for approval_ad_group in approval_dict:
