@@ -39,7 +39,8 @@ class Smtp(object):
             return False
 
 def notify_approvers(input_form_id, approvers, text=None):
-
+    print('Email info:', input_form_id, approvers, text)
+    return {}
     smtp = Smtp()
     subject = 'Torro - You have an new ticket message.'
     if not text:

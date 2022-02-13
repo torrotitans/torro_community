@@ -63,7 +63,7 @@ class interfaceSystemTrigger(Resource):
                 text = ''
                 if 'msg' in data:
                     text = data['msg']
-                data2 = notify_approvers(data1['data']['history_id'], notice_ids, text=text)
+                data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
                 if data2['code'] == 200:
                     data = response_code.SUCCESS
                 else:
