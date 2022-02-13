@@ -224,9 +224,9 @@
       "des": "Smtp account",
       "edit": 1,
       "id": "smtp_account",
-      "label": "Smtp host",
+      "label": "Smtp account",
       "options": [],
-      "placeholder": "Smtp host",
+      "placeholder": "Smtp account",
       "style": 3,
       "required": true
     },
