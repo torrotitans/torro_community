@@ -40,21 +40,26 @@ class system_notify(baseTask, DbBase):
                     raise Exception('input form not found: {}'.format(str(input_form_id)))
                 # get history id
                 history_id = input_form_infos[0]['history_id']
+
+                notify_msg = str(self.stage_dict['notify_msg'])
+                create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
                 # get requestor email
                 emails = self.stage_dict['emails']
-                notify_msg = str(self.stage_dict['notify_msg'])
                 print('stage_dict:', self.stage_dict)
                 if not isinstance(emails, list):
                     emails = emails.split(',')
+
                 groups = self.stage_dict['groups']
-                create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                if not isinstance(emails, list):
+                if not isinstance(groups, list):
                     groups = groups.split(',')
+                print('groups:', groups)
                 for group in groups:
                     mail_list, _ = Ldap.get_ad_group_member(group)
                     print('mail list:', mail_list)
                     if mail_list:
                         emails.extend(mail_list)
+                print('emails:', emails)
                 notify_id_list = []
                 for email in emails:
                     values = (email, input_form_id, history_id, notify_msg, 0, create_time)
