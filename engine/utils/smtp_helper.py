@@ -3,13 +3,17 @@ from email.mime.text import MIMEText
 from email.header import Header
 from db.org.db_org_mgr import org_mgr
 from utils.status_code import response_code
-
+from common.common_crypto import prpcrypt
 class Smtp(object):
     def __init__(self, ):
         mail_host, mail_user, mail_pass, is_ssl, port = org_mgr.get_smtp()
         self.mail_host = mail_host
         self.mail_user = mail_user
-        self.mail_pass = mail_pass
+        try:
+            self.mail_pass = prpcrypt.encrypt(mail_pass)
+        except:
+            print('encrypt: ', mail_pass)
+            self.mail_pass = ''
         self.port = port
         if int(is_ssl) == 1:
             is_ssl = True

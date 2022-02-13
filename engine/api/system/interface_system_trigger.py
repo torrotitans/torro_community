@@ -26,7 +26,7 @@ class interfaceSystemTrigger(Resource):
 
 
             # request_data = req.verify_all_param(request_data, governanceApiPara.changeStatus_POST_request)
-
+            print('request_data:', request_data)
             admin_info = governance_singleton.get_admin_user_info()
             user_key = admin_info.get('ACCOUNT_NAME')
             account_id = admin_info.get('ID')
