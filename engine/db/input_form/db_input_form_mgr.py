@@ -837,12 +837,13 @@ class DbInputFormMgr(DbBase):
                                                                                                              time=str(time.time())))
                 approval_mails = approver_emails + [random_token]
                 print('approval_mails:', approval_mails)
+                # system it approval does not need to marge
                 for ad_group in approval_mails:
-                    if ad_group not in approval_dict:
-                        approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
-                    else:
-                        approval_dict[ad_group]['label_list'].append(approval_label)
-                    # self.__add_approval(input_form_id, index, ad_group, approval_label)
+                    # if ad_group not in approval_dict:
+                    #     approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
+                    # else:
+                    #     approval_dict[ad_group]['label_list'].append(approval_label)
+                    self.__add_approval(input_form_id, index, ad_group, approval_label)
                 # trigger airflow
                 retry = 0
                 while retry < 3:
