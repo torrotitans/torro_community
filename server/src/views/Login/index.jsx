@@ -57,6 +57,7 @@ const LoginPage = () => {
               wsList: data.workspace_list,
               wsId: Number(data.workspace_id),
               ad_group_list: data.ad_group_list,
+              userCN: data.ACCOUNT_CN,
             };
             setAuth(tmpAuth);
           }
