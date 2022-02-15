@@ -132,7 +132,7 @@ class DbGovernanceMgr(DbBase):
                     # if it is the last approval
                     approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                     sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                    print('approvalTable: ', sql)
+                    print('approvalTable: ', sql, now_approval_num, next_approval_num)
                     last_approval_info = self.execute_fetch_one(conn, sql)
                     # if cannot find the next approval task, is the last approval status
                     if not last_approval_info:
@@ -208,7 +208,7 @@ class DbGovernanceMgr(DbBase):
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                         sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
-                        print('next approvalTable sql:', sql)
+                        print('next approvalTable sql:', now_approval_num, next_approval_num, sql)
                         next_approval_items = self.execute_fetch_all(conn, sql)
                         # notify next adgroup approvers
                         next_adgroup = []
