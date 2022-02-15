@@ -74,7 +74,8 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
       let value = elem.childNodes[i];
       if (
         (value.id && value.id.indexOf("s") !== -1) ||
-        (value.id && value.id.indexOf("u") !== -1)
+        (value.id && value.id.indexOf("u") !== -1) ||
+        (value.id && value.id.indexOf("d") !== -1)
       ) {
         tmp += `$(${value.id})`;
       } else {
@@ -89,22 +90,16 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
   };
   useEffect(() => {
     let script = document.createElement("script");
-    script.setAttribute(
-      "src",
-      "http://localhost:8080/ueditor/ueditor.config.js"
-    );
+    script.setAttribute("src", "/ueditor/ueditor.config.js");
     document.getElementsByTagName("head")[0].appendChild(script);
     script = document.createElement("script");
-    script.setAttribute(
-      "src",
-      "http://localhost:8080/ueditor/ueditor.all.min.js"
-    );
+    script.setAttribute("src", "/ueditor/ueditor.all.min.js");
     document.getElementsByTagName("head")[0].appendChild(script);
 
     script.onload = () => {
       let UE = window.UE;
       var ue = UE.getEditor("container", {
-        UEDITOR_HOME_URL: "http://localhost:8080/ueditor/",
+        UEDITOR_HOME_URL: "/ueditor/",
         serverUrl: "/ueditor",
         initialFrameHeight: 150,
         toolbars: [[]],
@@ -133,6 +128,16 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
       }
     });
     initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+      for (var i = 0; i < options.length; i++) {
+        var tmpVariable = options[i];
+        var tmpProp = tmpVariable.value;
+        if (`$(${tmpProp})` === args[0]) {
+          return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
+        }
+      }
+    });
+
+    initialContent = initialContent.replace(/\$\(d(\d+)\)/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
@@ -206,6 +211,15 @@ const Default = ({ value, options, onChange }) => {
       }
     });
     initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+      for (var i = 0; i < options.length; i++) {
+        var tmpVariable = options[i];
+        var tmpProp = tmpVariable.value;
+        if (`$(${tmpProp})` === args[0]) {
+          return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
+        }
+      }
+    });
+    initialContent = initialContent.replace(/\$\(d(\d+)\)/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;

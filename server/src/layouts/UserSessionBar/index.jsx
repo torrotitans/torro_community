@@ -25,7 +25,7 @@ import Torro from "@assets/icons/Torrotext";
 import CallModal from "@basics/CallModal";
 import Select from "@basics/Select";
 import { sendNotify } from "src/utils/systerm-error";
-import { updateLogin } from "@lib/api";
+import { updateLogin, getNotify } from "@lib/api";
 
 const UserTag = ({ role }) => {
   const { setAuth, authContext } = useGlobalContext();
@@ -181,6 +181,16 @@ const UserSessionBar = () => {
 
   useEffect(() => {
     setNotifyNum(1);
+  }, []);
+
+  useEffect(() => {
+    getNotify()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        sendNotify({ msg: e.message, status: 3, show: true });
+      });
   }, []);
 
   return (
