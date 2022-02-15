@@ -10,7 +10,7 @@ class Smtp(object):
         self.mail_host = mail_host
         self.mail_user = mail_user
         try:
-            self.mail_pass = prpcrypt.encrypt(mail_pass)
+            self.mail_pass = prpcrypt.decrypt(mail_pass)
         except:
             print('Email encrypt: ', mail_pass)
             self.mail_pass = mail_pass
