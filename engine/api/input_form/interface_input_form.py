@@ -277,6 +277,21 @@ class interfaceInputFormList(Resource):
                 one_data['field_ids'] = field_ids
 
                 data = input_form_singleton.input_form_data(user_key, one_data, workspace_id)
+
+                # return data
+                if data['code'] == 200:
+                    response_data = data['data']
+                    text = ''
+                    if 'msg' in data:
+                        text = data['msg']
+                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                    if data2['code'] == 200:
+                        data['data'] = req.verify_all_param(response_data,
+                                                            inputFormApiPara.input_form_data_POST_response)
+                    else:
+                        data = response_code.UPDATE_DATA_FAIL
+                        data['msg'] = 'Create new form success, fail to send email to approves'
+
                 output_data['data'].append(data)
 
             return output_data
