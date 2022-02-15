@@ -61,19 +61,19 @@ class DbWorkflowMgr(DbBase):
                                     "id": "groups",
                                     "label": "Groups",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 },
                                 {
                                     "id": "emails",
                                     "label": "User emails",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 },
                                 {
                                     "id": "notify_msg",
                                     "label": "Notify msg",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 }
                             ],
                             "flowType": "System",
@@ -87,19 +87,19 @@ class DbWorkflowMgr(DbBase):
                                     "id": "groups",
                                     "label": "Groups",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 },
                                 {
                                     "id": "emails",
                                     "label": "User emails",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 },
                                 {
                                     "id": "notify_msg",
                                     "label": "Notify msg",
                                     "value": "",
-                                    "style": 5
+                                    "style": 3
                                 }
                             ],
                             "flowType": "System",
