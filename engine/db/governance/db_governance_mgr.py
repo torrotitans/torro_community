@@ -208,6 +208,7 @@ class DbGovernanceMgr(DbBase):
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                         sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
+                        print('next approvalTable sql:', sql)
                         next_approval_items = self.execute_fetch_all(conn, sql)
                         # notify next adgroup approvers
                         next_adgroup = []
