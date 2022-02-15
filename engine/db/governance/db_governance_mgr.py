@@ -246,7 +246,7 @@ class DbGovernanceMgr(DbBase):
                             if not member_list:
                                 notice_ids.extend(member_list)
                         if return_count != 0:
-                            all_approval_flag = 1
+                            all_approval_flag = 0
 
                         # 4.change status
                         # insert form
