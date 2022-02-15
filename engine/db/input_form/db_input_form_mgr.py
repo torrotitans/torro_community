@@ -445,6 +445,7 @@ class DbInputFormMgr(DbBase):
             input_form['form_id'] = form_id
             input_form['approvers'] = approvers
             data = response_code.SUCCESS
+            data['msg'] = 'Waiting for your approval.'
             data['data'] = input_form
 
             return data
@@ -548,6 +549,7 @@ class DbInputFormMgr(DbBase):
             input_form['history_id'] = history_id
             input_form['approvers'] = approvers
             data = response_code.SUCCESS
+            data['msg'] = 'Waiting for your approval.'
             data['data'] = input_form
 
             return data
