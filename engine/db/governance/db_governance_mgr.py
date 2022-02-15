@@ -283,7 +283,7 @@ class DbGovernanceMgr(DbBase):
                         data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
                     if 'data' not in data:
                         data['data'] = {}
-                    data['data']['notice_ids'] = notice_ids
+                    data['data']['notice_ids'] = list(set(notice_ids))
                     data['data']['history_id'] = history_id
                     return data
                 elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
