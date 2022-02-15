@@ -2,6 +2,7 @@ from api.gcp.tasks.baseTask import baseTask
 from utils.smtp_helper import notify_approvers
 from db.base import DbBase
 from utils.log_helper import lg
+from utils.ldap_helper import Ldap
 from db.connection_pool import MysqlConn
 from config import configuration
 
@@ -10,6 +11,7 @@ class system_email_notify(baseTask, DbBase):
     api_type = 'system'
     api_name = 'system_email_notify'
     arguments = {
+        "groups": {"type": str, "default": ''},
         "emails": {"type": str, "default": ''},
         'email_msg': {"type": str, "default": ''}}
 
@@ -45,6 +47,16 @@ class system_email_notify(baseTask, DbBase):
                 email_msg = str(self.stage_dict['email_msg'])
                 if not isinstance(emails, list):
                     emails = emails.split(',')
+                groups = self.stage_dict['groups']
+                if not isinstance(groups, list):
+                    groups = groups.split(',')
+                print('groups:', groups)
+                for group in groups:
+                    mail_list, _ = Ldap.get_ad_group_member(group)
+                    print('mail list:', mail_list)
+                    if mail_list:
+                        emails.extend(mail_list)
+
                 data = notify_approvers(history_id, emails, text=email_msg)
 
                 if data['code'] == 200:
