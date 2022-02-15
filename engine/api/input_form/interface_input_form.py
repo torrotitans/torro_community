@@ -92,6 +92,7 @@ class interfaceInputForm(Resource):
                     data = response_code.UPDATE_DATA_FAIL
                     data['msg'] = 'Create new form success, fail to send email to approves'
         except:
+            lg.error(traceback.format_exc())
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'
 
