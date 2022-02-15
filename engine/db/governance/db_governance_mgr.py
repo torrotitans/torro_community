@@ -267,7 +267,7 @@ class DbGovernanceMgr(DbBase):
                             data['msg'] = 'The input form is finished.'
                         else:
                             data = response_code.SUCCESS
-                            data['msg'] = 'approved.'
+                            data['msg'] = 'approved successfully, waiting for next approval: {}'.format(', '.join(next_adgroup))
                             # return data
                     else:
                         data = response_code.UPDATE_DATA_FAIL
