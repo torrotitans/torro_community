@@ -521,9 +521,9 @@ class DbOrgMgr(DbBase):
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
                 mail_pass = smtp_info['MAIL_PASS']
-                port = smtp_info['PORT']
+                # port = smtp_info['PORT']
                 is_ssl = smtp_info['USE_SSL']
-                return mail_host, mail_user, mail_pass, is_ssl, port
+                return mail_host, mail_user, mail_pass, is_ssl
         except Exception as e:
             lg.error(e)
             return response_code.GET_DATA_FAIL

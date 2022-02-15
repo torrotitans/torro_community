@@ -6,15 +6,15 @@ from utils.status_code import response_code
 from common.common_crypto import prpcrypt
 class Smtp(object):
     def __init__(self, ):
-        mail_host, mail_user, mail_pass, is_ssl, port = org_mgr.get_smtp()
+        mail_host, mail_user, mail_pass, is_ssl = org_mgr.get_smtp()
         self.mail_host = mail_host
         self.mail_user = mail_user
         try:
             self.mail_pass = prpcrypt.encrypt(mail_pass)
         except:
-            print('encrypt: ', mail_pass)
-            self.mail_pass = ''
-        self.port = port
+            print('Email encrypt: ', mail_pass)
+            self.mail_pass = mail_pass
+        # self.port = port
         if int(is_ssl) == 1:
             is_ssl = True
         else:
@@ -49,8 +49,10 @@ class Smtp(object):
 
 def notify_approvers(input_form_id, approvers, text=None):
     print('Email info:', input_form_id, approvers, text)
-    return response_code.SUCCESS
     smtp = Smtp()
+    print('Email client:', smtp.mail_user, smtp.mail_pass, smtp.is_ssl)
+    return response_code.SUCCESS
+
     subject = 'Torro - You have an new ticket message.'
     if not text:
         text = 'The waiting for approval form id is: %s' % input_form_id
