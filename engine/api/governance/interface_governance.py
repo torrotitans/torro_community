@@ -66,8 +66,8 @@ class interfaceGovernance(Resource):
                 tasks = data['data'].get('tasks', [])
                 return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
                 data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
-            else:
-                return response_result_process(data, xml=xml)
+            # else:
+            #     return response_result_process(data, xml=xml)
 
             # return response_result_process(data1, xml=xml)
             print('response data:', data)

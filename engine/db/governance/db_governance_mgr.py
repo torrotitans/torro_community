@@ -576,6 +576,8 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
             if 'notice_ids' not in data['data']:
                 data['data']['notice_ids'] = []
+            else:
+                data['data']['notice_ids'] = list(set(data['data']['notice_ids']))
             data['data']['history_id'] = history_id
             return data
 
