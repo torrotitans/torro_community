@@ -209,9 +209,16 @@ class DbGovernanceMgr(DbBase):
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                         sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
                         next_approval_items = self.execute_fetch_all(conn, sql)
+                        # notify next adgroup approvers
+                        next_adgroup = []
                         # check if it is system approval task
                         system_approval_trigger_flag = 0
                         for next_approval_item in next_approval_items:
+                            try:
+                                ad_group = json.loads(next_approval_item['ad_group'])
+                            except:
+                                ad_group = []
+                            next_adgroup.extend(ad_group)
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
@@ -233,8 +240,13 @@ class DbGovernanceMgr(DbBase):
                         # print('approvalTable update_sql: ', sql)
                         return_count = self.updete_exec(conn, sql)
                         # print('return_count:', return_count)
-                        # if return_count == 0:
-                        #     all_approval_flag = 1
+                        # modify successfully, can send the email
+                        for ad_group in next_adgroup:
+                            member_list, _ = Ldap.get_ad_group_member(ad_group)
+                            if not member_list:
+                                notice_ids.extend(member_list)
+                        if return_count != 0:
+                            all_approval_flag = 1
 
                         # 4.change status
                         # insert form
