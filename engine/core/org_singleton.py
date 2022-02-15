@@ -24,6 +24,10 @@ class orgSingleton():
 
     def get_roles_info(self):
         return org_mgr.get_roles_info()
+
+    def insert_notification(self, emails, input_form_id, history_id, notify_msg):
+
+        return org_mgr.insert_notification(emails, input_form_id, history_id, notify_msg)
 orgSingleton_singleton = orgSingleton()
 
 

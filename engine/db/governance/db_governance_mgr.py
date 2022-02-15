@@ -132,7 +132,7 @@ class DbGovernanceMgr(DbBase):
                     # if it is the last approval
                     approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                     sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                    print('approvalTable: ', sql)
+                    print('approvalTable: ', sql, now_approval_num, next_approval_num)
                     last_approval_info = self.execute_fetch_one(conn, sql)
                     # if cannot find the next approval task, is the last approval status
                     if not last_approval_info:
@@ -208,6 +208,7 @@ class DbGovernanceMgr(DbBase):
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                         sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
+                        print('next approvalTable sql:', now_approval_num, next_approval_num, sql)
                         next_approval_items = self.execute_fetch_all(conn, sql)
                         # notify next adgroup approvers
                         next_adgroup = []
@@ -215,10 +216,16 @@ class DbGovernanceMgr(DbBase):
                         system_approval_trigger_flag = 0
                         for next_approval_item in next_approval_items:
                             try:
-                                ad_group = json.loads(next_approval_item['ad_group'])
+                                ad_group = next_approval_item['ad_group']
+                                try:
+                                    _ = prpcrypt.decrypt(ad_group)
+                                except:
+                                    next_adgroup.append(ad_group)
+
                             except:
                                 ad_group = []
-                            next_adgroup.extend(ad_group)
+                                # print('FN:next approval group:', ad_group)
+                            # next_adgroup.append(ad_group)
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
@@ -241,12 +248,14 @@ class DbGovernanceMgr(DbBase):
                         return_count = self.updete_exec(conn, sql)
                         # print('return_count:', return_count)
                         # modify successfully, can send the email
+                        print('FN:now notice_ids:', notice_ids)
                         for ad_group in next_adgroup:
                             member_list, _ = Ldap.get_ad_group_member(ad_group)
-                            if not member_list:
+                            if member_list:
                                 notice_ids.extend(member_list)
+                        print('FN:next notice_ids:', notice_ids)
                         if return_count != 0:
-                            all_approval_flag = 1
+                            all_approval_flag = 0
 
                         # 4.change status
                         # insert form
@@ -274,7 +283,7 @@ class DbGovernanceMgr(DbBase):
                         data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
                     if 'data' not in data:
                         data['data'] = {}
-                    data['data']['notice_ids'] = notice_ids
+                    data['data']['notice_ids'] = list(set(notice_ids))
                     data['data']['history_id'] = history_id
                     return data
                 elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
@@ -576,6 +585,8 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
             if 'notice_ids' not in data['data']:
                 data['data']['notice_ids'] = []
+            else:
+                data['data']['notice_ids'] = list(set(data['data']['notice_ids']))
             data['data']['history_id'] = history_id
             return data
 

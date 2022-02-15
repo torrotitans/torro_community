@@ -61,19 +61,19 @@ class DbWorkflowMgr(DbBase):
                                     "id": "groups",
                                     "label": "Groups",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 },
                                 {
                                     "id": "emails",
                                     "label": "User emails",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 },
                                 {
                                     "id": "email_msg",
                                     "label": "Email msg",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 }
                             ],
                             "flowType": "System",
