@@ -101,6 +101,14 @@ export const LoginCall = async (param) => {
   return await handleResponse(await callApi(method, url, param));
 };
 
+export const getNotify = async (param) => {
+  let {
+    systemNotify: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
 export const updateLogin = async (param) => {
   let {
     loginPut: { url, method },
