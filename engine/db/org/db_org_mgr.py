@@ -583,4 +583,25 @@ class DbOrgMgr(DbBase):
         finally:
             conn.close()
 
+    def insert_notification(self, emails, input_form_id, history_id, notify_msg):
+
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            notify_id_list = []
+            create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            for email in emails:
+                values = (email, input_form_id, history_id, notify_msg, 0, create_time)
+                fields = ('account_id', 'input_form_id', 'history_id', 'comment', 'is_read', 'create_time')
+                sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
+                notify_id = self.insert_exec(conn, sql, return_insert_id=True)
+                notify_id_list.append(str(notify_id))
+            return notify_id_list
+        except Exception as e:
+            lg.error(e)
+            return []
+        finally:
+            conn.close()
+
+
 org_mgr = DbOrgMgr()

@@ -8,6 +8,7 @@ from flask import request
 from flask_restful import Resource
 from core.input_form_singleton import input_form_singleton
 from core.form_singleton import formSingleton_singleton
+from core.org_singleton import orgSingleton_singleton
 import os
 from utils.log_helper import lg
 from utils.status_code import response_code
@@ -86,6 +87,7 @@ class interfaceInputForm(Resource):
                 if 'msg' in data:
                     text = data['msg']
                 data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'], data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
@@ -163,6 +165,10 @@ class interfaceInputForm(Resource):
                     if 'msg' in data:
                         text = data['msg']
                     data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'],
+                                                                       data['data']['history_id'],
+                                                                       text)
+
                     if data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                     else:
@@ -285,6 +291,10 @@ class interfaceInputFormList(Resource):
                     if 'msg' in data:
                         text = data['msg']
                     data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'],
+                                                                       data['data']['history_id'],
+                                                                       text)
+
                     if data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data,
                                                             inputFormApiPara.input_form_data_POST_response)
