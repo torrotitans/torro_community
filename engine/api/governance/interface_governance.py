@@ -70,7 +70,7 @@ class interfaceGovernance(Resource):
                 return response_result_process(data, xml=xml)
 
             # return response_result_process(data1, xml=xml)
-
+            print('response data:', data)
             # email notification
             if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
                 print('response data:', data)
@@ -139,20 +139,20 @@ class interfaceGovernanceBatch(Resource):
                     one_data = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
                 data['data'].append(one_data)
 
-            # email notification
-            if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
-                print('response data:', data)
-                notice_ids = data['data']['notice_ids']
-                text = ''
-                if 'msg' in data:
-                    text = data['msg']
-                data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
-                if data2['code'] == 200:
-                    data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
-                    data = response_code.SUCCESS
-                else:
-                    data = response_code.UPDATE_DATA_FAIL
-                    data['msg'] = 'Create new form success, fail to send email to approves'
+                # # email notification
+                # if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
+                #     print('response data:', data)
+                #     notice_ids = data['data']['notice_ids']
+                #     text = ''
+                #     if 'msg' in data:
+                #         text = data['msg']
+                #     data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
+                #     if data2['code'] == 200:
+                #         data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
+                #         data = response_code.SUCCESS
+                #     else:
+                #         data = response_code.UPDATE_DATA_FAIL
+                #         data['msg'] = 'Create new form success, fail to send email to approves'
 
             return response_result_process(data, xml=xml)
         except Exception as e:
