@@ -50,7 +50,7 @@ class Smtp(object):
 def notify_approvers(input_form_id, approvers, text=None):
     print('Email info:', input_form_id, approvers, text)
     smtp = Smtp()
-    print('Email client:', smtp.mail_user, smtp.mail_pass, smtp.is_ssl)
+    print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_ssl)
     return response_code.SUCCESS
 
     subject = 'Torro - You have an new ticket message.'

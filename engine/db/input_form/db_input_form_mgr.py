@@ -713,33 +713,33 @@ class DbInputFormMgr(DbBase):
             approver_emails = []
             # get workspace owner group
             if int(approval_item['id']) == 1:
-                ad_groups = self.__get_workspace_owner_group(workspace_id, 'ws_owner_group')
+                approver_emails = self.__get_workspace_owner_group(workspace_id, 'ws_owner_group')
                 # print('ad_groups:', ad_groups)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                if ad_groups:
+                if approver_emails:
                     index += 1
             # get region group, default id=s1
             elif int(approval_item['id']) == 2:
                 region = form_field_values_dict.get('s1', None)
-                ad_groups = self.__get_workspace_region_group(workspace_id, region)
+                approver_emails = self.__get_workspace_region_group(workspace_id, region)
                 # print('ad_groups:', ad_groups)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                approvers.append(ad_groups)
-                if ad_groups:
+                approvers.append(approver_emails)
+                if approver_emails:
                     index += 1
             # get dynamic field group
             elif int(approval_item['id']) == 3:
-                ad_groups = []
+                approver_emails = []
                 field = approval_item['value']
                 field_id = field.replace('d', '').strip()
                 option_label = form_field_values_dict.get(field, None)
@@ -763,7 +763,7 @@ class DbInputFormMgr(DbBase):
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                    ad_groups.append(ad_group)
+                    approver_emails.append(ad_group)
                     # approvers.append([ad_group])
                     index += 1
 
