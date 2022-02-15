@@ -217,6 +217,7 @@ class DbGovernanceMgr(DbBase):
                         for next_approval_item in next_approval_items:
                             try:
                                 ad_group = json.loads(next_approval_item['ad_group'])
+                                print('FN:next approval group:', ad_group)
                             except:
                                 ad_group = []
                             next_adgroup.extend(ad_group)
@@ -242,10 +243,12 @@ class DbGovernanceMgr(DbBase):
                         return_count = self.updete_exec(conn, sql)
                         # print('return_count:', return_count)
                         # modify successfully, can send the email
+                        print('FN:now notice_ids:', notice_ids)
                         for ad_group in next_adgroup:
                             member_list, _ = Ldap.get_ad_group_member(ad_group)
                             if not member_list:
                                 notice_ids.extend(member_list)
+                        print('FN:next notice_ids:', notice_ids)
                         if return_count != 0:
                             all_approval_flag = 0
 
