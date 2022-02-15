@@ -514,9 +514,9 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'smtpTable', '*')
-            smtp_info = self.execute_fetch_all(conn, sql)
-            if smtp_info:
-                return '', '', '', '', ''
+            smtp_info = self.execute_fetch_one(conn, sql)
+            if not smtp_info:
+                return '', '', '', ''
             else:
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
@@ -526,7 +526,7 @@ class DbOrgMgr(DbBase):
                 return mail_host, mail_user, mail_pass, is_ssl
         except Exception as e:
             lg.error(e)
-            return response_code.GET_DATA_FAIL
+            return None, None, None, None
         finally:
             conn.close()
 
