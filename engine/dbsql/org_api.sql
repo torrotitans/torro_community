@@ -76,19 +76,19 @@ CREATE TABLE `ldapTable` (
   `PORT` int DEFAULT NULL COMMENT 'ldap port',
   `CER_PATH` varchar(512) DEFAULT NULL COMMENT 'save ldap cer path',
   `USE_SSL` tinyint(1) DEFAULT '1' COMMENT 'permission type',
-  `ADMIN_DN` varchar(64) DEFAULT NULL COMMENT 'admin dn',
+  `ADMIN_DN` varchar(256) DEFAULT NULL COMMENT 'admin dn',
   `ADMIN_PWD` varchar(512) DEFAULT NULL COMMENT 'admin password',
 
-  `USER_SEARCH_BASE` varchar(64) DEFAULT NULL COMMENT 'user search base',
+  `USER_SEARCH_BASE` varchar(128) DEFAULT NULL COMMENT 'user search base',
   `USER_SERACH_FILTER` varchar(64) DEFAULT NULL COMMENT 'user search filter',
   `DISPLAY_NAME_LDAP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'display name ldap attribute',
   `EMAIL_ADDRESS_LDAP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'email address ldap attribute',
   `USER_ADGROUP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'user adgroup attribute',
 
-  `GROUP_SEARCH_BASE` varchar(64) DEFAULT NULL COMMENT 'group search base',
+  `GROUP_SEARCH_BASE` varchar(128) DEFAULT NULL COMMENT 'group search base',
   `GROUP_SERACH_FILTER` varchar(64) DEFAULT NULL COMMENT 'group search filter',
   `GROUP_MEMBER_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'group member attribute',
-  `GROUP_EMAIL_SUFFIX` varchar(64) DEFAULT NULL COMMENT 'group mail suffix',
+  `GROUP_EMAIL_SUFFIX` varchar(128) DEFAULT NULL COMMENT 'group mail suffix',
 
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
