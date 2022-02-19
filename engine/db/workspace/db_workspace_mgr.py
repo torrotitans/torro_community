@@ -400,21 +400,47 @@ class DbWorkspaceMgr(DbBase):
             ad_group_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
             # print('ad_group_list:', ad_group_list)
             db_name = configuration.get_database_name()
-            workspace_id_set = set()
-            for ad_group_name in ad_group_list:
-                condition = "GROUP_MAIL='%s' " % (ad_group_name)
-                relations = [{"table_name": "workspace_to_adgroupTable",
-                              "join_condition": "workspace_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
-                sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
-                # # print(sql)
-                wp_ad_info = self.execute_fetch_all(conn, sql)
-                workspace_id_set = workspace_id_set | set([str(wp_ad['WORKSPACE_ID']) for wp_ad in wp_ad_info])
-            if 'None' in workspace_id_set:
-                workspace_id_set.remove('None')
-            if not workspace_id_set:
-                return response_code.GET_DATA_FAIL
-            # # print(workspace_id_set)
-            condition = 'ID in ({})'.format(','.join(workspace_id_set))
+
+            # check if the user is org admin
+            org_admin = False
+            for ad_group in ad_group_list:
+                condition = 'GROUP_MAIL="%s"' % ad_group
+                ad_group_fields = '*'
+                sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
+                # # print('131232sql', sql)
+                ad_group_info = self.execute_fetch_one(conn, sql)
+                if not ad_group_info:
+                    continue
+                # print('adgroup:', ad_group)
+                ad_group_id = ad_group_info['ID']
+
+                # get org permissions
+                utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID',
+                                                                         db_name, conn)
+                # if 'admin' in utils_role_set:
+                #     role_set = set(['admin'])
+                # else:
+                if 'admin' in utils_role_set:
+                    org_admin = True
+            if not org_admin:
+                workspace_id_set = set()
+                for ad_group_name in ad_group_list:
+                    condition = "GROUP_MAIL='%s' " % (ad_group_name)
+                    relations = [{"table_name": "workspace_to_adgroupTable",
+                                  "join_condition": "workspace_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
+                    sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
+                    # # print(sql)
+                    wp_ad_info = self.execute_fetch_all(conn, sql)
+                    workspace_id_set = workspace_id_set | set([str(wp_ad['WORKSPACE_ID']) for wp_ad in wp_ad_info])
+                if 'None' in workspace_id_set:
+                    workspace_id_set.remove('None')
+                if not workspace_id_set:
+                    return response_code.GET_DATA_FAIL
+                # # print(workspace_id_set)
+                condition = 'ID in ({})'.format(','.join(workspace_id_set))
+
+            else:
+                condition = '1=1'
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'workspaceTable', 'ID,WORKSPACE_NAME,REGOINS, CREATE_TIME', condition)
             # # print(sql)
@@ -552,7 +578,7 @@ class DbWorkspaceMgr(DbBase):
                 return data
             workspace['ws_name'] = data['data']['WORKSPACE_NAME']
             self.__delete_2ad_to_workspace(workspace_id)
-            self.__delete_workspace(workspace_id)
+            # self.__delete_workspace(workspace_id)
             # delete
             self.__delete_system_fields(workspace_id)
             data = response_code.SUCCESS
@@ -623,6 +649,17 @@ class DbWorkspaceMgr(DbBase):
             return_info['system'] = system
             return_info['dynamic'] = dynamic
 
+            # get usecase resource
+            condition = "WORKSPACE_ID='%s' " % (workspace_id)
+            sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
+            return_uc_infos = self.execute_fetch_one(conn, sql)
+            resource_infos = []
+            for return_uc_info in return_uc_infos:
+                resource_info = {}
+                for key in return_uc_info:
+                    resource_info[key.lower()] = return_uc_info[key]
+                resource_infos.append(resource_info)
+            return_info['usecase_resource'] = resource_infos
             # print('last:', return_info)
             data = response_code.SUCCESS
             data['data'] = return_info
