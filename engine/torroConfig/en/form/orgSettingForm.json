@@ -254,10 +254,10 @@
     },
     {
       "default": "",
-      "des": "Smtp SSL",
+      "des": "Smtp TLS",
       "edit": 1,
-      "id": "smtp_ssl",
-      "label": "Smtp SSL",
+      "id": "smtp_tls",
+      "label": "Smtp TLS",
       "options": [
         {
           "label": "True",
@@ -268,7 +268,7 @@
           "value": "false"
         }
       ],
-      "placeholder": "Smtp SSL",
+      "placeholder": "Smtp TLS",
       "style": 2,
       "required": true
     },

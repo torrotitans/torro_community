@@ -119,7 +119,7 @@ CREATE TABLE `smtpTable` (
   `MAIL_USER` varchar(64) DEFAULT NULL COMMENT 'smtp user',
   `MAIL_PASS` varchar(64) DEFAULT NULL COMMENT 'smtp pwd',
   `PORT` int(11) DEFAULT NULL COMMENT 'ldap port',
-  `USE_SSL` boolean DEFAULT true COMMENT 'permission type',
+  `USE_TLS` boolean DEFAULT true COMMENT 'ues tls',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
   PRIMARY KEY (`ID`) USING BTREE

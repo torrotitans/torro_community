@@ -6,7 +6,7 @@ from utils.status_code import response_code
 from common.common_crypto import prpcrypt
 class Smtp(object):
     def __init__(self, ):
-        mail_host, mail_user, mail_pass, mail_port, is_ssl = org_mgr.get_smtp()
+        mail_host, mail_user, mail_pass, mail_port, is_tls = org_mgr.get_smtp()
         self.mail_host = mail_host
         self.mail_user = mail_user
         try:
@@ -15,11 +15,11 @@ class Smtp(object):
             print('Email encrypt: ', mail_pass)
             self.mail_pass = mail_pass
         # self.port = port
-        if int(is_ssl) == 1:
-            is_ssl = True
+        if int(is_tls) == 1:
+            is_tls = True
         else:
-            is_ssl = False
-        self.is_ssl = is_ssl
+            is_tls = False
+        self.is_tls = is_tls
         self.port = mail_port
     def send_email(self, subject, text, receivers, sender=None, sender_name=None):
 
@@ -37,7 +37,7 @@ class Smtp(object):
             smtpObj = smtplib.SMTP()
             smtpObj.connect(self.mail_host, self.port)
             smtpObj.ehlo()
-            if self.is_ssl is True or self.is_ssl == 1:
+            if self.is_tls is True or self.is_tls == 1:
                 smtpObj.starttls()
             smtpObj.login(self.mail_user, self.mail_pass)
             smtpObj.sendmail(sender, receivers, message.as_string())
@@ -48,13 +48,20 @@ class Smtp(object):
             return False
 
     @staticmethod
-    def check_email_pwd(mail_host, mail_user, mail_pass, mail_port, mail_ssl):
+    def check_email_pwd(mail_host, mail_user, mail_pass, mail_port, mail_tls):
         try:
             smtpObj = smtplib.SMTP()
             smtpObj.connect(mail_host, mail_port)  # 25 为 SMTP 端口号
             smtpObj.ehlo()
-            if mail_ssl == 1:
+            if mail_tls == 1:
                 smtpObj.starttls()
+
+            try:
+                mail_pass = prpcrypt.decrypt(mail_pass)
+            except:
+                print('Email encrypt: ', mail_pass)
+                mail_pass = mail_pass
+
             smtpObj.login(mail_user, mail_pass)
             # smtpObj.sendmail(sender, receivers, message.as_string())
             # print("邮件发送成功")
@@ -66,7 +73,7 @@ class Smtp(object):
 def notify_approvers(input_form_id, approvers, text=None):
     print('Email info:', input_form_id, approvers, text)
     smtp = Smtp()
-    print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_ssl)
+    print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_tls)
     return response_code.SUCCESS
 
     subject = 'Torro - You have an new ticket message.'

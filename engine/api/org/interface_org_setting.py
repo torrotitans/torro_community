@@ -82,12 +82,12 @@ class interfaceOrgSetting(Resource):
             smtp_account = request_data['smtp_account']
             smtp_pwd = request_data['smtp_pwd']
             smtp_port = request_data['smtp_port']
-            smtp_ssl = request_data['smtp_ssl']
-            if smtp_ssl == "True":
-                smtp_ssl = 1
+            smtp_tls = request_data['smtp_tls']
+            if smtp_tls == "True":
+                smtp_tls = 1
             else:
-                smtp_ssl = 0
-            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_ssl)
+                smtp_tls = 0
+            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'SMTP VERIFY FAILED.'
@@ -142,12 +142,12 @@ class interfaceOrgSetting(Resource):
             smtp_account = request_data['smtp_account']
             smtp_pwd = request_data['smtp_pwd']
             smtp_port = request_data['smtp_port']
-            smtp_ssl = request_data['smtp_ssl']
-            if smtp_ssl == "True":
-                smtp_ssl = 1
+            smtp_tls = request_data['smtp_tls']
+            if smtp_tls == "True":
+                smtp_tls = 1
             else:
-                smtp_ssl = 0
-            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_ssl)
+                smtp_tls = 0
+            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'SMTP VERIFY FAILED.'
