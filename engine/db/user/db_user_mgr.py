@@ -217,7 +217,7 @@ class DbUserMgr(DbBase):
                 for ad_group in ad_group_infos:
                     group_list.append(ad_group['GROUP_MAIL'])
                 user_info['GROUP_LIST'] = group_list
-                # # print('group_list:', group_list)
+                print('123group_list:', group_list)
                 # exit(0)
                 for ad_group in ad_group_list:
                     condition = 'GROUP_MAIL="%s"' % ad_group
