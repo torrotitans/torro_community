@@ -241,6 +241,17 @@
       "style": 3,
       "required": true
     },
+        {
+      "default": "",
+      "des": "smtp port",
+      "edit": 1,
+      "id": "smtp_port",
+      "label": "Smtp port",
+      "options": [],
+      "placeholder": "Smtp port",
+      "style": 3,
+      "required": true
+    },
     {
       "default": "",
       "des": "Smtp SSL",
@@ -273,7 +284,7 @@
       "required": true
     }
   ],
-  "fields_num": 23,
+  "fields_num": 24,
   "id": 777,
   "title": "Project setup config",
   "u_max_id": 0

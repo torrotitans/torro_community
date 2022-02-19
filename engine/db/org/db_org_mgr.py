@@ -103,7 +103,7 @@ class DbOrgMgr(DbBase):
             smtp_host = smtp_info['smtp_host']
             smtp_account = smtp_info['smtp_account']
             smtp_pwd = smtp_info['smtp_pwd']
-            # smtp_port = smtp_info['smtp_port']
+            smtp_port = smtp_info['smtp_port']
             smtp_ssl = smtp_info['smtp_ssl']
             create_time = smtp_info['create_time']
 
@@ -113,7 +113,7 @@ class DbOrgMgr(DbBase):
             # insert form
             fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_SSL', 'CREATE_TIME',
                       'TIME_MODIFY')
-            values = (smtp_host, smtp_account, smtp_pwd, 0, smtp_ssl, create_time, create_time)
+            values = (smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_ssl, create_time, create_time)
             sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
             print('smtpTable sql:', sql)
             smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -310,7 +310,7 @@ class DbOrgMgr(DbBase):
             smtp_info['smtp_host'] = org['smtp_host']
             smtp_info['smtp_account'] = org['smtp_account']
             smtp_info['smtp_pwd'] = org['smtp_pwd']
-            # smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_port'] = org['smtp_port']
             smtp_info['smtp_ssl'] = org['smtp_ssl']
             smtp_info['create_time'] = create_time
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
@@ -460,7 +460,7 @@ class DbOrgMgr(DbBase):
             smtp_info['smtp_host'] = org['smtp_host']
             smtp_info['smtp_account'] = org['smtp_account']
             smtp_info['smtp_pwd'] = org['smtp_pwd']
-            # smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_port'] = org['smtp_port']
             smtp_info['smtp_ssl'] = org['smtp_ssl']
             smtp_info['create_time'] = create_time
 
@@ -521,12 +521,12 @@ class DbOrgMgr(DbBase):
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
                 mail_pass = smtp_info['MAIL_PASS']
-                # port = smtp_info['PORT']
+                port = smtp_info['PORT']
                 is_ssl = smtp_info['USE_SSL']
-                return mail_host, mail_user, mail_pass, is_ssl
+                return mail_host, mail_user, mail_pass, port, is_ssl
         except Exception as e:
             lg.error(e)
-            return None, None, None, None
+            return None, None, None, None, None
         finally:
             conn.close()
 
