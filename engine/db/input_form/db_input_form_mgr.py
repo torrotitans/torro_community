@@ -687,7 +687,7 @@ class DbInputFormMgr(DbBase):
             input_stage_info.append(json.dumps(condition_value))
             input_stage_info.extend([now, now])
             workflow_stages_info_list.append(input_stage_info)
-        # print('workflow_stages_info_list: ', workflow_stages_info_list)
+        print('workflow_stages_info_list: ', workflow_stages_info_list)
 
         input_form = {'id': '', 'input_stage_id_list': [], 'form_id': form_id, 'history_id': ''}
         for input_stage_info in workflow_stages_info_list:
@@ -695,7 +695,7 @@ class DbInputFormMgr(DbBase):
                       'create_time', 'updated_time')
             values = tuple(input_stage_info)
             sql = self.create_insert_sql(db_name, 'inputStageTable', '({})'.format(', '.join(fields)), values)
-            # # print('inputStageTable sql:', sql)
+            print('inputStageTable sql:', sql)
             input_stage_id = self.insert_exec(conn, sql, return_insert_id=True)
             input_form['input_stage_id_list'].append(input_stage_id)
             workflow_stages_id_list.append(input_stage_id)
