@@ -39,6 +39,23 @@ CREATE TABLE `workspace_to_adgroupTable` (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+DROP TABLE IF EXISTS `usecaseResourceTable`;
+CREATE TABLE `usecaseResourceTable` (
+  `ID` int NOT NULL AUTO_INCREMENT COMMENT 'resource_id',
+  `WORKSPACE_ID` int NOT NULL COMMENT 'workspace_id',
+  `USECASE_ID` int DEFAULT '-1' COMMENT 'workspace_id',
+  `LABEL` varchar(512) DEFAULT NULL COMMENT 'usecase label',
+  `OWNER_GROUP` varchar(512) DEFAULT NULL COMMENT 'owner group',
+  `TEAM_GROUP` varchar(512) DEFAULT NULL COMMENT 'team group',
+  `SERVICE_ACCOUNT` varchar(512) DEFAULT NULL COMMENT 'service account',
+  `ITEMS` text COMMENT 'items',
+  `AVAILABLE` int DEFAULT '1' COMMENT 'available flag',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
+  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  PRIMARY KEY (`ID`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+
 DROP TABLE IF EXISTS `usecaseTable`;
 CREATE TABLE `usecaseTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'usecase_id',

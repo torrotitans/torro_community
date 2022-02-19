@@ -92,13 +92,13 @@ class DbUserMgr(DbBase):
             user_id = None
             if user_info and ad_group_list:
                 user_id = user_info['ID']
-                # fields = ('GROUP_LIST',)
-                # values = (json.dumps(ad_group_list),)
-                # # update workflow
-                # sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
-                # print('update_sql: ', sql)
-                # return_count = self.updete_exec(conn, sql)
-                # # print('return_count: ', return_count)
+                fields = ('GROUP_LIST',)
+                values = (json.dumps(ad_group_list),)
+                # update recount
+                sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
+                print('update_sql: ', sql)
+                return_count = self.updete_exec(conn, sql)
+                # print('return_count: ', return_count)
             if (not user_info) and user_mail:
                 import datetime
                 if not ad_group_list:
