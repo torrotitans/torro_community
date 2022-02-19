@@ -32,6 +32,8 @@ class workspaceSingleton():
     def get_tag_template_info(self, workspace_id):
         return workspace_mgr.get_tag_template_info(workspace_id)
 
+    def get_usecase_resource(self, workspace_id):
+        return workspace_mgr.get_usecase_resource(workspace_id)
 workspace_singleton = workspaceSingleton()
 
 

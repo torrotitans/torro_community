@@ -15,6 +15,7 @@ from api.user.interface_user_login import interfaceUserLogin
 from api.org.interface_org_setting import interfaceOrgSetting
 from api.workspace.interface_workspace_info import interfaceWorkspaceInfo
 from api.workspace.interface_workspace_setting import interfaceWorkspaceSetting
+from api.workspace.interface_usecase_resource import interfaceUsecaseResource
 from api.usecase.interface_usecase_info import interfaceUseCaseInfo
 from api.usecase.interface_usecase_setting import interfaceUseCaseSetting
 from api.login.interface_login import interfaceLogin
@@ -39,6 +40,12 @@ from api.workspace.interface_tag_template_info import interfaceTagTemplateList
 from api.system.interface_system_trigger import interfaceSystemTrigger
 from api.system.interface_system_notify import interfaceSystemNotify
 api = Api()
+
+
+api.add_resource(
+    interfaceUsecaseResource,
+    '/api/usecaseResource',
+)
 
 api.add_resource(
     interfaceSystemTrigger,
