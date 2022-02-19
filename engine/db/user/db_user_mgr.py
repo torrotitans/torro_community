@@ -271,9 +271,9 @@ class DbUserMgr(DbBase):
                         condition = 'AD_GROUP_ID="%s"' % ad_group_id
                         workspace_id_field = 'WORKSPACE_ID'
                         sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field, condition=condition)
-                        # # print('2222', sql)
+                        print('2222', sql)
                         workspace_id_dict = self.execute_fetch_all(conn, sql)
-                        # # print('1111111', workspace_id_dict)
+                        print('1111111', workspace_id_dict)
                         workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
 
                         # get workspace permissions
