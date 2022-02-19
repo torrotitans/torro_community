@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 /* material-ui */
 import InsertBtn from "@material-ui/core/Button";
@@ -63,7 +63,9 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
   const [ue, setUe] = useState(null);
   const [initicialValue, setIniticialValue] = useState("");
   const [loading, setLoading] = useState(true);
+  /* eslint-disable */
   const [id, setId] = useState("container" + Math.floor(Math.random() * 10000));
+  /* eslint-disable */
 
   const deCodeValue = () => {
     let tempDiv = document.createElement("div");
@@ -152,37 +154,38 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
         setUe(ue);
       }, 0);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
-    var initialContent = value.replace(/\$\(u(\d+)\)/g, (...args) => {
+    var initialContent = value.replace(/\$\{u(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
-    initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\$\{s(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
 
-    initialContent = initialContent.replace(/\$\(d(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\$\{d(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
+
     setIniticialValue(initialContent);
   }, [value, options]);
 
@@ -244,29 +247,29 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
 const Default = ({ value, options, onChange }) => {
   const [open, setOpen] = useState(false);
   const displayValue = useMemo(() => {
-    var initialContent = value.replace(/\$\(u(\d+)\)/g, (...args) => {
+    var initialContent = value.replace(/\${u(\d+)}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
-    initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\${s(\d+)}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
-    initialContent = initialContent.replace(/\$\(d(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\${d(\d+)}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }

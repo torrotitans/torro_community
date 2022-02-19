@@ -49,6 +49,11 @@ export default {
   selectedUc: "Select use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
   confirmLogout: "Are you sure to exit the App?",
+  gotRequest: "You got requests need to approve",
+  requestID: "Request ID",
+  request: "Request",
+  time: "Time",
+  gotNewRequest: "You got new requests!",
 
   country: "Country",
   region: "Region",
