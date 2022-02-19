@@ -284,7 +284,7 @@ const WorkspaceManage = () => {
           let res1 = res[0];
           let res2 = res[1];
           if (res1.data && res2.data) {
-            let ucList = res1.data.map(
+            let ucList = res1.data.filter(
               (item) => item.workspace_id === authContext.wsId
             );
             setWsData({
