@@ -72,10 +72,11 @@ class Smtp(object):
             print(traceback.format_exc())
             return False
 def notify_approvers(input_form_id, approvers, text=None):
+    approvers = list(set(approvers))
     print('Email info:', input_form_id, approvers, text)
     smtp = Smtp()
     print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_tls)
-    return response_code.SUCCESS
+    # return response_code.SUCCESS
 
     subject = 'Torro - You have an new ticket message.'
     if not text:
