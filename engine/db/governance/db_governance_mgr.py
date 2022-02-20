@@ -234,7 +234,7 @@ class DbGovernanceMgr(DbBase):
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
-                                    token_json = prpcrypt.encrypt(token)
+                                    token_json = prpcrypt.decrypt(token)
                                     print('LOG:: airflow token:', token, token_json)
                                     input_form_id, form_id, approval_order, time = token_json.split('||')
                                     retry = 0
@@ -247,7 +247,7 @@ class DbGovernanceMgr(DbBase):
                                         else:
                                             break
                                 except:
-                                    lg.error(traceback.format_exc())
+                                    print(traceback.format_exc())
 
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # print('approvalTable update_sql: ', sql)
