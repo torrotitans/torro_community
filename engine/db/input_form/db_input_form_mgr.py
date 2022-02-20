@@ -785,6 +785,10 @@ class DbInputFormMgr(DbBase):
                     account_id = field_info['ACCOUNT_ID']
                     account_cn = field_info['ACCOUNT_CN']
                 approver_emails = Ldap.get_line_manager(account_name, account_id, account_cn)
+                for ad_group in approver_emails:
+                    self.__add_approval(input_form_id, index, ad_group, approval_label)
+                index += 1
+
             # get usecase data linear group
             elif int(approval_item['id']) == 5:
                 approver_emails = self.__get_data_linear_approval(form_field_values_dict, workspace_id)
