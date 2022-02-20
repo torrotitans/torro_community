@@ -857,7 +857,7 @@ class DbInputFormMgr(DbBase):
                     self.__add_approval(input_form_id, index, ad_group, approval_label)
                 print("LOG:: approval_item['id']:", approval_item['id'], approval_index)
                 # trigger airflow
-                if approval_index == 1:
+                if approval_index == 0:
                     retry = 0
                     while retry < 3:
                         return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
