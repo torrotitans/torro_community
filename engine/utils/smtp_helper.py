@@ -50,6 +50,7 @@ class Smtp(object):
     @staticmethod
     def check_email_pwd(mail_host, mail_user, mail_pass, mail_port, mail_tls):
         try:
+            print('smtp info:', mail_host, mail_user, mail_pass, mail_port, mail_tls)
             smtpObj = smtplib.SMTP()
             smtpObj.connect(mail_host, mail_port)  # 25 为 SMTP 端口号
             smtpObj.ehlo()
