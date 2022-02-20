@@ -44,7 +44,7 @@ class DbDashboardMgr(DbBase):
                 group_list.append(ad_group['GROUP_MAIL'])
             # print('group_list:', group_list)
             user_info['GROUP_LIST'] = group_list
-            adgroup_list = user_info['GROUP_LIST']
+            adgroup_list = user_info['GROUP_LIST'] + [account_id]
             # # print('user_info', adgroup_list)
             # fetch inputFormTable info
             if 'approverView' in condition_dict:
