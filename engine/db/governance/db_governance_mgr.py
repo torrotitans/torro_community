@@ -235,6 +235,7 @@ class DbGovernanceMgr(DbBase):
                                 try:
                                     token = next_approval_item['ad_group']
                                     token_json = prpcrypt.encrypt(token)
+                                    print('LOG:: airflow token:', token, token_json)
                                     input_form_id, form_id, approval_order, time = token_json.split('||')
                                     retry = 0
                                     while retry < 3:
