@@ -37,10 +37,10 @@ class interfaceSystemTrigger(Resource):
             input_form_id = request_data['input_form_id']
             workspace_id = request_data['workspace_id']
             token = request_data.get('token', '')
-            token = prpcrypt.decrypt(token)
+            # token = prpcrypt.decrypt(token)
             print('LOG:: token:', token)
-            token_json = json.loads(prpcrypt.decrypt(token))
-            token = token_json.get('token', '||ERROR_TOKEN||')
+            # token_json = json.loads(prpcrypt.decrypt(token))
+            # token = token_json.get('token', '||ERROR_TOKEN||')
             # # print('user id:', user_key)
             # change status
             form_status = request_data.get('form_status', None)
