@@ -14,8 +14,8 @@ const config = {
     method: PUT,
   },
   systemNotify: {
-    // url: `${BASE_API_URL}/api/systemNotify`,
-    url: `/stub/systemNotify.json`,
+    url: `${BASE_API_URL}/api/systemNotify`,
+    // url: `/stub/systemNotify.json`,
     method: GET,
   },
   notifyRead: {

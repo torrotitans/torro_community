@@ -82,7 +82,7 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
         (value.id && value.id.indexOf("u") !== -1) ||
         (value.id && value.id.indexOf("d") !== -1)
       ) {
-        tmp += `$(${value.id})`;
+        tmp += `$\{${value.id}}`;
       } else {
         tmp +=
           value instanceof HTMLElement

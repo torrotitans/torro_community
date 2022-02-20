@@ -118,6 +118,8 @@
 }
 .notifyTable {
   width: 80rem;
+  max-height: 50rem;
+  overflow: hidden;
 }
 
 .notifyTitle {

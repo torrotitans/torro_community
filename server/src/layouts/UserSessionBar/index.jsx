@@ -10,6 +10,7 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { useNavigate } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
 import cn from "classnames";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
@@ -382,62 +383,64 @@ const UserSessionBar = () => {
           </div>
           <Model open={openModel} handleClose={closeHandle}>
             <div className={styles.notifyTable}>
-              <div className={styles.notifyTitle}>
-                <Text type="subTitle">
-                  <Intl id="gotRequest" />
-                </Text>
-              </div>
-              <TableContainer component={Paper}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell width="20%" align="center">
-                        <Intl id="requestID"></Intl>
-                      </TableCell>
-                      <TableCell width="30%" align="center">
-                        <Intl id="requestor"></Intl>
-                      </TableCell>
-                      <TableCell width="30%" align="center">
-                        <Intl id="time"></Intl>
-                      </TableCell>
-                      <TableCell width="20%" align="center">
-                        <Intl id="operation"></Intl>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {notify.map((row, index) => {
-                      return (
-                        <TableRow
-                          key={index}
-                          className={cn(styles.recordRow, {
-                            [styles["active"]]: row.is_read === 0,
-                          })}
-                        >
-                          <TableCell width="30%" align="center">
-                            {row.input_form_id}
-                          </TableCell>
-                          <TableCell width="30%" align="center">
-                            {row.account_id}
-                          </TableCell>
-                          <TableCell width="30%" align="center">
-                            {row.create_time}
-                          </TableCell>
-                          <TableCell width="30%" align="center">
-                            <div className={styles.viewIcon}>
-                              <VisibilityIcon
-                                onClick={() => {
-                                  viewRequest(row.input_form_id, row.id);
-                                }}
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <ScrollBar>
+                <div className={styles.notifyTitle}>
+                  <Text type="subTitle">
+                    <Intl id="gotRequest" />
+                  </Text>
+                </div>
+                <TableContainer component={Paper}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell width="20%" align="center">
+                          <Intl id="requestID"></Intl>
+                        </TableCell>
+                        <TableCell width="30%" align="center">
+                          <Intl id="requestor"></Intl>
+                        </TableCell>
+                        <TableCell width="30%" align="center">
+                          <Intl id="time"></Intl>
+                        </TableCell>
+                        <TableCell width="20%" align="center">
+                          <Intl id="operation"></Intl>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {notify.map((row, index) => {
+                        return (
+                          <TableRow
+                            key={index}
+                            className={cn(styles.recordRow, {
+                              [styles["active"]]: row.is_read === 0,
+                            })}
+                          >
+                            <TableCell width="30%" align="center">
+                              {row.input_form_id}
+                            </TableCell>
+                            <TableCell width="30%" align="center">
+                              {row.account_id}
+                            </TableCell>
+                            <TableCell width="30%" align="center">
+                              {row.create_time}
+                            </TableCell>
+                            <TableCell width="30%" align="center">
+                              <div className={styles.viewIcon}>
+                                <VisibilityIcon
+                                  onClick={() => {
+                                    viewRequest(row.input_form_id, row.id);
+                                  }}
+                                />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </ScrollBar>
             </div>
           </Model>
           <CallModal

@@ -1,9 +1,16 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import Scrollbar from "react-perfect-scrollbar";
 import { useNavigate } from "react-router-dom";
+import XLSX from "xlsx";
 
 /* material-ui */
 import FormLabel from "@material-ui/core/FormLabel";
@@ -29,14 +36,21 @@ import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
 import SystemDefineField from "./SystemDefineField";
 import RegionDesign from "./RegionDesign";
+import GroupListTable from "./GroupListTable";
+
+const FILENAME = "AD group list template.xlsx";
 
 const Workspace = ({ currentId, onBack, addState }) => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
   const { setAuth, authContext } = useGlobalContext();
   const navigate = useNavigate();
+  const fileRef = useRef();
 
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
+  const [adList, setAdList] = useState([
+    ["Use case Owner Group", "Use case Team Group", "Admin Service Account"],
+  ]);
 
   const [step, setStep] = useState(0);
   const [currentWs, setCurrentWs] = useState(null);
@@ -81,6 +95,48 @@ const Workspace = ({ currentId, onBack, addState }) => {
     });
     setRegions(tmp);
   };
+
+  const downLoadTemplate = useCallback(() => {
+    let ws_name = "Sheet1";
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.aoa_to_sheet(adList);
+
+    ws["!cols"] = [{ width: 30 }, { width: 30 }, { width: 30 }];
+
+    XLSX.utils.book_append_sheet(wb, ws, ws_name);
+    XLSX.writeFile(wb, FILENAME);
+  }, [adList]);
+
+  const uploadFile = useCallback(() => {
+    fileRef.current.click();
+  }, []);
+
+  const clearFile = useCallback((e) => {
+    e.target.value = null;
+  }, []);
+
+  const uploadExcel = useCallback((e) => {
+    var X = XLSX;
+    var to_json = function to_json(workbook) {
+      var result = {};
+      workbook.SheetNames.forEach(function(sheetName) {
+        var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {
+          header: 1,
+        });
+        if (roa.length) result[sheetName] = roa;
+      });
+      return result;
+    };
+
+    let f = e.target.files[0];
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      var data = e.target.result;
+      let d = to_json(X.read(data, { type: "array" }));
+      setAdList(d["Sheet1"]);
+    };
+    reader.readAsArrayBuffer(f);
+  }, []);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall = addState ? wsPost : wsPut;
@@ -142,13 +198,29 @@ const Workspace = ({ currentId, onBack, addState }) => {
           <Intl id="confirmAddWS" />
         ),
       });
+      let groupData = adList.filter((d, index) => index !== 0);
+      let groupMap = { ownerGroupList: [], teamGroupList: [], accontList: [] };
+      groupData.forEach((item) => {
+        groupMap.ownerGroupList.push(item[0]);
+        groupMap.teamGroupList.push(item[1]);
+        groupMap.accontList.push(item[2]);
+      });
+
+      console.log(groupMap);
       setSubmitData({
         ...currentWs,
         ...data,
         regions: regions,
+        groupArr: groupMap,
+      });
+      console.log({
+        ...currentWs,
+        ...data,
+        regions: regions,
+        groupArr: groupMap,
       });
     },
-    [regions, currentWs, wsId]
+    [regions, currentWs, wsId, adList]
   );
 
   const renderFormItem = (items, disabled) => {
@@ -286,11 +358,51 @@ const Workspace = ({ currentId, onBack, addState }) => {
                       <div className={styles.formItemTitle}>
                         <FormLabel className={styles.fieldTitle}>
                           <Text type="subTitle">
+                            <Intl id="defaultAd" />
+                          </Text>
+                        </FormLabel>
+                        <div className={styles.excelBtnGroup}>
+                          <div
+                            className={styles.operationBtn}
+                            onClick={downLoadTemplate}
+                          >
+                            <Intl id="downLoadExcel" />
+                          </div>
+                          <div
+                            className={styles.operationBtn}
+                            onClick={uploadFile}
+                          >
+                            <Intl id="uploadExcel" />
+                            <input
+                              className={styles.uploadBtn}
+                              type="file"
+                              name="xlfile"
+                              id="xlf"
+                              ref={fileRef}
+                              accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                              onChange={uploadExcel}
+                              onClick={clearFile}
+                            ></input>
+                          </div>
+                        </div>
+                      </div>
+
+                      <GroupListTable
+                        data={adList}
+                        onChange={(data) => {
+                          setRegions(data);
+                        }}
+                      />
+                    </div>
+                    <div className={styles.formItemLine}>
+                      <div className={styles.formItemTitle}>
+                        <FormLabel className={styles.fieldTitle}>
+                          <Text type="subTitle">
                             <Intl id="regionStructure" />
                           </Text>
                         </FormLabel>
                         <div
-                          className={styles.addRegionBtn}
+                          className={styles.operationBtn}
                           onClick={(e) => {
                             addRegion();
                           }}
@@ -315,7 +427,7 @@ const Workspace = ({ currentId, onBack, addState }) => {
                           </Text>
                         </FormLabel>
                         <div
-                          className={styles.addRegionBtn}
+                          className={styles.operationBtn}
                           onClick={(e) => {
                             setStep(1);
                           }}

@@ -72,7 +72,8 @@ export default {
   serviceAdmin: "TORRO ADMIN",
 
   // workspace
-  wsCreate: "Create new worp",
+  wsCreate: "Create new workspace",
+  defaultAd: "Default AD group List",
   addWs: "Add new workspace",
   wsDetail: "Workspace Detail",
   confirmUpdateWs: "Do you confirm to update the workspace?",
@@ -93,6 +94,12 @@ export default {
   systemField: "System Define Field",
   updateSystemField: "Update system define field",
   dynamicApprover: "Dynamic Approval Field",
+
+  adminServiceAcc: "Admin Service Account",
+  ucOwnerGroup: "Use case Owner Group",
+  ucTeamGroup: "Use case Team Group",
+  downLoadExcel: "Download excel template",
+  uploadExcel: "Upload default AD group List",
 
   workspaceName: "Workspace Name",
   wsAD: "Workspace owner AD group",
