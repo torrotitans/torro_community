@@ -59,7 +59,7 @@ class interfaceOrgSetting(Resource):
             print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             
             # Since the Flag is a true false, will convert them into int
-            if isinstance(use_ssl, str) and use_ssl.strip().lower() == "true":
+            if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
                 use_ssl = 1
             else:
                 use_ssl = 0
@@ -83,7 +83,7 @@ class interfaceOrgSetting(Resource):
             smtp_pwd = request_data['smtp_pwd']
             smtp_port = request_data['smtp_port']
             smtp_tls = request_data['smtp_tls']
-            if isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true":
+            if (isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true") or smtp_tls is True:
                 smtp_tls = 1
             else:
                 smtp_tls = 0
@@ -121,7 +121,7 @@ class interfaceOrgSetting(Resource):
             print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
 
             # Since the Flag is a true false, will convert them into int
-            if isinstance(use_ssl, str) and use_ssl.strip().lower() == "true":
+            if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
                 use_ssl = 1
             else:
                 use_ssl = 0
@@ -143,7 +143,7 @@ class interfaceOrgSetting(Resource):
             smtp_pwd = request_data['smtp_pwd']
             smtp_port = request_data['smtp_port']
             smtp_tls = request_data['smtp_tls']
-            if isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true":
+            if (isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true") or smtp_tls is True:
                 smtp_tls = 1
             else:
                 smtp_tls = 0
