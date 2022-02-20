@@ -255,7 +255,7 @@ class DbDashboardMgr(DbBase):
             sql = self.create_get_relation_sql(db_name, 'inputNotifyTable', 'inputNotifyTable.*, formTable.title', relations=relation_tables,
                                                condition=condition)
             print('inputNotifyTable sql:', sql)
-            return_notify_infos = self.execute_fetch_all(sql, sql)
+            return_notify_infos = self.execute_fetch_all(db_conn, sql)
 
             # return_notify_infos = self.execute_fetch_all(db_conn, sql)
             if isinstance(return_notify_infos, list):
