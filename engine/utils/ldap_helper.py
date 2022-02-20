@@ -51,7 +51,7 @@ class Ldap():
         Ldap.__refresh_ldap()
         # get line managers
         line_managers = []
-        line_manager = 'xxxx@mail.com'
+        line_manager = 'charlie@torro.ai'
         line_managers.append(line_manager)
         return line_managers
 
