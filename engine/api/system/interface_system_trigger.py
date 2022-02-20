@@ -37,6 +37,7 @@ class interfaceSystemTrigger(Resource):
             input_form_id = request_data['input_form_id']
             workspace_id = request_data['workspace_id']
             token = request_data.get('token', '')
+            print('LOG:: token:', token)
             token_json = json.loads(prpcrypt.decrypt(token))
             token = token_json.get('token', '||ERROR_TOKEN||')
             # # print('user id:', user_key)
@@ -44,7 +45,7 @@ class interfaceSystemTrigger(Resource):
             form_status = request_data.get('form_status', None)
             if not form_status:
                 request_data = response_code.BAD_REQUEST
-                request_data['msg'] = 'please pss the form_status code.'
+                request_data['msg'] = 'please pass the form_status code.'
                 return response_result_process(request_data, xml=xml)
 
             inputData = {'id':input_form_id, 'form_status': form_status}
