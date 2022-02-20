@@ -244,10 +244,20 @@ class DbDashboardMgr(DbBase):
             else:
                 is_read_str = ""
 
+            # condition = is_read_str + "account_id='%s'" % account_id
+            # sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
+
             condition = is_read_str + "account_id='%s'" % account_id
-            sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
+            relation_tables = [
+                {'table_name': 'inputFormIndexTable', 'join_condition': 'inputNotifyTable.input_form_id=inputFormIndexTable.id'},
+                {'table_name': 'formTable', 'join_condition': 'inputFormIndexTable.form_id=formTable.id'}
+            ]
+            sql = self.create_get_relation_sql(db_name, 'inputNotifyTable', 'inputNotifyTable.*, formTable.title', relations=relation_tables,
+                                               condition=condition)
             print('inputNotifyTable sql:', sql)
-            return_notify_infos = self.execute_fetch_all(db_conn, sql)
+            return_notify_infos = self.execute_fetch_all(sql, sql)
+
+            # return_notify_infos = self.execute_fetch_all(db_conn, sql)
             if isinstance(return_notify_infos, list):
                 notify_infos.extend(return_notify_infos)
             notify_id_list = list()

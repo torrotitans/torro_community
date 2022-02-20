@@ -380,7 +380,7 @@ class DbWorkspaceMgr(DbBase):
                 return data
 
             workspace_insert = self.__set_workspace(workspace_info)
-            team_resource = workspace.get('team_resource', [])
+            team_resource = workspace.get('groupArr', [])
             _ = self.__set_team_resource(workspace_insert['data']['workspace_id'], team_resource)
 
             data = response_code.SUCCESS
@@ -554,7 +554,7 @@ class DbWorkspaceMgr(DbBase):
             workspace_info['create_time'] = create_time
 
             workspace_insert = self.__set_workspace(workspace_info, workspace_id)
-            team_resource = workspace.get('team_resource', [])
+            team_resource = workspace.get('groupArr', [])
             _ = self.__set_team_resource(workspace_id, team_resource)
 
             data = response_code.SUCCESS
