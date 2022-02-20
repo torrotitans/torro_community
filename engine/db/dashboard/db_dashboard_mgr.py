@@ -247,7 +247,7 @@ class DbDashboardMgr(DbBase):
             # condition = is_read_str + "account_id='%s'" % account_id
             # sql = self.create_select_sql(db_name, 'inputNotifyTable', '*', condition=condition)
 
-            condition = is_read_str + "account_id='%s'" % account_id
+            condition = is_read_str + "account_id='%s' order by create_time desc" % account_id
             relation_tables = [
                 {'table_name': 'inputFormIndexTable', 'join_condition': 'inputNotifyTable.input_form_id=inputFormIndexTable.id'},
                 {'table_name': 'formTable', 'join_condition': 'inputFormIndexTable.form_id=formTable.id'}
