@@ -687,7 +687,7 @@ class DbInputFormMgr(DbBase):
             input_stage_info.append(json.dumps(condition_value))
             input_stage_info.extend([now, now])
             workflow_stages_info_list.append(input_stage_info)
-        # print('workflow_stages_info_list: ', workflow_stages_info_list)
+        print('workflow_stages_info_list: ', workflow_stages_info_list)
 
         input_form = {'id': '', 'input_stage_id_list': [], 'form_id': form_id, 'history_id': ''}
         for input_stage_info in workflow_stages_info_list:
@@ -695,7 +695,7 @@ class DbInputFormMgr(DbBase):
                       'create_time', 'updated_time')
             values = tuple(input_stage_info)
             sql = self.create_insert_sql(db_name, 'inputStageTable', '({})'.format(', '.join(fields)), values)
-            # # print('inputStageTable sql:', sql)
+            print('inputStageTable sql:', sql)
             input_stage_id = self.insert_exec(conn, sql, return_insert_id=True)
             input_form['input_stage_id_list'].append(input_stage_id)
             workflow_stages_id_list.append(input_stage_id)
@@ -785,6 +785,10 @@ class DbInputFormMgr(DbBase):
                     account_id = field_info['ACCOUNT_ID']
                     account_cn = field_info['ACCOUNT_CN']
                 approver_emails = Ldap.get_line_manager(account_name, account_id, account_cn)
+                for ad_group in approver_emails:
+                    self.__add_approval(input_form_id, index, ad_group, approval_label)
+                index += 1
+
             # get usecase data linear group
             elif int(approval_item['id']) == 5:
                 approver_emails = self.__get_data_linear_approval(form_field_values_dict, workspace_id)
@@ -851,6 +855,7 @@ class DbInputFormMgr(DbBase):
                     # else:
                     #     approval_dict[ad_group]['label_list'].append(approval_label)
                     self.__add_approval(input_form_id, index, ad_group, approval_label)
+                print("LOG:: approval_item['id']:", approval_item['id'], approval_index)
                 # trigger airflow
                 if approval_index == 0:
                     retry = 0

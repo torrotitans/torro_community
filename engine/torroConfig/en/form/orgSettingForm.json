@@ -241,12 +241,23 @@
       "style": 3,
       "required": true
     },
+        {
+      "default": "",
+      "des": "smtp port",
+      "edit": 1,
+      "id": "smtp_port",
+      "label": "Smtp port",
+      "options": [],
+      "placeholder": "Smtp port",
+      "style": 3,
+      "required": true
+    },
     {
       "default": "",
-      "des": "Smtp SSL",
+      "des": "Smtp TLS",
       "edit": 1,
-      "id": "smtp_ssl",
-      "label": "Smtp SSL",
+      "id": "smtp_tls",
+      "label": "Smtp TLS",
       "options": [
         {
           "label": "True",
@@ -257,7 +268,7 @@
           "value": "false"
         }
       ],
-      "placeholder": "Smtp SSL",
+      "placeholder": "Smtp TLS",
       "style": 2,
       "required": true
     },
@@ -273,7 +284,7 @@
       "required": true
     }
   ],
-  "fields_num": 23,
+  "fields_num": 24,
   "id": 777,
   "title": "Project setup config",
   "u_max_id": 0

@@ -51,7 +51,7 @@ class Ldap():
         Ldap.__refresh_ldap()
         # get line managers
         line_managers = []
-        line_manager = 'xxxx@mail.com'
+        line_manager = 'charlie@torro.ai'
         line_managers.append(line_manager)
         return line_managers
 
@@ -255,7 +255,7 @@ class Ldap():
                     user_mail = mail_info[0]
                 else:
                     user_mail = mail_info
-                dispaly_name_info = attr_dict[Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
+                dispaly_name_info = attr_dict[Ldap.DISPLAY_NAME_LDAP_ATTRIBUTE]
                 if isinstance(dispaly_name_info, list):
                     user_dispaly_name = dispaly_name_info[0]
                 else:

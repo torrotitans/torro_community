@@ -15,6 +15,7 @@ from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.org.db_org_parameter import orgApiPara
+from utils.smtp_helper import Smtp
 
 class interfaceOrgSetting(Resource):
 
@@ -58,7 +59,7 @@ class interfaceOrgSetting(Resource):
             print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             
             # Since the Flag is a true false, will convert them into int
-            if use_ssl == "True":
+            if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
                 use_ssl = 1
             else:
                 use_ssl = 0
@@ -76,6 +77,21 @@ class interfaceOrgSetting(Resource):
                 data['msg'] = 'LDAP VERIFY FAILED.'
                 return data
 
+            # check smtp connect
+            smtp_host = request_data['smtp_host']
+            smtp_account = request_data['smtp_account']
+            smtp_pwd = request_data['smtp_pwd']
+            smtp_port = request_data['smtp_port']
+            smtp_tls = request_data['smtp_tls']
+            if (isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true") or smtp_tls is True:
+                smtp_tls = 1
+            else:
+                smtp_tls = 0
+            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
+            if not smtp_flag:
+                data = response_code.ADD_DATA_FAIL
+                data['msg'] = 'SMTP VERIFY FAILED.'
+                return data
             data = orgSingleton_singleton.add_new_org_setting(request_data)
             if data['code'] == 200:
                 response_data = data['data']
@@ -100,6 +116,42 @@ class interfaceOrgSetting(Resource):
                 request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
                 return response_result_process(request_data, xml=xml)
             request_data = req.verify_all_param(request_data, orgApiPara.updateOrg_POST_request)
+
+            use_ssl = request_data['use_ssl']
+            print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
+
+            # Since the Flag is a true false, will convert them into int
+            if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
+                use_ssl = 1
+            else:
+                use_ssl = 0
+            account_dn = request_data['admin_dn']
+            password = request_data['admin_pwd']
+
+            host = request_data['host']
+            port = request_data['port']
+
+            login_flag = Auth.service_account_login(account_dn, password, host, port, use_ssl)
+            if not login_flag:
+                data = response_code.ADD_DATA_FAIL
+                data['msg'] = 'LDAP VERIFY FAILED.'
+                return data
+
+            # check smtp connect
+            smtp_host = request_data['smtp_host']
+            smtp_account = request_data['smtp_account']
+            smtp_pwd = request_data['smtp_pwd']
+            smtp_port = request_data['smtp_port']
+            smtp_tls = request_data['smtp_tls']
+            if (isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true") or smtp_tls is True:
+                smtp_tls = 1
+            else:
+                smtp_tls = 0
+            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
+            if not smtp_flag:
+                data = response_code.ADD_DATA_FAIL
+                data['msg'] = 'SMTP VERIFY FAILED.'
+                return data
 
             data = orgSingleton_singleton.update_org(request_data)
             if data['code'] == 200:

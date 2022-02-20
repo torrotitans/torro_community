@@ -33,7 +33,7 @@ class DbGovernanceMgr(DbBase):
     def __get_adgroup_member(self, ad_group):
         return []
     # change inputform status
-    def change_status(self, user_key, account_id, workspace_id, inputData):
+    def change_status(self, user_key, account_id, workspace_id, inputData, system_approval_flag=False):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -41,7 +41,13 @@ class DbGovernanceMgr(DbBase):
 
             miss_role_list = []
             # 1.get the approver's ad_group from ldap
-            checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+            # if it is the system approval task
+            if not system_approval_flag:
+                checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+                notice_ids = [account_id]
+            else:
+                checking_list = []
+                notice_ids = []
             #  2.Also put the approver's email into the checking group
             checking_list.append(account_id)
             # print('checking_list:', checking_list)
@@ -55,7 +61,6 @@ class DbGovernanceMgr(DbBase):
             input_form_cond = "inputFormIndexTable.id='%s'" % input_form_id
             sql = self.create_get_relation_sql(db_name, 'inputFormIndexTable', 'userTable.ACCOUNT_ID', relations=relations, condition=input_form_cond)
             user_info = self.execute_fetch_one(conn, sql)
-            notice_ids = [account_id]
             if user_info:
                 notice_ids.append(user_info['ACCOUNT_ID'])
 
@@ -229,7 +234,8 @@ class DbGovernanceMgr(DbBase):
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
-                                    token_json = prpcrypt.encrypt(token)
+                                    token_json = prpcrypt.decrypt(token)
+                                    print('LOG:: airflow token:', token, token_json)
                                     input_form_id, form_id, approval_order, time = token_json.split('||')
                                     retry = 0
                                     while retry < 3:
@@ -241,7 +247,7 @@ class DbGovernanceMgr(DbBase):
                                         else:
                                             break
                                 except:
-                                    lg.error(traceback.format_exc())
+                                    print(traceback.format_exc())
 
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # print('approvalTable update_sql: ', sql)
