@@ -53,7 +53,7 @@ export default {
   requestID: "Request ID",
   request: "Request",
   time: "Time",
-  gotNewRequest: "You got new requests!",
+  gotNewRequest: "You got new notification!",
 
   country: "Country",
   region: "Region",
