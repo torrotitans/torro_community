@@ -77,7 +77,7 @@ class DbWorkflowMgr(DbBase):
                                 }
                             ],
                             "flowType": "System",
-                            "id": 0,
+                            "id": 2,
                             "label": "Emails Notification"
                         },
                         {
