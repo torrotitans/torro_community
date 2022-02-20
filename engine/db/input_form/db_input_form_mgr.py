@@ -194,7 +194,7 @@ class DbInputFormMgr(DbBase):
                 else:
                     member_list = []
                 print('now_approval:', now_approval_flag, account_id, member_list, approver_group)
-                if int(now_approval_flag) == 1 and approver_view and account_id not in member_list:
+                if approver_view and account_id not in member_list:
                     data = response_code.GET_DATA_FAIL
                     data['msg'] = 'you do not have access to view this page.'
                     return data
