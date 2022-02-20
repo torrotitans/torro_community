@@ -855,6 +855,7 @@ class DbInputFormMgr(DbBase):
                     # else:
                     #     approval_dict[ad_group]['label_list'].append(approval_label)
                     self.__add_approval(input_form_id, index, ad_group, approval_label)
+                print("LOG:: approval_item['id']:", approval_item['id'], approval_index)
                 # trigger airflow
                 if approval_index == 0:
                     retry = 0
