@@ -881,8 +881,17 @@ class DbWorkspaceMgr(DbBase):
             # print('taxonomyTable sql:', sql)
             return_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
-            for return_info in return_infos:
-                pass
+            for return_uc_info in return_infos:
+                resource_info = {'id': None, 'resource': None}
+                resource_json = {}
+                for key in return_uc_info:
+                    if key.lower() == 'id':
+                        resource_info['id'] = return_uc_info[key]
+                    resource_json[key.lower()] = return_uc_info[key]
+                resource_info['resource'] = resource_json
+                if resource_info['id'] != None:
+                    resource_infos.append(resource_info)
+            # return_info['groupArr'] = resource_infos
 
             data = response_code.SUCCESS
             data['data'] = resource_infos
