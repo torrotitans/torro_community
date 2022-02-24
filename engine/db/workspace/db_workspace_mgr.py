@@ -379,12 +379,13 @@ class DbWorkspaceMgr(DbBase):
                 data['msg'] = 'workspace exists.'
                 return data
 
-            workspace_insert = self.__set_workspace(workspace_info)
+            # workspace_insert = self.__set_workspace(workspace_info)
             team_resource = workspace.get('groupArr', [])
-            _ = self.__set_team_resource(workspace_insert['data']['workspace_id'], team_resource)
+            print('team_resource:', team_resource)
+            _ = self.__set_team_resource(352, team_resource)
 
             data = response_code.SUCCESS
-            workspace['ws_id'] = workspace_insert['data']['workspace_id']
+            workspace['ws_id'] = 352
             data['data'] = workspace
             return data
         except Exception as e:
