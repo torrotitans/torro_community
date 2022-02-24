@@ -225,14 +225,8 @@ class DbWorkspaceMgr(DbBase):
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = {
-                        'WORKSPACE_ID': id,
-                        'OWNER_GROUP': owner_group,
-                        'TEAM_GROUP': team_group,
-                        'SERVICE_ACCOUNT': service_account,
-                        'LABEL': label,
-                        'ITEMS': items}
-                    print('insert_resource item:', values)
+                    values = [id, owner_group, team_group, service_account, label, items]
+                    # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
                     values = [resource_info['id'], id, owner_group, team_group, service_account, label, items]
@@ -241,15 +235,12 @@ class DbWorkspaceMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             print('usecaseResourceTable insert_resource:', insert_resource)
-            sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
-            for one_data in insert_data:
+            # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
+            for values in insert_resource:
+                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS')
+                sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
                 print('usecaseResourceTable one_sql:', sql)
-                print('usecaseResourceTable one_sql:', one_data)
-
-                one_sql = sql % one_data
-                print('usecaseResourceTable one_sql:', one_sql)
-                _ = self.insert_exec(conn, one_sql)
-
+                _ = self.insert_exec(conn, sql)
             for update_record in update_resource:
                 resource_id = update_record[0]
                 values = update_record[1:]
