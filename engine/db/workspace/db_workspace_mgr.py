@@ -223,6 +223,7 @@ class DbWorkspaceMgr(DbBase):
                 service_account = resource_info['resource'][2]
                 label = resource_info['resource'][3]
                 items = ','.join(resource_info['resource'][4:])
+                print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
                     values = {
                         'WORKSPACE_ID': id,
@@ -231,6 +232,7 @@ class DbWorkspaceMgr(DbBase):
                         'SERVICE_ACCOUNT': service_account,
                         'LABEL': label,
                         'ITEMS': items}
+                    print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
                     values = [resource_info['id'], id, owner_group, team_group, service_account, label, items]
