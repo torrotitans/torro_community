@@ -225,7 +225,7 @@ class DbWorkspaceMgr(DbBase):
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = [id, owner_group, team_group, service_account, label, items]
+                    values = (id, owner_group, team_group, service_account, label, items)
                     # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
