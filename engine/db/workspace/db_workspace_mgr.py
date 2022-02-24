@@ -237,7 +237,7 @@ class DbWorkspaceMgr(DbBase):
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
-
+            print('usecaseResourceTable insert_resource:', insert_resource)
             sql = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
             print('usecaseResourceTable insert batch:', sql)
             _ = self.insert_exec(conn, sql)
