@@ -9,16 +9,12 @@ import React, {
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { useNavigate } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
-import cn from "classnames";
-import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
-import Paper from "@material-ui/core/Paper";
 import MenuIcon from "@material-ui/icons/Menu";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import VisibilityIcon from "@material-ui/icons/Visibility";
 import Popper from "@material-ui/core/Popper";
 import Typography from "@material-ui/core/Typography";
 
@@ -28,6 +24,7 @@ import { useGlobalContext } from "src/context";
 import { USER, GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
 // import LANGUAGE from "src/lib/data/languageType";
 import Model from "@basics/Modal";
+import NotifyTable from "./NotifyTable";
 import DoubleSquare from "@assets/icons/DoubleSquare";
 import DoubleCircle from "@assets/icons/DoubleCircle";
 import DoubleTriangle from "@assets/icons/DoubleTriangle";
@@ -36,14 +33,6 @@ import Text from "@basics/Text";
 import Torro from "@assets/icons/Torrotext";
 import CallModal from "@basics/CallModal";
 import Select from "@basics/Select";
-import {
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@basics/Table";
 import { sendNotify } from "src/utils/systerm-error";
 import { updateLogin, getNotify, readNotify } from "@lib/api";
 
@@ -247,6 +236,19 @@ const UserSessionBar = () => {
   useEffect(() => {
     let loop;
     if (authContext.userId && authContext.role) {
+      getNotify()
+        .then((res) => {
+          if (res.data) {
+            setNotify(res.data);
+          }
+        })
+        .catch((e) => {
+          sendNotify({
+            msg: e.message,
+            status: 3,
+            show: true,
+          });
+        });
       loop = setInterval(() => {
         setNotifyHash(Math.floor(Math.random() * 100000));
       }, 5000);
@@ -261,23 +263,25 @@ const UserSessionBar = () => {
   /* eslint-disable */
 
   useEffect(() => {
-    getNotify()
-      .then((res) => {
-        if (res.data) {
-          setNotify(res.data);
-          let unReadList = res.data.filter((item) => !item.is_read);
-          if (unReadList.length > unRead.length && notifyHash) {
-            setAnchorEl(bellRef.current);
+    if (authContext.userId && authContext.role && notifyHash) {
+      getNotify()
+        .then((res) => {
+          if (res.data) {
+            setNotify(res.data);
+            let unReadList = res.data.filter((item) => !item.is_read);
+            if (unReadList.length > unRead.length && notifyHash) {
+              setAnchorEl(bellRef.current);
+            }
           }
-        }
-      })
-      .catch((e) => {
-        sendNotify({
-          msg: e.message,
-          status: 3,
-          show: true,
+        })
+        .catch((e) => {
+          sendNotify({
+            msg: e.message,
+            status: 3,
+            show: true,
+          });
         });
-      });
+    }
   }, [notifyHash]);
 
   return (
@@ -336,9 +340,7 @@ const UserSessionBar = () => {
                     >
                       <NotificationsIcon className={styles.svgIcon} />
                       {unRead.length > 0 && (
-                        <div className={styles.notificaNum}>
-                          {unRead.length}
-                        </div>
+                        <div className={styles.notificaNum}></div>
                       )}
                       <div>
                         <Popper
@@ -382,66 +384,11 @@ const UserSessionBar = () => {
             </div>
           </div>
           <Model open={openModel} handleClose={closeHandle}>
-            <div className={styles.notifyTable}>
-              <ScrollBar>
-                <div className={styles.notifyTitle}>
-                  <Text type="subTitle">
-                    <Intl id="gotRequest" />
-                  </Text>
-                </div>
-                <TableContainer component={Paper}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell width="20%" align="center">
-                          <Intl id="requestID"></Intl>
-                        </TableCell>
-                        <TableCell width="30%" align="center">
-                          <Intl id="requestor"></Intl>
-                        </TableCell>
-                        <TableCell width="30%" align="center">
-                          <Intl id="time"></Intl>
-                        </TableCell>
-                        <TableCell width="20%" align="center">
-                          <Intl id="operation"></Intl>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {notify.map((row, index) => {
-                        return (
-                          <TableRow
-                            key={index}
-                            className={cn(styles.recordRow, {
-                              [styles["active"]]: row.is_read === 0,
-                            })}
-                          >
-                            <TableCell width="30%" align="center">
-                              {row.input_form_id}
-                            </TableCell>
-                            <TableCell width="30%" align="center">
-                              {row.account_id}
-                            </TableCell>
-                            <TableCell width="30%" align="center">
-                              {row.create_time}
-                            </TableCell>
-                            <TableCell width="30%" align="center">
-                              <div className={styles.viewIcon}>
-                                <VisibilityIcon
-                                  onClick={() => {
-                                    viewRequest(row.input_form_id, row.id);
-                                  }}
-                                />
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </ScrollBar>
-            </div>
+            <NotifyTable
+              notify={notify}
+              viewRequest={viewRequest}
+              unRead={unRead}
+            />
           </Model>
           <CallModal
             open={modalData.open}
