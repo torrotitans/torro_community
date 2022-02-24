@@ -388,7 +388,8 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace
             return data
         except Exception as e:
-            lg.error(e)
+            import traceback
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
