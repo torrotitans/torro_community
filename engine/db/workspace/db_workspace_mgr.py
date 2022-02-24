@@ -374,10 +374,10 @@ class DbWorkspaceMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workspaceTable', '*', condition)
             # print('workspaceTable: ', sql)
             workspace_infos = self.execute_fetch_all(conn, sql)
-            if workspace_infos:
-                data = response_code.ADD_DATA_FAIL
-                data['msg'] = 'workspace exists.'
-                return data
+            # if workspace_infos:
+            #     data = response_code.ADD_DATA_FAIL
+            #     data['msg'] = 'workspace exists.'
+            #     return data
 
             # workspace_insert = self.__set_workspace(workspace_info)
             team_resource = workspace.get('groupArr', [])
