@@ -366,6 +366,7 @@ class DbBase(object):
             fields = list(insert_data_list[0].keys())
             index = 0
             # 添加 sql 前面的的字段
+            print('sql fields', fields)
             for i in fields:
                 if index == len(fields) - 1:
                     sql += '%s' % i
