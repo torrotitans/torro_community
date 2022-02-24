@@ -46,21 +46,21 @@ const wsItemList = [
     title: <Intl id="dataOnboarding" />,
     link: `${ROOT}/dataOnboarding`,
   },
-  {
-    id: "dataDiscovery",
-    title: <Intl id="dataDiscovery" />,
-    link: `${ROOT}/dataDiscovery`,
-  },
+  // {
+  //   id: "dataDiscovery",
+  //   title: <Intl id="dataDiscovery" />,
+  //   link: `${ROOT}/dataDiscovery`,
+  // },
   {
     id: "getDataAccess",
     title: <Intl id="getDataAccess" />,
     link: `${ROOT}/getDataAccess`,
   },
-  {
-    id: "visualisation",
-    title: <Intl id="visualisation" />,
-    link: `${ROOT}/visualisation`,
-  },
+  // {
+  //   id: "visualisation",
+  //   title: <Intl id="visualisation" />,
+  //   link: `${ROOT}/visualisation`,
+  // },
 ];
 
 const LeftNav = ({ open, closeHandle }) => {

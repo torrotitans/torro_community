@@ -54,7 +54,14 @@
   color: $main-purple !important;
 }
 
-.addRegionBtn {
+.excelBtnGroup {
+  display: flex;
+
+  .operationBtn {
+    margin-left: $rbwmspace20;
+  }
+}
+.operationBtn {
   display: inline-block;
   text-align: center;
   padding: 0.5rem;
@@ -86,4 +93,8 @@
   button:nth-child(1) {
     margin-right: $rbwmspace20;
   }
+}
+
+.uploadBtn {
+  display: none;
 }

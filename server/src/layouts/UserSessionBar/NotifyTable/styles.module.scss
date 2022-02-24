@@ -1,0 +1,31 @@
+.notifyTable {
+  width: 80rem;
+  max-height: 50rem;
+  overflow: hidden;
+}
+
+.notifyTitle {
+  margin-bottom: $rbwmspace20;
+  color: $main-purple;
+}
+
+.active td {
+  font-weight: $medium-font-weight;
+  color: $main-purple;
+}
+
+.viewIcon {
+  cursor: pointer;
+}
+
+.newNotify {
+  padding: $rbwmspace20;
+  color: $dark-purple;
+  background-color: $white;
+  border-radius: 4px;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+}
+.unread {
+  color: $main-red;
+  font-weight: $medium-font-weight;
+}
