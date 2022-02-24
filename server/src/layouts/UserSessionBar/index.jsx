@@ -228,7 +228,7 @@ const UserSessionBar = () => {
       readNotify({ nodify_id: id, is_read: 1 })
         .then((res) => {})
         .catch((e) => {});
-      navigate(`/app/requestDetail?id=${requestId}&approved=true`);
+      navigate(`/app/approvalFlow?id=${requestId}`);
     },
     [navigate, closeHandle, setUnRead]
   );

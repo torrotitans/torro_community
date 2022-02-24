@@ -187,8 +187,34 @@ const Workspace = ({ currentId, onBack, addState }) => {
     }
   }, [modalData, submitData, wsId, addState, authContext, setAuth, navigate]);
 
+  const checkRegionEmptyVal = useCallback((regions) => {
+    let validate = true;
+    regions.forEach((item) => {
+      if (!item.region || !item.workflow) {
+        validate = false;
+      }
+
+      item.countryList.forEach((item) => {
+        if (!item.region || !item.workflow) {
+          validate = false;
+        }
+      });
+    });
+
+    return validate;
+  }, []);
+
   const submitHandle = useCallback(
     (data) => {
+      if (!checkRegionEmptyVal(regions)) {
+        sendNotify({
+          msg:
+            "Each region or country need to fill in name and workflow value.",
+          status: 3,
+          show: true,
+        });
+        return;
+      }
       setModalData({
         open: true,
         status: 1,
@@ -198,15 +224,18 @@ const Workspace = ({ currentId, onBack, addState }) => {
           <Intl id="confirmAddWS" />
         ),
       });
+
       let groupData = adList.filter((d, index) => index !== 0);
-      let groupMap = { ownerGroupList: [], teamGroupList: [], accontList: [] };
+      let groupMap = {
+        ownerGroupList: [],
+        teamGroupList: [],
+        accontList: [],
+      };
       groupData.forEach((item) => {
         groupMap.ownerGroupList.push(item[0]);
         groupMap.teamGroupList.push(item[1]);
         groupMap.accontList.push(item[2]);
       });
-
-      console.log(groupMap);
       setSubmitData({
         ...currentWs,
         ...data,
@@ -220,7 +249,7 @@ const Workspace = ({ currentId, onBack, addState }) => {
         groupArr: groupMap,
       });
     },
-    [regions, currentWs, wsId, adList]
+    [regions, currentWs, wsId, adList, checkRegionEmptyVal]
   );
 
   const renderFormItem = (items, disabled) => {
