@@ -175,8 +175,8 @@ class DbInputFormMgr(DbBase):
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields, condition)
             approval_infos = self.execute_fetch_all(db_conn, sql)
-            now_approver_group = ''
 
+            approval_flag = False
             for index, approval_info in enumerate(approval_infos):
                 approver_id = approval_info['account_id']
                 approver_group = approval_info['ad_group']
@@ -198,11 +198,11 @@ class DbInputFormMgr(DbBase):
                 # if approver_view is true, need to check if the users are the approvers
                 if approver_view:
                     if int(now_approval_flag) == 1 and account_id in member_list:
-                        pass
-                    else:
-                        data = response_code.GET_DATA_FAIL
-                        data['msg'] = 'you do not have access to view this page.'
-                        return data
+                        approval_flag = True
+                    # else:
+                    #     data = response_code.GET_DATA_FAIL
+                    #     data['msg'] = 'you do not have access to view this page.'
+                    #     return data
                 else:
                     pass
                 if approver_comment is None:
@@ -264,6 +264,17 @@ class DbInputFormMgr(DbBase):
                     # pass
                 status_history_list.append(status_history)
                 old_status_history_list.append({'label': status_label, 'operator': '', 'comment': '', 'time': None})
+
+            # if it is an approval page, user need to in the approval group
+            if approver_view and approval_flag:
+                pass
+            # if it is not an approval page, everyone can read it
+            elif not approver_view:
+                pass
+            else:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'you do not have access to view this page.'
+                return data
 
             for input_form_info in input_form_infos:
                 history_id = int(input_form_info['history_id'])
