@@ -214,6 +214,7 @@ class DbWorkspaceMgr(DbBase):
         insert_resource = []
         update_resource = []
         for resource_info in resource_list:
+            print('resource_info:', resource_info)
             if 'resource' not in resource_info or len(resource_info['resource']) < 4:
                 continue
             else:
