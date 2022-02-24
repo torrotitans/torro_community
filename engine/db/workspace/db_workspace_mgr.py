@@ -213,6 +213,7 @@ class DbWorkspaceMgr(DbBase):
 
         insert_resource = []
         update_resource = []
+        create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for resource_info in resource_list:
             # print('resource_info:', resource_info)
             if 'resource' not in resource_info or len(resource_info['resource']) < 4:
@@ -225,11 +226,11 @@ class DbWorkspaceMgr(DbBase):
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = (id, owner_group, team_group, service_account, label, items)
+                    values = (id, owner_group, team_group, service_account, label, items, create_time)
                     # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
-                    values = [resource_info['id'], id, owner_group, team_group, service_account, label, items]
+                    values = (resource_info['id'], id, owner_group, team_group, service_account, label, items, create_time)
                     update_resource.append(values)
         conn = MysqlConn()
         try:
@@ -237,14 +238,14 @@ class DbWorkspaceMgr(DbBase):
             print('usecaseResourceTable insert_resource:', insert_resource)
             # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
             for values in insert_resource:
-                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS')
+                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
                 print('usecaseResourceTable one_sql:', sql)
                 _ = self.insert_exec(conn, sql)
             for update_record in update_resource:
                 resource_id = update_record[0]
                 values = update_record[1:]
-                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS')
+                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_update_sql(db_name, '', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
                 _ = self.updete_exec(conn, sql)
