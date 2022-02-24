@@ -50,6 +50,9 @@ class status:
                                             'table_id': 'u4',
                                             'field_id': 'u5'},
                             'usecase': {
-                                'usecase_name': 15
+                                'usecase_name': 15,
+                                'owner_group': 'u2',
+                                'team_group': 'u3',
+                                'service_account': 'u8',
                             }
                             }

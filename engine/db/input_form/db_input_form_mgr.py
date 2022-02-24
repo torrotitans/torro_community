@@ -176,6 +176,7 @@ class DbInputFormMgr(DbBase):
             sql = self.create_select_sql(db_name, table_name, fields, condition)
             approval_infos = self.execute_fetch_all(db_conn, sql)
             now_approver_group = ''
+
             for index, approval_info in enumerate(approval_infos):
                 approver_id = approval_info['account_id']
                 approver_group = approval_info['ad_group']
@@ -194,10 +195,16 @@ class DbInputFormMgr(DbBase):
                 else:
                     member_list = []
                 print('now_approval:', now_approval_flag, account_id, member_list, approver_group)
-                if int(now_approval_flag) == 1 and approver_view and account_id not in member_list:
-                    data = response_code.GET_DATA_FAIL
-                    data['msg'] = 'you do not have access to view this page.'
-                    return data
+                # if approver_view is true, need to check if the users are the approvers
+                if approver_view:
+                    if int(now_approval_flag) == 1 and account_id in member_list:
+                        pass
+                    else:
+                        data = response_code.GET_DATA_FAIL
+                        data['msg'] = 'you do not have access to view this page.'
+                        return data
+                else:
+                    pass
                 if approver_comment is None:
                     approver_comment = ''
                 is_approved = approval_info['is_approved']
@@ -362,8 +369,10 @@ class DbInputFormMgr(DbBase):
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'user not found'
                 return data
-            # get workflow and check if the workflow expires
+
             form_field_values_dict = inputData['form_field_values_dict']
+
+            # get workflow and check if the workflow expires
             form_field_input_dict, form_field_values_dict = self.__get_form_field_input_dict(form_field_values_dict,
                                                                                              field_ids)
 
@@ -415,7 +424,11 @@ class DbInputFormMgr(DbBase):
                 form_id, workspace_id, db_name, conn)
             # # print('approver_info:', approver_info)
             # # print('workflow_stages_id_list:', workflow_stages_id_list)
-            # exit(0)
+
+            # do the usecase resource checking and change the available flag before all the insertion.
+            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
+            if usecase_resource_data['code'] != 200:
+                return usecase_resource_data
             # add approval
             # create approval list
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -491,11 +504,11 @@ class DbInputFormMgr(DbBase):
                 data['msg'] = 'form not found'
                 return data
 
-            # get workflow and check if the workflow expires
             form_field_values_dict = inputData['form_field_values_dict']
+
+            # get workflow and check if the workflow expires
             form_field_input_dict, form_field_values_dict = self.__get_form_field_input_dict(form_field_values_dict,
                                                                                              field_ids)
-
             condition = 'form_id="%s"' % form_id
             sql = self.create_select_sql(db_name, 'workflowTable', '*', condition)
             # print('workflowTable: ', sql)
@@ -530,7 +543,13 @@ class DbInputFormMgr(DbBase):
                 workflow_stages_list,
                 form_field_values_dict, input_form_id,
                 form_id, workspace_id, db_name, conn)
-            # approver_info = {'itemList': [{'id': 1}, {'id': 2}]}
+
+
+            # do the usecase resource checking and change the available flag before all the insertion.
+            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
+            if usecase_resource_data['code'] != 200:
+                return usecase_resource_data
+
             now = str(datetime.datetime.today())
             # get approval
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -606,6 +625,37 @@ class DbInputFormMgr(DbBase):
                 break
 
         return trigger_worfklow
+
+    def __check_usecase_resource_available(self, workspace_id, form_id, form_field_values_dict, conn, db_name):
+
+        data = response_code.SUCCESS
+        if form_id == Status.system_form_id['usecase']:
+            owner_group = form_field_values_dict.get(Status.system_form_field_id['usecase']['owner_group'], '').strip()
+            team_group = form_field_values_dict.get(Status.system_form_field_id['usecase']['team_group'], '').strip()
+            service_account = form_field_values_dict.get(Status.system_form_field_id['usecase']['service_account'], '').strip()
+
+            condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, owner_group)
+            sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition=condition)
+            resource_info = self.execute_fetch_one(conn, sql)
+            if not resource_info:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'Canot find the owner group info.'
+
+            available = int(resource_info['AVAILABLE'])
+            if available == 0:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'This owner group resource has already been used.'
+            elif team_group != resource_info['TEAM_GROUP'] or service_account != resource_info['SERVICE_ACCOUNT']:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'team_group or service_account not match.'
+            else:
+                condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, owner_group)
+                fields = ('AVAILABLE',)
+                values = ('0', )
+                sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
+                _ = self.updete_exec(conn, sql)
+
+        return data
 
     def __get_form_field_input_dict(self, form_field_values_dict, field_ids):
         form_field_input_dict = {}

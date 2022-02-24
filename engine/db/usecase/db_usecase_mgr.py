@@ -540,4 +540,21 @@ class DbUseCaseMgr(DbBase):
             conn.close()
 
 
+    def update_usecase_resource(self, workspace_id, usecase_id, uc_owner_group):
+
+        conn = MysqlConn()
+        db_name = configuration.get_database_name()
+        try:
+            condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, uc_owner_group)
+            fields = ('USECASE_ID', 'AVAILABLE')
+            values = (usecase_id, '0')
+            sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
+            _ = self.updete_exec(conn, sql)
+            return response_code.SUCCESS
+        except Exception as e:
+            import traceback
+            lg.error(traceback.format_exc())
+            return response_code.GET_DATA_FAIL
+        finally:
+            conn.close()
 usecase_mgr = DbUseCaseMgr()

@@ -3,8 +3,6 @@ from db.base import DbBase
 from db.usecase.db_usecase_mgr import usecase_mgr
 import json
 import datetime
-from core.form_singleton import formSingleton_singleton
-
 class system_add_new_usecase(baseTask, DbBase):
     api_type = 'system'
     api_name = 'system_add_new_usecase'
@@ -45,12 +43,16 @@ class system_add_new_usecase(baseTask, DbBase):
             usecase_info['usecase_name'] = self.stage_dict['usecase_name']
             usecase_info['resources_access'] = self.stage_dict['resources_access']
             usecase_info['uc_team_group'] = self.stage_dict['uc_team_group']
-            usecase_info['uc_owner_group'] = self.stage_dict['uc_owner_group']
+            uc_owner_group = self.stage_dict['uc_owner_group']
+            usecase_info['uc_owner_group'] = uc_owner_group
             usecase_info['uc_input_form'] = input_form_id
 
             data = usecase_mgr.add_new_usecase_setting(usecase_info)
 
             if data['code'] == 200:
+                usecase_id = data['data']['usecase_id']
+                data1 = usecase_mgr.update_usecase_resource(workspace_id, usecase_id, uc_owner_group)
+
                 return 'create new usecase successfully.'
             else:
                 return data['msg']

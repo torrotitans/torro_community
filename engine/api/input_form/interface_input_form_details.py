@@ -34,7 +34,7 @@ class interfaceInputFormDetails(Resource):
                 user_key = req.get_user_key()
                 account_id = req.get_user_account_id()
                 input_form_id = request_data.get('id')
-                approver_view = request_data.get('approverView', False)
+                approver_view = request_data.get('approverView', True)
                 # print('user id:', user_key)
                 data = input_form_singleton.get_input_form_data(account_id, input_form_id, approver_view)
                 if data['code'] == 200:
