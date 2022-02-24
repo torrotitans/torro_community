@@ -243,6 +243,9 @@ class DbWorkspaceMgr(DbBase):
             print('usecaseResourceTable insert_resource:', insert_resource)
             sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
             for one_data in insert_data:
+                print('usecaseResourceTable one_sql:', sql)
+                print('usecaseResourceTable one_sql:', one_data)
+
                 one_sql = sql % one_data
                 print('usecaseResourceTable one_sql:', one_sql)
                 _ = self.insert_exec(conn, one_sql)
