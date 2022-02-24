@@ -201,7 +201,7 @@ class DbInputFormMgr(DbBase):
                         approval_flag = True
                     # else:
                     #     data = response_code.GET_DATA_FAIL
-                    #     data['msg'] = 'you do not have access to view this page.'
+                    #     data['msg'] = 'Permission denied.'
                     #     return data
                 else:
                     pass
