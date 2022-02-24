@@ -654,7 +654,7 @@ class DbWorkspaceMgr(DbBase):
             # get usecase resource
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
-            return_uc_infos = self.execute_fetch_one(conn, sql)
+            return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_uc_infos:
                 resource_info = {}
