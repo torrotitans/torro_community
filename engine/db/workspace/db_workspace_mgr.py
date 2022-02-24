@@ -10,7 +10,7 @@ import datetime
 from utils.status_code import response_code
 from config import configuration
 from utils.ldap_helper import Ldap
-
+from db.user.db_user_mgr import user_mgr
 import json
 
 
@@ -214,7 +214,7 @@ class DbWorkspaceMgr(DbBase):
         insert_resource = []
         update_resource = []
         for resource_info in resource_list:
-            print('resource_info:', resource_info)
+            # print('resource_info:', resource_info)
             if 'resource' not in resource_info or len(resource_info['resource']) < 4:
                 continue
             else:
@@ -223,7 +223,7 @@ class DbWorkspaceMgr(DbBase):
                 service_account = resource_info['resource'][2]
                 label = resource_info['resource'][3]
                 items = ','.join(resource_info['resource'][4:])
-                print('resource_info owner_group:', owner_group)
+                # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
                     values = {
                         'WORKSPACE_ID': id,
@@ -241,9 +241,11 @@ class DbWorkspaceMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             print('usecaseResourceTable insert_resource:', insert_resource)
-            sql = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
-            print('usecaseResourceTable insert batch:', sql)
-            _ = self.insert_exec(conn, sql)
+            sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
+            for one_data in insert_data:
+                one_sql = sql % one_data
+                print('usecaseResourceTable one_sql:', one_sql)
+                _ = self.insert_exec(conn, one_sql)
 
             for update_record in update_resource:
                 resource_id = update_record[0]
@@ -420,7 +422,7 @@ class DbWorkspaceMgr(DbBase):
                 ad_group_id = ad_group_info['ID']
 
                 # get org permissions
-                utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID',
+                utils_role_set, permissions = user_mgr.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID',
                                                                          db_name, conn)
                 # if 'admin' in utils_role_set:
                 #     role_set = set(['admin'])
