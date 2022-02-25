@@ -189,13 +189,13 @@ const Workspace = ({ currentId, onBack, addState }) => {
 
   const checkRegionEmptyVal = useCallback((regions) => {
     let validate = true;
-    regions.forEach((item) => {
-      if (!item.region || !item.workflow) {
+    regions.forEach((regionItem) => {
+      if (!regionItem.region || !regionItem.workflow) {
         validate = false;
       }
 
-      item.countryList.forEach((item) => {
-        if (!item.region || !item.workflow) {
+      regionItem.countryList.forEach((countryItem) => {
+        if (!countryItem.country || !countryItem.workflow) {
           validate = false;
         }
       });
@@ -401,7 +401,12 @@ const Workspace = ({ currentId, onBack, addState }) => {
                             className={styles.operationBtn}
                             onClick={uploadFile}
                           >
-                            <Intl id="uploadExcel" />
+                            {currentId ? (
+                              <Intl id="addNewAD" />
+                            ) : (
+                              <Intl id="uploadExcel" />
+                            )}
+
                             <input
                               className={styles.uploadBtn}
                               type="file"
@@ -419,7 +424,7 @@ const Workspace = ({ currentId, onBack, addState }) => {
                       <GroupListTable
                         data={adList}
                         onChange={(data) => {
-                          setRegions(data);
+                          setAdList(data);
                         }}
                       />
                     </div>
