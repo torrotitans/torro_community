@@ -10,7 +10,7 @@ import datetime
 from utils.status_code import response_code
 from config import configuration
 from utils.ldap_helper import Ldap
-
+from db.user.db_user_mgr import user_mgr
 import json
 
 
@@ -213,7 +213,9 @@ class DbWorkspaceMgr(DbBase):
 
         insert_resource = []
         update_resource = []
+        create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for resource_info in resource_list:
+            # print('resource_info:', resource_info)
             if 'resource' not in resource_info or len(resource_info['resource']) < 4:
                 continue
             else:
@@ -222,30 +224,28 @@ class DbWorkspaceMgr(DbBase):
                 service_account = resource_info['resource'][2]
                 label = resource_info['resource'][3]
                 items = ','.join(resource_info['resource'][4:])
+                # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = {
-                        'WORKSPACE_ID': id,
-                        'OWNER_GROUP': owner_group,
-                        'TEAM_GROUP': team_group,
-                        'SERVICE_ACCOUNT': service_account,
-                        'LABEL': label,
-                        'ITEMS': items}
+                    values = (id, owner_group, team_group, service_account, label, items, create_time)
+                    # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
-                    values = [resource_info['id'], id, owner_group, team_group, service_account, label, items]
+                    values = (resource_info['id'], id, owner_group, team_group, service_account, label, items, create_time)
                     update_resource.append(values)
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
-
-            sql = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
-            print('usecaseResourceTable insert batch:', sql)
-            _ = self.insert_exec(conn, sql)
-
+            print('usecaseResourceTable insert_resource:', insert_resource)
+            # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
+            for values in insert_resource:
+                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
+                sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
+                print('usecaseResourceTable one_sql:', sql)
+                _ = self.insert_exec(conn, sql)
             for update_record in update_resource:
                 resource_id = update_record[0]
                 values = update_record[1:]
-                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS')
+                fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_update_sql(db_name, '', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
                 _ = self.updete_exec(conn, sql)
@@ -381,6 +381,7 @@ class DbWorkspaceMgr(DbBase):
 
             workspace_insert = self.__set_workspace(workspace_info)
             team_resource = workspace.get('groupArr', [])
+            print('team_resource:', team_resource)
             _ = self.__set_team_resource(workspace_insert['data']['workspace_id'], team_resource)
 
             data = response_code.SUCCESS
@@ -388,7 +389,8 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace
             return data
         except Exception as e:
-            lg.error(e)
+            import traceback
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -415,7 +417,7 @@ class DbWorkspaceMgr(DbBase):
                 ad_group_id = ad_group_info['ID']
 
                 # get org permissions
-                utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID',
+                utils_role_set, permissions = user_mgr.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID',
                                                                          db_name, conn)
                 # if 'admin' in utils_role_set:
                 #     role_set = set(['admin'])
@@ -652,20 +654,26 @@ class DbWorkspaceMgr(DbBase):
             # get usecase resource
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
-            return_uc_infos = self.execute_fetch_one(conn, sql)
+            return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_uc_infos:
-                resource_info = {}
+                resource_info = {'id': None, 'resource': None}
+                resource_json = {}
                 for key in return_uc_info:
-                    resource_info[key.lower()] = return_uc_info[key]
-                resource_infos.append(resource_info)
-            return_info['usecase_resource'] = resource_infos
+                    if key.lower() == 'id':
+                        resource_info['id'] = return_uc_info[key]
+                    resource_json[key.lower()] = return_uc_info[key]
+                resource_info['resource'] = resource_json
+                if resource_info['id'] != None:
+                    resource_infos.append(resource_info)
+            return_info['groupArr'] = resource_infos
             # print('last:', return_info)
             data = response_code.SUCCESS
             data['data'] = return_info
             return data
         except Exception as e:
-            lg.error(e)
+            import traceback
+            lg.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -873,8 +881,17 @@ class DbWorkspaceMgr(DbBase):
             # print('taxonomyTable sql:', sql)
             return_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
-            for return_info in return_infos:
-                pass
+            for return_uc_info in return_infos:
+                resource_info = {'id': None, 'resource': None}
+                resource_json = {}
+                for key in return_uc_info:
+                    if key.lower() == 'id':
+                        resource_info['id'] = return_uc_info[key]
+                    resource_json[key.lower()] = return_uc_info[key]
+                resource_info['resource'] = resource_json
+                if resource_info['id'] != None:
+                    resource_infos.append(resource_info)
+            # return_info['groupArr'] = resource_infos
 
             data = response_code.SUCCESS
             data['data'] = resource_infos

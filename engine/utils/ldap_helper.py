@@ -144,7 +144,13 @@ class Ldap():
                 entry = conn.response[0]
                 # adgroup_attribute = Ldap.GROUP_SERACH_FILTER.split('=')[0]
                 # adgroup_name = attr_dict[adgroup_attribute][0]
-                ad_group_mail = entry['attributes'][adgroup_attribute][0] + Ldap.GROUP_EMAIL_SUFFIX
+                
+                ad_group_mail = entry['attributes'][adgroup_attribute]
+                if isinstance(ad_group_mail, list):
+                    ad_group_mail = ad_group_mail[0] + Ldap.GROUP_EMAIL_SUFFIX
+                else:
+                    ad_group_mail = ad_group_mail + Ldap.GROUP_EMAIL_SUFFIX
+                    
                 if ad_group_mail:
                     ad_groups_mails.append(ad_group_mail)
 
