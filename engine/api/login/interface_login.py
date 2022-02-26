@@ -25,7 +25,6 @@ class interfaceLogin(Resource):
     allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
     # @api_version
     def post(self):
-        lg.error('This is a debug message')
         xml = request.args.get('format')
         try:
             request_data = req.request_process(request, xml, modelEnum.login.value)
