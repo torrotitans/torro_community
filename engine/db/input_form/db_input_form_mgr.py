@@ -440,6 +440,9 @@ class DbInputFormMgr(DbBase):
             usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
             if usecase_resource_data['code'] != 200:
                 return usecase_resource_data
+            
+            
+            exit(0)
             # add approval
             # create approval list
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -647,6 +650,7 @@ class DbInputFormMgr(DbBase):
 
             condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, owner_group)
             sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition=condition)
+            print('usecaseResourceTable create_select_sql:', sql)
             resource_info = self.execute_fetch_one(conn, sql)
             if not resource_info:
                 data = response_code.GET_DATA_FAIL
@@ -665,6 +669,7 @@ class DbInputFormMgr(DbBase):
                 values = ('0', )
                 sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
                 _ = self.updete_exec(conn, sql)
+            print('usecaseResourceTable updete_exec sql:', sql)
 
         return data
 
