@@ -21,13 +21,11 @@ Config = config[config_name]
 
 
 class interfaceLogin(Resource):
-    
-    logger = lg.getLogger(__name__)
 
     allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
     # @api_version
     def post(self):
-        logger.debug('This is a debug message')
+        lg.error('This is a debug message')
         xml = request.args.get('format')
         try:
             request_data = req.request_process(request, xml, modelEnum.login.value)
