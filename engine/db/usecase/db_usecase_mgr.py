@@ -549,6 +549,7 @@ class DbUseCaseMgr(DbBase):
             fields = ('USECASE_ID', 'AVAILABLE')
             values = (usecase_id, '0')
             sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
+            print('update usecase id sql:', sql)
             _ = self.updete_exec(conn, sql)
             return response_code.SUCCESS
         except Exception as e:

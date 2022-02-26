@@ -442,7 +442,7 @@ class DbInputFormMgr(DbBase):
                 return usecase_resource_data
             
             
-            exit(0)
+            # exit(0)
             # add approval
             # create approval list
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -670,7 +670,7 @@ class DbInputFormMgr(DbBase):
                 sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
                 _ = self.updete_exec(conn, sql)
             print('data: ', data, team_group != resource_info['TEAM_GROUP'].strip(), service_account != resource_info['SERVICE_ACCOUNT'].strip())
-            print('group: ', team_group, resource_info['TEAM_GROUP'], service_account, resource_info['SERVICE_ACCOUNT'])
+            # print('group: ', team_group, resource_info['TEAM_GROUP'], service_account, resource_info['SERVICE_ACCOUNT'])
             print('usecaseResourceTable updete_exec sql:', sql)
 
         return data
