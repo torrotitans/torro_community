@@ -412,6 +412,12 @@ class DbInputFormMgr(DbBase):
                 return data
             # # print('pass:', trigger_worfklow)
             # exit(0)
+
+            # do the usecase resource checking and change the available flag before all the insertion.
+            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
+            if usecase_resource_data['code'] != 200:
+                return usecase_resource_data
+
             # insert form index
             # approver_info = {'itemList': [{'id': 1}, {'id': 2}]}
             fields = ('creator_id', 'form_id', 'workspace_id')
@@ -435,12 +441,6 @@ class DbInputFormMgr(DbBase):
                 form_id, workspace_id, db_name, conn)
             # # print('approver_info:', approver_info)
             # # print('workflow_stages_id_list:', workflow_stages_id_list)
-
-            # do the usecase resource checking and change the available flag before all the insertion.
-            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
-            if usecase_resource_data['code'] != 200:
-                return usecase_resource_data
-            
             
             # exit(0)
             # add approval
