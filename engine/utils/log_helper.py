@@ -28,6 +28,8 @@ def init_log():
         # 4.绑定关系：①logger绑定handler
         lg.addHandler(fh)
         lg.addHandler(sh)
+        sh.setLevel(logging.INFO)
+        fh.setLevel(logging.ERROR)
         # # ②为handler绑定formatter
         fh.setFormatter(formatter)
         sh.setFormatter(formatter)
