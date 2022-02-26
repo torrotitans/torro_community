@@ -21,7 +21,7 @@ echo ""
 echo ""
 echo ""
 yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-yum install -y wget coreutils python3-devel python3-setuptools tmux gcc-c++ gcc automake autoconf libtool make zlib zlib-devel openssl openssl-devel pcre pcre-devel nginx lsof nodejs
+yum install -y nano wget coreutils python3-devel python3-setuptools tmux gcc-c++ gcc automake autoconf libtool make zlib zlib-devel openssl openssl-devel pcre pcre-devel nginx lsof nodejs
 wget https://repo.mysql.com//mysql80-community-release-el8-1.noarch.rpm
 rpm -ivh mysql80-community-release-el8-1.noarch.rpm
 yum install -y mysql-server
