@@ -68,6 +68,14 @@
     margin: 0 5px;
     display: inline-block;
   }
+  .profileIcon {
+    width: 2rem;
+    color: $white;
+    height: 2rem;
+    margin: 0 5px;
+    display: inline-block;
+    border-radius: 100%;
+  }
   .iconLabel {
     font-size: 1rem;
     color: $white;
