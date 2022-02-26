@@ -6,7 +6,7 @@ import os
 import logging.handlers
 
 # 1.创建1个logger：
-lg = logging.getLogger("Error")
+lg = logging.getLogger(__name__)
 
 
 def init_log():
