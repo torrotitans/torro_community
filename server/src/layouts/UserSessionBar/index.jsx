@@ -220,7 +220,29 @@ const UserSessionBar = () => {
     [notify]
   );
 
-  const readAll = useCallback(() => {}, []);
+  const readAll = useCallback(() => {
+    let unReadIdList = unRead.map((item) => item.id);
+    readNotify({ nodify_id: unReadIdList, is_read: 1 })
+      .then((res) => {
+        if (res.code === 200) {
+          setNotify(
+            notify.map((not) => {
+              if (unReadIdList.includes(not.id)) {
+                not.is_read = 1;
+              }
+              return not;
+            })
+          );
+        }
+      })
+      .catch((e) => {
+        sendNotify({
+          msg: e.message,
+          status: 3,
+          show: true,
+        });
+      });
+  }, [unRead, notify]);
 
   // System notify
   const viewRequest = useCallback(
@@ -229,7 +251,13 @@ const UserSessionBar = () => {
       setUnRead(id);
       readNotify({ nodify_id: id, is_read: 1 })
         .then((res) => {})
-        .catch((e) => {});
+        .catch((e) => {
+          sendNotify({
+            msg: e.message,
+            status: 3,
+            show: true,
+          });
+        });
       navigate(`/app/approvalFlow?id=${requestId}`);
     },
     [navigate, closeHandle, setUnRead]
