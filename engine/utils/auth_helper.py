@@ -6,7 +6,7 @@ import sys
 import datetime
 import jwt
 import time
-from flask import abort
+from flask import abort, g
 from common.common_crypto import prpcrypt
 from common.common_hash_key import secret_key
 from utils.smtp_helper import Smtp
@@ -15,6 +15,9 @@ import api
 from db.user.db_user_mgr import user_mgr
 from utils.status_code import response_code
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class Auth(object):
     """
@@ -111,7 +114,7 @@ class Auth(object):
         except TypeError:
             return 'Token Error'
         except:
-            print(sys.exc_info()[1])
+            logger.error(sys.exc_info()[1])
 
     @classmethod
     def get_offline_password(cls, username):
@@ -146,13 +149,15 @@ class Auth(object):
         :param password:
         :return: json
         """
+        
+        logger = logging.getLogger("main.api.interfaceLogin.authenticate")
         password = prpcrypt.decrypt(password)
         # ldap:
         if username == 'TorroAdmin':
             user = user_mgr.get_user_by_name(username)
             user_base_data = user.get('data')
             if user_base_data and password == user_base_data['PASS_WORD']:
-                print('admin login')
+                logger.debug('admin login')
                 data = response_code.SUCCESS
                 data['msg'] = '[ORG_SETTING]'
                 data['token'] = prpcrypt.encrypt('[SETTING]')
@@ -160,17 +165,20 @@ class Auth(object):
             else:
                 return response_code.LOGIN_FAIL
         if offline_flag == 1:
+            logger.info("FN:AnthN login_mode:offline)
             ad_group_list, ldap_usernames = user_mgr.offline_login(username, password)
         else:
+            logger.info("FN:AnthN login_mode:ldap)
             ad_group_list, ldap_usernames = Auth.ldap_auth(username, password)
-        print('FN:authenticate ad_group_list:{}, ldap_username:{}'.format(ad_group_list, ldap_usernames))
+            
         if ldap_usernames[0] is not None:
             user = user_mgr.get_user_by_name(username, ldap_usernames, ad_group_list)
         else:
             user = user_mgr.get_user_by_name(username)
         user_base_data = user.get('data')
-        print('FN:authenticate user_base_data:', user_base_data, user)
-        # 判断是有这个用户
+        logger.debig('FN:authenticate user_base_data:', user_base_data, user)
+        
+        # Check if this user exists
         if (user_base_data is None):
             return response_code.LOGIN_FAIL
         if user_base_data:
@@ -207,12 +215,12 @@ class Auth(object):
         all_endpoint_permission = '{}-*'.format(api_endpoint)
         all_permission = '*-*'
         permission_allow = 0
-        print('user_role:', user_role)
+        logger.info('FN:_check_permissions account_cn:{} user_role:{}'.format(g.account_cn,user_role))
         if user_role == '':
             user_role = 'viewer'
-        print('default user_role:', user_role)
-        print('permissions:', permissions)
-        print('api_endpoint:', request_id, api_endpoint, method)
+        logger.debug('FN:_check_permissions default user_role:', user_role)
+        logger.debug('FN:_check_permissions permissions:', permissions)
+        logger.info('FN:_check_permissions api_endpoint:', request_id, api_endpoint, method)
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
@@ -233,7 +241,7 @@ class Auth(object):
         auth_token = request.cookies.get('token')
         # # print('auth_token', auth_token)
         payload = cls.__decode_auth_token(cls, auth_token)
-        print('payload:', payload)
+        logger.debug('FN:refresh_token payload:', payload)
         # role_list = payload['data']['role_list']
         old_role = payload['data']['user_role']
         old_workspace_id = payload['data']['workspace_id']
@@ -256,7 +264,7 @@ class Auth(object):
             old_workspace_id = None
             old_role = None
             remove_workspace_list.append(remove_workspace_id_dict['value'])
-            print('0workspace_item_list:', workspace_item_list)
+            logger.debug('FN:refresh_token workspace_item_list:', workspace_item_list)
             for index, workspace in enumerate(workspace_item_list):
                 if workspace['value'] in remove_workspace_list:
                     remove_workspace_index_list.append(index)
@@ -275,7 +283,7 @@ class Auth(object):
             else:
                 role_name = None
 
-        print('111workspace_id:', workspace_id)
+        logger.debug('FN:refresh_token workspace_id:{}', workspace_id)
         # get default role&workspace
         if workspace_id is None and role_name is None:
             role_name = old_role
@@ -296,16 +304,16 @@ class Auth(object):
             else:
                 workspace_id = ''
 
-        print('workspace id:', workspace_id, workspace_permissions)
+        logger.debug('FN:refresh_token workspace id:', workspace_id, workspace_permissions)
         # # choose role
         role_name_list = []
         if workspace_id is not None and workspace_id in workspace_permissions:
-            print('11111111111111')
+            logger.info('FN:refresh_token account_cn:{}'.format(g.account_cn))
             for wp_role_name in workspace_permissions[workspace_id]:
-                print('222222222222222')
+                logger.info('FN:refresh_tolen account_cn:{} wp_role_name:'.format(g.account_cn, wp_role_name))
 
                 role_name_list.append(wp_role_name)
-        print('role_name_list:', role_name_list, role_name)
+        logger.debug('FN:refresh_token role_name_list:{} role_name:{}'.format(role_name_list, role_name))
 
         # print('2workspace_item_list:', workspace_item_list)
         # workspace_name_list = list(set(workspace_name_list))
@@ -336,7 +344,7 @@ class Auth(object):
         :return: list
         """
         auth_token = request.cookies.get('token')
-        print('auth_token:', auth_token)
+        logger.debug('FN:identify auth_token:', auth_token)
         if (auth_token):
             # Bearer cjidsfjsfi
             # workspace_id = request.cookies.get('workspace_id', '1')
@@ -348,7 +356,7 @@ class Auth(object):
                 return data, None, None
             else:
                 payload = cls.__decode_auth_token(cls, auth_token)
-                print('payload:', payload)
+                logger.debug('FN:identify payload:', payload)
                 if not isinstance(payload, str):
                     user_id = payload['data']['user_key']
                     account_id = payload['data']['account_id']
@@ -363,13 +371,13 @@ class Auth(object):
 
                     api_endpoint = request.endpoint
                     method = request.method
-                    print('payload: ', payload, api_endpoint)
+                    logger.debug('FN:identify payload: ', payload, api_endpoint)
                     if (userInfo is None):
                         abort(401, 'user not found')
                     else:
                         # print('org permission:')
                         permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint, method)
-                        print('org permission_allow:', permission_allow)
+                        logger.debug('FN:identify org permission_allow:', permission_allow)
                         if permission_allow == 0:
                             # print('workspace permission:')
                             permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id, api_endpoint, method)
@@ -379,7 +387,7 @@ class Auth(object):
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
-                            print('wp permission_allow:', permission_allow)
+                            logger.debug('FN:identify wp permission_allow:', permission_allow)
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:
