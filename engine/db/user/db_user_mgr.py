@@ -4,13 +4,14 @@
 from utils.ldap_helper import Ldap
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import traceback
 from utils.status_code import response_code
 from config import configuration
-
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import logging
+
+logger = logging.getLogger("main.db.user." + __name__)
 
 class DbUserMgr(DbBase):
     """
@@ -50,21 +51,19 @@ class DbUserMgr(DbBase):
         pass
 
     def get_user_by_id(self, id):
-        """
-        通过id获取用户
-        :return:
-        """
+        logger.debug("FN:get_user_by_id user_id:{}".format(id))
         conn = MysqlConn()
         try:
             condition = "id='%s'" % id
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'userTable', '*', condition=condition)
+            logger.debug("FN:get_user_by_id sql:".format(sql))
             data = response_code.SUCCESS
             user_info = self.execute_fetch_one(conn, sql)
             data['data'] = user_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -75,6 +74,7 @@ class DbUserMgr(DbBase):
         :param cn_name:
         :return:
         """
+        logger.debug("FN:get_user_by_name account_cn:".format(cn_name))
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
@@ -84,10 +84,10 @@ class DbUserMgr(DbBase):
             condition = 'ACCOUNT_CN="%s"' % cn_name
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            logger.debug("FN:get_user_by_name sql:".format(sql))
             user_info = self.execute_fetch_one(conn, sql)
-            print('FN:get_user_by_name user_info:', user_info)
-            print('FN:get_user_by_name ad_group_list: ', ad_group_list)
-            # print((user_info and ad_group_list), (user_info and ldap_username))
+            logger.debug('FN:get_user_by_name user_info:{} ad_group_list:{}'.format(user_info, ad_group_list))
+
             # if exist, update ad_group_list
             user_id = None
             if user_info and ad_group_list:
@@ -96,9 +96,9 @@ class DbUserMgr(DbBase):
                 values = (json.dumps(ad_group_list),)
                 # update recount
                 sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
-                print('update_sql: ', sql)
+                logger.debug("FN:get_user_by_name update_sql:".format(sql))
                 return_count = self.updete_exec(conn, sql)
-                # print('return_count: ', return_count)
+
             if (not user_info) and user_mail:
                 import datetime
                 if not ad_group_list:
@@ -110,38 +110,35 @@ class DbUserMgr(DbBase):
                 fields = list(user_info.keys())
                 values = tuple(user_info.values())
                 sql = self.create_insert_sql(db_name, 'userTable', '({})'.format(', '.join(fields)), values)
-                print('FN:get_user_by_name userTable_insert_sql:', sql)
+                logger.debug("FN:get_user_by_name userTable_insert_sql:".format(sql))
                 user_id = self.insert_exec(conn, sql, return_insert_id=True)
                 user_info['ID'] = user_id
             # add ad_group
             if ad_group_list is not None and user_id is not None:
                 condition = 'USER_ID="%s"' % user_id
                 sql = self.create_delete_sql(db_name, 'user_to_adgroupTable', condition=condition)
-                print('FN:get_user_by_name user_to_adgroupTable_delete_sql:', sql)
+                logger.debug('FN:get_user_by_name user_to_adgroupTable_delete_sql:{}'.format(sql))
                 _ = self.execute_del_data(conn, sql)
                 ad_group_id_list = []
                 for ad_group in ad_group_list:
-                    print("FN:get_user_by_name getAdGroupById:",ad_group)
                     condition = 'GROUP_MAIL="%s"' % ad_group
                     ad_group_fields = '*'
-                    # # print('131232sql', sql)
                     sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
-                    print("FN:get_user_by_name getAdGroupById_sql:",sql)
+                    logger.debug("FN:get_user_by_name getAdGroupById_sql:{}".format(sql))
                     ad_group_info = self.execute_fetch_one(conn, sql)
                     if ad_group_info:
                         ad_group_id_list.append(ad_group_info['ID'])
                 for ad_group_id in ad_group_id_list:
-                    print("FN:get_user_by_name update_user_to_adgroup")
                     fields = ('USER_ID', 'AD_GROUP_ID')
                     values = (user_id, ad_group_id)
                     user_to_adgroup_insert_sql = self.create_insert_sql(db_name, 'user_to_adgroupTable', '({})'.format(', '.join(fields)), values)
-                    print('FN:get_user_by_name user_to_adgroup_insert_sql:', user_to_adgroup_insert_sql)
+                    logger.debug('FN:get_user_by_name user_to_adgroup_insert_sql:{}'.format(user_to_adgroup_insert_sql))
                     self.insert_exec(conn, user_to_adgroup_insert_sql, return_insert_id=True)
             data = response_code.SUCCESS
             data['data'] = user_info
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -157,14 +154,13 @@ class DbUserMgr(DbBase):
             values = (new_password,)
             # update workflow
             sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
-            # print('update_sql: ', sql)
+            logger.debug('FN:update_user_password update_sql:{}'.format(sql))
             return_count = self.updete_exec(conn, sql)
-            # print('return_count: ', return_count)
             data = response_code.SUCCESS
             data['data'] = {'count': return_count}
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -173,7 +169,7 @@ class DbUserMgr(DbBase):
         condition = 'AD_GROUP_ID="%s"' % ad_group_id
         utils_fields = '*'
         sql = self.create_select_sql(db_name, table_name, utils_fields, condition=condition)
-        # print(table_name+' sql :', sql)
+        logger.debug('FN:__get_util_permission sql:{}'.format(sql))
         utils_info = self.execute_fetch_one(conn, sql)
         if utils_info:
             utils_permissions = {}
@@ -184,7 +180,7 @@ class DbUserMgr(DbBase):
                 condition = 'NAME="%s"' % role_name
                 role_fields = '*'
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
-                print('FN:__get_util_permission roleTable_sql:', sql)
+                logger.debug('FN:__get_util_permission roleTable_sql:{}'.format(sql))
                 role_info = self.execute_fetch_one(conn, sql)
                 utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'])
             return set(role_list), utils_permissions
@@ -200,12 +196,13 @@ class DbUserMgr(DbBase):
             condition = 'ID="%s"' % id
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            logger.debug('FN:get_user_permissions userTable_sql:{}'.format(sql))
             user_info = self.execute_fetch_one(conn, sql)
             user_info['permissions'] = {'usecase': {}, 'workspace': {}, 'org': {}}
             org_admin = False
             role_set = set()
             workspace_id_set = set()
-            # # print('user_info', user_info)
+
             if user_info:
                 condition = 'USER_ID="%s"' % id
                 relation_tables = [
@@ -217,17 +214,17 @@ class DbUserMgr(DbBase):
                 for ad_group in ad_group_infos:
                     group_list.append(ad_group['GROUP_MAIL'])
                 user_info['GROUP_LIST'] = group_list
-                print('123group_list:', group_list)
-                # exit(0)
+                logger.debug('FN:get_user_permissions group_list:{}'.format(group_list))
+
                 for ad_group in ad_group_list:
                     condition = 'GROUP_MAIL="%s"' % ad_group
                     ad_group_fields = '*'
                     sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
-                    # # print('131232sql', sql)
+                    logger.debug('FN:get_user_permissions adgroupTable_sql:{}'.format(sql))
                     ad_group_info = self.execute_fetch_one(conn, sql)
                     if not ad_group_info:
                         continue
-                    # print('adgroup:', ad_group)
+
                     ad_group_id = ad_group_info['ID']
 
                     # get org permissions
@@ -238,7 +235,9 @@ class DbUserMgr(DbBase):
                     role_set = utils_role_set | role_set
                     if 'admin' in role_set:
                         org_admin = True
-                    # print('org_to_adgroupTable:', permissions)
+                        
+                    logger.debug('FN:get_user_permissions org_permission:{}'.format(permissions))
+
                     for item_id in permissions:
                         item_id = str(item_id)
                         if item_id in user_info['permissions']['org']:
@@ -254,13 +253,13 @@ class DbUserMgr(DbBase):
                         workspace_id_field = 'WORKSPACE_ID'
                         sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field,
                                                      condition=condition)
-                        # # print('2222', sql)
+                        logger.debug('FN:get_user_permissions org_admin_workspace_to_adgroupTable_sql:{}'.format(sql))
                         workspace_id_dict = self.execute_fetch_all(conn, sql)
-                        # # print('1111111', workspace_id_dict)
+                        logger.debug('FN:get_user_permissions org_admin_workspace_id_dict:{}'.format(workspace_id_dict))
                         workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
-
+                        
                         # workspace permissions up to all
-                        # print('workspace_to_adgroupTable:', permissions)
+                        logger.debug('FN:get_user_permissions org_admin_workspace_permissions:{}'.format(permissions))
                         for item_id in workspace_id_set:
                             item_id = str(item_id)
                             if item_id not in user_info['permissions']['workspace']:
@@ -271,16 +270,16 @@ class DbUserMgr(DbBase):
                         condition = 'AD_GROUP_ID="%s"' % ad_group_id
                         workspace_id_field = 'WORKSPACE_ID'
                         sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field, condition=condition)
-                        print('2222', sql)
+                        logger.debug('FN:get_user_permissions non_org_admin_workspace_to_adgroupTable_sql:{}'.format(sql))
                         workspace_id_dict = self.execute_fetch_all(conn, sql)
-                        print('1111111', workspace_id_dict)
+                        logger.debug('FN:get_user_permissions non_org_admin_workspace_id_dict:{}'.format(workspace_id_dict))
                         workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
 
                         # get workspace permissions
-                        print("fn:get_user_permissions id:{}, ad_group_id:{}".format(id,ad_group_id))
+                        logger.debug("fn:get_user_permissions id:{}, ad_group_id:{}".format(id,ad_group_id))
                         utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'workspace_to_adgroupTable', 'WORKSPACE_ID', db_name, conn)
                         # role_set = utils_role_set | role_set
-                        # print('workspace_to_adgroupTable:', permissions)
+                        logger.debug('FN:get_user_permissions non_org_admin_workspace_permissions:{}'.format(permissions))
                         for item_id in permissions:
                             item_id = str(item_id)
                             if item_id in user_info['permissions']['workspace']:
@@ -293,7 +292,7 @@ class DbUserMgr(DbBase):
                     # get usecase permissions
                     utils_role_set, permissions = self.__get_util_permission(ad_group_id, 'usecase_to_adgroupTable', 'USECASE_ID', db_name, conn)
                     # role_set = utils_role_set | role_set
-                    # print('usecase_to_adgroupTable:', permissions)
+                    logger.debug('FN:get_user_permissions usecase_to_adgroupTable_permissions:{}'.format(permissions))
                     for item_id in permissions:
                         item_id = str(item_id)
                         if item_id in user_info['permissions']['usecase']:
@@ -303,16 +302,18 @@ class DbUserMgr(DbBase):
                                 user_info['permissions']['usecase'][item_id][role_name] = role_permissions
                         else:
                             user_info['permissions']['usecase'][item_id] = permissions[item_id]
-                # print('workspace_id_set:', workspace_id_set)
+
+                logger.debug('FN:get_user_permissions workspace_id_set:{}'.format(workspace_id_set))
                 workspace_list = list(workspace_id_set)
-                print('FN:get_user_permissions workspace_list:', workspace_list)
+                logger.debug('FN:get_user_permissions workspace_list:{}'.format(workspace_list))
+                
                 if len(workspace_list) != 0:
                     user_info['workspace_list'] = []
                     user_info['workspace_id'] = str(workspace_list[0])
                     condition = 'ID in (%s)' % ','.join([str(w) for w in workspace_list])
                     workspace_info_field = 'ID,WORKSPACE_NAME'
                     sql = self.create_select_sql(db_name, 'workspaceTable', workspace_info_field, condition=condition)
-                    # print('workspace sql: ', sql)
+                    logger.debug('FN:get_user_permissions workspaceTable_sql:{}'.format(sql))
                     workspace_name_dict = self.execute_fetch_all(conn, sql)
                     for workspace in workspace_name_dict:
                         user_info['workspace_list'].append({'label': workspace['WORKSPACE_NAME'],
@@ -328,13 +329,13 @@ class DbUserMgr(DbBase):
                         elif len(user_info['role_list']) == 1:
                             user_info['user_role'] = user_info['role_list'][0]
                 else:
-                    # print('workspace sql: 1111')
+
                     user_info['workspace_id'] = ''
                     user_info['workspace_list'] = []
                     user_info['role_list'] = []
                     user_info['user_role'] = ''
 
-                # print('role_set:', role_set)
+
                 if org_admin:
                     user_info['role_list'] = ['admin']
                     user_info['user_role'] = 'admin'
@@ -347,12 +348,12 @@ class DbUserMgr(DbBase):
                 #         if 'viewer' in user_info['role_list']:
                 #             user_info['role_list'].remove('viewer')
 
-                print("FN:get_user_permissions user_info['workspace_list']: ",  user_info['workspace_list'])
+                logger.debug("FN:get_user_permissions user_info['workspace_list']: {}".format(user_info['workspace_list']))
                 return user_info
             else:
                 return {}
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -374,13 +375,14 @@ class DbUserMgr(DbBase):
                 ]
                 sql = self.create_get_relation_sql(db_name, 'adgroupTable', 'GROUP_MAIL',
                                                    relations=relation_tables, condition=condition)
-                # print('create_get_relation_sql:', sql)
+                logger.debug('FN:fetch_user_info create_get_relation_sql:{}'.format(sql))
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group in ad_group_infos:
                     ad_group_list.append(ad_group['GROUP_MAIL'])
-            # print('ad_group_list:', ad_group_list)
+            logger.debug('FN:fetch_user_info ad_group_list:{}'.format(ad_group_list))
             permissions = {'org': {}, 'usecase': {}, 'workspace': {}}
-            # print('user_info', user_info)
+            logger.debug('FN:fetch_user_info user_info:{}'.format(user_info))
+
             user_set = set()
             user_set.add(str(user_key))
             user_fields = 'ID'
@@ -389,18 +391,18 @@ class DbUserMgr(DbBase):
                     condition = 'GROUP_MAIL="%s"' % ad_group
                     ad_group_fields = '*'
                     sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
-                    # # print('sql', sql)
+                    logger.debug('FN:fetch_user_info adgroupTable_sql:{}'.format(sql))
                     ad_group_info = self.execute_fetch_one(conn, sql)
                     ad_group_id = ad_group_info['ID']
                     # get org permissions
                     utils_role_set, org_permissions = self.__get_util_permission(ad_group_id, 'org_to_adgroupTable', 'ORG_ID', db_name, conn)
-                    # # print('org_permissions:', org_permissions)
+                    logger.debug('FN:fetch_user_info org_permissions:{}'.format(org_permissions))
                     permissions['org'] = org_permissions
                     for org_id in org_permissions:
                         for role in org_permissions[org_id]:
                             if role in self.manager_role:
                                 sql = self.create_select_sql(db_name, 'userTable', user_fields)
-                                # print('userTable:', sql)
+                                logger.debug('FN:fetch_user_info userTable_sql:{}'.format(sql))
                                 users_info = self.execute_fetch_all(conn, sql)
                                 sub_user_set = set([str(user['ID']) for user in users_info])
                                 user_set = user_set | sub_user_set
@@ -415,7 +417,7 @@ class DbUserMgr(DbBase):
                                 memeber_list, _ = Ldap.get_ad_group_member(GROUP_MAIL)
                                 user_condiction = 'ACCOUNT_NAME in ("%s")' % '","'.join(memeber_list)
                                 sql = self.create_select_sql(db_name, 'userTable', user_fields, user_condiction)
-                                # print('workspace account sql:', sql)
+                                logger.debug('FN:fetch_user_info userTable_sql:{}'.format(sql))
                                 users_info = self.execute_fetch_all(conn, sql)
                                 sub_user_set = set([str(user['ID']) for user in users_info])
                                 user_set = user_set | sub_user_set
@@ -457,11 +459,11 @@ class DbUserMgr(DbBase):
                 #         users_info = self.execute_fetch_all(conn, sql)
                 #         sub_user_set = set([user['ID'] for user in users_info])
                 #         user_set = user_set | sub_user_set
-                # print('user_set: ', user_set)
+                logger.debug('FN:fetch_user_info user_set:{}'.format(user_set))
                 user_condiction = 'ID in(%s)' % ','.join(user_set)
                 user_fields = '*'
                 sql = self.create_select_sql(db_name, 'userTable', user_fields, user_condiction)
-                # print('user info sql:', sql)
+                logger.debug('FN:fetch_user_info userTable_sql:{}'.format(sql))
                 users_info = self.execute_fetch_all(conn, sql)
                 for i in range(len(users_info)):
                     user_id = users_info[i]['ID']
@@ -484,7 +486,7 @@ class DbUserMgr(DbBase):
             else:
                 return response_code.GET_DATA_FAIL
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -507,7 +509,7 @@ class DbUserMgr(DbBase):
             return ad_group_list, (user_mail, ldap_username)
         except Exception as e:
             import traceback
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return None, (None, None)
         finally:
             conn.close()
