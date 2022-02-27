@@ -157,9 +157,9 @@ class CreateTagTemplate(baseTask, DbBase):
 
     def __create_tag_template_workflow(self, form_id, creator_id):
         workflow = {'form_id': form_id, 'workflow_name': 'default workflow', 'stages': [
-            {"apiTaskName": "", "condition": [], "flowType": "Trigger", "id": 407, "label": "Form | data tags188"},
+            {"apiTaskName": "", "condition": [], "flowType": "Trigger", "id": 100, "label": "Form | data tags188"},
             {"apiTaskName": "", "condition": [{"id": 1, "label": "workspace owner approval", "style": 6, "value": ""}],
-             "flowType": "Approval", "id": 2, "label": "Approval Process"},
+             "flowType": "Approval", "id": 101, "label": "Approval Process"},
             {"apiTaskName": "system_create_tag", "condition": [], "flowType": "System", "id": 14,
              "label": "Create Tags"}],
                     'creator_id': creator_id, 'field_id_list': []}
