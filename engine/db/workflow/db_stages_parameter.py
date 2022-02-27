@@ -38,6 +38,7 @@ class stageBase(metaclass=abc.ABCMeta):
                     text = new_stage_dict['condition'][index]['value']
                     text, mapping_words = stageBase.save_pattern(text)
                     for ignore_word in stageBase.sql_ignore_set:
+                        # text = text.replace('\\', '-*backslash*-')
                         text = text.replace(ignore_word, '')
                     text = stageBase.recover_pattern(text, mapping_words)
                     new_stage_dict['condition'][index]['value'] = text
