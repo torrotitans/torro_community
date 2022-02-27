@@ -17,7 +17,7 @@ from utils.status_code import response_code
 import traceback
 import logging
 
-logger = logging.getLogger("main." + __name__)
+logger = logging.getLogger("main.utils." + __name__)
 
 class Auth(object):
     """
