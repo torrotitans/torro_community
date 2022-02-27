@@ -284,10 +284,18 @@ class DbDashboardMgr(DbBase):
             db_name = configuration.get_database_name()
             if not is_read:
                 is_read = 0
-            condition = "id='%s' and account_id='%s'" % (notify_id, account_id)
+            
+            if isinstance(notify_id, list):
+                # Check if notify_id is a list
+                notify_list = "{}".format(notify_id)[1:-1] # Remove the []
+                condition = "id in ('%s') and account_id='%s'" % (notify_list, account_id)
+            else:
+                condition = "id='%s' and account_id='%s'" % (notify_id, account_id)
+                
             fields = ('is_read', )
             values = (is_read, )
             sql = self.create_update_sql(db_name, 'inputNotifyTable', fields, values, condition=condition)
+            print("FN:read_notify sql:",sql)
             _ = self.updete_exec(db_conn, sql)
             return response_code.SUCCESS
         except Exception as e:
