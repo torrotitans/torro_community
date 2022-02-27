@@ -32,7 +32,9 @@ class interfaceEditWorkflow(Resource):
             #     return response_result_process(data, xml=xml)
             request_data = req.verify_all_param(request_data, workflowApiPara.postWorkflowData_POST_request)
             for index, stage in enumerate(request_data['stages']):
+                print("request_data['stages'][index] 1111:", request_data['stages'][index])
                 request_data['stages'][index] = stageBase.verify_all_param(req.verify_all_param, stage)
+                print("request_data['stages'][index] 2222:", request_data['stages'][index])
             workflow = request_data
             data = workflowSingleton_singleton.add_new_workflow(workflow)
 

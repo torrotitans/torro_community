@@ -15,7 +15,7 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
     payload = {'token': token, 'input_form_id': input_form_id, 'form_id': form_id, 'workspace_id': workspace_id}
 
     print('airflow payload:', payload)
-    return True
+    # return True
     retry = 0
     while retry < 3:
         try:
