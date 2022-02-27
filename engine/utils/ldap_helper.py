@@ -2,11 +2,14 @@ from ldap3 import Server, Connection, ALL, SUBTREE, Tls
 from common.common_crypto import prpcrypt
 import traceback
 from db.org.db_org_mgr import org_mgr
+import logging
+
+logger = logging.getLogger("main.utils." + __name__)
 
 class Ldap():
 
     ldap_info = org_mgr.get_ldap_info()
-    # # print('ldap_info', ldap_info)
+    logger.debug('ldap_info{}'.format(ldap_info)
     if ldap_info['code'] == 200:
         ldap_info = ldap_info['data']
         host = ldap_info['HOST']
@@ -49,6 +52,7 @@ class Ldap():
     @staticmethod
     def get_line_manager(account_name, account_id, account_cn):
         Ldap.__refresh_ldap()
+        
         # get line managers
         line_managers = []
         line_manager = 'charlie@torro.ai'
@@ -57,8 +61,9 @@ class Ldap():
 
     @staticmethod
     def __refresh_ldap():
+        loggger.debug("FN:refresh_ldap")
         ldap_info = org_mgr.get_ldap_info()
-        # # print('ldap_info', ldap_info)
+        # logger.debug('ldap_info{}'.format(ldap_info))
         if ldap_info['code'] == 200:
             ldap_info = ldap_info['data']
             Ldap.host = ldap_info['HOST']
@@ -84,6 +89,7 @@ class Ldap():
 
     @staticmethod
     def __get_user(account_cn, conn):
+        loggger.debug("FN:get_user")
         res = conn.search(
             search_base=Ldap.USER_SEARCH_BASE,
             search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
@@ -103,6 +109,7 @@ class Ldap():
 
     @staticmethod
     def __get_ad_group(ad_group, conn):
+        loggger.debug("FN:get_ad_group")
         res = conn.search(
             search_base=Ldap.GROUP_SEARCH_BASE,
             search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group)),
@@ -122,6 +129,7 @@ class Ldap():
 
     @staticmethod
     def __get_member_ad_group(entry, conn):
+        loggger.debug("FN:get_member_ad_group")
         ad_groups_mails = []
         # res = Ldap.__get_user(member, conn)
         # if res:
@@ -184,32 +192,30 @@ class Ldap():
                     member_mail = mail_info[0]
                 else:
                     member_mail = mail_info
-                # print('member_mail:', member_mail)
+                # logger.debug('FN:__get_ad_group_member member_mail:{}'.format(member_mail))
                 if member_mail:
                     member_mails.append(member_mail)
-        # # print('member_mails:', member_mails)
+        
         return member_mails
     @staticmethod
     def __login_with_user_pwd(account_cn, password, servers):
         # return True
-        # print(username, password)
-        print('user cn:', '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE))
+        logger.debug('FN:__login_with_user_pwd user_search_filter:{} user_search_base:{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE))
         conn = Connection(servers, '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE),
                           password, check_names=True, lazy=False, raise_exceptions=True)
         conn.open()
         conn.bind()
         if conn.result["description"] == "success":
-            # print("auth success:", conn.result)
+            
             return True
         else:
-            # print("auth fail:", conn.result)
+            
             return False
 
     @staticmethod
     def service_account_login(account_dn, password, host, port, use_ssl=False):
         pwd = prpcrypt.decrypt(password)
-        # print('ldap info:', Ldap.host, Ldap.use_ssl, Ldap.port)
-        # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
+                
         try:
 
             servers = Server(host, use_ssl=use_ssl, get_info=ALL, port=port)
@@ -219,14 +225,14 @@ class Ldap():
             conn.open()
             conn.bind()
             if conn.result["description"] == "success":
-                # print("auth success:", conn.result)
+                
                 return True
             else:
-                # print("auth fail:", conn.result)
+                
                 return False
 
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return False
 
     @staticmethod
@@ -234,7 +240,7 @@ class Ldap():
 
         Ldap.__refresh_ldap()
         pwd = prpcrypt.decrypt(Ldap.ADMIN_PASSWORD)
-        print('FN:ldap_auth ldap_host:{} ldap_use_ssl:{} ldap.port:{}'.format(Ldap.host, Ldap.use_ssl, Ldap.port))
+        # logger.debug('FN:ldap_auth ldap_host:{} ldap_use_ssl:{} ldap.port:{}'.format(Ldap.host, Ldap.use_ssl, Ldap.port))
         # pwd = Ldap.__decode_pwd(Ldap.ADMIN_PASSWORD)['ldap_pwd']
         try:
 
@@ -249,10 +255,10 @@ class Ldap():
             # conn.open()
             # conn.bind()
             # exit(0)
-            print('FN:ldap_auth acc:{} ldap_return:{}'.format(account_cn, res))
+            #logger.debug('FN:ldap_auth acc:{} ldap_return:{}'.format(account_cn, res))
             if res:
                 entry = conn.response[0]
-                print('FN:ldap_auth ldap_entry:', entry)
+                logger.debug('FN:ldap_auth ldap_entry:{}'.format(entry)
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
@@ -268,18 +274,19 @@ class Ldap():
                     user_dispaly_name = dispaly_name_info
                 # check password by dn, get displayname and email
                 login_flag = Ldap.__login_with_user_pwd(account_cn, password, servers)
-                print('login_flag:', login_flag)
+                logger.debug('FN:ldap_auth login_flag:{}'.format(login_flag))
                 if login_flag:
                     ad_group_list = Ldap.__get_member_ad_group(entry, conn)
-                    print('FN:ldap_auth ldap_ad_group_list:', ad_group_list)
+                    logger.debug('FN:ldap_auth ldap_ad_group_list:{}'.format(ad_group_list))
                     return ad_group_list, (user_mail, user_dispaly_name)
                 else:
                     return None, (None, None)
             else:
                 return None, (None, None)
         except:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return None, (None, None)
+                             
     @staticmethod
     def get_member_ad_group(account_id, offline_flag=0):
         Ldap.__refresh_ldap()
@@ -293,11 +300,10 @@ class Ldap():
                 conn.open()
                 conn.bind()
                 res = Ldap.__get_user(account_cn, conn)
-                # print('conn.result:', conn.result)
-                # print('res ', res)
+
                 if res:
                     entry = conn.response[0]
-                    # print('entry:', entry)
+                    logger.debug('FN:get_member_ad_group entry:{}'.format(entry))
                     # attr_dict = entry['attributes']
                     ad_group_list = Ldap.__get_member_ad_group(entry, conn)
 
@@ -310,7 +316,7 @@ class Ldap():
                 ad_group_list = org_mgr.offline_ad_group(account_id)
                 return  ad_group_list
         except:
-            # print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return []
 
     @staticmethod
@@ -326,16 +332,15 @@ class Ldap():
             conn.bind()
             res = Ldap.__get_ad_group(ad_group_name, conn)
 
-            # print('res ', res)
             if res:
                 entry = conn.response[0]
-                # print('entry:', entry)
+                logger.debug('FN:get_ad_group_member entry:{}'.format(entry))
                 # attr_dict = entry['attributes']
                 member_list = Ldap.__get_ad_group_member(entry, conn)
-                # # print(member_list)
+                logger.debug('FN:get_ad_group_member member_list:{}'.format(member_list))
                 return member_list, ad_group_mail
             else:
                 return None, None
         except:
-            # print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return None, None
