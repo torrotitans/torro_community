@@ -34,7 +34,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
       let tmpData = [...data];
       let currentFied = tmpData[page * rowsPerPage + index].resource;
       currentFied[valueIndex] = value;
-      onChange([data[0], ...tmpData]);
+      onChange(tmpData);
     },
     [data, page, rowsPerPage, onChange]
   );
