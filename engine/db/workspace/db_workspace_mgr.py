@@ -247,7 +247,7 @@ class DbWorkspaceMgr(DbBase):
                 resource_id = update_record['id']
                 values = update_record['values']
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
-                sql = self.create_update_sql(db_name, '', fields, values, condition="ID='%s'" % resource_id)
+                sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
                 _ = self.updete_exec(conn, sql)
 
