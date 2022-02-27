@@ -89,7 +89,7 @@ class Ldap():
 
     @staticmethod
     def __get_user(account_cn, conn):
-        loggger.debug("FN:get_user")
+        logger.debug("FN:get_user")
         res = conn.search(
             search_base=Ldap.USER_SEARCH_BASE,
             search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
@@ -109,7 +109,7 @@ class Ldap():
 
     @staticmethod
     def __get_ad_group(ad_group, conn):
-        loggger.debug("FN:get_ad_group")
+        logger.debug("FN:get_ad_group")
         res = conn.search(
             search_base=Ldap.GROUP_SEARCH_BASE,
             search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group)),
@@ -129,7 +129,7 @@ class Ldap():
 
     @staticmethod
     def __get_member_ad_group(entry, conn):
-        loggger.debug("FN:get_member_ad_group")
+        logger.debug("FN:get_member_ad_group")
         ad_groups_mails = []
         # res = Ldap.__get_user(member, conn)
         # if res:
