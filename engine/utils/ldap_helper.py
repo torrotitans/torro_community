@@ -61,7 +61,7 @@ class Ldap():
 
     @staticmethod
     def __refresh_ldap():
-        loggger.debug("FN:refresh_ldap")
+        logger.debug("FN:refresh_ldap")
         ldap_info = org_mgr.get_ldap_info()
         # logger.debug('ldap_info{}'.format(ldap_info))
         if ldap_info['code'] == 200:
