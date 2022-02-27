@@ -10,7 +10,7 @@ from flask_apscheduler import APScheduler
 import logging
 
 # Get the logger specified in the file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("__main__." + __name__)
 
 def create_app(config_name):
     
