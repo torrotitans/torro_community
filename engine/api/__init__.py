@@ -8,12 +8,9 @@ from api.resource import api
 from config import config, Config
 from flask_apscheduler import APScheduler
 import logging
-from logging import config
-
-logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
 
 # Get the logger specified in the file
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 def create_app(config_name):
     
