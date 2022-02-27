@@ -28,7 +28,7 @@ class DbWorkflowMgr(DbBase):
                             "apiTaskName": "",
                             "condition": [],
                             "flowType": "Approval",
-                            "id": "approval",
+                            "id": "101",
                             "label": "Approval Process"
                         }
                     ],
@@ -77,7 +77,7 @@ class DbWorkflowMgr(DbBase):
                                 }
                             ],
                             "flowType": "System",
-                            "id": 101,
+                            "id": 102,
                             "label": "Emails Notification"
                         },
                         {
@@ -103,7 +103,7 @@ class DbWorkflowMgr(DbBase):
                                 }
                             ],
                             "flowType": "System",
-                            "id": 102,
+                            "id": 103,
                             "label": "System Notification"
                         },
                         # {

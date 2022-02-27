@@ -102,7 +102,7 @@ const WorkflowManagement = () => {
           stages: [
             {
               apiTaskName: "",
-              id: item.id,
+              id: 100,
               label: `Form | ${item.title}`,
               flowType: TRIGGER,
               condition: [],
@@ -111,7 +111,7 @@ const WorkflowManagement = () => {
               apiTaskName: "",
               condition: [],
               flowType: "Approval",
-              id: "approval",
+              id: 101,
               label: "Approval Process",
             },
           ],
