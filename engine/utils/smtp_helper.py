@@ -78,7 +78,7 @@ class Smtp(object):
             return False
 def notify_approvers(input_form_id, approvers, text=None):
     approvers = list(set(approvers))
-    print('Email info:', input_form_id, approvers, text)
+    print('Email info:', input_form_id, approvers)
     smtp = Smtp()
     print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_tls)
     # return response_code.SUCCESS
@@ -87,6 +87,7 @@ def notify_approvers(input_form_id, approvers, text=None):
     if not text:
         text = 'The waiting for approval form id is: %s' % input_form_id
         text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
+    print('Email text:', text)
     smtp.send_email(subject, text, receivers=approvers)
     data = response_code.SUCCESS
     return data
