@@ -8,6 +8,9 @@ import os
 # from flask_cors import CORS
 from api import create_app
 from config import configuration
+from logging import config
+
+logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
