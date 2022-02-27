@@ -53,7 +53,7 @@ class DbWorkspaceMgr(DbBase):
 
                 sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition=condition)
                 # print('workspaceTable sql:', sql)
-                workspace_id = self.updete_exec(conn, sql)
+                _ = self.updete_exec(conn, sql)
 
                 # update group info
                 ad_group_fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
