@@ -36,7 +36,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
       currentFied[valueIndex] = value;
       onChange([data[0], ...tmpData]);
     },
-    [data, data, page, rowsPerPage]
+    [data, page, rowsPerPage, onChange]
   );
 
   const handleChangePage = (event, newPage) => {

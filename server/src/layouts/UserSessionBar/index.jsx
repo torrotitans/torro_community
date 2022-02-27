@@ -390,6 +390,7 @@ const UserSessionBar = () => {
               notify={notify}
               viewRequest={viewRequest}
               unRead={unRead}
+              readAll={readAll}
             />
           </Model>
           <CallModal
