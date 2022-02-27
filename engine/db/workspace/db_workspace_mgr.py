@@ -657,13 +657,25 @@ class DbWorkspaceMgr(DbBase):
             return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_uc_infos:
-                resource_info = {'id': None, 'resource': None}
-                resource_json = {}
+                resource_info = {'resource': None}
+                # resource_json = {}
                 for key in return_uc_info:
-                    if key.lower() == 'id':
-                        resource_info['id'] = return_uc_info[key]
-                    resource_json[key.lower()] = return_uc_info[key]
-                resource_info['resource'] = resource_json
+                    # if key.lower() == 'id':
+                    #     resource_info['id'] = return_uc_info[key]
+                    resource_info[key.lower()] = resource_info[key]
+                # resource_info['resource'] = resource_json
+                resource_list = [resource_info['OWNER_GROUP'.lower()],
+                                 resource_info['TEAM_GROUP'.lower()],
+                                 resource_info['SERVICE_ACCOUNT'.lower()],
+                                 resource_info['LABEL'.lower()]]
+                try:
+                    del resource_info['OWNER_GROUP'.lower()]
+                    del resource_info['TEAM_GROUP'.lower()],
+                    del resource_info['SERVICE_ACCOUNT'.lower()],
+                    del resource_info['LABEL'.lower()]
+                except:
+                    pass
+                resource_info['resource'] = resource_list
                 if resource_info['id'] != None:
                     resource_infos.append(resource_info)
             return_info['groupArr'] = resource_infos
