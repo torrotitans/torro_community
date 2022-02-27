@@ -11,7 +11,8 @@ import logging
 
 def create_app(config_name):
     
-    logging.info("FLASK:Initiating Torro Engine")
+    logger = logging.getLogger(__name__)
+    logging.info("FLASK:Initiating Torro Engine Start Sequence")
     app = Flask(__name__)
     # 验证
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -31,4 +32,12 @@ def create_app(config_name):
     api.init_app(app)
     ApiDoc(app)
     logging.info("FLASK:Torro Engine is up and running!")
+    logging.info("")
+    logging.info("            ______                        ___    ____")
+    logging.info("           /_  __/___  ______________    /   |  /  _/")
+    logging.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
+    logging.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
+    logging.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
+    logging.info("")
+    
     return app
