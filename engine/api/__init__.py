@@ -11,7 +11,7 @@ import logging
 
 def create_app(config_name):
     
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger('__main__.' + __name__)
     logging.info("FLASK:Initiating Torro Engine Start Sequence")
     app = Flask(__name__)
     # 验证
