@@ -28,7 +28,7 @@ class DbWorkflowMgr(DbBase):
                             "apiTaskName": "",
                             "condition": [],
                             "flowType": "Approval",
-                            "id": "approval",
+                            "id": "101",
                             "label": "Approval Process"
                         }
                     ],
