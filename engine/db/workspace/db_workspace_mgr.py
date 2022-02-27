@@ -662,7 +662,7 @@ class DbWorkspaceMgr(DbBase):
                 for key in return_uc_info:
                     # if key.lower() == 'id':
                     #     resource_info['id'] = return_uc_info[key]
-                    resource_info[key.lower()] = resource_info[key]
+                    resource_info[key.lower()] = return_uc_info[key]
                 # resource_info['resource'] = resource_json
                 resource_list = [resource_info['OWNER_GROUP'.lower()],
                                  resource_info['TEAM_GROUP'.lower()],
