@@ -95,7 +95,7 @@ class interfaceEditWorkflow(Resource):
             for index, stage in enumerate(request_data['stages']):
                 print("request_data['stages'][index] 1111:", stage)
                 request_data['stages'][index] = stageBase.verify_all_param(req.verify_all_param, stage)
-                print("request_data['stages'][index] 2222:", request_data['stages'][index])
+            print("request_data['stages'][index] 2222:", request_data['stages'])
             # request_data = stageBase.verify_all_param(req.verify_all_param, request_data)
             workflow = request_data
             data = workflowSingleton_singleton.update_workflow(workflow)
