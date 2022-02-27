@@ -288,7 +288,7 @@ class DbDashboardMgr(DbBase):
             if isinstance(notify_id, list):
                 # Check if notify_id is a list
                 notify_list = "{}".format(notify_id)[1:-1] # Remove the []
-                condition = "id in ('%s') and account_id='%s'" % (notify_list, account_id)
+                condition = "id in (%s) and account_id='%s'" % (notify_list, account_id)
             else:
                 condition = "id='%s' and account_id='%s'" % (notify_id, account_id)
                 
