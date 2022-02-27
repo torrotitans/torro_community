@@ -165,10 +165,10 @@ class Auth(object):
             else:
                 return response_code.LOGIN_FAIL
         if offline_flag == 1:
-            logger.info("FN:AnthN login_mode:offline)
+            logger.info("FN:AnthN login_mode:offline")
             ad_group_list, ldap_usernames = user_mgr.offline_login(username, password)
         else:
-            logger.info("FN:AnthN login_mode:ldap)
+            logger.info("FN:AnthN login_mode:ldap")
             ad_group_list, ldap_usernames = Auth.ldap_auth(username, password)
             
         if ldap_usernames[0] is not None:
