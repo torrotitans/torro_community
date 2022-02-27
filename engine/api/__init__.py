@@ -8,11 +8,24 @@ from api.resource import api
 from config import config, Config
 from flask_apscheduler import APScheduler
 import logging
+from logging import config
+
+logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
+
+# Get the logger specified in the file
+logger = logging.getLogger()
 
 def create_app(config_name):
     
-    logger = logging.getLogger('__main__.' + __name__)
     logging.info("FLASK:Initiating Torro Engine Start Sequence")
+    logging.info("")
+    logging.info("            ______                        ___    ____")
+    logging.info("           /_  __/___  ______________    /   |  /  _/")
+    logging.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
+    logging.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
+    logging.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
+    logging.info("")
+    
     app = Flask(__name__)
     # 验证
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -32,12 +45,5 @@ def create_app(config_name):
     api.init_app(app)
     ApiDoc(app)
     logging.info("FLASK:Torro Engine is up and running!")
-    logging.info("")
-    logging.info("            ______                        ___    ____")
-    logging.info("           /_  __/___  ______________    /   |  /  _/")
-    logging.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
-    logging.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
-    logging.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
-    logging.info("")
-    
+
     return app
