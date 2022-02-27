@@ -111,7 +111,7 @@ const WorkflowManagement = () => {
               apiTaskName: "",
               condition: [],
               flowType: "Approval",
-              id: 2,
+              id: "approval",
               label: "Approval Process",
             },
           ],

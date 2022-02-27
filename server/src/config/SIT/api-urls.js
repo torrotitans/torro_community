@@ -1,7 +1,7 @@
 import { DELETE, GET, POST, PUT } from "@lib/data/api-types";
 
 /* eslint-disable no-undef */
-const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://104.155.78.187";
+const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://34.79.84.83";
 /* eslint-disable no-new */
 
 const config = {
@@ -12,6 +12,15 @@ const config = {
   loginPut: {
     url: `${BASE_API_URL}/api/login`,
     method: PUT,
+  },
+  systemNotify: {
+    // url: `${BASE_API_URL}/api/systemNotify`,
+    url: `/stub/systemNotify.json`,
+    method: GET,
+  },
+  notifyRead: {
+    url: `${BASE_API_URL}/api/systemNotify`,
+    method: POST,
   },
   filterOptionGet: {
     url: `${BASE_API_URL}/api/getDashboardOptions`,
@@ -238,13 +247,13 @@ const config = {
     method: GET,
   },
   wsFormGet: {
-    // url: `${BASE_API_URL}/api/torroConfig/en.form.workspaceForm`,
-    url: `/stub/workspaceForm.json`,
+    url: `${BASE_API_URL}/api/torroConfig/en.form.workspaceForm`,
+    // url: `/stub/workspaceForm.json`,
     method: GET,
   },
   policyFormGet: {
-    // url: `${BASE_API_URL}/api/torroConfig/en.form.policyForm`,
-    url: `/stub/policyForm.json`,
+    url: `${BASE_API_URL}/api/torroConfig/en.form.policyForm`,
+    // url: `/stub/policyForm.json`,
     method: GET,
   },
 };

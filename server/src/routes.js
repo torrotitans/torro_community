@@ -60,6 +60,10 @@ const routes = (language, isLoggedIn, haveRole) => {
         { path: "/getDataAccess", element: <GetDataAccess /> },
         { path: "/workflow", element: <WorkflowPage /> },
         { path: "/requestDetail", element: <RequestDetailPage /> },
+        {
+          path: "/approvalFlow",
+          element: <RequestDetailPage approved={true} />,
+        },
       ],
     },
     {

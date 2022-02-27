@@ -103,17 +103,17 @@ class DbOrgMgr(DbBase):
             smtp_host = smtp_info['smtp_host']
             smtp_account = smtp_info['smtp_account']
             smtp_pwd = smtp_info['smtp_pwd']
-            # smtp_port = smtp_info['smtp_port']
-            smtp_ssl = smtp_info['smtp_ssl']
+            smtp_port = smtp_info['smtp_port']
+            smtp_tls = smtp_info['smtp_tls']
             create_time = smtp_info['create_time']
 
 
             db_name = configuration.get_database_name()
 
             # insert form
-            fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_SSL', 'CREATE_TIME',
+            fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_TLS', 'CREATE_TIME',
                       'TIME_MODIFY')
-            values = (smtp_host, smtp_account, smtp_pwd, 0, smtp_ssl, create_time, create_time)
+            values = (smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls, create_time, create_time)
             sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
             print('smtpTable sql:', sql)
             smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -310,8 +310,8 @@ class DbOrgMgr(DbBase):
             smtp_info['smtp_host'] = org['smtp_host']
             smtp_info['smtp_account'] = org['smtp_account']
             smtp_info['smtp_pwd'] = org['smtp_pwd']
-            # smtp_info['smtp_port'] = org['smtp_port']
-            smtp_info['smtp_ssl'] = org['smtp_ssl']
+            smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_tls'] = org['smtp_tls']
             smtp_info['create_time'] = create_time
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
             ldap_infos = self.execute_fetch_all(conn, sql)
@@ -460,8 +460,8 @@ class DbOrgMgr(DbBase):
             smtp_info['smtp_host'] = org['smtp_host']
             smtp_info['smtp_account'] = org['smtp_account']
             smtp_info['smtp_pwd'] = org['smtp_pwd']
-            # smtp_info['smtp_port'] = org['smtp_port']
-            smtp_info['smtp_ssl'] = org['smtp_ssl']
+            smtp_info['smtp_port'] = org['smtp_port']
+            smtp_info['smtp_tls'] = org['smtp_tls']
             smtp_info['create_time'] = create_time
 
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
@@ -514,19 +514,19 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'smtpTable', '*')
-            smtp_info = self.execute_fetch_all(conn, sql)
-            if smtp_info:
-                return '', '', '', '', ''
+            smtp_info = self.execute_fetch_one(conn, sql)
+            if not smtp_info:
+                return '', '', '', ''
             else:
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
                 mail_pass = smtp_info['MAIL_PASS']
                 port = smtp_info['PORT']
-                is_ssl = smtp_info['USE_SSL']
-                return mail_host, mail_user, mail_pass, is_ssl, port
+                is_tls = smtp_info['USE_TLS']
+                return mail_host, mail_user, mail_pass, port, is_tls
         except Exception as e:
             lg.error(e)
-            return response_code.GET_DATA_FAIL
+            return None, None, None, None, None
         finally:
             conn.close()
 
@@ -582,5 +582,28 @@ class DbOrgMgr(DbBase):
             return ''
         finally:
             conn.close()
+
+    def insert_notification(self, emails, input_form_id, history_id, notify_msg):
+
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            notify_id_list = []
+            create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            emails = list(set(emails))
+            print('insert_notification emails:', emails, notify_msg)
+            for email in emails:
+                values = (email, input_form_id, history_id, notify_msg, 0, create_time)
+                fields = ('account_id', 'input_form_id', 'history_id', 'comment', 'is_read', 'create_time')
+                sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
+                notify_id = self.insert_exec(conn, sql, return_insert_id=True)
+                notify_id_list.append(str(notify_id))
+            return notify_id_list
+        except Exception as e:
+            lg.error(e)
+            return []
+        finally:
+            conn.close()
+
 
 org_mgr = DbOrgMgr()

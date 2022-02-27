@@ -11,6 +11,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import styles from "./styles.module.scss";
 import Button from "@basics/Button";
 import Model from "@basics/Modal";
+import Loading from "@assets/icons/Loading";
 
 const SimpleMenu = ({ options, insert }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,6 +62,10 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
   const [content, setContent] = useState("");
   const [ue, setUe] = useState(null);
   const [initicialValue, setIniticialValue] = useState("");
+  const [loading, setLoading] = useState(true);
+  /* eslint-disable */
+  const [id, setId] = useState("container" + Math.floor(Math.random() * 10000));
+  /* eslint-disable */
 
   const deCodeValue = () => {
     let tempDiv = document.createElement("div");
@@ -68,84 +73,132 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
     if (!tempDiv.childNodes.length) {
       return "";
     }
-    let elem = tempDiv.childNodes[0];
     let tmp = "";
-    for (let i = 0; i < elem.childNodes.length; i++) {
-      let value = elem.childNodes[i];
-      if (
-        (value.id && value.id.indexOf("s") !== -1) ||
-        (value.id && value.id.indexOf("u") !== -1)
-      ) {
-        tmp += `$(${value.id})`;
-      } else {
-        tmp +=
-          value instanceof HTMLElement
-            ? value.innerText
-            : value.textContent || value;
+    tempDiv.childNodes.forEach((elem) => {
+      for (let i = 0; i < elem.childNodes.length; i++) {
+        let value = elem.childNodes[i];
+        if (
+          (value.id && value.id.indexOf("s") !== -1) ||
+          (value.id && value.id.indexOf("u") !== -1) ||
+          (value.id && value.id.indexOf("d") !== -1)
+        ) {
+          tmp += `$\{${value.id}}`;
+        } else {
+          tmp +=
+            value instanceof HTMLElement
+              ? value.innerText
+              : value.textContent || value;
+        }
       }
-    }
-
+      tmp += "\n";
+    });
+    console.log(tmp);
     return tmp;
   };
   useEffect(() => {
-    let script = document.createElement("script");
-    script.setAttribute(
-      "src",
-      "http://localhost:8080/ueditor/ueditor.config.js"
-    );
-    document.getElementsByTagName("head")[0].appendChild(script);
-    script = document.createElement("script");
-    script.setAttribute(
-      "src",
-      "http://localhost:8080/ueditor/ueditor.all.min.js"
-    );
-    document.getElementsByTagName("head")[0].appendChild(script);
+    let UE = window.UE;
 
-    script.onload = () => {
-      let UE = window.UE;
-      var ue = UE.getEditor("container", {
-        UEDITOR_HOME_URL: "http://localhost:8080/ueditor/",
-        serverUrl: "/ueditor",
-        initialFrameHeight: 150,
-        toolbars: [[]],
-        lang: "en",
-        maximumWords: 100,
-        elementPathEnabled: false,
-      });
+    if (!UE) {
+      let script = document.createElement("script");
+      script.setAttribute("src", "/ueditor/ueditor.config.js");
+      document.getElementsByTagName("head")[0].appendChild(script);
+      script = document.createElement("script");
+      script.setAttribute("src", "/ueditor/ueditor.all.min.js");
+      document.getElementsByTagName("head")[0].appendChild(script);
 
-      ue.addListener("contentChange", () => {
-        setContent(ue.getContent());
-        window.a = ue.getContent();
-      });
+      script.onload = () => {
+        UE = window.UE;
 
-      setUe(ue);
-    };
-  }, []);
+        var ue = UE.getEditor(id, {
+          UEDITOR_HOME_URL: "/ueditor/",
+          serverUrl: "/ueditor",
+          initialFrameHeight: 150,
+          toolbars: [[]],
+          lang: "en",
+          maximumWords: 100,
+          elementPathEnabled: false,
+        });
+
+        ue.addListener("contentChange", () => {
+          setContent(ue.getContent());
+          window.a = ue.getContent();
+        });
+
+        ue.ready(function() {
+          setLoading(false);
+        });
+
+        setUe(ue);
+      };
+    } else {
+      UE = window.UE;
+
+      setTimeout(() => {
+        var ue = UE.getEditor(id, {
+          UEDITOR_HOME_URL: "/ueditor/",
+          serverUrl: "/ueditor",
+          initialFrameHeight: 150,
+          toolbars: [[]],
+          lang: "en",
+          maximumWords: 100,
+          elementPathEnabled: false,
+        });
+
+        ue.addListener("contentChange", () => {
+          setContent(ue.getContent());
+          window.a = ue.getContent();
+        });
+
+        ue.ready(function() {
+          setLoading(false);
+        });
+
+        setUe(ue);
+      }, 0);
+    }
+  }, [id]);
 
   useEffect(() => {
-    var initialContent = value.replace(/\$\(u(\d+)\)/g, (...args) => {
+    var initialContent = value.replace(/\$\{u(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
-    initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\$\{s(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
+
+    initialContent = initialContent.replace(/\$\{d(\d+)\}/g, (...args) => {
+      for (var i = 0; i < options.length; i++) {
+        var tmpVariable = options[i];
+        var tmpProp = tmpVariable.value;
+        if (`$\{${tmpProp}}` === args[0]) {
+          return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
+        }
+      }
+    });
+
     setIniticialValue(initialContent);
   }, [value, options]);
 
   return (
     <Model open={true}>
+      {loading && (
+        <div className={styles.loading}>
+          <Loading />
+        </div>
+      )}
+
       <div className={styles.ueditor}>
         <div className={styles.operation}>
           <SimpleMenu
@@ -159,7 +212,7 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
           />
         </div>
         <textarea
-          id="container"
+          id={id}
           name="blog"
           type="text/plain"
           onChange={() => {}}
@@ -196,26 +249,37 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
 const Default = ({ value, options, onChange }) => {
   const [open, setOpen] = useState(false);
   const displayValue = useMemo(() => {
-    var initialContent = value.replace(/\$\(u(\d+)\)/g, (...args) => {
+    var initialContent = value.replace(/\${u(\d+)}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
-    initialContent = initialContent.replace(/\$\(s(\d+)\)/g, (...args) => {
+    initialContent = initialContent.replace(/\${s(\d+)}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];
         var tmpProp = tmpVariable.value;
-        if (`$(${tmpProp})` === args[0]) {
+        if (`$\{${tmpProp}}` === args[0]) {
+          return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
+        }
+      }
+    });
+    initialContent = initialContent.replace(/\${d(\d+)}/g, (...args) => {
+      for (var i = 0; i < options.length; i++) {
+        var tmpVariable = options[i];
+        var tmpProp = tmpVariable.value;
+        if (`$\{${tmpProp}}` === args[0]) {
           return `<span id='${tmpVariable.value}' style='color: #fff;background: #8fa0f5;border-radius: 4px;padding: 2px;-webkit-user-modify:read-only;-moz-user-modify:read-only;user-modify:read-only;'>${tmpVariable.label}</span>`;
         }
       }
     });
     return initialContent;
   }, [value, options]);
+
+  console.log(displayValue);
 
   return (
     <>

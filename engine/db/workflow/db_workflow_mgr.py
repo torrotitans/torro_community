@@ -58,20 +58,26 @@ class DbWorkflowMgr(DbBase):
                             "apiTaskName": "system_email_notify",
                             "condition": [
                                 {
-                                    "id": "emails",
-                                    "label": "Emails",
+                                    "id": "groups",
+                                    "label": "Groups",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
+                                },
+                                {
+                                    "id": "emails",
+                                    "label": "User emails",
+                                    "value": "",
+                                    "style": 3
                                 },
                                 {
                                     "id": "email_msg",
                                     "label": "Email msg",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 }
                             ],
                             "flowType": "System",
-                            "id": "email_notify",
+                            "id": 101,
                             "label": "Emails Notification"
                         },
                         {
@@ -81,23 +87,23 @@ class DbWorkflowMgr(DbBase):
                                     "id": "groups",
                                     "label": "Groups",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 },
                                 {
                                     "id": "emails",
                                     "label": "User emails",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 },
                                 {
                                     "id": "notify_msg",
                                     "label": "Notify msg",
                                     "value": "",
-                                    "style": 1
+                                    "style": 3
                                 }
                             ],
                             "flowType": "System",
-                            "id": "system_notify",
+                            "id": 102,
                             "label": "System Notification"
                         },
                         # {

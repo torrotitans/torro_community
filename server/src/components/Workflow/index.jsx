@@ -159,6 +159,8 @@ const Workflow = ({ flowId, droppableItems }) => {
     }
   }, [flowIdList, editFlow, droppableItems, conditionItems]);
 
+  console.log(dropOptions);
+
   const dropOptionMap = useMemo(() => {
     let mapData = {};
     dropOptions.data.forEach((item, index) => {

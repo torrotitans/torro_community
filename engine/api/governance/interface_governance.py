@@ -15,6 +15,7 @@ from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.governance.db_governance_parameter import governanceApiPara
 from db.gcp.task_operator import taskOperator
+from core.org_singleton import orgSingleton_singleton
 
 class interfaceGovernance(Resource):
     # @api_version
@@ -49,7 +50,7 @@ class interfaceGovernance(Resource):
             input_form_id = request_data['id']
             # # print('user id:', user_key)
             # change status
-            data = governance_singleton.change_status(user_key, account_id, request_data)
+            data = governance_singleton.change_status(user_key, account_id, workspace_id, request_data)
             # print('change status data: ', data)
             # if begin to execute task
             data1 = response_code.BAD_REQUEST
@@ -65,12 +66,12 @@ class interfaceGovernance(Resource):
                 gcp_tasks = data['data'].get('gcp_tasks', [])
                 tasks = data['data'].get('tasks', [])
                 return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
-            else:
-                return response_result_process(data, xml=xml)
+                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
+            # else:
+            #     return response_result_process(data, xml=xml)
 
             # return response_result_process(data1, xml=xml)
-
+            print('response data:', data)
             # email notification
             if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
                 print('response data:', data)
@@ -78,7 +79,8 @@ class interfaceGovernance(Resource):
                 text = ''
                 if 'msg' in data:
                     text = data['msg']
-                data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
+                data2 = notify_approvers(input_form_id, notice_ids, text=text)
+                data3 = orgSingleton_singleton.insert_notification(notice_ids+[account_id], input_form_id, data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
                     data = response_code.SUCCESS
@@ -121,35 +123,56 @@ class interfaceGovernanceBatch(Resource):
             # exit(0)
 
             status_infos = request_data['data']
-            data = response_code.SUCCESS
-            data['data'] = []
+            data_batch = response_code.SUCCESS
+            data_batch['data'] = []
             for status_info in status_infos:
                 form_id = status_info['form_id']
                 input_form_id = status_info['id']
                 # # print('user id:', user_key)
                 # change status
-                one_data = governance_singleton.change_status(user_key, account_id, status_info)
+                data = governance_singleton.change_status(user_key, account_id, workspace_id, status_info)
                 # print('change status data: ', data)
                 # if begin to execute task
+                data1 = response_code.BAD_REQUEST
+                # system form operations
+                # if data['code'] == 200 and form_id == 2 and data['msg'] == 'request successfully':
+                #     data1 = governance_singleton.add_new_usecase(input_form_id, form_id, user_key, workspace_id)
+                # if data['code'] == 200 and form_id == 3 and data['msg'] == 'request successfully':
+                #     data1 = governance_singleton.add_new_policy_tags(input_form_id, form_id, user_key, workspace_id)
+                # trigger gcp task
+                if data['code'] == 200 and 'data' in data and 'is_approved' in data['data'] and data['data'][
+                    'is_approved'] == 1:
+                    # if data['code'] == 200 and 'data' in data and data['data']['is_approved'] == 1 and data['data']['tasks']\
+                    #     and data['data']['gcp_tasks']:
+                    gcp_tasks = data['data'].get('gcp_tasks', [])
+                    tasks = data['data'].get('tasks', [])
+                    return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id, input_form_id,
+                                                                 user_key)
+                    data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks,
+                                                            return_msg_list)
+                else:
+                    data_batch['data'].append(data)
 
-                if one_data['code'] == 200 and 'data' in one_data and 'is_approved' in one_data['data'] and one_data['data']['is_approved'] == 1:
-                    gcp_tasks = one_data['data'].get('gcp_tasks', [])
-                    tasks = one_data['data'].get('tasks', [])
-                    return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                    one_data = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
-                data['data'].append(one_data)
-
-            # # email notification
-            # if data['code'] == 200 and data1['code'] == 200:
-            #     notice_ids = data['data']['notice_ids']
-            #     data2 = notify_approvers(data1['data']['history_id'], notice_ids)
-            #     if data2['code'] == 200:
-            #         data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
-            #     else:
-            #         data = response_code.UPDATE_DATA_FAIL
-            #         data['msg'] = 'Create new form success, fail to send email to approves'
-
-            return response_result_process(data, xml=xml)
+                # return response_result_process(data1, xml=xml)
+                print('response data:', data)
+                # email notification
+                if 'data' in data and 'notice_ids' in data['data'] and data['code'] == 200:
+                    print('response data:', data)
+                    notice_ids = data['data']['notice_ids']
+                    text = ''
+                    if 'msg' in data:
+                        text = data['msg']
+                    data2 = notify_approvers(input_form_id, notice_ids, text=text)
+                    data3 = orgSingleton_singleton.insert_notification(notice_ids + [account_id], input_form_id,
+                                                                       data['data']['history_id'], text)
+                    if data2['code'] == 200:
+                        data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
+                        data = response_code.SUCCESS
+                    else:
+                        data = response_code.UPDATE_DATA_FAIL
+                        data['msg'] = 'Create new form success, fail to send email to approves'
+                data_batch['data'].append(data)
+            return response_result_process(data_batch, xml=xml)
         except Exception as e:
             lg.error(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL

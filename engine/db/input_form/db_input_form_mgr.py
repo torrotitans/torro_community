@@ -175,7 +175,8 @@ class DbInputFormMgr(DbBase):
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields, condition)
             approval_infos = self.execute_fetch_all(db_conn, sql)
-            now_approver_group = ''
+
+            approval_flag = False
             for index, approval_info in enumerate(approval_infos):
                 approver_id = approval_info['account_id']
                 approver_group = approval_info['ad_group']
@@ -194,10 +195,16 @@ class DbInputFormMgr(DbBase):
                 else:
                     member_list = []
                 print('now_approval:', now_approval_flag, account_id, member_list, approver_group)
-                if int(now_approval_flag) == 1 and approver_view and account_id not in member_list:
-                    data = response_code.GET_DATA_FAIL
-                    data['msg'] = 'you do not have access to view this page.'
-                    return data
+                # if approver_view is true, need to check if the users are the approvers
+                if approver_view:
+                    if int(now_approval_flag) == 1 and account_id in member_list:
+                        approval_flag = True
+                    # else:
+                    #     data = response_code.GET_DATA_FAIL
+                    #     data['msg'] = 'Permission denied.'
+                    #     return data
+                else:
+                    pass
                 if approver_comment is None:
                     approver_comment = ''
                 is_approved = approval_info['is_approved']
@@ -257,6 +264,17 @@ class DbInputFormMgr(DbBase):
                     # pass
                 status_history_list.append(status_history)
                 old_status_history_list.append({'label': status_label, 'operator': '', 'comment': '', 'time': None})
+
+            # if it is an approval page, user need to in the approval group
+            if approver_view and approval_flag:
+                pass
+            # if it is not an approval page, everyone can read it
+            elif not approver_view:
+                pass
+            else:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'you do not have access to view this page.'
+                return data
 
             for input_form_info in input_form_infos:
                 history_id = int(input_form_info['history_id'])
@@ -320,8 +338,12 @@ class DbInputFormMgr(DbBase):
 
             update_time = input_form_list[0]['updated_time']
             status_history_suffix = self.status_history_mapping.get(form_status, self.status_history_mapping[0])
+            print('status_history_suffix:', status_history_suffix)
             if form_status in (2, 3):
-                status_history_suffix[0]['time'] = status_history_list[-1]['time']
+                try:
+                    status_history_suffix[0]['time'] = status_history_list[-1]['time']
+                except:
+                    pass
             if form_status in (1, 2, 5, 6):
                 status_history_suffix[-1]['time'] = update_time
 
@@ -362,8 +384,10 @@ class DbInputFormMgr(DbBase):
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'user not found'
                 return data
-            # get workflow and check if the workflow expires
+
             form_field_values_dict = inputData['form_field_values_dict']
+
+            # get workflow and check if the workflow expires
             form_field_input_dict, form_field_values_dict = self.__get_form_field_input_dict(form_field_values_dict,
                                                                                              field_ids)
 
@@ -392,6 +416,12 @@ class DbInputFormMgr(DbBase):
                 return data
             # # print('pass:', trigger_worfklow)
             # exit(0)
+
+            # do the usecase resource checking and change the available flag before all the insertion.
+            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
+            if usecase_resource_data['code'] != 200:
+                return usecase_resource_data
+
             # insert form index
             # approver_info = {'itemList': [{'id': 1}, {'id': 2}]}
             fields = ('creator_id', 'form_id', 'workspace_id')
@@ -415,6 +445,7 @@ class DbInputFormMgr(DbBase):
                 form_id, workspace_id, db_name, conn)
             # # print('approver_info:', approver_info)
             # # print('workflow_stages_id_list:', workflow_stages_id_list)
+
             # exit(0)
             # add approval
             # create approval list
@@ -445,6 +476,7 @@ class DbInputFormMgr(DbBase):
             input_form['form_id'] = form_id
             input_form['approvers'] = approvers
             data = response_code.SUCCESS
+            data['msg'] = 'Waiting for your approval.'
             data['data'] = input_form
 
             return data
@@ -490,11 +522,11 @@ class DbInputFormMgr(DbBase):
                 data['msg'] = 'form not found'
                 return data
 
-            # get workflow and check if the workflow expires
             form_field_values_dict = inputData['form_field_values_dict']
+
+            # get workflow and check if the workflow expires
             form_field_input_dict, form_field_values_dict = self.__get_form_field_input_dict(form_field_values_dict,
                                                                                              field_ids)
-
             condition = 'form_id="%s"' % form_id
             sql = self.create_select_sql(db_name, 'workflowTable', '*', condition)
             # print('workflowTable: ', sql)
@@ -529,7 +561,13 @@ class DbInputFormMgr(DbBase):
                 workflow_stages_list,
                 form_field_values_dict, input_form_id,
                 form_id, workspace_id, db_name, conn)
-            # approver_info = {'itemList': [{'id': 1}, {'id': 2}]}
+
+
+            # do the usecase resource checking and change the available flag before all the insertion.
+            usecase_resource_data = self.__check_usecase_resource_available(workspace_id, form_id, form_field_values_dict, conn, db_name)
+            if usecase_resource_data['code'] != 200:
+                return usecase_resource_data
+
             now = str(datetime.datetime.today())
             # get approval
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -548,6 +586,7 @@ class DbInputFormMgr(DbBase):
             input_form['history_id'] = history_id
             input_form['approvers'] = approvers
             data = response_code.SUCCESS
+            data['msg'] = 'Waiting for your approval.'
             data['data'] = input_form
 
             return data
@@ -604,6 +643,41 @@ class DbInputFormMgr(DbBase):
                 break
 
         return trigger_worfklow
+
+    def __check_usecase_resource_available(self, workspace_id, form_id, form_field_values_dict, conn, db_name):
+
+        data = response_code.SUCCESS
+        if form_id == Status.system_form_id['usecase']:
+            owner_group = form_field_values_dict.get(Status.system_form_field_id['usecase']['owner_group'], '').strip()
+            team_group = form_field_values_dict.get(Status.system_form_field_id['usecase']['team_group'], '').strip()
+            service_account = form_field_values_dict.get(Status.system_form_field_id['usecase']['service_account'], '').strip()
+
+            condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, owner_group)
+            sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition=condition)
+            print('usecaseResourceTable create_select_sql:', sql)
+            resource_info = self.execute_fetch_one(conn, sql)
+            if not resource_info:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'Canot find the owner group info.'
+
+            available = int(resource_info['AVAILABLE'])
+            if available == 0:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'This owner group resource has already been used.'
+            elif team_group != resource_info['TEAM_GROUP'] or service_account != resource_info['SERVICE_ACCOUNT']:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'team_group or service_account not match.'
+            else:
+                condition = "WORKSPACE_ID='%s' and OWNER_GROUP='%s'" % (workspace_id, owner_group)
+                fields = ('AVAILABLE',)
+                values = ('0', )
+                sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
+                _ = self.updete_exec(conn, sql)
+            print('data: ', data, team_group != resource_info['TEAM_GROUP'].strip(), service_account != resource_info['SERVICE_ACCOUNT'].strip())
+            # print('group: ', team_group, resource_info['TEAM_GROUP'], service_account, resource_info['SERVICE_ACCOUNT'])
+            print('usecaseResourceTable updete_exec sql:', sql)
+
+        return data
 
     def __get_form_field_input_dict(self, form_field_values_dict, field_ids):
         form_field_input_dict = {}
@@ -685,7 +759,7 @@ class DbInputFormMgr(DbBase):
             input_stage_info.append(json.dumps(condition_value))
             input_stage_info.extend([now, now])
             workflow_stages_info_list.append(input_stage_info)
-        # print('workflow_stages_info_list: ', workflow_stages_info_list)
+        print('workflow_stages_info_list: ', workflow_stages_info_list)
 
         input_form = {'id': '', 'input_stage_id_list': [], 'form_id': form_id, 'history_id': ''}
         for input_stage_info in workflow_stages_info_list:
@@ -693,7 +767,7 @@ class DbInputFormMgr(DbBase):
                       'create_time', 'updated_time')
             values = tuple(input_stage_info)
             sql = self.create_insert_sql(db_name, 'inputStageTable', '({})'.format(', '.join(fields)), values)
-            # # print('inputStageTable sql:', sql)
+            print('inputStageTable sql:', sql)
             input_stage_id = self.insert_exec(conn, sql, return_insert_id=True)
             input_form['input_stage_id_list'].append(input_stage_id)
             workflow_stages_id_list.append(input_stage_id)
@@ -713,33 +787,33 @@ class DbInputFormMgr(DbBase):
             approver_emails = []
             # get workspace owner group
             if int(approval_item['id']) == 1:
-                ad_groups = self.__get_workspace_owner_group(workspace_id, 'ws_owner_group')
+                approver_emails = self.__get_workspace_owner_group(workspace_id, 'ws_owner_group')
                 # print('ad_groups:', ad_groups)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                if ad_groups:
+                if approver_emails:
                     index += 1
             # get region group, default id=s1
             elif int(approval_item['id']) == 2:
                 region = form_field_values_dict.get('s1', None)
-                ad_groups = self.__get_workspace_region_group(workspace_id, region)
+                approver_emails = self.__get_workspace_region_group(workspace_id, region)
                 # print('ad_groups:', ad_groups)
-                for ad_group in ad_groups:
+                for ad_group in approver_emails:
                     if ad_group not in approval_dict:
                         approval_dict[ad_group] = {'index': index, 'label_list': [approval_label]}
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                approvers.append(ad_groups)
-                if ad_groups:
+                # approvers.append(approver_emails)
+                if approver_emails:
                     index += 1
             # get dynamic field group
             elif int(approval_item['id']) == 3:
-                ad_groups = []
+                approver_emails = []
                 field = approval_item['value']
                 field_id = field.replace('d', '').strip()
                 option_label = form_field_values_dict.get(field, None)
@@ -763,7 +837,7 @@ class DbInputFormMgr(DbBase):
                     else:
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
-                    ad_groups.append(ad_group)
+                    approver_emails.append(ad_group)
                     # approvers.append([ad_group])
                     index += 1
 
@@ -783,6 +857,10 @@ class DbInputFormMgr(DbBase):
                     account_id = field_info['ACCOUNT_ID']
                     account_cn = field_info['ACCOUNT_CN']
                 approver_emails = Ldap.get_line_manager(account_name, account_id, account_cn)
+                for ad_group in approver_emails:
+                    self.__add_approval(input_form_id, index, ad_group, approval_label)
+                index += 1
+
             # get usecase data linear group
             elif int(approval_item['id']) == 5:
                 approver_emails = self.__get_data_linear_approval(form_field_values_dict, workspace_id)
@@ -794,7 +872,7 @@ class DbInputFormMgr(DbBase):
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
                     index += 1
-                    approvers.append([ad_group])
+                    # approvers.append([ad_group])
             # get policy tags ad group
             elif int(approval_item['id']) == 6:
                 approver_emails = self.__get_policy_tags_approval(form_field_values_dict, workspace_id)
@@ -806,7 +884,7 @@ class DbInputFormMgr(DbBase):
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
                     index += 1
-                    approvers.append([ad_group])
+                    # approvers.append([ad_group])
             # get data approval ad group
             elif int(approval_item['id']) == 0:
                 approver_emails = self.__get_data_approval(form_field_values_dict, workspace_id, form_id)
@@ -818,7 +896,7 @@ class DbInputFormMgr(DbBase):
                         approval_dict[ad_group]['label_list'].append(approval_label)
                     # self.__add_approval(input_form_id, index, ad_group, approval_label)
                     index += 1
-                    approvers.append([ad_group])
+                    # approvers.append([ad_group])
             # it approval
             elif int(approval_item['id']) == 7:
                 approver_emails = self.__get_workspace_owner_group(workspace_id, 'it_group')
@@ -849,15 +927,17 @@ class DbInputFormMgr(DbBase):
                     # else:
                     #     approval_dict[ad_group]['label_list'].append(approval_label)
                     self.__add_approval(input_form_id, index, ad_group, approval_label)
+                print("LOG:: approval_item['id']:", approval_item['id'], approval_index)
                 # trigger airflow
-                retry = 0
-                while retry < 3:
-                    return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
-                    if not return_flag:
-                        retry += 1
-                        time.sleep(1)
-                    else:
-                        break
+                if approval_index == 0:
+                    retry = 0
+                    while retry < 3:
+                        return_flag = system_approval(random_token, input_form_id, form_id, workspace_id, approval_index)
+                        if not return_flag:
+                            retry += 1
+                            time.sleep(1)
+                        else:
+                            break
                 if approver_emails:
                     index += 1
             # get now approval group

@@ -16,6 +16,7 @@ const Identity = (() => {
     wsList: [],
     wsId: "",
     ad_group_list: [],
+    userCN: "",
   };
   try {
     if (!getCookie("TORRO_AUTH")) {
@@ -38,6 +39,7 @@ const GlobalContextProvider = (props) => {
         init: actions.payload.init,
         userName: actions.payload.userName,
         userId: actions.payload.userId,
+        userCN: actions.payload.userCN,
         roleList: actions.payload.roleList,
         role: actions.payload.role,
         wsList: actions.payload.wsList,
@@ -60,6 +62,7 @@ const GlobalContextProvider = (props) => {
       wsId: Identity.wsId,
       accountId: Identity.accountId,
       ad_group_list: Identity.ad_group_list,
+      userCN: Identity.userCN,
     }
   );
 

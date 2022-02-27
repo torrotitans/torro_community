@@ -8,6 +8,7 @@ from flask import request
 from flask_restful import Resource
 from core.input_form_singleton import input_form_singleton
 from core.form_singleton import formSingleton_singleton
+from core.org_singleton import orgSingleton_singleton
 import os
 from utils.log_helper import lg
 from utils.status_code import response_code
@@ -34,6 +35,7 @@ class interfaceInputForm(Resource):
         workspace_id = req.get_workspace_id()
         try:
             user_key = req.get_user_key()
+            account_id = req.get_user_account_id()
             # print('user id:', user_key)
         except:
             data = response_code.GET_DATA_FAIL
@@ -85,13 +87,15 @@ class interfaceInputForm(Resource):
                 text = ''
                 if 'msg' in data:
                     text = data['msg']
-                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
+                data3 = orgSingleton_singleton.insert_notification(data['data']['approvers']+[account_id], data['data']['id'], data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
                     data = response_code.UPDATE_DATA_FAIL
                     data['msg'] = 'Create new form success, fail to send email to approves'
         except:
+            lg.error(traceback.format_exc())
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'
 
@@ -113,6 +117,7 @@ class interfaceInputForm(Resource):
             workspace_id = req.get_workspace_id()
             try:
                 user_key = req.get_user_key()
+                account_id = req.get_user_account_id()
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
@@ -161,7 +166,11 @@ class interfaceInputForm(Resource):
                     text = ''
                     if 'msg' in data:
                         text = data['msg']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
+                    data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
+                                                                       data['data']['id'], data['data']['history_id'],
+                                                                       text)
+
                     if data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                     else:
@@ -227,6 +236,7 @@ class interfaceInputFormList(Resource):
         workspace_id = req.get_workspace_id()
         try:
             user_key = req.get_user_key()
+            account_id = req.get_user_account_id()
             # print('user id:', user_key)
         except:
             data = response_code.GET_DATA_FAIL
@@ -276,6 +286,25 @@ class interfaceInputFormList(Resource):
                 one_data['field_ids'] = field_ids
 
                 data = input_form_singleton.input_form_data(user_key, one_data, workspace_id)
+
+                # return data
+                if data['code'] == 200:
+                    response_data = data['data']
+                    text = ''
+                    if 'msg' in data:
+                        text = data['msg']
+                    data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
+                                                                       data['data']['id'], data['data']['history_id'],
+                                                                       text)
+
+                    if data2['code'] == 200:
+                        data['data'] = req.verify_all_param(response_data,
+                                                            inputFormApiPara.input_form_data_POST_response)
+                    else:
+                        data = response_code.UPDATE_DATA_FAIL
+                        data['msg'] = 'Create new form success, fail to send email to approves'
+
                 output_data['data'].append(data)
 
             return output_data

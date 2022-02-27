@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 
-from utils.smtp_helper import notify_approvers
+# from utils.smtp_helper import notify_approvers
 import traceback
 from flask import request
 from flask_restful import Resource
@@ -34,8 +34,7 @@ class interfaceSystemNotify(Resource):
                 account_id = req.get_user_account_id()
                 workspace_id = req.get_workspace_id()
                 # print('user id:', user_key)
-                data = response_code.SUCCESS
-                data['data'] = dashboard_singleton.get_notify(account_id)
+                data = dashboard_singleton.get_notify(account_id)
             except:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'Token error or expired, please login again.'

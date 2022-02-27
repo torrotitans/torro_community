@@ -28,7 +28,7 @@ import { useMemo } from "react";
 import TextBox from "@basics/TextBox";
 import SpecialField from "./SpecialField";
 import CommentSection from "../CommentSection";
-import renderOption from "src/utils/renderOption";
+// import renderOption from "src/utils/renderOption";
 import {
   Table,
   TableBody,
@@ -197,7 +197,7 @@ const FormDataDisplay = ({
     (row) => {
       let label = row.label;
       let defaultValue = row.default;
-      let options = row.options;
+      // let options = row.options;
       let special;
       specialList.forEach((item) => {
         if (

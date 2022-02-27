@@ -12,6 +12,8 @@ from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_request_process import req
 from db.gcp.task_operator import taskOperator
+from common.common_crypto import prpcrypt
+import json
 
 class interfaceSystemTrigger(Resource):
 
@@ -28,16 +30,28 @@ class interfaceSystemTrigger(Resource):
             # request_data = req.verify_all_param(request_data, governanceApiPara.changeStatus_POST_request)
             print('request_data:', request_data)
             admin_info = governance_singleton.get_admin_user_info()
-            user_key = admin_info.get('ACCOUNT_NAME')
-            account_id = admin_info.get('ID')
+            user_key = admin_info.get('ID')
+            account_id = admin_info.get('ACCOUNT_ID')
             # exit(0)
             form_id = request_data['form_id']
             input_form_id = request_data['input_form_id']
             workspace_id = request_data['workspace_id']
             token = request_data.get('token', '')
+            # token = prpcrypt.decrypt(token)
+            print('LOG:: token:', token)
+            # token_json = json.loads(prpcrypt.decrypt(token))
+            # token = token_json.get('token', '||ERROR_TOKEN||')
             # # print('user id:', user_key)
             # change status
-            data = governance_singleton.system_approval_trigger(user_key, account_id, request_data)
+            form_status = request_data.get('form_status', None)
+            if not form_status:
+                request_data = response_code.BAD_REQUEST
+                request_data['msg'] = 'please pass the form_status code.'
+                return response_result_process(request_data, xml=xml)
+
+            inputData = {'id':input_form_id, 'form_status': form_status}
+            # data = governance_singleton.system_approval_trigger(user_key, account_id, request_data)
+            data = governance_singleton.change_status(user_key, token, workspace_id, inputData)
             # print('change status data: ', data)
             # if begin to execute task
             # system form operations
@@ -52,7 +66,7 @@ class interfaceSystemTrigger(Resource):
                 gcp_tasks = data['data'].get('gcp_tasks', [])
                 tasks = data['data'].get('tasks', [])
                 return_msg_list = taskOperator.execute_tasks(gcp_tasks, workspace_id, form_id,input_form_id, user_key)
-                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, tasks, return_msg_list)
+                data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
                 data = response_code.SUCCESS
 
 

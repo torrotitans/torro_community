@@ -92,13 +92,13 @@ class DbUserMgr(DbBase):
             user_id = None
             if user_info and ad_group_list:
                 user_id = user_info['ID']
-                # fields = ('GROUP_LIST',)
-                # values = (json.dumps(ad_group_list),)
-                # # update workflow
-                # sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
-                # print('update_sql: ', sql)
-                # return_count = self.updete_exec(conn, sql)
-                # # print('return_count: ', return_count)
+                fields = ('GROUP_LIST',)
+                values = (json.dumps(ad_group_list),)
+                # update recount
+                sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
+                print('update_sql: ', sql)
+                return_count = self.updete_exec(conn, sql)
+                # print('return_count: ', return_count)
             if (not user_info) and user_mail:
                 import datetime
                 if not ad_group_list:
@@ -217,7 +217,7 @@ class DbUserMgr(DbBase):
                 for ad_group in ad_group_infos:
                     group_list.append(ad_group['GROUP_MAIL'])
                 user_info['GROUP_LIST'] = group_list
-                # # print('group_list:', group_list)
+                print('123group_list:', group_list)
                 # exit(0)
                 for ad_group in ad_group_list:
                     condition = 'GROUP_MAIL="%s"' % ad_group
@@ -271,9 +271,9 @@ class DbUserMgr(DbBase):
                         condition = 'AD_GROUP_ID="%s"' % ad_group_id
                         workspace_id_field = 'WORKSPACE_ID'
                         sql = self.create_select_sql(db_name, 'workspace_to_adgroupTable', workspace_id_field, condition=condition)
-                        # # print('2222', sql)
+                        print('2222', sql)
                         workspace_id_dict = self.execute_fetch_all(conn, sql)
-                        # # print('1111111', workspace_id_dict)
+                        print('1111111', workspace_id_dict)
                         workspace_id_set = workspace_id_set | set([item['WORKSPACE_ID'] for item in workspace_id_dict])
 
                         # get workspace permissions

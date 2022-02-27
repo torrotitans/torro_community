@@ -4,9 +4,8 @@ import { getQueryString } from "src/utils/url-util.js";
 import RequestDetail from "@comp/RequestDetail";
 import RequestDetailList from "@comp/RequestDetailList";
 
-const RequestDetailPage = () => {
+const RequestDetailPage = ({ approved }) => {
   const recordId = getQueryString("id");
-  const approved = getQueryString("approved");
   const recordList = getQueryString("idList");
   if (recordId) {
     return <RequestDetail recordId={recordId} approvedView={approved} />;

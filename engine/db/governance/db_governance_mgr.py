@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*
 
 from string import Template
+from utils.airflow_helper import system_approval
 from db.gcp.task_operator import taskFetcher
 from config import configuration
 from db.base import DbBase
@@ -14,6 +15,11 @@ import datetime
 import traceback
 from common.common_input_form_status import status as Status
 from common.common_crypto import prpcrypt
+import os
+from config import config
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
+
 class DbGovernanceMgr(DbBase):
 
     status = Status.code
@@ -32,7 +38,7 @@ class DbGovernanceMgr(DbBase):
     def __get_adgroup_member(self, ad_group):
         return []
     # change inputform status
-    def change_status(self, user_key, account_id, inputData):
+    def change_status(self, user_key, account_id, workspace_id, inputData, system_approval_flag=False):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -40,7 +46,13 @@ class DbGovernanceMgr(DbBase):
 
             miss_role_list = []
             # 1.get the approver's ad_group from ldap
-            checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+            # if it is the system approval task
+            if not system_approval_flag:
+                checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
+                # notice_ids = [account_id]
+            else:
+                checking_list = []
+            notice_ids = []
             #  2.Also put the approver's email into the checking group
             checking_list.append(account_id)
             # print('checking_list:', checking_list)
@@ -54,7 +66,6 @@ class DbGovernanceMgr(DbBase):
             input_form_cond = "inputFormIndexTable.id='%s'" % input_form_id
             sql = self.create_get_relation_sql(db_name, 'inputFormIndexTable', 'userTable.ACCOUNT_ID', relations=relations, condition=input_form_cond)
             user_info = self.execute_fetch_one(conn, sql)
-            notice_ids = [account_id]
             if user_info:
                 notice_ids.append(user_info['ACCOUNT_ID'])
 
@@ -131,7 +142,7 @@ class DbGovernanceMgr(DbBase):
                     # if it is the last approval
                     approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                     sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                    print('approvalTable: ', sql)
+                    print('approvalTable: ', sql, now_approval_num, next_approval_num)
                     last_approval_info = self.execute_fetch_one(conn, sql)
                     # if cannot find the next approval task, is the last approval status
                     if not last_approval_info:
@@ -191,6 +202,8 @@ class DbGovernanceMgr(DbBase):
                             data['data'] = {}
                             data['data']['notice_ids'] = notice_ids
                             data['msg'] = 'the %s level approval task has already been approved.' % now_approval_num
+                            data['msg'] += '\n URL: ' + Config.FRONTEND_URL + '/app/approvalFlow?id=%s' % input_form_id
+
                             data['data']['history_id'] = history_id
                             return data
                         # close all the same num approval task
@@ -206,12 +219,56 @@ class DbGovernanceMgr(DbBase):
                         fields = ('now_approval', 'is_approved')
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
+                        sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
+                        print('next approvalTable sql:', now_approval_num, next_approval_num, sql)
+                        next_approval_items = self.execute_fetch_all(conn, sql)
+                        # notify next adgroup approvers
+                        next_adgroup = []
+                        # check if it is system approval task
+                        system_approval_trigger_flag = 0
+                        for next_approval_item in next_approval_items:
+                            try:
+                                ad_group = next_approval_item['ad_group']
+                                try:
+                                    _ = prpcrypt.decrypt(ad_group)
+                                except:
+                                    next_adgroup.append(ad_group)
+
+                            except:
+                                ad_group = []
+                                # print('FN:next approval group:', ad_group)
+                            # next_adgroup.append(ad_group)
+                            if next_approval_item and next_approval_item['label'] == 'System approval':
+                                try:
+                                    token = next_approval_item['ad_group']
+                                    token_json = prpcrypt.decrypt(token)
+                                    print('LOG:: airflow token:', token, token_json)
+                                    input_form_id, form_id, approval_order, time = token_json.split('||')
+                                    retry = 0
+                                    while retry < 3:
+                                        return_flag = system_approval(token, input_form_id, form_id,
+                                                                      workspace_id, approval_order)
+                                        if not return_flag:
+                                            retry += 1
+                                            time.sleep(1)
+                                        else:
+                                            break
+                                except:
+                                    print(traceback.format_exc())
+
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         # print('approvalTable update_sql: ', sql)
                         return_count = self.updete_exec(conn, sql)
                         # print('return_count:', return_count)
-                        # if return_count == 0:
-                        #     all_approval_flag = 1
+                        # modify successfully, can send the email
+                        print('FN:now notice_ids:', notice_ids)
+                        for ad_group in next_adgroup:
+                            member_list, _ = Ldap.get_ad_group_member(ad_group)
+                            if member_list:
+                                notice_ids.extend(member_list)
+                        print('FN:next notice_ids:', notice_ids)
+                        if return_count != 0:
+                            all_approval_flag = 0
 
                         # 4.change status
                         # insert form
@@ -232,14 +289,14 @@ class DbGovernanceMgr(DbBase):
                             data['msg'] = 'The input form is finished.'
                         else:
                             data = response_code.SUCCESS
-                            data['msg'] = 'approved.'
+                            data['msg'] = 'approved successfully, waiting for next approval: {}'.format(', '.join(next_adgroup))
                             # return data
                     else:
                         data = response_code.UPDATE_DATA_FAIL
                         data['msg'] = 'Your form\'s tasks miss one of roles of each tasks:\n{}\nPlease find IT support.'.format('\n'.join(miss_role_list))
                     if 'data' not in data:
                         data['data'] = {}
-                    data['data']['notice_ids'] = notice_ids
+                    data['data']['notice_ids'] = list(set(notice_ids))
                     data['data']['history_id'] = history_id
                     return data
                 elif form_status_code in (Status.rejected, Status.cancelled, Status.failed):
@@ -345,6 +402,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
             if 'notice_ids' not in data['data']:
                 data['data']['notice_ids'] = []
+            data['data']['id'] = input_form_id
             data['data']['history_id'] = history_id
             return data
 
@@ -541,6 +599,8 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
             if 'notice_ids' not in data['data']:
                 data['data']['notice_ids'] = []
+            else:
+                data['data']['notice_ids'] = list(set(data['data']['notice_ids']))
             data['data']['history_id'] = history_id
             return data
 
@@ -553,7 +613,7 @@ class DbGovernanceMgr(DbBase):
 
 
     # when finish the workflow task, update the logs
-    def updateTask(self, user_key, account_id, input_form_id, tasks, return_msg_list):
+    def updateTask(self, user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -600,7 +660,7 @@ class DbGovernanceMgr(DbBase):
             # update form
             inputData = {'id': input_form_id, 'form_status': form_status_code, 'comment': ''}
 
-            data = self.change_status(user_key, account_id, inputData)
+            data = self.change_status(user_key, account_id, workspace_id, inputData)
             # fields = ('form_status', 'updated_time')
             # values = (form_status_code, now)
             # update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)

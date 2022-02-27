@@ -49,6 +49,15 @@ export default {
   selectedUc: "Select use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
   confirmLogout: "Are you sure to exit the App?",
+  gotNewRequest: "You got new notification!",
+  notifyID: "Notification ID",
+  request: "Request",
+  time: "Time",
+  youGot: "You got",
+  unread: "unread notifications",
+  formName: "Form",
+  msg: "Message",
+  readAll: "Read all",
 
   country: "Country",
   region: "Region",
@@ -67,7 +76,8 @@ export default {
   serviceAdmin: "TORRO ADMIN",
 
   // workspace
-  wsCreate: "Create new worp",
+  wsCreate: "Create new workspace",
+  defaultAd: "Default AD group List",
   addWs: "Add new workspace",
   wsDetail: "Workspace Detail",
   confirmUpdateWs: "Do you confirm to update the workspace?",
@@ -89,6 +99,12 @@ export default {
   updateSystemField: "Update system define field",
   dynamicApprover: "Dynamic Approval Field",
 
+  adminServiceAcc: "Admin Service Account",
+  ucOwnerGroup: "Use case Owner Group",
+  ucTeamGroup: "Use case Team Group",
+  downLoadExcel: "Download excel template",
+  uploadExcel: "Upload default AD group List",
+
   workspaceName: "Workspace Name",
   wsAD: "Workspace owner AD group",
   itAD: "IT admin AD group",
@@ -97,7 +113,8 @@ export default {
   wsDes: "Workspace Descrpition",
   userCycle: "User recertification cycle",
   ucFlow: "Use case approval flow",
-  ucNotFound: "Use case not found",
+  addNewAD: "Add new AD group List",
+  limit150: "Please have less than 150 records",
 
   // policy
   confirmUpdatePolicy: "Do you confirm to update this policy?",

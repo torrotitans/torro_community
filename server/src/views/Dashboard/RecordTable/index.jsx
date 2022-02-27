@@ -363,11 +363,11 @@ const RecordTable = ({ approved }) => {
                             <div className={styles.operation}>
                               <VisibilityIcon
                                 onClick={() => {
-                                  navigate(
-                                    `/app/requestDetail?id=${row.id}${
-                                      approved ? "&approved=true" : ""
-                                    }`
-                                  );
+                                  if (approved) {
+                                    navigate(`/app/approvalFlow?id=${row.id}`);
+                                  } else {
+                                    navigate(`/app/requestDetail?id=${row.id}`);
+                                  }
                                 }}
                               />
                             </div>
@@ -397,11 +397,16 @@ const RecordTable = ({ approved }) => {
                     let selectedIdList = selectedList.map((selectedIndex) => {
                       return tableList[selectedIndex].id;
                     });
-                    navigate(
-                      `/app/requestDetail?idList=${selectedIdList.join("|")}${
-                        approved ? "&approved=true" : ""
-                      }`
-                    );
+
+                    if (approved) {
+                      navigate(
+                        `/app/approvalFlow?idList=${selectedIdList.join("|")}`
+                      );
+                    } else {
+                      navigate(
+                        `/app/requestDetail?idList=${selectedIdList.join("|")}`
+                      );
+                    }
                   }}
                   variant="contained"
                   disabled={selectedList.length < 1}

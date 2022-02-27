@@ -13,6 +13,15 @@ const config = {
     url: `${BASE_API_URL}/api/login`,
     method: PUT,
   },
+  systemNotify: {
+    url: `${BASE_API_URL}/api/systemNotify`,
+    // url: `/stub/systemNotify.json`,
+    method: GET,
+  },
+  notifyRead: {
+    url: `${BASE_API_URL}/api/systemNotify`,
+    method: POST,
+  },
   filterOptionGet: {
     url: `${BASE_API_URL}/api/getDashboardOptions`,
     method: GET,

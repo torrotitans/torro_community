@@ -39,6 +39,23 @@ CREATE TABLE `workspace_to_adgroupTable` (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+DROP TABLE IF EXISTS `usecaseResourceTable`;
+CREATE TABLE `usecaseResourceTable` (
+  `ID` int NOT NULL AUTO_INCREMENT COMMENT 'resource_id',
+  `WORKSPACE_ID` int NOT NULL COMMENT 'workspace_id',
+  `USECASE_ID` int DEFAULT '-1' COMMENT 'workspace_id',
+  `LABEL` varchar(512) DEFAULT NULL COMMENT 'usecase label',
+  `OWNER_GROUP` varchar(512) DEFAULT NULL COMMENT 'owner group',
+  `TEAM_GROUP` varchar(512) DEFAULT NULL COMMENT 'team group',
+  `SERVICE_ACCOUNT` varchar(512) DEFAULT NULL COMMENT 'service account',
+  `ITEMS` text COMMENT 'items',
+  `AVAILABLE` int DEFAULT '1' COMMENT 'available flag',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
+  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  PRIMARY KEY (`ID`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+
 DROP TABLE IF EXISTS `usecaseTable`;
 CREATE TABLE `usecaseTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'usecase_id',
@@ -76,19 +93,19 @@ CREATE TABLE `ldapTable` (
   `PORT` int DEFAULT NULL COMMENT 'ldap port',
   `CER_PATH` varchar(512) DEFAULT NULL COMMENT 'save ldap cer path',
   `USE_SSL` tinyint(1) DEFAULT '1' COMMENT 'permission type',
-  `ADMIN_DN` varchar(64) DEFAULT NULL COMMENT 'admin dn',
+  `ADMIN_DN` varchar(256) DEFAULT NULL COMMENT 'admin dn',
   `ADMIN_PWD` varchar(512) DEFAULT NULL COMMENT 'admin password',
 
-  `USER_SEARCH_BASE` varchar(64) DEFAULT NULL COMMENT 'user search base',
+  `USER_SEARCH_BASE` varchar(128) DEFAULT NULL COMMENT 'user search base',
   `USER_SERACH_FILTER` varchar(64) DEFAULT NULL COMMENT 'user search filter',
   `DISPLAY_NAME_LDAP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'display name ldap attribute',
   `EMAIL_ADDRESS_LDAP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'email address ldap attribute',
   `USER_ADGROUP_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'user adgroup attribute',
 
-  `GROUP_SEARCH_BASE` varchar(64) DEFAULT NULL COMMENT 'group search base',
+  `GROUP_SEARCH_BASE` varchar(128) DEFAULT NULL COMMENT 'group search base',
   `GROUP_SERACH_FILTER` varchar(64) DEFAULT NULL COMMENT 'group search filter',
   `GROUP_MEMBER_ATTRIBUTE` varchar(64) DEFAULT NULL COMMENT 'group member attribute',
-  `GROUP_EMAIL_SUFFIX` varchar(64) DEFAULT NULL COMMENT 'group mail suffix',
+  `GROUP_EMAIL_SUFFIX` varchar(128) DEFAULT NULL COMMENT 'group mail suffix',
 
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
@@ -102,7 +119,7 @@ CREATE TABLE `smtpTable` (
   `MAIL_USER` varchar(64) DEFAULT NULL COMMENT 'smtp user',
   `MAIL_PASS` varchar(64) DEFAULT NULL COMMENT 'smtp pwd',
   `PORT` int(11) DEFAULT NULL COMMENT 'ldap port',
-  `USE_SSL` boolean DEFAULT true COMMENT 'permission type',
+  `USE_TLS` boolean DEFAULT true COMMENT 'ues tls',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `TIME_MODIFY` datetime DEFAULT NULL COMMENT 'last_modify_time',
   PRIMARY KEY (`ID`) USING BTREE

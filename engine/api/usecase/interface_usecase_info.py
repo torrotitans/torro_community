@@ -33,7 +33,7 @@ class interfaceUseCaseInfo(Resource):
                 # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
                 return response_result_process(data, xml=xml)
-            data = usecaseSingleton_singleton.get_usecase_info_by_ad_group(account_id)
+            data = usecaseSingleton_singleton.get_usecase_info_by_workspace(workspace_id)
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, usecaseApiPara.getUsecase_GET_response)

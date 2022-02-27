@@ -18,6 +18,8 @@ from config import config
 import os
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
+
+
 class interfaceLogin(Resource):
 
     allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
