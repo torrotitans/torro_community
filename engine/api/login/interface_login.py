@@ -47,7 +47,7 @@ class interfaceLogin(Resource):
 
             # AuthN User
             dict_user = Auth.authenticate(login_name, login_password, offline_flag)
-            logger.debug('FN:{}_post dict_user:{}'.format(__name__,dict_user))
+            logger.debug('FN:post dict_user:{}'.format(dict_user))
             
             if 'token' not in dict_user:
                 return response_code.LOGIN_FAIL
@@ -60,8 +60,7 @@ class interfaceLogin(Resource):
             # print('user_token:', token)
             # operation_log(description='login')
             if user_key:
-                g.user_key = user_key
-                logger.info("FN: User:{} Login:True".format(g.user_key))
+                g.user_key = user_key # torro User ID
                 g.account_id = account_id
                 data = response_code.SUCCESS
                 data['data'] = dict_user
