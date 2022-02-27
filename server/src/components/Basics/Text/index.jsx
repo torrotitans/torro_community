@@ -4,9 +4,12 @@ import cn from "classnames";
 
 /* local components and methods */
 import styles from "./styles.module.scss";
-const Text = ({ type, title, children }) => {
+const Text = ({ type, title, className, children }) => {
   return (
-    <span title={title} className={cn(styles[type], styles.fontFamily)}>
+    <span
+      title={title}
+      className={cn(className, styles[type], styles.fontFamily)}
+    >
       {children}
     </span>
   );

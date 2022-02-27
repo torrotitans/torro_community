@@ -13,9 +13,9 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ThumbDownAltIcon from "@material-ui/icons/ThumbDownAlt";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import Checkbox from "@material-ui/core/Checkbox";
+import MarkUnreadChatAltIcon from "@assets/icons/MarkUnreadChatAlt";
 
 /* local components & methods */
-import MarkUnreadChatAltIcon from "@assets/icons/MarkUnreadChatAlt";
 import FormDataDisplay from "../FormDataDisplay";
 import Button from "@basics/Button";
 import styles from "./styles.module.scss";

@@ -7,7 +7,9 @@ import ScrollBar from "react-perfect-scrollbar";
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import EmailIcon from "@material-ui/icons/Email";
 import TablePagination from "@material-ui/core/TablePagination";
+import MarkUnreadChatAltIcon from "@assets/icons/MarkUnreadChatAlt";
 
 /* local components & methods */
 import Text from "@basics/Text";
@@ -21,7 +23,7 @@ import {
   TableCell,
 } from "@basics/Table";
 
-const NotifyTable = ({ notify, viewRequest, unRead }) => {
+const NotifyTable = ({ notify, viewRequest, unRead, readAll }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -51,6 +53,11 @@ const NotifyTable = ({ notify, viewRequest, unRead }) => {
             <span className={styles.unread}>{unRead.length}</span>{" "}
             <Intl id="unread" />
           </Text>
+          <div className={styles.readAll} onClick={readAll}>
+            <Text type="subTitle">
+              <Intl id="readAll" />
+            </Text>
+          </div>
         </div>
 
         <TableContainer component={Paper}>
@@ -96,12 +103,14 @@ const NotifyTable = ({ notify, viewRequest, unRead }) => {
                       {row.create_time}
                     </TableCell>
                     <TableCell width="10%" align="center">
-                      <div className={styles.viewIcon}>
-                        <VisibilityIcon
-                          onClick={() => {
-                            viewRequest(row.input_form_id, row.id);
-                          }}
-                        />
+                      <div
+                        onClick={() => {
+                          viewRequest(row.input_form_id, row.id);
+                        }}
+                        className={styles.viewIcon}
+                      >
+                        {row.is_read === 0 && <MarkUnreadChatAltIcon />}
+                        {row.is_read === 1 && <EmailIcon />}
                       </div>
                     </TableCell>
                   </TableRow>

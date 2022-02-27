@@ -73,24 +73,26 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
     if (!tempDiv.childNodes.length) {
       return "";
     }
-    let elem = tempDiv.childNodes[0];
     let tmp = "";
-    for (let i = 0; i < elem.childNodes.length; i++) {
-      let value = elem.childNodes[i];
-      if (
-        (value.id && value.id.indexOf("s") !== -1) ||
-        (value.id && value.id.indexOf("u") !== -1) ||
-        (value.id && value.id.indexOf("d") !== -1)
-      ) {
-        tmp += `$\{${value.id}}`;
-      } else {
-        tmp +=
-          value instanceof HTMLElement
-            ? value.innerText
-            : value.textContent || value;
+    tempDiv.childNodes.forEach((elem) => {
+      for (let i = 0; i < elem.childNodes.length; i++) {
+        let value = elem.childNodes[i];
+        if (
+          (value.id && value.id.indexOf("s") !== -1) ||
+          (value.id && value.id.indexOf("u") !== -1) ||
+          (value.id && value.id.indexOf("d") !== -1)
+        ) {
+          tmp += `$\{${value.id}}`;
+        } else {
+          tmp +=
+            value instanceof HTMLElement
+              ? value.innerText
+              : value.textContent || value;
+        }
       }
-    }
-
+      tmp += "\n";
+    });
+    console.log(tmp);
     return tmp;
   };
   useEffect(() => {
@@ -276,6 +278,8 @@ const Default = ({ value, options, onChange }) => {
     });
     return initialContent;
   }, [value, options]);
+
+  console.log(displayValue);
 
   return (
     <>

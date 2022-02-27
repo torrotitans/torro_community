@@ -41,6 +41,7 @@ import FormRender from "@comp/FormRender";
 import FormItem from "@comp/FormItem";
 import UsecaseInfo from "@comp/UsecaseInfo";
 import { GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
+import GroupListTable from "@comp/GroupListTable";
 
 const USE_CASE_FORM_ID = 2;
 
@@ -54,6 +55,7 @@ const WorkspaceManage = () => {
   const [step, setStep] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [adList, setAdList] = useState([]);
 
   const [ucDefaultData, setUcDefaultData] = useState(null);
   const [viewUcId, setViewUcId] = useState(null);
@@ -409,6 +411,16 @@ const WorkspaceManage = () => {
                       <div className={styles.detailValue}>
                         {wsData.approval}
                       </div>
+                    </div>
+                  </div>
+                  <div className={styles.fullLineField}>
+                    <div className={styles.secondTitle}>
+                      <Text type="title">
+                        <Intl id="defaultAd" />
+                      </Text>
+                    </div>
+                    <div className={styles.formOptions}>
+                      <GroupListTable data={adList} editable={false} />
                     </div>
                   </div>
                   <div className={styles.fullLineField}>
