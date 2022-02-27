@@ -68,7 +68,7 @@ class interfaceLogin(Resource):
             else:
                 data = dict_user
             
-            logger.debug('FN:post user:{} login:True'.format(g.account_cn))
+            logger.info('FN:post user:{} login:True'.format(g.account_cn))
             resp = make_response(json.dumps(data, cls=DateEncoder))
             origin = request.headers.get('Origin')
             # print('request.headers:', request.headers.get('Origin'))
