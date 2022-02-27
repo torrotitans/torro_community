@@ -176,7 +176,7 @@ class Auth(object):
         else:
             user = user_mgr.get_user_by_name(username)
         user_base_data = user.get('data')
-        logger.debig('FN:authenticate user_base_data:', user_base_data, user)
+        logger.debug('FN:authenticate user_base_data:', user_base_data, user)
         
         # Check if this user exists
         if (user_base_data is None):
