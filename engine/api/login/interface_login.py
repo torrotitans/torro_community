@@ -47,7 +47,7 @@ class interfaceLogin(Resource):
 
             # AuthN User
             dict_user = Auth.authenticate(login_name, login_password, offline_flag)
-            logger.debug('FN:interfaceLogin_post dict_user:', dict_user)
+            logger.debug('FN:{}_post dict_user:{}'.format(__name__,dict_user))
             
             if 'token' not in dict_user:
                 return response_code.LOGIN_FAIL
