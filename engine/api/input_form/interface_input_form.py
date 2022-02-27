@@ -87,7 +87,7 @@ class interfaceInputForm(Resource):
                 text = ''
                 if 'msg' in data:
                     text = data['msg']
-                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
                 data3 = orgSingleton_singleton.insert_notification(data['data']['approvers']+[account_id], data['data']['id'], data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
@@ -166,7 +166,7 @@ class interfaceInputForm(Resource):
                     text = ''
                     if 'msg' in data:
                         text = data['msg']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                    data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
                     data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
                                                                        data['data']['id'], data['data']['history_id'],
                                                                        text)
@@ -293,7 +293,7 @@ class interfaceInputFormList(Resource):
                     text = ''
                     if 'msg' in data:
                         text = data['msg']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                    data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
                     data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
                                                                        data['data']['id'], data['data']['history_id'],
                                                                        text)

@@ -402,6 +402,7 @@ class DbGovernanceMgr(DbBase):
                 data['data'] = {}
             if 'notice_ids' not in data['data']:
                 data['data']['notice_ids'] = []
+            data['data']['id'] = input_form_id
             data['data']['history_id'] = history_id
             return data
 
