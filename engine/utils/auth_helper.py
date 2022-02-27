@@ -214,12 +214,12 @@ class Auth(object):
         all_endpoint_permission = '{}-*'.format(api_endpoint)
         all_permission = '*-*'
         permission_allow = 0
-        logger.info('FN:_check_permissions user_role:{}'.format(user_role))
+        # logger.info('FN:_check_permissions user_role:{}'.format(user_role))
         if user_role == '':
             user_role = 'viewer'
-        logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
-        logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
-        logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
+        # logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
+        # logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
+        # logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
@@ -377,7 +377,7 @@ class Auth(object):
                     else:
                         # print('org permission:')
                         permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint, method)
-                        logger.debug('FN:identify org permission_allow:{}'.format(permission_allow))
+                        # logger.debug('FN:identify org permission_allow:{}'.format(permission_allow))
                         if permission_allow == 0:
                             # print('workspace permission:')
                             permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id, api_endpoint, method)
@@ -387,7 +387,7 @@ class Auth(object):
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
-                            logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
+                            # logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:
