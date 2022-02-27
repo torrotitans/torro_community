@@ -343,7 +343,7 @@ class Auth(object):
         :return: list
         """
         auth_token = request.cookies.get('token')
-        logger.debug('FN:identify auth_token:{}'.format(auth_token))
+        # logger.debug('FN:identify auth_token:{}'.format(auth_token))
         if (auth_token):
             # Bearer cjidsfjsfi
             # workspace_id = request.cookies.get('workspace_id', '1')
@@ -355,7 +355,7 @@ class Auth(object):
                 return data, None, None
             else:
                 payload = cls.__decode_auth_token(cls, auth_token)
-                logger.debug('FN:identify payload:{}'.format(payload))
+                # logger.debug('FN:identify payload:{}'.format(payload))
                 if not isinstance(payload, str):
                     user_id = payload['data']['user_key']
                     account_id = payload['data']['account_id']
