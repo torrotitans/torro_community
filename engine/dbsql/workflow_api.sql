@@ -45,7 +45,7 @@ CREATE TABLE `stageTable` (
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   `updated_time` datetime DEFAULT NULL COMMENT 'last_updated_time',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- bigquery
 -- insert into stageTable values (null, 'Create Bigquery Dataset', 'GoogleCloud', 'GoogleCloud', 'GoogleCloud', '[{"id": "porject_id", "style": 3, "label": "Porject ID", "value": "", "des": "input your project id", "regExp": ""}, {"id": "dataset_location", "style": 3, "label": "DataSet Location", "value": "", "des": "choose your dataset region", "regExp": ""}, {"id": "dataset_name", "style": 3, "label": "DataSet Name", "value": "", "des": "input your dataset name", "regExp": ""}, {"id": "dataset_cmek", "style": 3, "label": "DataSet CMEK", "value": "", "des": "input your dataset cmek, will use the default gcp key if no input", "regExp": ""}, {"id": "table_expiration", "style": 1, "label": "Table Expiration", "value": "", "des": "input n days your table expiration, default is None", "regExp": ""}, {"id": "dataset_label", "style": 3, "label": "DataSet Label", "value": "", "des": "input your dataset label, for example: dataset_owner=second,dataset_expire=9days", "regExp": ""}]', 'Create bigquery dataset', '2021-05-09', '2021-05-09');
