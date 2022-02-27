@@ -151,7 +151,7 @@ class interfaceGovernanceBatch(Resource):
                     data1 = governance_singleton.updateTask(user_key, account_id, input_form_id, workspace_id, tasks,
                                                             return_msg_list)
                 else:
-                    return response_result_process(data, xml=xml)
+                    data_batch['data'].append(data)
 
                 # return response_result_process(data1, xml=xml)
                 print('response data:', data)
@@ -172,7 +172,7 @@ class interfaceGovernanceBatch(Resource):
                         data = response_code.UPDATE_DATA_FAIL
                         data['msg'] = 'Create new form success, fail to send email to approves'
                 data_batch['data'].append(data)
-            return response_result_process(data, xml=xml)
+            return response_result_process(data_batch, xml=xml)
         except Exception as e:
             lg.error(traceback.format_exc())
             error_data = response_code.GET_DATA_FAIL
