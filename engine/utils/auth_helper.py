@@ -214,12 +214,12 @@ class Auth(object):
         all_endpoint_permission = '{}-*'.format(api_endpoint)
         all_permission = '*-*'
         permission_allow = 0
-        # logger.info('FN:_check_permissions user_role:{}'.format(user_role))
+        logger.info('FN:_check_permissions user_role:{}'.format(user_role))
         if user_role == '':
             user_role = 'viewer'
-        # logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
-        # logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
-        # logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
+        logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
+        logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
+        logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
@@ -240,7 +240,7 @@ class Auth(object):
         auth_token = request.cookies.get('token')
         # # print('auth_token', auth_token)
         payload = cls.__decode_auth_token(cls, auth_token)
-        # logger.debug('FN:refresh_token payload:{}'.format(payload))
+        logger.debug('FN:refresh_token payload:{}'.format(payload))
         # role_list = payload['data']['role_list']
         old_role = payload['data']['user_role']
         old_workspace_id = payload['data']['workspace_id']
@@ -263,7 +263,7 @@ class Auth(object):
             old_workspace_id = None
             old_role = None
             remove_workspace_list.append(remove_workspace_id_dict['value'])
-            # logger.debug('FN:refresh_token workspace_item_list:{}'.format(workspace_item_list))
+            logger.debug('FN:refresh_token workspace_item_list:{}'.format(workspace_item_list))
             for index, workspace in enumerate(workspace_item_list):
                 if workspace['value'] in remove_workspace_list:
                     remove_workspace_index_list.append(index)
@@ -282,7 +282,7 @@ class Auth(object):
             else:
                 role_name = None
 
-        # logger.debug('FN:refresh_token workspace_id:{}'.format(workspace_id))
+        logger.debug('FN:refresh_token workspace_id:{}'.format(workspace_id))
         # get default role&workspace
         if workspace_id is None and role_name is None:
             role_name = old_role
@@ -303,7 +303,7 @@ class Auth(object):
             else:
                 workspace_id = ''
 
-        # logger.debug('FN:refresh_token workspace id:{}{}'.format(workspace_id, workspace_permissions))
+        logger.debug('FN:refresh_token workspace id:{}{}'.format(workspace_id, workspace_permissions))
         # # choose role
         role_name_list = []
         if workspace_id is not None and workspace_id in workspace_permissions:
@@ -312,7 +312,7 @@ class Auth(object):
                 logger.debug('FN:refresh_tolen wp_role_name:'.format(wp_role_name))
 
                 role_name_list.append(wp_role_name)
-        # logger.debug('FN:refresh_token role_name_list:{} role_name:{}'.format(role_name_list, role_name))
+        logger.debug('FN:refresh_token role_name_list:{} role_name:{}'.format(role_name_list, role_name))
 
         # print('2workspace_item_list:', workspace_item_list)
         # workspace_name_list = list(set(workspace_name_list))
@@ -331,7 +331,7 @@ class Auth(object):
         token = cls.__encode_auth_token(cls, payload['data']['user_key'], payload['data']['account_id'], payload['data']['permissions'],
                                         role_name_list, role_name,
                                         workspace_item_list, workspace_id, login_time)
-        # logger.debug('token:{}'.format(token))
+        logger.debug('FN:refresh_token token:{}'.format(token))
 
         return token.decode(), role_name, role_name_list, workspace_id, workspace_item_list
 
@@ -343,7 +343,7 @@ class Auth(object):
         :return: list
         """
         auth_token = request.cookies.get('token')
-        # logger.debug('FN:identify auth_token:{}'.format(auth_token))
+        logger.debug('FN:identify auth_token:{}'.format(auth_token))
         if (auth_token):
             # Bearer cjidsfjsfi
             # workspace_id = request.cookies.get('workspace_id', '1')
@@ -355,7 +355,7 @@ class Auth(object):
                 return data, None, None
             else:
                 payload = cls.__decode_auth_token(cls, auth_token)
-                # logger.debug('FN:identify payload:{}'.format(payload))
+                logger.debug('FN:identify payload:{}'.format(payload))
                 if not isinstance(payload, str):
                     user_id = payload['data']['user_key']
                     account_id = payload['data']['account_id']
@@ -370,14 +370,14 @@ class Auth(object):
 
                     api_endpoint = request.endpoint
                     method = request.method
-                    # logger.debug('FN:identify payload:{}{}'.format( payload, api_endpoint))
+                    logger.debug('FN:identify payload:{}{}'.format( payload, api_endpoint))
                     
                     if (userInfo is None):
                         abort(401, 'user not found')
                     else:
                         # print('org permission:')
                         permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint, method)
-                        # logger.debug('FN:identify org permission_allow:{}'.format(permission_allow))
+                        logger.debug('FN:identify org permission_allow:{}'.format(permission_allow))
                         if permission_allow == 0:
                             # print('workspace permission:')
                             permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id, api_endpoint, method)
@@ -387,7 +387,7 @@ class Auth(object):
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
-                            # logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
+                            logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:
