@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 def create_app(config_name):
     
-    logging.info("FLASK:Initiating Torro Engine Start Sequence")
-    logging.info("")
-    logging.info("            ______                        ___    ____")
-    logging.info("           /_  __/___  ______________    /   |  /  _/")
-    logging.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
-    logging.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
-    logging.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
-    logging.info("")
+    logger.info("FLASK:Initiating Torro Engine Start Sequence")
+    logger.info("")
+    logger.info("            ______                        ___    ____")
+    logger.info("           /_  __/___  ______________    /   |  /  _/")
+    logger.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
+    logger.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
+    logger.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
+    logger.info("")
     
     app = Flask(__name__)
     # 验证
@@ -41,6 +41,6 @@ def create_app(config_name):
     ###初始化日志###
     api.init_app(app)
     ApiDoc(app)
-    logging.info("FLASK:Torro Engine is up and running!")
+    logger.info("FLASK:Torro Engine is up and running!")
 
     return app
