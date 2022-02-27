@@ -9,8 +9,11 @@ import os
 from api import create_app
 from config import configuration
 from logging import config
+import logging
 
 logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
+
+logging.getLogger()
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
