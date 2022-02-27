@@ -209,7 +209,7 @@ class DbWorkspaceMgr(DbBase):
         finally:
             conn.close()
 
-    def __set_team_resource(self, id, resource_list):
+    def __set_team_resource(self, workspace_id, resource_list):
 
         insert_resource = []
         update_resource = []
@@ -226,12 +226,13 @@ class DbWorkspaceMgr(DbBase):
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = (id, owner_group, team_group, service_account, label, items, create_time)
+                    values = (workspace_id, owner_group, team_group, service_account, label, items, create_time)
                     # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
-                    values = (resource_info['id'], id, owner_group, team_group, service_account, label, items, create_time)
-                    update_resource.append(values)
+                    update_record = {'id': resource_info['id'],
+                                    'values': (workspace_id, owner_group, team_group, service_account, label, items, create_time)}
+                    update_resource.append(update_record)
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
@@ -243,8 +244,8 @@ class DbWorkspaceMgr(DbBase):
                 print('usecaseResourceTable one_sql:', sql)
                 _ = self.insert_exec(conn, sql)
             for update_record in update_resource:
-                resource_id = update_record[0]
-                values = update_record[1:]
+                resource_id = update_record['id']
+                values = update_record['values']
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_update_sql(db_name, '', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
