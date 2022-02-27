@@ -80,7 +80,7 @@ class interfaceGovernance(Resource):
                 if 'msg' in data:
                     text = data['msg']
                 data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
-                data3 = orgSingleton_singleton.insert_notification(notice_ids, input_form_id, data['data']['history_id'], text)
+                data3 = orgSingleton_singleton.insert_notification(notice_ids+[account_id], input_form_id, data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)
                     data = response_code.SUCCESS
@@ -163,7 +163,7 @@ class interfaceGovernanceBatch(Resource):
                     if 'msg' in data:
                         text = data['msg']
                     data2 = notify_approvers(data['data']['history_id'], notice_ids, text=text)
-                    data3 = orgSingleton_singleton.insert_notification(notice_ids, input_form_id,
+                    data3 = orgSingleton_singleton.insert_notification(notice_ids + [account_id], input_form_id,
                                                                        data['data']['history_id'], text)
                     if data2['code'] == 200:
                         data['data'] = req.verify_all_param(data['data'], governanceApiPara.changeStatus_POST_response)

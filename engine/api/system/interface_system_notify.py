@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 
-from utils.smtp_helper import notify_approvers
+# from utils.smtp_helper import notify_approvers
 import traceback
 from flask import request
 from flask_restful import Resource

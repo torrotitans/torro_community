@@ -35,6 +35,7 @@ class interfaceInputForm(Resource):
         workspace_id = req.get_workspace_id()
         try:
             user_key = req.get_user_key()
+            account_id = req.get_user_account_id()
             # print('user id:', user_key)
         except:
             data = response_code.GET_DATA_FAIL
@@ -86,8 +87,8 @@ class interfaceInputForm(Resource):
                 text = ''
                 if 'msg' in data:
                     text = data['msg']
-                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
-                data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'], data['data']['history_id'], text)
+                data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                data3 = orgSingleton_singleton.insert_notification(data['data']['approvers']+[account_id], data['data']['id'], data['data']['history_id'], text)
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
@@ -116,6 +117,7 @@ class interfaceInputForm(Resource):
             workspace_id = req.get_workspace_id()
             try:
                 user_key = req.get_user_key()
+                account_id = req.get_user_account_id()
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
@@ -164,9 +166,9 @@ class interfaceInputForm(Resource):
                     text = ''
                     if 'msg' in data:
                         text = data['msg']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
-                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'],
-                                                                       data['data']['history_id'],
+                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
+                                                                       data['data']['id'], data['data']['history_id'],
                                                                        text)
 
                     if data2['code'] == 200:
@@ -234,6 +236,7 @@ class interfaceInputFormList(Resource):
         workspace_id = req.get_workspace_id()
         try:
             user_key = req.get_user_key()
+            account_id = req.get_user_account_id()
             # print('user id:', user_key)
         except:
             data = response_code.GET_DATA_FAIL
@@ -290,9 +293,9 @@ class interfaceInputFormList(Resource):
                     text = ''
                     if 'msg' in data:
                         text = data['msg']
-                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'], text=text)
-                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'], data['data']['id'],
-                                                                       data['data']['history_id'],
+                    data2 = notify_approvers(data['data']['history_id'], data['data']['approvers'])
+                    data3 = orgSingleton_singleton.insert_notification(data['data']['approvers'] + [account_id],
+                                                                       data['data']['id'], data['data']['history_id'],
                                                                        text)
 
                     if data2['code'] == 200:

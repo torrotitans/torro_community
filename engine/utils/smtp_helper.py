@@ -4,6 +4,11 @@ from email.header import Header
 from db.org.db_org_mgr import org_mgr
 from utils.status_code import response_code
 from common.common_crypto import prpcrypt
+import os
+from config import config
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
+
 class Smtp(object):
     def __init__(self, ):
         mail_host, mail_user, mail_pass, mail_port, is_tls = org_mgr.get_smtp()
@@ -81,6 +86,7 @@ def notify_approvers(input_form_id, approvers, text=None):
     subject = 'Torro - You have an new ticket message.'
     if not text:
         text = 'The waiting for approval form id is: %s' % input_form_id
+        text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
     smtp.send_email(subject, text, receivers=approvers)
     data = response_code.SUCCESS
     return data

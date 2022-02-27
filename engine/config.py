@@ -124,7 +124,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
 
-    FRONTEND_URL = 'http://35.220.239.54:9000'
+    FRONTEND_URL = 'http://34.79.84.83'
     DEFAULT_BUCEKT = 'torro_landing_bucket_dev_337903'
     DEFAULT_PROJECT = 'ninth-iris-337903'
     DEFAULT_REGION = 'asia-east2'
@@ -136,7 +136,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = False
 
-    FRONTEND_URL = 'http://34.92.243.193:9000'
+    FRONTEND_URL = 'http://34.79.84.83'
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_testing'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'
@@ -148,7 +148,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
-    FRONTEND_URL = 'http://34.92.243.193:9000'
+    FRONTEND_URL = 'http://34.79.84.83'
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod'
     DEFAULT_PROJECT = 'geometric-ocean-333410'
     DEFAULT_REGION = 'asia-east2'

@@ -15,6 +15,11 @@ import datetime
 import traceback
 from common.common_input_form_status import status as Status
 from common.common_crypto import prpcrypt
+import os
+from config import config
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
+
 class DbGovernanceMgr(DbBase):
 
     status = Status.code
@@ -44,10 +49,10 @@ class DbGovernanceMgr(DbBase):
             # if it is the system approval task
             if not system_approval_flag:
                 checking_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
-                notice_ids = [account_id]
+                # notice_ids = [account_id]
             else:
                 checking_list = []
-                notice_ids = []
+            notice_ids = []
             #  2.Also put the approver's email into the checking group
             checking_list.append(account_id)
             # print('checking_list:', checking_list)
@@ -197,6 +202,8 @@ class DbGovernanceMgr(DbBase):
                             data['data'] = {}
                             data['data']['notice_ids'] = notice_ids
                             data['msg'] = 'the %s level approval task has already been approved.' % now_approval_num
+                            data['msg'] += '\n URL: ' + Config.FRONTEND_URL + '/app/approvalFlow?id=%s' % input_form_id
+
                             data['data']['history_id'] = history_id
                             return data
                         # close all the same num approval task

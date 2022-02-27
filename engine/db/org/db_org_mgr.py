@@ -590,6 +590,7 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
             notify_id_list = []
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print('insert_notification emails:', emails, notify_msg)
             for email in emails:
                 values = (email, input_form_id, history_id, notify_msg, 0, create_time)
                 fields = ('account_id', 'input_form_id', 'history_id', 'comment', 'is_read', 'create_time')
