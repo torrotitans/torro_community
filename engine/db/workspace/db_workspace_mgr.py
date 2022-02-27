@@ -510,7 +510,7 @@ class DbWorkspaceMgr(DbBase):
                 return data
 
             self.__delete_2ad_to_workspace(workspace_id)
-            self.__delete_groups(workspace_id)
+            # self.__delete_groups(workspace_id)
             # self.__delete_workspace(workspace_id)
             # self.__update_system_fields(workspace_id)
             workspace_info = {}
