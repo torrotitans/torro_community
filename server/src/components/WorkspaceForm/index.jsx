@@ -105,7 +105,7 @@ const Workspace = ({ currentId, onBack, addState }) => {
 
     XLSX.utils.book_append_sheet(wb, ws, ws_name);
     XLSX.writeFile(wb, FILENAME);
-  }, [adList]);
+  }, []);
 
   const uploadFile = useCallback(() => {
     fileRef.current.click();

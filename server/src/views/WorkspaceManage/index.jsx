@@ -55,7 +55,6 @@ const WorkspaceManage = () => {
   const [step, setStep] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [adList, setAdList] = useState([]);
 
   const [ucDefaultData, setUcDefaultData] = useState(null);
   const [viewUcId, setViewUcId] = useState(null);
@@ -420,7 +419,7 @@ const WorkspaceManage = () => {
                       </Text>
                     </div>
                     <div className={styles.formOptions}>
-                      <GroupListTable data={adList} editable={false} />
+                      <GroupListTable data={wsData.groupArr} editable={false} />
                     </div>
                   </div>
                   <div className={styles.fullLineField}>

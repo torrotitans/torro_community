@@ -6,7 +6,6 @@ import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
-import VisibilityIcon from "@material-ui/icons/Visibility";
 import EmailIcon from "@material-ui/icons/Email";
 import TablePagination from "@material-ui/core/TablePagination";
 import MarkUnreadChatAltIcon from "@assets/icons/MarkUnreadChatAlt";
