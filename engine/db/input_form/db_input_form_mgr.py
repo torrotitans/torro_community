@@ -338,6 +338,7 @@ class DbInputFormMgr(DbBase):
 
             update_time = input_form_list[0]['updated_time']
             status_history_suffix = self.status_history_mapping.get(form_status, self.status_history_mapping[0])
+            print('status_history_suffix:', status_history_suffix)
             if form_status in (2, 3):
                 status_history_suffix[0]['time'] = status_history_list[-1]['time']
             if form_status in (1, 2, 5, 6):
