@@ -98,7 +98,12 @@ const Workspace = ({ currentId, onBack, addState }) => {
     let ws_name = "Sheet1";
     let wb = XLSX.utils.book_new();
     let ws = XLSX.utils.aoa_to_sheet([
-      ["Use case Owner Group", "Use case Team Group", "Admin Service Account"],
+      [
+        "Use case Owner Group",
+        "Use case Team Group",
+        "Admin Service Account",
+        "Use case Label",
+      ],
     ]);
 
     ws["!cols"] = [{ width: 30 }, { width: 30 }, { width: 30 }];
