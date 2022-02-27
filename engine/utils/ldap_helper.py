@@ -9,7 +9,7 @@ logger = logging.getLogger("main.utils." + __name__)
 class Ldap():
 
     ldap_info = org_mgr.get_ldap_info()
-    logger.debug('ldap_info{}'.format(ldap_info)
+    logger.debug('ldap_info{}'.format(ldap_info))
     if ldap_info['code'] == 200:
         ldap_info = ldap_info['data']
         host = ldap_info['HOST']
