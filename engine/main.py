@@ -14,12 +14,11 @@ from logging import config
 logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
 
 # Get the logger specified in the file
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 # CORS(app, supports_credentials=True)
 if __name__ == '__main__':
     host, port, debug = configuration.get_start_config()
-    logging.info('FLASK:Starting Torro Engine')
     app.run(host=host, port=port, debug=eval(debug))
 
