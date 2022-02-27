@@ -15,7 +15,7 @@ logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
 
 logger = logging.getLogger(__name__)
 
-logger.info("Welcome to Torro")
+logger.info("FLASK: Welcome to Torro.ai")
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
