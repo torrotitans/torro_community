@@ -53,7 +53,7 @@ class DbWorkspaceMgr(DbBase):
 
                 sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition=condition)
                 # print('workspaceTable sql:', sql)
-                workspace_id = self.updete_exec(conn, sql)
+                _ = self.updete_exec(conn, sql)
 
                 # update group info
                 ad_group_fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
@@ -209,7 +209,7 @@ class DbWorkspaceMgr(DbBase):
         finally:
             conn.close()
 
-    def __set_team_resource(self, id, resource_list):
+    def __set_team_resource(self, workspace_id, resource_list):
 
         insert_resource = []
         update_resource = []
@@ -226,12 +226,13 @@ class DbWorkspaceMgr(DbBase):
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
                 if 'id' not in resource_info or resource_info['id'] in (None, ''):
-                    values = (id, owner_group, team_group, service_account, label, items, create_time)
+                    values = (workspace_id, owner_group, team_group, service_account, label, items, create_time)
                     # print('insert_resource item:', values)
                     insert_resource.append(values)
                 else:
-                    values = (resource_info['id'], id, owner_group, team_group, service_account, label, items, create_time)
-                    update_resource.append(values)
+                    update_record = {'id': resource_info['id'],
+                                    'values': (workspace_id, owner_group, team_group, service_account, label, items, create_time)}
+                    update_resource.append(update_record)
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
@@ -243,10 +244,10 @@ class DbWorkspaceMgr(DbBase):
                 print('usecaseResourceTable one_sql:', sql)
                 _ = self.insert_exec(conn, sql)
             for update_record in update_resource:
-                resource_id = update_record[0]
-                values = update_record[1:]
+                resource_id = update_record['id']
+                values = update_record['values']
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
-                sql = self.create_update_sql(db_name, '', fields, values, condition="ID='%s'" % resource_id)
+                sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
                 _ = self.updete_exec(conn, sql)
 
@@ -510,7 +511,7 @@ class DbWorkspaceMgr(DbBase):
                 return data
 
             self.__delete_2ad_to_workspace(workspace_id)
-            self.__delete_groups(workspace_id)
+            # self.__delete_groups(workspace_id)
             # self.__delete_workspace(workspace_id)
             # self.__update_system_fields(workspace_id)
             workspace_info = {}
@@ -657,13 +658,25 @@ class DbWorkspaceMgr(DbBase):
             return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_uc_infos:
-                resource_info = {'id': None, 'resource': None}
-                resource_json = {}
+                resource_info = {'resource': None}
+                # resource_json = {}
                 for key in return_uc_info:
-                    if key.lower() == 'id':
-                        resource_info['id'] = return_uc_info[key]
-                    resource_json[key.lower()] = return_uc_info[key]
-                resource_info['resource'] = resource_json
+                    # if key.lower() == 'id':
+                    #     resource_info['id'] = return_uc_info[key]
+                    resource_info[key.lower()] = return_uc_info[key]
+                # resource_info['resource'] = resource_json
+                resource_list = [resource_info['OWNER_GROUP'.lower()],
+                                 resource_info['TEAM_GROUP'.lower()],
+                                 resource_info['SERVICE_ACCOUNT'.lower()],
+                                 resource_info['LABEL'.lower()]]
+                try:
+                    del resource_info['OWNER_GROUP'.lower()]
+                    del resource_info['TEAM_GROUP'.lower()],
+                    del resource_info['SERVICE_ACCOUNT'.lower()],
+                    del resource_info['LABEL'.lower()]
+                except:
+                    pass
+                resource_info['resource'] = resource_list
                 if resource_info['id'] != None:
                     resource_infos.append(resource_info)
             return_info['groupArr'] = resource_infos

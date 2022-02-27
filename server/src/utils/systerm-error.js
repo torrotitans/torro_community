@@ -20,6 +20,10 @@ export const closeNotify = () => {
 
 export const sendNotify = (options = {}) => {
   if (document.getElementById(ID)) {
+    ReactDOM.render(
+      <GlobalNotification handleClose={closeNotify} {...options} />,
+      document.getElementById(ID)
+    );
     return;
   }
 

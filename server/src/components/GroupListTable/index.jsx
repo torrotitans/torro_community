@@ -64,6 +64,9 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                 <Intl id="adminServiceAcc" />
               </TableCell>
               <TableCell align="center">
+                <Intl id="ucLabel" />
+              </TableCell>
+              <TableCell align="center">
                 <Intl id="useCase" />
               </TableCell>
             </TableRow>
@@ -109,7 +112,19 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                       rowArr[2]
                     )}
                   </TableCell>
-                  <TableCell align="center">{rowArr[3]}</TableCell>
+                  <TableCell align="center">
+                    {editable ? (
+                      <TextBox
+                        value={rowArr[3]}
+                        onChange={(value) => {
+                          setData(index, 3, value);
+                        }}
+                      />
+                    ) : (
+                      rowArr[3]
+                    )}
+                  </TableCell>
+                  <TableCell align="center">{rowArr[4]}</TableCell>
                 </TableRow>
               );
             })}

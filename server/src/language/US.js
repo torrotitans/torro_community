@@ -102,6 +102,7 @@ export default {
   adminServiceAcc: "Admin Service Account",
   ucOwnerGroup: "Use case Owner Group",
   ucTeamGroup: "Use case Team Group",
+  ucLabel: "Use case Label",
   downLoadExcel: "Download excel template",
   uploadExcel: "Upload default AD group List",
 
