@@ -57,6 +57,7 @@ export default {
   unread: "unread notifications",
   formName: "Form",
   msg: "Message",
+  readAll: "Read all",
 
   country: "Country",
   region: "Region",
@@ -112,6 +113,8 @@ export default {
   wsDes: "Workspace Descrpition",
   userCycle: "User recertification cycle",
   ucFlow: "Use case approval flow",
+  addNewAD: "Add new AD group List",
+  limit150: "Please have less than 150 records",
 
   // policy
   confirmUpdatePolicy: "Do you confirm to update this policy?",

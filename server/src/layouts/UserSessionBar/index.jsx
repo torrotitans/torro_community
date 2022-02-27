@@ -220,6 +220,8 @@ const UserSessionBar = () => {
     [notify]
   );
 
+  const readAll = useCallback(() => {}, []);
+
   // System notify
   const viewRequest = useCallback(
     (requestId, id) => {

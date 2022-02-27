@@ -7,6 +7,7 @@
 .notifyTitle {
   margin-bottom: $rbwmspace20;
   color: $main-purple;
+  display: flex;
 }
 
 .active td {
@@ -28,4 +29,10 @@
 .unread {
   color: $main-red;
   font-weight: $medium-font-weight;
+}
+.readAll {
+  margin-left: $rbwmspace20;
+  text-decoration: underline;
+  color: $text;
+  cursor: pointer;
 }
