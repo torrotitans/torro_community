@@ -6,7 +6,7 @@ import sys
 import datetime
 import jwt
 import time
-from flask import abort, g
+from flask import abort
 from common.common_crypto import prpcrypt
 from common.common_hash_key import secret_key
 from utils.smtp_helper import Smtp
@@ -215,7 +215,7 @@ class Auth(object):
         all_endpoint_permission = '{}-*'.format(api_endpoint)
         all_permission = '*-*'
         permission_allow = 0
-        logger.info('FN:_check_permissions account_cn:{} user_role:{}'.format(g.account_cn,user_role))
+        logger.info('FN:_check_permissions user_role:{}'.format(user_role))
         if user_role == '':
             user_role = 'viewer'
         logger.debug('FN:_check_permissions default user_role:', user_role)
@@ -308,9 +308,9 @@ class Auth(object):
         # # choose role
         role_name_list = []
         if workspace_id is not None and workspace_id in workspace_permissions:
-            logger.info('FN:refresh_token account_cn:{}'.format(g.account_cn))
+            logger.info('FN:refresh_token '.format())
             for wp_role_name in workspace_permissions[workspace_id]:
-                logger.info('FN:refresh_tolen account_cn:{} wp_role_name:'.format(g.account_cn, wp_role_name))
+                logger.info('FN:refresh_tolen wp_role_name:'.format(wp_role_name))
 
                 role_name_list.append(wp_role_name)
         logger.debug('FN:refresh_token role_name_list:{} role_name:{}'.format(role_name_list, role_name))
