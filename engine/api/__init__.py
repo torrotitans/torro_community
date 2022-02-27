@@ -4,13 +4,14 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_docs import ApiDoc
-
 from api.resource import api
-
 from config import config, Config
 from flask_apscheduler import APScheduler
+import logging
 
 def create_app(config_name):
+    
+    logging.info("FLASK:Initiating Torro Engine")
     app = Flask(__name__)
     # 验证
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -29,4 +30,5 @@ def create_app(config_name):
     ###初始化日志###
     api.init_app(app)
     ApiDoc(app)
+    logging.info("FLASK:Torro Engine is up and running!")
     return app
