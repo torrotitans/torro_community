@@ -6,6 +6,10 @@ from utils.status_code import response_code
 from common.common_crypto import prpcrypt
 import os
 from config import config
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -17,7 +21,6 @@ class Smtp(object):
         try:
             self.mail_pass = prpcrypt.decrypt(mail_pass)
         except:
-            print('Email encrypt: ', mail_pass)
             self.mail_pass = mail_pass
         # self.port = port
         if int(is_tls) == 1:
@@ -48,24 +51,21 @@ class Smtp(object):
             smtpObj.sendmail(sender, receivers, message.as_string())
             return True
         except smtplib.SMTPException:
-            import traceback
-            # print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return False
 
     @staticmethod
     def check_email_pwd(mail_host, mail_user, mail_pass, mail_port, mail_tls):
         try:
-            print('smtp info:', mail_host, mail_user, mail_pass, mail_port, mail_tls)
+            logger.debug("FN:check_email_pwd mail_host:{} mail_user:{} mail_port:{} mail_tls:{}".format(mail_host, mail_user, mail_port, mail_tls))
             smtpObj = smtplib.SMTP()
             smtpObj.connect(mail_host, mail_port)  # 25 为 SMTP 端口号
             smtpObj.ehlo()
             if mail_tls == 1:
                 smtpObj.starttls()
-
             try:
                 mail_pass = prpcrypt.decrypt(mail_pass)
             except:
-                print('Email encrypt: ', mail_pass)
                 mail_pass = mail_pass
 
             smtpObj.login(mail_user, mail_pass)
@@ -73,21 +73,25 @@ class Smtp(object):
             # print("邮件发送成功")
             return True
         except smtplib.SMTPException:
-            import traceback
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return False
+        
 def notify_approvers(input_form_id, approvers, text=None):
     approvers = list(set(approvers))
-    print('Email info:', input_form_id, approvers)
+    logger.info("FN:notify_approvers input_form_id:{} approvers:{}".format(input_form_id, approvers))
     smtp = Smtp()
-    print('Email client:', smtp.mail_host,smtp.mail_user, smtp.mail_pass, smtp.is_tls)
+    logger.debug("FN:notify_approvers mail_host:{} mail_user:{} mail_tls:{}".format(smtp.mail_host,smtp.mail_user,smtp.is_tls))
     # return response_code.SUCCESS
-
-    subject = 'Torro - You have an new ticket message.'
+    
+    # Change the subject line for your company specific line
+    subject = 'Torro - You have an new ticket message await your action'
     if not text:
         text = 'The waiting for approval form id is: %s' % input_form_id
         text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
-    print('Email text:', text)
+
+    logger.debug("FN:notify_approvers subject:{} body:{} receivers:".format(subject, text, approvers))
     smtp.send_email(subject, text, receivers=approvers)
     data = response_code.SUCCESS
+    logger.debug("FN:notify_approvers email_sent:True")
+    
     return data
