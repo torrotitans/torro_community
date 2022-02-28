@@ -10,7 +10,7 @@ from common.common_input_form_status import status
 # from utils.ldap_helper import Ldap
 import logging
 
-logger = logging.getLogger("main.utils." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 class DbDashboardMgr(DbBase):
 
