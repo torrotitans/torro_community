@@ -41,7 +41,7 @@ class DbUserMgr(DbBase):
         pass
 
     def get_user_by_id(self, id):
-        logger.debug("FN:get_user_by_id user_id:{}".format(id))
+        # logger.debug("FN:get_user_by_id user_id:{}".format(id))
         conn = MysqlConn()
         try:
             condition = "id='%s'" % id
