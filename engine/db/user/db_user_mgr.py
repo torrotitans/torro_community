@@ -47,7 +47,7 @@ class DbUserMgr(DbBase):
             condition = "id='%s'" % id
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'userTable', '*', condition=condition)
-            logger.debug("FN:get_user_by_id sql:".format(sql))
+            # logger.debug("FN:get_user_by_id sql:".format(sql))
             data = response_code.SUCCESS
             user_info = self.execute_fetch_one(conn, sql)
             data['data'] = user_info
