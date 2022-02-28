@@ -8,8 +8,17 @@ import os
 # from flask_cors import CORS
 from api import create_app
 from config import configuration
+from logging import config
+import logging
+
+logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
+
+logger = logging.getLogger(__name__)
+
+logger.info("FLASK: Welcome to Torro.ai")
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+
 # CORS(app, supports_credentials=True)
 if __name__ == '__main__':
     host, port, debug = configuration.get_start_config()

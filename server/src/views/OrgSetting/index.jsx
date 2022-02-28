@@ -47,6 +47,7 @@ const OrgSetting = () => {
   const submitHandle = useCallback(
     (data) => {
       data.admin_pwd = Encrypt(data.admin_pwd);
+      data.smtp_pwd = Encrypt(data.smtp_pwd);
       data.use_ssl = data.use_ssl === "false" ? false : true;
       OrgSetup(data)
         .then((res) => {

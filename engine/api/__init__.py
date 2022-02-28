@@ -4,13 +4,25 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_docs import ApiDoc
-
 from api.resource import api
-
 from config import config, Config
 from flask_apscheduler import APScheduler
+import logging
+
+# Get the logger specified in the file
+logger = logging.getLogger("main." + __name__)
 
 def create_app(config_name):
+    
+    logger.info("FLASK:Initiating Torro Engine Start Sequence")
+    logger.info("")
+    logger.info("            ______                        ___    ____")
+    logger.info("           /_  __/___  ______________    /   |  /  _/")
+    logger.info("            / / / __ \/ ___/ ___/ __ \  / /| |  / /  ")
+    logger.info("           / / / /_/ / /  / /  / /_/ / / ___ |_/ /   ")
+    logger.info("          /_/  \____/_/  /_/   \____(_)_/  |_/___/   ")
+    logger.info("")
+    
     app = Flask(__name__)
     # 验证
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
@@ -29,4 +41,6 @@ def create_app(config_name):
     ###初始化日志###
     api.init_app(app)
     ApiDoc(app)
+    logger.info("FLASK:Torro Engine is up and running!")
+
     return app

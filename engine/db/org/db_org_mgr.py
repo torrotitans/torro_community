@@ -3,7 +3,6 @@
 from common.common_time import get_system_datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import copy
 import datetime
 from utils.status_code import response_code
@@ -12,24 +11,26 @@ import traceback
 import json
 import os
 from config import config
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
 class DbOrgMgr(DbBase):
     """
-    用户相关数据库表操作类
+    User related db operation
     """
     '''
-    0.为用户配置一个最初的admin账号，且orgTable表，除id和admin_id外全为空；
-    1.进入登录界面：
-    *第一次用给定的admin账号和密码登录；
-    2.前端获取org_name名字并设置在导航页面：
-    如果org_name为空，则立即跳转到org设置页面配置：
-          -- 填写org基本信息
-          -- 选择密码登录/ldap
-          -- 重新创建admin账号/配置ldap+设置admin email
-    如果org_name不为空，正常跳转到选择角色界面
-    
+    0. Default there is an admin account
+    1. Use default admin account for first login 
+    2. Setup the org_name in the UI portal
+        if org_name is empty:
+            then go to org setup
+            -- fill in the org info
+            -- setup ldap login
+            -- setup smtp and airflow url
     '''
     def __delete_admin(self):
         conn = MysqlConn()
@@ -41,7 +42,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -84,14 +85,14 @@ class DbOrgMgr(DbBase):
                       group_search_base, group_search_filter, group_member_attribute, email_suffix,
                       create_time, time_modify)
             sql = self.create_insert_sql(db_name, 'ldapTable', '({})'.format(', '.join(fields)), values)
-            print('ldapTable sql:', sql)
+            logger.debug('FN:__set_ldap ldapTable_sql:{}'.format(sql))
             ldap_id = self.insert_exec(conn, sql, return_insert_id=True)
             ldap_info['id'] = ldap_id
             data = response_code.SUCCESS
             data['data'] = ldap_info
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -115,14 +116,14 @@ class DbOrgMgr(DbBase):
                       'TIME_MODIFY')
             values = (smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls, create_time, create_time)
             sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
-            print('smtpTable sql:', sql)
+            logger.debug('FN:__set_smtp smtpTable_sql:{}'.format(sql))
             smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
             smtp_info['id'] = smtp_id
             data = response_code.SUCCESS
             data['data'] = smtp_info
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -135,14 +136,15 @@ class DbOrgMgr(DbBase):
 
             condition = "1=1"
             delete_table_sql = self.create_delete_sql(db_name, "ldapTable", condition)
-            # print('delete_table_sql ', delete_table_sql)
+            logger.debug('FN:__delete_ldap delete_ldapTable_sql:{}'.format(sql))
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
+            
     def __delete_smtp(self):
 
         conn = MysqlConn()
@@ -150,11 +152,11 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
             condition = "1=1"
             delete_table_sql = self.create_delete_sql(db_name, "smtpTable", condition)
-            # print('delete_table_sql ', delete_table_sql)
+            logger.debug('FN:__delete_smtp delete_smtpTable_sql:{}'.format(sql))
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -175,7 +177,7 @@ class DbOrgMgr(DbBase):
             fields = ('ORG_NAME', 'AIRFLOW_URL', 'CREATE_TIME', 'DES', 'PROJECT_NAME')
             values = (org_name, airflow_url, create_time, des, Config.DEFAULT_PROJECT)
             sql = self.create_insert_sql(db_name, 'orgTable', '({})'.format(', '.join(fields)), values)
-            # print('orgTable sql:', sql)
+            logger.debug('FN:__set_org orgTable_sql:{}'.format(sql))
             org_id = self.insert_exec(conn, sql, return_insert_id=True)
 
             select_condition = "GROUP_MAIL='%s' " % admin_group
@@ -188,18 +190,20 @@ class DbOrgMgr(DbBase):
                 fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
                 values = (admin_group, create_time, des)
                 sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(fields)), values)
-                # print('admin adgroupTable sql:', sql)
+                logger.debug('FN:__set_org adgroupTable_sql:{}'.format(sql))
                 admin_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
             values = (org_id, admin_group_id, json.dumps(['admin']))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
-            # print('admin org_to_adgroupTable sql:', sql)
+            logger.debug('FN:__set_org org_to_adgroupTable_sql:{}'.format(sql))
             self.insert_exec(conn, sql, return_insert_id=True)
 
             select_condition = "GROUP_MAIL='%s' " % visitor_group
             select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
+            logger.debug('FN:__set_org adgroupTable_sql:{}'.format(sql))
             ad_group_info = self.execute_fetch_one(conn, select_table_sql)
+            
             if ad_group_info:
                 visitor_group_id = ad_group_info['ID']
             # insert visitor group
@@ -207,13 +211,13 @@ class DbOrgMgr(DbBase):
                 fields = ('GROUP_MAIL', 'CREATE_TIME', 'DES')
                 values = (visitor_group, create_time, des)
                 sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(fields)), values)
-                # print('visitor adgroupTable sql:', sql)
+                logger.debug('FN:__set_org adgroupTable_sql:{}'.format(sql))
                 visitor_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
             values = (org_id, visitor_group_id, json.dumps(['viewer']))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
-            # print('visitor org_to_adgroupTable sql:', sql)
+            logger.debug('FN:__set_org org_to_adgroupTable_sql:{}'.format(sql))
             self.insert_exec(conn, sql, return_insert_id=True)
 
             org_info['org_id'] = org_id
@@ -223,10 +227,11 @@ class DbOrgMgr(DbBase):
             data['data'] = org_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
+            
     def __delete_org(self):
         conn = MysqlConn()
         try:
@@ -234,14 +239,15 @@ class DbOrgMgr(DbBase):
 
             condition = "1=1"
             delete_table_sql = self.create_delete_sql(db_name, "orgTable", condition)
-            # print('delete_table_sql ', delete_table_sql)
+            logger.debug('FN:__delete_org delete_orgTable_sql:{}'.format(delete_table_sql))
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
+            
     def __delete_adgroup_to_org(self, org_id=None):
         conn = MysqlConn()
         try:
@@ -260,11 +266,11 @@ class DbOrgMgr(DbBase):
             #     self.delete_exec(conn, delete_table_sql)
             delete_condition = "1=1"
             delete_table_sql = self.create_delete_sql(db_name, "org_to_adgroupTable", delete_condition)
-            # print('delete_table_sql ', delete_table_sql)
+            logger.debug('FN:__delete_adgroup_to_org delete_org_to_adgroupTable_sql:{}'.format(delete_table_sql))
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -315,6 +321,7 @@ class DbOrgMgr(DbBase):
             smtp_info['create_time'] = create_time
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
             ldap_infos = self.execute_fetch_all(conn, sql)
+            
             if ldap_infos:
                 self.__delete_adgroup_to_org()
                 self.__delete_ldap()
@@ -340,9 +347,11 @@ class DbOrgMgr(DbBase):
 
             data['data'] = org
             return data
+        
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
+        
         finally:
             conn.close()
 
@@ -353,15 +362,20 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
             ldap_info = self.execute_fetch_one(conn, sql)
+            
             if ldap_info:
                 data = response_code.SUCCESS
                 data['data'] = ldap_info
+                
             else:
                 data = response_code.GET_DATA_FAIL
+                
             return data
+        
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return response_code.GET_DATA_FAIL
+        
         finally:
             conn.close()
 
@@ -372,6 +386,7 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'orgTable', '*')
+            logger.debug('FN:get_org_info orgTable_sql:{}'.format(sql))
             org_info = self.execute_fetch_one(conn, sql)
             if org_info:
                 org_id = org_info['ID']
@@ -387,7 +402,7 @@ class DbOrgMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -399,6 +414,7 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
             condition = "ID=%s " % (id)
             sql = self.create_select_sql(db_name, 'orgTable', '*', condition)
+            logger.debug('FN:get_org_info_by_id orgTable_sql:{}'.format(sql))
             org_info = self.execute_fetch_one(conn, sql)
             if org_info:
                 data = response_code.SUCCESS
@@ -407,7 +423,7 @@ class DbOrgMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -420,7 +436,7 @@ class DbOrgMgr(DbBase):
             data = self.get_org_info_by_id(org['id'])
             if data['code'] != 200:
                 return response_code.UPDATE_DATA_FAIL
-            # # print(data)
+            logger.debug("FN:update_org_info data".format(data))
             self.__delete_adgroup_to_org()
             self.__delete_ldap()
             self.__delete_org()
@@ -465,11 +481,13 @@ class DbOrgMgr(DbBase):
             smtp_info['create_time'] = create_time
 
             sql = self.create_select_sql(db_name, 'ldapTable', '*')
+            logger.debug('FN:update_org_info ldapTable_sql:{}'.format(sql))
             ldap_infos = self.execute_fetch_all(conn, sql)
             if ldap_infos:
                 data = response_code.ADD_DATA_FAIL
                 return data
             sql = self.create_select_sql(db_name, 'orgTable', '*')
+            logger.debug('FN:update_org_info orgTable_sql:{}'.format(sql))
             org_infos = self.execute_fetch_all(conn, sql)
             if org_infos:
                 data = response_code.ADD_DATA_FAIL
@@ -485,9 +503,11 @@ class DbOrgMgr(DbBase):
             org['smtp_id'] = smtp_insert['data']['id']
             data['data'] = org
             return data
+        
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
+        
         finally:
             conn.close()
 
@@ -496,16 +516,20 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'roleTable', '*')
+            logger.debug('FN:get_roles_info roleTable_sql:{}'.format(sql))
             org_info = self.execute_fetch_all(conn, sql)
+            
             if org_info:
                 data = response_code.SUCCESS
                 data['data'] = org_info
             else:
                 data = response_code.GET_DATA_FAIL
             return data
+        
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.GET_DATA_FAIL
+        
         finally:
             conn.close()
 
@@ -514,7 +538,9 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'smtpTable', '*')
+            logger.debug('FN:get_smtp smtpTable_sql:{}'.format(sql))
             smtp_info = self.execute_fetch_one(conn, sql)
+            
             if not smtp_info:
                 return '', '', '', ''
             else:
@@ -524,9 +550,11 @@ class DbOrgMgr(DbBase):
                 port = smtp_info['PORT']
                 is_tls = smtp_info['USE_TLS']
                 return mail_host, mail_user, mail_pass, port, is_tls
+            
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return None, None, None, None, None
+        
         finally:
             conn.close()
 
@@ -538,13 +566,16 @@ class DbOrgMgr(DbBase):
             condition = 'ACCOUNT_ID="%s"' % (account_id)
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            logger.debug('FN:offline_ad_group userTable_sql:{}'.format(sql))
             user_info = self.execute_fetch_one(conn, sql)
             ad_group_list = json.loads(user_info.get('GROUP_LIST', []))
-            print('ad_group_list:', ad_group_list)
+            logger.debug('FN:offline_ad_group ad_group_list:{}'.format(ad_group_list))
             return ad_group_list
+        
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return None, None
+        
         finally:
             conn.close()
 
@@ -556,13 +587,16 @@ class DbOrgMgr(DbBase):
             condition = 'ACCOUNT_ID="%s"' % (account_id)
             user_fields = '*'
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
+            logger.debug('FN:get_user_cn userTable_sql:{}'.format(sql))
             user_info = self.execute_fetch_one(conn, sql)
             account_cn = user_info.get('ACCOUNT_CN', None)
-            print('ACCOUNT_CN:', account_cn)
+            logger.debug('FN:get_user_cn ACCOUNT_CN:{}'.format(sql))
             return account_cn
+        
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return None, None
+        
         finally:
             conn.close()
 
@@ -572,13 +606,14 @@ class DbOrgMgr(DbBase):
         try:
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'orgTable', 'AIRFLOW_URL')
+            logger.debug('FN:get_airflow_url orgTable_sql:{}'.format(sql))
             org_info = self.execute_fetch_one(conn, sql)
             if org_info:
                 return org_info['AIRFLOW_URL']
             else:
                 return ''
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return ''
         finally:
             conn.close()
@@ -591,7 +626,7 @@ class DbOrgMgr(DbBase):
             notify_id_list = []
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             emails = list(set(emails))
-            print('insert_notification emails:', emails, notify_msg)
+            logger.debug('FN:insert_notification emails:{} notify_msg'.format(emails, notify_msg))
             for email in emails:
                 values = (email, input_form_id, history_id, notify_msg, 0, create_time)
                 fields = ('account_id', 'input_form_id', 'history_id', 'comment', 'is_read', 'create_time')
@@ -599,11 +634,12 @@ class DbOrgMgr(DbBase):
                 notify_id = self.insert_exec(conn, sql, return_insert_id=True)
                 notify_id_list.append(str(notify_id))
             return notify_id_list
+        
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return []
+        
         finally:
             conn.close()
-
 
 org_mgr = DbOrgMgr()
