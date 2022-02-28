@@ -7,13 +7,13 @@ from flask import request, g
 from utils.auth_helper import Auth
 import logging
 
-logger = logging.getLogger("main.common." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         user_key, account_id, workspace_id = Auth.identify(request)
-        logger.info('FN:Login_requred func:{} user_key:{} account_id:{} workspace_id:{}'.format(func.__name__,user_key, account_id, workspace_id))
+        # logger.info('FN:Login_requred func:{} user_key:{} account_id:{} workspace_id:{}'.format(func.__name__,user_key, account_id, workspace_id))
         
         if user_key > 0:
             g.user_key = user_key
