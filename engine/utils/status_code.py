@@ -5,10 +5,10 @@ class responseCode(object):
     @property
     def SUCCESS(self):
         return {'code': 200, 'msg': 'request success!'}
+    
     @property
     def TOKEN_ERROR(self):
         return {'code': 401, 'msg': 'token error'}
-
 
     @property
     def LOGIN_IS_FAIL(self):
@@ -109,6 +109,5 @@ class responseCode(object):
     @property
     def EXCEPTION_DB(self):
         return {'code': 1024, 'msg': 'DB exceptional error'}
-
 
 response_code = responseCode()
