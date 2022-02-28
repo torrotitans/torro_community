@@ -19,7 +19,7 @@ import logging
 import traceback
 
 # Get the logger specified in the file
-logger = logging.getLogger("main.api." + __name__)
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
