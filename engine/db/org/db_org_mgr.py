@@ -13,7 +13,7 @@ import os
 from config import config
 import logging
 
-logger = logging.getLogger("main.utils." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
