@@ -17,7 +17,7 @@ from utils.status_code import response_code
 import traceback
 import logging
 
-logger = logging.getLogger("main.utils." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 class Auth(object):
     """
@@ -229,6 +229,7 @@ class Auth(object):
                     permission_allow = 1
                     break
         return permission_allow
+    
     @classmethod
     def refresh_token(cls, request, role_name, workspace_id, new_workspace_id_dict=None, remove_workspace_id_dict=None):
         # workspace_item_list: all the worksapce
@@ -370,7 +371,7 @@ class Auth(object):
 
                     api_endpoint = request.endpoint
                     method = request.method
-                    logger.debug('FN:identify payload:{}{}'.format( payload, api_endpoint))
+                    # logger.debug('FN:identify payload:{}{}'.format( payload, api_endpoint))
                     
                     if (userInfo is None):
                         abort(401, 'user not found')
