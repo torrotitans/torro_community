@@ -20,19 +20,17 @@ Config = config[config_name]
 
 class DbOrgMgr(DbBase):
     """
-    用户相关数据库表操作类
+    User related db operation
     """
     '''
-    0.为用户配置一个最初的admin账号，且orgTable表，除id和admin_id外全为空；
-    1.进入登录界面：
-    *第一次用给定的admin账号和密码登录；
-    2.前端获取org_name名字并设置在导航页面：
-    如果org_name为空，则立即跳转到org设置页面配置：
-          -- 填写org基本信息
-          -- 选择密码登录/ldap
-          -- 重新创建admin账号/配置ldap+设置admin email
-    如果org_name不为空，正常跳转到选择角色界面
-    
+    0. Default there is an admin account
+    1. Use default admin account for first login 
+    2. Setup the org_name in the UI portal
+        if org_name is empty:
+            then go to org setup
+            -- fill in the org info
+            -- setup ldap login
+            -- setup smtp and airflow url
     '''
     def __delete_admin(self):
         conn = MysqlConn()
@@ -44,7 +42,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error(e)
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -438,7 +436,7 @@ class DbOrgMgr(DbBase):
             data = self.get_org_info_by_id(org['id'])
             if data['code'] != 200:
                 return response_code.UPDATE_DATA_FAIL
-            # # print(data)
+            logger.debug("FN:update_org_info data".format(data))
             self.__delete_adgroup_to_org()
             self.__delete_ldap()
             self.__delete_org()
