@@ -4,7 +4,7 @@ import traceback
 from db.org.db_org_mgr import org_mgr
 import logging
 
-logger = logging.getLogger("main.utils." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 class Ldap():
 
