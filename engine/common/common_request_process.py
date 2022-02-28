@@ -11,7 +11,7 @@ from utils.xml_json_process import xml_to_json, is_none
 from flask import g
 import logging
 
-logger = logging.getLogger("main.common." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 class requestProcess(object):
 
