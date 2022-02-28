@@ -11,29 +11,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import logging
 
-logger = logging.getLogger("main.db.user." + __name__)
+logger = logging.getLogger("main." + __name__)
 
 class DbUserMgr(DbBase):
     """
-    用户相关数据库表操作类
+    DB operation for user related
     """
     '''
-    0.为用户配置一个最初的admin账号，且orgTable表有一条除id和admin_id外全为空的record；（开启后端时首先判断一下user和org表是否存在，不存在创建并插入default的record）
-    1.进入登录界面：
-    *第一次用给定的admin账号和密码登录；
-    2.前端获取org_name名字并设置在导航页面：
-    如果org_name为空，则立即跳转到org设置页面配置：
-          -- 填写org基本信息
-          -- 选择密码登录/ldap
-          -- 重新创建admin账号/配置ldap+设置admin email
-          -- 删除默认账号
-    如果org_name不为空，判断login_type：
-        if login_type is base，login旁出现注册按钮，可供用户注册填写信息并获得最基本的viewer账号；
-        if login_type is ladp，login旁没有注册按钮，登录后自动获得基本viewer权限，且根据ldap ADDITIONAL_SEARCH_FILTER_FIELD_LIST拿到用户信息；
-        if login_type is github outh，......
-    3.登录到选择角色界面；
-    4.选择角色后设置当前角色并获得角色权限列表；
-    5.根据角色名显示页面，call api时根据权限列表判断权限；
+    0.Default has an admin account from the org table
+    1.Login with the default admin account
+    2.Setup the org with LDAP login
+    3.Log onto role selection page；
+    4.Select the role for the current operation；
+    5.Depends on the role selection，calling api will determine the privilege based on the role ；
     
     1. ui ->org login_type
     2. api-> role_list+token
@@ -69,11 +59,7 @@ class DbUserMgr(DbBase):
             conn.close()
 
     def get_user_by_name(self, cn_name, ldap_usernames=(None,None), ad_group_list=None):
-        """
-        get user info through account_name
-        :param cn_name:
-        :return:
-        """
+
         logger.debug("FN:get_user_by_name account_cn:".format(cn_name))
         conn = MysqlConn()
         try:
