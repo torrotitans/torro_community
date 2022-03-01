@@ -48,7 +48,6 @@ const handleObjectToFormData = (data, ss) => {
 };
 
 const handleResponse = async (response) => {
-  console.log(response);
   const body = response.json ? await response.json() : {};
   const statusCode = response.status.toString().split("");
   let technicalError = statusCode[0] === "5";
