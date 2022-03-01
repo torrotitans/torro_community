@@ -11,18 +11,20 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
     try:
         
         airflow_url = org_mgr.get_airflow_url()
+        airflow_header = {'Content-Type': 'application/json','Accept': '*/*' }
         token_json = {'input_form_id': input_form_id, 'form_id': form_id, 'approval_order': approval_order,
                       'workspace_id': workspace_id, 'token': random_token}
 
         token = prpcrypt.encrypt(json.dumps(token_json))
         payload = {'token': token, 'input_form_id': input_form_id, 'form_id': form_id, 'workspace_id': workspace_id}
+        payload = json.dumps(payload)
 
         logger.info('FN:system_approval airflow_url:{} payload:{}'.format(airflow_url,payload))
         # return True
         retry = 0
         while retry < 3:
             try:
-                res = requests.post(airflow_url, data=payload, verify=False)
+                res = requests.post(airflow_url, data=payload, verify=False, header=airflow_header)
                 logger.info("FN:system_approval airflow_response_status_code:{} airflow_response_text:{}".format(res.status_code,res.text))
                 
                 if res.status_code == 200:
