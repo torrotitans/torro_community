@@ -91,7 +91,7 @@ class interfaceLogin(Resource):
         
         except Exception as e:
 
-            logger.error(traceback.format_exc())
+            logger.error("FN:interfaceLogin_post error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
             
             return response_result_process(error_data, xml=xml)
@@ -142,7 +142,7 @@ class interfaceLogin(Resource):
             
         except Exception as e:
 
-            logger.error(traceback.format_exc())
+            logger.error("FN:interfaceLogin_put error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
             
             return response_result_process(error_data, xml=xml)
