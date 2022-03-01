@@ -11,7 +11,7 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
     try:
         
         airflow_url = org_mgr.get_airflow_url()
-        airflow_header = {'Content-Type': 'application/json','Accept': '*/*' }
+        airflow_header = {'Content-Type': 'application/json'}
         token_json = {'input_form_id': input_form_id, 'form_id': form_id, 'approval_order': approval_order,
                       'workspace_id': workspace_id, 'token': random_token}
 
