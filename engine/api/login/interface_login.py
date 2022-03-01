@@ -65,10 +65,10 @@ class interfaceLogin(Resource):
                 g.account_cn = dict_user.get('ACCOUNT_CN')
                 data = response_code.SUCCESS
                 data['data'] = dict_user
+                logger.info('FN:post user:{} login:True'.format(g.account_cn))
             else:
                 data = dict_user
             
-            logger.info('FN:post user:{} login:True'.format(g.account_cn))
             resp = make_response(json.dumps(data, cls=DateEncoder))
             origin = request.headers.get('Origin')
             # print('request.headers:', request.headers.get('Origin'))
