@@ -84,7 +84,7 @@ class requestProcess(object):
             return request_param
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:_xml_request error:{}".format(e))
             return False
 
     def _json_request(self, request):
@@ -111,7 +111,7 @@ class requestProcess(object):
             return data
         
         except JSONDecodeError as e:
-            logger.error(e)
+            logger.error("FN:_json_request error:{}".format(e))
             return False
 
     def verify_one_param_type(self, param_name, value, type=None):
@@ -183,7 +183,7 @@ class requestProcess(object):
                     code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
                     return code
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:verify_one_param_type error:{}".format(e))
             code = response_code.BAD_REQUEST
             code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
             return code
