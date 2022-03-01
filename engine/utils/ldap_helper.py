@@ -257,7 +257,7 @@ class Ldap():
             #logger.debug('FN:ldap_auth acc:{} ldap_return:{}'.format(account_cn, res))
             if res:
                 entry = conn.response[0]
-                logger.debug('FN:ldap_auth ldap_entry:{}'.format(entry))
+                logger.debug('FN:ldap_auth ldap_entry:{}'.format(entry['attributes']['memberOf']))
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
