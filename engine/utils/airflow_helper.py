@@ -25,7 +25,7 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
         while retry < 3:
             try:
                 logger.info('FN:system_approval airflow_url:{} payload:{}'.format(airflow_url,payload))
-                res = requests.post(airflow_url, data=payload, verify=False, header=airflow_header)
+                res = requests.post(airflow_url, data=payload, verify=False, headers=airflow_header)
                 logger.info("FN:system_approval airflow_response_status_code:{} airflow_response_text:{}".format(res.status_code,res.text))
                 
                 if res.status_code == 200:
