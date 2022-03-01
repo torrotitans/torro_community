@@ -9,7 +9,6 @@ logger = logging.getLogger("main." + __name__)
 class Ldap():
 
     ldap_info = org_mgr.get_ldap_info()
-    logger.debug('ldap_info{}'.format(ldap_info))
     if ldap_info['code'] == 200:
         ldap_info = ldap_info['data']
         host = ldap_info['HOST']
@@ -89,7 +88,7 @@ class Ldap():
 
     @staticmethod
     def __get_user(account_cn, conn):
-        logger.debug("FN:get_user")
+        
         res = conn.search(
             search_base=Ldap.USER_SEARCH_BASE,
             search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
@@ -109,7 +108,7 @@ class Ldap():
 
     @staticmethod
     def __get_ad_group(ad_group, conn):
-        logger.debug("FN:get_ad_group")
+
         res = conn.search(
             search_base=Ldap.GROUP_SEARCH_BASE,
             search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group)),
@@ -129,7 +128,7 @@ class Ldap():
 
     @staticmethod
     def __get_member_ad_group(entry, conn):
-        logger.debug("FN:get_member_ad_group")
+
         ad_groups_mails = []
         # res = Ldap.__get_user(member, conn)
         # if res:
@@ -334,7 +333,7 @@ class Ldap():
 
             if res:
                 entry = conn.response[0]
-                logger.debug('FN:get_ad_group_member entry:{}'.format(entry))
+                # logger.debug('FN:get_ad_group_member entry:{}'.format(entry))
                 # attr_dict = entry['attributes']
                 member_list = Ldap.__get_ad_group_member(entry, conn)
                 logger.debug('FN:get_ad_group_member member_list:{}'.format(member_list))
