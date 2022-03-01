@@ -29,6 +29,7 @@ class Smtp(object):
             is_tls = False
         self.is_tls = is_tls
         self.port = mail_port
+        
     def send_email(self, subject, text, receivers, sender=None, sender_name=None):
 
         if sender is None:
@@ -51,7 +52,7 @@ class Smtp(object):
             smtpObj.sendmail(sender, receivers, message.as_string())
             return True
         except smtplib.SMTPException:
-            logger.error(traceback.format_exc())
+            logger.error("FN:send_email error:{}".format(traceback.format_exc()))
             return False
 
     @staticmethod
@@ -73,7 +74,7 @@ class Smtp(object):
             # print("邮件发送成功")
             return True
         except smtplib.SMTPException:
-            logger.error(traceback.format_exc())
+            logger.error("FN:check_email_pwd error:{}".format(traceback.format_exc()))
             return False
         
 def notify_approvers(input_form_id, approvers, text=None):

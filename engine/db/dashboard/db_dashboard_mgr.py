@@ -8,6 +8,7 @@ import json
 from utils.status_code import response_code
 from common.common_input_form_status import status
 # from utils.ldap_helper import Ldap
+import traceback
 import logging
 
 logger = logging.getLogger("main." + __name__)
@@ -179,8 +180,7 @@ class DbDashboardMgr(DbBase):
             data['data'] = return_result
             return data
         except Exception as e:
-            import traceback
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_data error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
@@ -229,8 +229,7 @@ class DbDashboardMgr(DbBase):
             return data
         
         except Exception as e:
-            import traceback
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_options error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
@@ -279,8 +278,7 @@ class DbDashboardMgr(DbBase):
             return data
         
         except Exception as e:
-            import traceback
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_notify error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
@@ -308,8 +306,7 @@ class DbDashboardMgr(DbBase):
             return response_code.SUCCESS
         
         except Exception as e:
-            import traceback
-            logger.error(traceback.format_exc())
+            logger.error("FN:read_notify error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         
         finally:

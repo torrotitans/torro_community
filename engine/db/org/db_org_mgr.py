@@ -42,7 +42,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__delete_admin error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -91,9 +91,11 @@ class DbOrgMgr(DbBase):
             data = response_code.SUCCESS
             data['data'] = ldap_info
             return data
+
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:__set_ldap error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
+
         finally:
             conn.close()
 
@@ -123,7 +125,7 @@ class DbOrgMgr(DbBase):
             data['data'] = smtp_info
             return data
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:__set_smtp error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -140,7 +142,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__delete_ldap error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -156,7 +158,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__delete_smtp error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -227,7 +229,7 @@ class DbOrgMgr(DbBase):
             data['data'] = org_info
             return data
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__set_org error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -243,7 +245,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__delete_org error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -270,7 +272,7 @@ class DbOrgMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:__delete_adgroup_to_org error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -349,7 +351,7 @@ class DbOrgMgr(DbBase):
             return data
         
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:add_new_org_setting error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         
         finally:
@@ -373,7 +375,7 @@ class DbOrgMgr(DbBase):
             return data
         
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_ldap_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         
         finally:
@@ -402,7 +404,7 @@ class DbOrgMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_org_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -423,7 +425,7 @@ class DbOrgMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_org_info_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -505,7 +507,7 @@ class DbOrgMgr(DbBase):
             return data
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:update_org_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         
         finally:
@@ -527,7 +529,7 @@ class DbOrgMgr(DbBase):
             return data
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_roles_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         
         finally:
@@ -552,7 +554,7 @@ class DbOrgMgr(DbBase):
                 return mail_host, mail_user, mail_pass, port, is_tls
             
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_smtp error:{}".format(traceback.format_exc()))
             return None, None, None, None, None
         
         finally:
@@ -573,7 +575,7 @@ class DbOrgMgr(DbBase):
             return ad_group_list
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:offline_ad_group error:{}".format(traceback.format_exc()))
             return None, None
         
         finally:
@@ -594,7 +596,7 @@ class DbOrgMgr(DbBase):
             return account_cn
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_user_cn error:{}".format(traceback.format_exc()))
             return None, None
         
         finally:
@@ -613,7 +615,7 @@ class DbOrgMgr(DbBase):
             else:
                 return ''
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_airflow_url error:{}".format(traceback.format_exc()))
             return ''
         finally:
             conn.close()
@@ -636,7 +638,7 @@ class DbOrgMgr(DbBase):
             return notify_id_list
         
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:insert_notification error:{}".format(traceback.format_exc()))
             return []
         
         finally:

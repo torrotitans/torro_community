@@ -196,6 +196,7 @@ class Ldap():
                     member_mails.append(member_mail)
         
         return member_mails
+
     @staticmethod
     def __login_with_user_pwd(account_cn, password, servers):
         # return True
@@ -231,7 +232,7 @@ class Ldap():
                 return False
 
         except:
-            logger.error(traceback.format_exc())
+            logger.error("FN:service_account_login error:{}".format(traceback.format_exc()))
             return False
 
     @staticmethod
@@ -257,7 +258,7 @@ class Ldap():
             #logger.debug('FN:ldap_auth acc:{} ldap_return:{}'.format(account_cn, res))
             if res:
                 entry = conn.response[0]
-                logger.debug('FN:ldap_auth ldap_entry:{}'.format(entry))
+                logger.debug('FN:ldap_auth ldap_entry:{}'.format(entry['attributes'][Ldap.USER_ADGROUP_ATTRIBUTE]))
                 attr_dict = entry['attributes']
                 # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
                 # user_name = attr_dict[login_attribute][0]
@@ -283,7 +284,7 @@ class Ldap():
             else:
                 return None, (None, None)
         except:
-            logger.error(traceback.format_exc())
+            logger.error("FN:ldap_auth error:{}".format(traceback.format_exc()))
             return None, (None, None)
                              
     @staticmethod
@@ -302,7 +303,7 @@ class Ldap():
 
                 if res:
                     entry = conn.response[0]
-                    logger.debug('FN:get_member_ad_group entry:{}'.format(entry))
+                    logger.debug('FN:get_member_ad_group entry:{}'.format(entry['attributes'][Ldap.USER_ADGROUP_ATTRIBUTE]))
                     # attr_dict = entry['attributes']
                     ad_group_list = Ldap.__get_member_ad_group(entry, conn)
 
@@ -315,7 +316,7 @@ class Ldap():
                 ad_group_list = org_mgr.offline_ad_group(account_id)
                 return  ad_group_list
         except:
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_member_ad_group error:{}".format(traceback.format_exc()))
             return []
 
     @staticmethod
@@ -341,5 +342,5 @@ class Ldap():
             else:
                 return None, None
         except:
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_ad_group_member error:{}".format(traceback.format_exc()))
             return None, None
