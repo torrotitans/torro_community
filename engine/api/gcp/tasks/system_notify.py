@@ -77,7 +77,7 @@ class system_notify(baseTask, DbBase):
             
             except Exception as e:
                 
-                logger.error(traceback.format_exc())
+                logger.error("FN:system_notify_execute error:{}".format(traceback.format_exc()))
                 
             finally:
                 conn.close()

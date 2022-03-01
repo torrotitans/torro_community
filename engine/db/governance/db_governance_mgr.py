@@ -255,7 +255,7 @@ class DbGovernanceMgr(DbBase):
                                                                       workspace_id, approval_order)
                                         if not return_flag:
                                             retry += 1
-                                            time.sleep(1)
+                                            # time.sleep(1)
                                         else:
                                             break
                                 except:

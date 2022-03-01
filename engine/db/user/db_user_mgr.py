@@ -9,6 +9,7 @@ from utils.status_code import response_code
 from config import configuration
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import traceback
 import logging
 
 logger = logging.getLogger("main." + __name__)
@@ -53,7 +54,7 @@ class DbUserMgr(DbBase):
             data['data'] = user_info
             return data
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:get_user_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -124,7 +125,7 @@ class DbUserMgr(DbBase):
             data['data'] = user_info
             return data
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_user_by_name error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -146,7 +147,7 @@ class DbUserMgr(DbBase):
             data['data'] = {'count': return_count}
             return data
         except Exception as e:
-            logger.error(e)
+            logger.error("FN:update_user_password error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -339,7 +340,7 @@ class DbUserMgr(DbBase):
             else:
                 return {}
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:get_user_permissions error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -472,7 +473,7 @@ class DbUserMgr(DbBase):
             else:
                 return response_code.GET_DATA_FAIL
         except Exception as e:
-            logger.error(traceback.format_exc())
+            logger.error("FN:fetch_user_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -495,7 +496,7 @@ class DbUserMgr(DbBase):
             return ad_group_list, (user_mail, ldap_username)
         except Exception as e:
             import traceback
-            logger.error(traceback.format_exc())
+            logger.error("FN:offline_login error:{}".format(traceback.format_exc()))
             return None, (None, None)
         finally:
             conn.close()
