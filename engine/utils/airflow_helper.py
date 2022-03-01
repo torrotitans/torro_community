@@ -22,7 +22,7 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
         retry = 0
         while retry < 3:
             try:
-                requests.post(airflow_url, json=payload, verify=False)
+                requests.post(airflow_url, data=payload, verify=False)
                 return True
             except:
                 retry += 1
