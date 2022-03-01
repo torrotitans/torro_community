@@ -150,7 +150,9 @@ npm run build:PROD -- REACT_APP_API_URL=http://x.x.x.x
 ### 3.0 Run Torro for the first time
 ```bash
 cd torro_community/engine
-nohup gunicorn -b 0.0.0.0:8080 main:app &
+nohup gunicorn -b 0.0.0.0:8080 main:app --workers 3 --timeout 6000 &
+# If the system approval failed and timeout exceed worker timeout, 
+# then it will cause the server to crash and restart
 ```
 
 Go to your website and then use default account 
