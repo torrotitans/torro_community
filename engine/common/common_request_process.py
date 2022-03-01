@@ -9,6 +9,7 @@ from common.common_response_log import ResponseLog
 from common.common_response_process import response_result_process
 from utils.xml_json_process import xml_to_json, is_none
 from flask import g
+import traceback
 import logging
 
 logger = logging.getLogger("main." + __name__)
@@ -183,7 +184,8 @@ class requestProcess(object):
                     code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
                     return code
         except Exception as e:
-            logger.error("FN:verify_one_param_type error:{}".format(e))
+            logger.error("FN:verify_one_param_type error:True param_name:{} value:{} type:{}".format(param_name, value, type))
+            logger.error("FN:verify_one_param_type error:{}".format(traceback.format_exc()))
             code = response_code.BAD_REQUEST
             code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
             return code
@@ -256,6 +258,7 @@ class requestProcess(object):
             if must:
                 request_data[i] = fields[i]['default']
             else:
+                # logger.debug("FN:verify_all_param field:{} request_data:{} field_type:{}".format(i, request_data, fields))
                 param_type = self.verify_one_param_type(i, request_data[i], fields[i]['type'])
                 if param_type:
                     request_data[i] = fields[i]['default']
@@ -269,6 +272,7 @@ class requestProcess(object):
         """
 
         for k, v in request_data.items():
+            # logger.debug("FN:verify_all_param_type k:{} v:{} field_get:{}".format(k, v, fields.get(k)))
             param_type = self.verify_one_param_type(k, v, fields.get(k))
             if param_type:
                 return param_type
@@ -283,7 +287,7 @@ class requestProcess(object):
         """
         if version == apiVersion.version1.value:
             return True, True
-        else:  # 版本信息不存在给的提示
+        else:  # Version does not exist indicator
             result = response_code.REQUEST_VERSION_ISEXISTENCE
             return False, response_result_process(result, xml=xml)
 
