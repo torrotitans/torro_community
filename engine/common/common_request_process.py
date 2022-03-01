@@ -9,6 +9,7 @@ from common.common_response_log import ResponseLog
 from common.common_response_process import response_result_process
 from utils.xml_json_process import xml_to_json, is_none
 from flask import g
+import traceback
 import logging
 
 logger = logging.getLogger("main." + __name__)
@@ -183,7 +184,8 @@ class requestProcess(object):
                     code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
                     return code
         except Exception as e:
-            logger.error("FN:verify_one_param_type error:{}".format(e))
+            logger.error("FN:verify_one_param_type error:True param_name:{} value:{} type:{}".format(param_name, value, type))
+            logger.error("FN:verify_one_param_type error:{}".format(traceback.format_exc()))
             code = response_code.BAD_REQUEST
             code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
             return code
