@@ -22,7 +22,7 @@ import re
 logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
-email_regex = '^[a-z0-9]+[\._]?[ a-z0-9]+[@]\w+[. ]\w{2,3}$'
+email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 class DbGovernanceMgr(DbBase):
 
@@ -248,7 +248,9 @@ class DbGovernanceMgr(DbBase):
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
-                                    if(re.search(email_regex,token)==False):
+                                    if(re.fullmatch(email_regex, token)):
+                                        pass
+                                    else:
                                         # This is a valid token format, not an ADgroup
                                         token_json = prpcrypt.decrypt(token)
                                         logger.debug("FN:change_status airflow_token:{} airflow_token_json:{}".format(token, token_json))
