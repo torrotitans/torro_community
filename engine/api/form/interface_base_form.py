@@ -5,13 +5,16 @@ from utils.api_version_verify import api_version
 from flask import request
 from flask_restful import Resource
 from core.form_singleton import formSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.form.db_form_parameter import formApiPara
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceBaseForm(Resource):
 
@@ -54,7 +57,7 @@ class interfaceBaseForm(Resource):
             body = modelEnum.department.value.get('body')
             return response_result_process(data, xml_structure_str=body, xml=xml)
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceBaseForm error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
