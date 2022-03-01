@@ -258,7 +258,7 @@ class requestProcess(object):
             if must:
                 request_data[i] = fields[i]['default']
             else:
-                logger.debug("FN:verify_all_param field:{} request_data:{} field_type:{}".format(i, request_data, fields))
+                # logger.debug("FN:verify_all_param field:{} request_data:{} field_type:{}".format(i, request_data, fields))
                 param_type = self.verify_one_param_type(i, request_data[i], fields[i]['type'])
                 if param_type:
                     request_data[i] = fields[i]['default']
@@ -287,7 +287,7 @@ class requestProcess(object):
         """
         if version == apiVersion.version1.value:
             return True, True
-        else:  # 版本信息不存在给的提示
+        else:  # Version does not exist indicator
             result = response_code.REQUEST_VERSION_ISEXISTENCE
             return False, response_result_process(result, xml=xml)
 
