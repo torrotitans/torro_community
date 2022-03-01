@@ -17,10 +17,12 @@ from common.common_crypto import prpcrypt
 import os
 from config import config
 import logging
+import re
 
 logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
+email_regex = '^[a-z0-9]+[\._]?[ a-z0-9]+[@]\w+[. ]\w{2,3}$'
 
 class DbGovernanceMgr(DbBase):
 
@@ -246,18 +248,20 @@ class DbGovernanceMgr(DbBase):
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
-                                    token_json = prpcrypt.decrypt(token)
-                                    logger.debug("FN:change_status airflow_token:{} airflow_token_json:{}".format(token, token_json))
-                                    input_form_id, form_id, approval_order, time = token_json.split('||')
-                                    retry = 0
-                                    while retry < 3:
-                                        return_flag = system_approval(token, input_form_id, form_id,
-                                                                      workspace_id, approval_order)
-                                        if not return_flag:
-                                            retry += 1
-                                            # time.sleep(1)
-                                        else:
-                                            break
+                                    if(re.search(email_regex,token)==False):
+                                        # This is a valid token format, not an ADgroup
+                                        token_json = prpcrypt.decrypt(token)
+                                        logger.debug("FN:change_status airflow_token:{} airflow_token_json:{}".format(token, token_json))
+                                        input_form_id, form_id, approval_order, time = token_json.split('||')
+                                        retry = 0
+                                        while retry < 3:
+                                            return_flag = system_approval(token, input_form_id, form_id,
+                                                                        workspace_id, approval_order)
+                                            if not return_flag:
+                                                retry += 1
+                                                # time.sleep(1)
+                                            else:
+                                                break
                                 except:
                                     logger.error("FN:change_status error:{}".format(traceback.format_exc()))
 
