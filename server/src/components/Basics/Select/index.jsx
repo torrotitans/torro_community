@@ -5,6 +5,9 @@ import React from "react";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 
+/* local components and methods */
+import styles from "./styles.module.scss";
+
 const SelectC = ({
   value,
   options,
@@ -13,6 +16,7 @@ const SelectC = ({
   disableFullwidth,
   disabled,
   error,
+  maxHeight,
 }) => {
   return (
     <Select
@@ -37,6 +41,10 @@ const SelectC = ({
           horizontal: "left",
         },
         getContentAnchorEl: null,
+        MenuListProps: {
+          style: { maxHeight: maxHeight },
+          className: styles.menuList,
+        },
       }}
     >
       <MenuItem value="" disabled>
@@ -46,7 +54,11 @@ const SelectC = ({
         options.length &&
         options.map((item, index) => {
           return (
-            <MenuItem key={item.value + item.label + index} value={item.value}>
+            <MenuItem
+              key={item.value + item.label + index}
+              className={styles.menuItem}
+              value={item.value}
+            >
               {item.label}
             </MenuItem>
           );

@@ -26,7 +26,9 @@ const ProgressBar = ({ progress }) => {
             <div key={index} className={styles.flowItem}>
               <div className={styles.dot}>
                 <div className={styles.progressItem}>
-                  <div className={styles.progressName}>{item.label}</div>
+                  <div title={item.label} className={styles.progressName}>
+                    {item.label}
+                  </div>
                 </div>
               </div>
             </div>

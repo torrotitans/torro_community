@@ -93,6 +93,10 @@ const config = {
     url: `${BASE_API_URL}/api/workspaceInfo`,
     method: POST,
   },
+  useCaseResounceGet: {
+    url: `${BASE_API_URL}/api/usecaseResource`,
+    method: GET,
+  },
   workspacePut: {
     url: `${BASE_API_URL}/api/workspaceSetting`,
     method: PUT,

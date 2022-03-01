@@ -38,6 +38,7 @@ const FormItem = ({
   disabled,
   systemTag,
   fullWidth,
+  changeCb,
 }) => {
   const FormComponent = useMemo(() => {
     let type = Number(data.style);
@@ -209,7 +210,10 @@ const FormItem = ({
                   <FormComponent
                     {...dataProps}
                     value={value}
-                    onChange={onChange}
+                    onChange={(data) => {
+                      changeCb(data);
+                      onChange(data);
+                    }}
                     disabled={disabled}
                     inputRef={ref}
                     error={invalid}
