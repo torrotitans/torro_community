@@ -10,23 +10,44 @@ import Button from "@basics/Button";
 import HeadLine from "@basics/HeadLine";
 import Text from "@basics/Text";
 import styles from "./styles.module.scss";
-import { getFormItem, raiseFormRequest, updateFormRequest } from "@lib/api";
+import {
+  getFormItem,
+  raiseFormRequest,
+  updateFormRequest,
+  getUcResource,
+} from "@lib/api";
 import Loading from "@assets/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
 import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
+import { useMemo } from "react";
+
+const UC_FORM_ID = "2";
+const UC_PROP_MAP = {
+  u2: "owner_group",
+  u3: "team_group",
+  u8: "service_account",
+  u11: "label",
+};
+
+const UC_PROP = ["u2", "u3", "u8", "u11"];
 
 const FormRender = ({ formId, onBack, defaultData }) => {
   const navigate = useNavigate();
-  const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const { handleSubmit, control, register, setValue } = useForm(); // initialise the hook
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
   const [submitData, setSubmitData] = useState(null);
+  const [ucDef, setUcDef] = useState({});
   const [modalData, setModalData] = useState({
     open: false,
     status: 0,
     content: "",
   });
+
+  const ucForm = useMemo(() => {
+    return formId === UC_FORM_ID;
+  }, [formId]);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall = defaultData ? updateFormRequest : raiseFormRequest;
@@ -68,42 +89,96 @@ const FormRender = ({ formId, onBack, defaultData }) => {
     }
   }, [modalData, submitData, defaultData, navigate]);
 
-  const submitHandle = (data, d, f) => {
-    setModalData({
-      open: true,
-      status: 1,
-      content: <Intl id="confirmRaise" />,
-    });
-    let files = {};
-    Object.keys(data).forEach((key) => {
-      if (data[key] instanceof Array && data[key][0] instanceof File) {
-        data[key].forEach((item, index) => {
-          files[key + "-" + (index + 1)] = item;
+  const submitHandle = useCallback(
+    (data, d, f) => {
+      setModalData({
+        open: true,
+        status: 1,
+        content: <Intl id="confirmRaise" />,
+      });
+      let files = {};
+      Object.keys(data).forEach((key) => {
+        if (data[key] instanceof Array && data[key][0] instanceof File) {
+          data[key].forEach((item, index) => {
+            files[key + "-" + (index + 1)] = item;
+          });
+          data[key] = [];
+        }
+      });
+      if (ucForm) {
+        UC_PROP.forEach((key) => {
+          data[key] = ucDef[key][data[key]];
         });
-        data[key] = [];
       }
-    });
-    setSubmitData({
-      ...files,
-      form_id: formId,
-      form_field_values_dict: data,
-    });
-  };
+      setSubmitData({
+        ...files,
+        form_id: formId,
+        form_field_values_dict: data,
+      });
+    },
+    [formId, setSubmitData, ucForm, ucDef]
+  );
 
-  const renderFormItem = (items, disabled) => {
-    return items.map((item, index) => {
-      return (
-        <FormItem
-          key={index}
-          data={item}
-          index={index}
-          control={control}
-          register={register}
-          disabled={disabled}
-        />
-      );
-    });
-  };
+  const renderFormItem = useCallback(
+    (items, disabled) => {
+      return items.map((item, index) => {
+        return (
+          <FormItem
+            key={index}
+            data={item}
+            index={index}
+            control={control}
+            register={register}
+            disabled={disabled}
+            changeCb={(e) => {
+              if (ucForm && UC_PROP.includes(item.id)) {
+                UC_PROP.forEach((key) => {
+                  setValue(key, e);
+                });
+              }
+            }}
+          />
+        );
+      });
+    },
+    [control, register, setValue, ucForm]
+  );
+
+  const initUcDef = useCallback((tempFieldList, formData) => {
+    getUcResource()
+      .then((res2) => {
+        if (res2.data) {
+          let tmpUcDef = {};
+          Object.keys(UC_PROP_MAP).forEach((key) => {
+            tmpUcDef[key] = [];
+          });
+          res2.data.forEach((item, index) => {
+            Object.keys(UC_PROP_MAP).forEach((key) => {
+              tmpUcDef[key].push(item.resource[UC_PROP_MAP[key]]);
+            });
+          });
+          setUcDef(tmpUcDef);
+          tempFieldList = tempFieldList.map((item) => {
+            if (UC_PROP.includes(item.id)) {
+              item.style = 2;
+              item.options = tmpUcDef[item.id].map((val, index) => ({
+                label: val,
+                value: index,
+              }));
+            }
+            return item;
+          });
+          setFormData({
+            ...formData,
+            fieldList: tempFieldList,
+          });
+          setFormLoading(false);
+        }
+      })
+      .catch((e) => {
+        sendNotify({ msg: e.message, status: 3, show: true });
+      });
+  }, []);
 
   useEffect(() => {
     setFormLoading(true);
@@ -120,6 +195,10 @@ const FormRender = ({ formId, onBack, defaultData }) => {
             return item;
           });
 
+          if (ucForm) {
+            initUcDef(tempFieldList, data);
+            return;
+          }
           setFormData({
             ...data,
             fieldList: tempFieldList,
@@ -130,7 +209,7 @@ const FormRender = ({ formId, onBack, defaultData }) => {
       .catch((e) => {
         sendNotify({ msg: e.message, status: 3, show: true });
       });
-  }, [formId, defaultData]);
+  }, [formId, defaultData, initUcDef, ucForm]);
 
   return (
     <div className={styles.formControl}>
