@@ -256,7 +256,7 @@ class requestProcess(object):
             if must:
                 request_data[i] = fields[i]['default']
             else:
-                logger.debug("FN:verify_all_param field:{} request_date:{} field_type:{}".format(i, request_data[i], fields[i]['type']))
+                logger.debug("FN:verify_all_param field:{} request_data:{} field_type:{}".format(i, request_data, fields[i]['type']))
                 param_type = self.verify_one_param_type(i, request_data[i], fields[i]['type'])
                 if param_type:
                     request_data[i] = fields[i]['default']
@@ -268,9 +268,9 @@ class requestProcess(object):
         :param fields: {'a':str,'b':int}
         :return:
         """
-        
+
         for k, v in request_data.items():
-            logger.debug("FN:verify_all_param_type k:{} v:{} field_get:{}".format(k, v, fields.get(k)))
+            # logger.debug("FN:verify_all_param_type k:{} v:{} field_get:{}".format(k, v, fields.get(k)))
             param_type = self.verify_one_param_type(k, v, fields.get(k))
             if param_type:
                 return param_type
