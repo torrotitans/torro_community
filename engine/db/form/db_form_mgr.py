@@ -4,13 +4,16 @@
 import datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import copy
 import traceback
 from utils.status_code import response_code
 from config import configuration
 import json
 from db.workflow.db_workflow_mgr import workflow_mgr
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 # from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -58,7 +61,7 @@ class DbFormMgr(DbBase):
             data['data'] = result
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:get_all_base_form error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
@@ -81,7 +84,7 @@ class DbFormMgr(DbBase):
             data['data'] = form_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:get_base_form_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -184,7 +187,7 @@ class DbFormMgr(DbBase):
             data['data'] = form_info
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:get_details_form_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -302,7 +305,7 @@ class DbFormMgr(DbBase):
             data['data'] = return_info
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:get_field_template error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -314,7 +317,7 @@ class DbFormMgr(DbBase):
             data = response_code.SUCCESS
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:add_new_system_field error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
         finally:
             conn.close()
@@ -356,7 +359,7 @@ class DbFormMgr(DbBase):
             return data
 
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:delete_form error:{}".format(traceback.format_exc()))
             conn.conn.rollback()
             return response_code.DELETE_DATA_FAIL
         finally:
@@ -406,7 +409,7 @@ class DbFormMgr(DbBase):
             data['data'] = form
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:add_new_form error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -487,7 +490,7 @@ class DbFormMgr(DbBase):
                 data['msg'] = 'add new form failed'
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:update_form error:{}".format(traceback.format_exc()))
             # print(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
