@@ -6,13 +6,16 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.usecase_singleton import usecaseSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.usecase.db_usecase_parameter import usecaseApiPara
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceUseCaseInfo(Resource):
 
@@ -32,7 +35,10 @@ class interfaceUseCaseInfo(Resource):
                 data = response_code.GET_DATA_FAIL
                 # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
+                logger.error("FN:interfaceUseCaseInfo_get data_error:{}".format())
+                logger.error("FN:interfaceUseCaseInfo_get error:{}".format(traceback.format_exc()))
                 return response_result_process(data, xml=xml)
+
             data = usecaseSingleton_singleton.get_usecase_info_by_workspace(workspace_id)
             if data['code'] == 200:
                 response_data = data['data']
@@ -40,9 +46,10 @@ class interfaceUseCaseInfo(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceUseCaseInfo_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
     @login_required
     def post(self,):
         xml = request.args.get('format')
@@ -69,8 +76,7 @@ class interfaceUseCaseInfo(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceUseCaseInfo_post error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 

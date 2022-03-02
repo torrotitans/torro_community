@@ -89,6 +89,7 @@ class Auth(object):
                 algorithm='HS256'
             )
         except Exception as e:
+            logger.error("FN:__encode_auth_token error:{}".format(traceback.format_exc()))
             return e
 
     def __decode_auth_token(self, auth_token):
@@ -114,6 +115,7 @@ class Auth(object):
         except TypeError:
             return 'Token Error'
         except:
+            logger.error("FN:__decode_auth_token error:{}".format(traceback.format_exc()))
             logger.error(sys.exc_info()[1])
 
     @classmethod
@@ -139,7 +141,7 @@ class Auth(object):
             else:
                 return False
         except:
-            # print(traceback.format_exc())
+            logger.error("FN:get_offline_password error:{}".format(traceback.format_exc()))
             return False
     @classmethod
     def authenticate(cls, username, password, offline_flag):

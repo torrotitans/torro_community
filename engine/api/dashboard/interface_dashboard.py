@@ -29,7 +29,6 @@ class interfaceDashboard(Resource):
                 request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
                 return response_result_process(request_data, xml=xml)
 
-
             request_data = req.verify_all_param(request_data, dashboardApiPara.get_input_form_data_POST_request)
 
             try:
@@ -57,3 +56,4 @@ class interfaceDashboard(Resource):
             return response_result_process(error_data, xml=xml)
 
 # logger.error("FN: error:{}".format(traceback.format_exc()))
+# logger.debug("FN: error:{}".format())

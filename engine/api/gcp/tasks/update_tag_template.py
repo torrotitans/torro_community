@@ -3,7 +3,6 @@ from api.gcp.tasks.baseTask import baseTask
 import google
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
@@ -17,9 +16,12 @@ from config import config
 from core.form_singleton import formSingleton_singleton
 from core.workflow_singleton import workflowSingleton_singleton
 import random
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
-
 
 # class UpdateTagTemplate(baseTask):
 class UpdateTagTemplate(baseTask, DbBase):
@@ -37,7 +39,6 @@ class UpdateTagTemplate(baseTask, DbBase):
     def __init__(self, stage_dict):
         super(UpdateTagTemplate, self).__init__(stage_dict)
         # # print('self.stage_dict:', self.stage_dict)
-
         self.full_resource_name = None
         self.target_project = Config.DEFAULT_PROJECT
 
@@ -133,7 +134,7 @@ class UpdateTagTemplate(baseTask, DbBase):
                 workspace_id, old_tag_template_form_id)
                 sql = self.create_update_sql(db_name, 'tagTemplatesTable',
                                              tag_template_fields, values, condition=condition)
-                print('tagTemplatesTable update sql:', sql)
+                logger.debug("FN:UpdateTagTemplate_execute update_tagTemplatesTable_sql:{}".format(sql))
                 tag_template_id = self.updete_exec(conn, sql)
                 # print('tagTemplatesTable insert sql:', sql)
 
@@ -141,14 +142,13 @@ class UpdateTagTemplate(baseTask, DbBase):
 
         except HttpError as e:
             return (json.loads(e.content))
+
         except Exception as e:
-            lg.error(e)
-            import traceback
-            # print(traceback.format_exc())
+            logger.error("FN:UpdateTagTemplate_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
+
         finally:
             conn.close()
-            # pass
 
     def __update_tag_template_form(self, user_id, workspace_id):
 
@@ -160,10 +160,10 @@ class UpdateTagTemplate(baseTask, DbBase):
         form = {'title': form_name, 'des': description, 'fieldList': field_list, 'id': id}
         # print('form:', form)
         data = formSingleton_singleton.update_form(form, user_id, workspace_id)
-        print('*tags table data:', data)
+        logger.debug("FN:UpdateTagTemplate__update_tag_template_form tag_table_data:{}".format(data))
+        
         if data['code'] == 200:
             tag_tempalte_form_id = data['data']['id']
-
 
         else:
             tag_tempalte_form_id = None
@@ -192,82 +192,7 @@ class UpdateTagTemplate(baseTask, DbBase):
 
         except HttpError as e:
             return (json.loads(e.content))
+
         except Exception as e:
+            logger.error("FN:UpdateTagTemplate__get_tag_templates error:{}".format(traceback.format_exc()))
             return {'error': {'code': 500, 'message': str(e), 'status': 'ERROR'}}
-
-
-if __name__ == '__main__':
-    x = UpdateTagTemplate({"tag_template_display_name": 'Create Tag Templates Api',
-                           "description": 'testing api tasks',
-                           "field_list": [
-                               {
-                                   "style": 1,
-                                   "label": "CheckBox",
-                                   "default": "true,false",
-                                   "options": [
-                                       {
-                                           "label": "true"
-                                       },
-                                       {
-                                           "label": "false"
-                                       }
-                                   ],
-                                   "des": "",
-                                   "edit": 1,
-                                   "placeholder": ""
-                               },
-                               {
-                                   "style": 2,
-                                   "label": "Dropdown",
-                                   "default": "Option1",
-                                   "options": [
-                                       {
-                                           "label": "Option1",
-                                           "value": "Option1"
-                                       },
-                                       {
-                                           "label": "Option2",
-                                           "value": "Option2"
-                                       }
-                                   ],
-                                   "des": "",
-                                   "edit": 1,
-                                   "required": True,
-                                   "placeholder": ""
-                               },
-                               {
-                                   "style": 3,
-                                   "label": "Text",
-                                   "default": "",
-                                   "options": [],
-                                   "des": "",
-                                   "edit": 1,
-                                   "maxLength": 25,
-                                   "required": True,
-                                   "placeholder": "",
-                                   "rule": 0
-                               },
-                               {
-                                   "style": 5,
-                                   "label": "Switch",
-                                   "default": True,
-                                   "placeholder": "",
-                                   "options": [],
-                                   "des": "",
-                                   "edit": 1
-                               },
-                               {
-                                   "style": 6,
-                                   "label": "DatePicker",
-                                   "placeholder": "",
-                                   "default": "",
-                                   "options": [],
-                                   "des": "",
-                                   "required": True,
-                                   "edit": 1
-                               }
-                           ]
-                           })
-    x.execute()
-
-    # get policy api

@@ -88,81 +88,88 @@ class Ldap():
 
     @staticmethod
     def __get_user(account_cn, conn):
-        
-        res = conn.search(
-            search_base=Ldap.USER_SEARCH_BASE,
-            search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
-            search_scope=SUBTREE,
-            attributes=['*'],
-            paged_size=5
-        )
-        # if not res:
-        #     res = conn.search(
-        #     search_base = Ldap.SEARCH_BASE,
-        #     search_filter = '(userPrincipalName={username})'.format(username=username),
-        #     search_scope = SUBTREE,
-        #     attributes = ['cn', 'givenName', 'sAMAccountName', 'memberOf', 'name'],
-        #     paged_size = 5
-        #     )
-        return res
 
+        try:
+            res = conn.search(
+                search_base=Ldap.USER_SEARCH_BASE,
+                search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(account_cn)),
+                search_scope=SUBTREE,
+                attributes=['*'],
+                paged_size=5
+            )
+            # if not res:
+            #     res = conn.search(
+            #     search_base = Ldap.SEARCH_BASE,
+            #     search_filter = '(userPrincipalName={username})'.format(username=username),
+            #     search_scope = SUBTREE,
+            #     attributes = ['cn', 'givenName', 'sAMAccountName', 'memberOf', 'name'],
+            #     paged_size = 5
+            #     )
+            return res
+
+        except:
+            logger.error("FN:__get_user error:{}".format(traceback.format_exc()))
+
+        
     @staticmethod
     def __get_ad_group(ad_group, conn):
 
-        res = conn.search(
-            search_base=Ldap.GROUP_SEARCH_BASE,
-            search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group)),
-            search_scope=SUBTREE,
-            attributes=['*'],
-            paged_size=5
-        )
-        # if not res:
-        #     res = conn.search(
-        #     search_base = Ldap.SEARCH_BASE,
-        #     search_filter = '(userPrincipalName={username})'.format(username=username),
-        #     search_scope = SUBTREE,
-        #     attributes = ['cn', 'givenName', 'sAMAccountName', 'memberOf', 'name'],
-        #     paged_size = 5
-        #     )
-        return res
+        try:
+            res = conn.search(
+                search_base=Ldap.GROUP_SEARCH_BASE,
+                search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group)),
+                search_scope=SUBTREE,
+                attributes=['*'],
+                paged_size=5
+            )
+
+            return res
+        
+        except:
+            logger.error("FN:__get_ad_group error:{}".format(traceback.format_exc()))
 
     @staticmethod
     def __get_member_ad_group(entry, conn):
 
-        ad_groups_mails = []
-        # res = Ldap.__get_user(member, conn)
-        # if res:
-        # entry = conn.response[0]
-        # dn = entry['dn']
-        attr_dict = entry['attributes']
-        for ad_group_util in attr_dict[Ldap.USER_ADGROUP_ATTRIBUTE]:
-            adgroup_attribute = Ldap.GROUP_SERACH_FILTER.split('=')[0]
-            ad_group_name = ad_group_util.split(',')[0].replace(adgroup_attribute+'=', '')
-            ad_group_name = ad_group_name.replace(adgroup_attribute.upper()+'=', '')
-            # adgrou_cn = ad_group_util.split(',')[0]
-            # search_base = ad_group_util.replace(adgrou_cn+',', '')
-            res = conn.search(
-                search_base=Ldap.GROUP_SEARCH_BASE,
-                search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group_name)),
-                search_scope=SUBTREE,
-                attributes=['*']
-            )
-            if res:
-                entry = conn.response[0]
-                # adgroup_attribute = Ldap.GROUP_SERACH_FILTER.split('=')[0]
-                # adgroup_name = attr_dict[adgroup_attribute][0]
-                
-                ad_group_mail = entry['attributes'][adgroup_attribute]
-                if isinstance(ad_group_mail, list):
-                    ad_group_mail = ad_group_mail[0] + Ldap.GROUP_EMAIL_SUFFIX
-                else:
-                    ad_group_mail = ad_group_mail + Ldap.GROUP_EMAIL_SUFFIX
+        try:
+            ad_groups_mails = []
+            # res = Ldap.__get_user(member, conn)
+            # if res:
+            # entry = conn.response[0]
+            # dn = entry['dn']
+            attr_dict = entry['attributes']
+            for ad_group_util in attr_dict[Ldap.USER_ADGROUP_ATTRIBUTE]:
+                adgroup_attribute = Ldap.GROUP_SERACH_FILTER.split('=')[0]
+                ad_group_name = ad_group_util.split(',')[0].replace(adgroup_attribute+'=', '')
+                ad_group_name = ad_group_name.replace(adgroup_attribute.upper()+'=', '')
+                # adgrou_cn = ad_group_util.split(',')[0]
+                # search_base = ad_group_util.replace(adgrou_cn+',', '')
+                res = conn.search(
+                    search_base=Ldap.GROUP_SEARCH_BASE,
+                    search_filter='({})'.format(Ldap.GROUP_SERACH_FILTER.format(ad_group_name)),
+                    search_scope=SUBTREE,
+                    attributes=['*']
+                )
+                if res:
+                    entry = conn.response[0]
+                    # adgroup_attribute = Ldap.GROUP_SERACH_FILTER.split('=')[0]
+                    # adgroup_name = attr_dict[adgroup_attribute][0]
                     
-                if ad_group_mail:
-                    ad_groups_mails.append(ad_group_mail)
+                    ad_group_mail = entry['attributes'][adgroup_attribute]
+                    if isinstance(ad_group_mail, list):
+                        ad_group_mail = ad_group_mail[0] + Ldap.GROUP_EMAIL_SUFFIX
+                    else:
+                        ad_group_mail = ad_group_mail + Ldap.GROUP_EMAIL_SUFFIX
+                        
+                    if ad_group_mail:
+                        ad_groups_mails.append(ad_group_mail)
 
-        return ad_groups_mails
+            return ad_groups_mails
 
+        except:
+            logger.error("FN:__get_member_ad_group error:{}".format(traceback.format_exc()))
+
+    
     @staticmethod
     def __get_ad_group_member(entry, conn):
         member_mails = []
@@ -170,48 +177,55 @@ class Ldap():
         # if res:
         # entry = conn.response[0]
         # dn = entry['dn']
-        attr_dict = entry['attributes']
-        for user_util in attr_dict[Ldap.GROUP_MEMBER_ATTRIBUTE]:
-            user_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
-            user_name = user_util.split(',')[0].replace(user_attribute+'=', '')
-            user_name = user_name.replace(user_attribute.upper()+'=', '')
+        try:
+            attr_dict = entry['attributes']
+            for user_util in attr_dict[Ldap.GROUP_MEMBER_ATTRIBUTE]:
+                user_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
+                user_name = user_util.split(',')[0].replace(user_attribute+'=', '')
+                user_name = user_name.replace(user_attribute.upper()+'=', '')
 
-            # user_search_name = user_util
-            res = conn.search(
-                search_base=Ldap.USER_SEARCH_BASE,
-                search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(user_name)),
-                search_scope=SUBTREE,
-                attributes=['*']
-            )
-            if res:
-                entry = conn.response[0]
-                # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
-                mail_info = entry['attributes'][Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
-                if isinstance(mail_info, list):
-                    member_mail = mail_info[0]
-                else:
-                    member_mail = mail_info
-                # logger.debug('FN:__get_ad_group_member member_mail:{}'.format(member_mail))
-                if member_mail:
-                    member_mails.append(member_mail)
-        
-        return member_mails
+                # user_search_name = user_util
+                res = conn.search(
+                    search_base=Ldap.USER_SEARCH_BASE,
+                    search_filter='({})'.format(Ldap.USER_SERACH_FILTER.format(user_name)),
+                    search_scope=SUBTREE,
+                    attributes=['*']
+                )
+                if res:
+                    entry = conn.response[0]
+                    # login_attribute = Ldap.USER_SERACH_FILTER.split('=')[0]
+                    mail_info = entry['attributes'][Ldap.EMAIL_ADDRESS_LDAP_ATTRIBUTE]
+                    if isinstance(mail_info, list):
+                        member_mail = mail_info[0]
+                    else:
+                        member_mail = mail_info
+                    # logger.debug('FN:__get_ad_group_member member_mail:{}'.format(member_mail))
+                    if member_mail:
+                        member_mails.append(member_mail)
+            
+            return member_mails
+
+        except:
+            logger.error("FN:__get_ad_group_member error:{}".format(traceback.format_exc()))
 
     @staticmethod
     def __login_with_user_pwd(account_cn, password, servers):
         # return True
-        logger.debug('FN:__login_with_user_pwd user_search_filter:{} user_search_base:{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE))
-        conn = Connection(servers, '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE),
+        try:
+            conn = Connection(servers, '{},{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE),
                           password, check_names=True, lazy=False, raise_exceptions=True)
-        conn.open()
-        conn.bind()
-        if conn.result["description"] == "success":
-            
-            return True
-        else:
-            
-            return False
-
+            conn.open()
+            conn.bind()
+            if conn.result["description"] == "success":
+                
+                return True
+            else:
+                
+                return False
+        except:
+            logger.debug('FN:__login_with_user_pwd user_search_filter:{} user_search_base:{}'.format(Ldap.USER_SERACH_FILTER.format(account_cn), Ldap.USER_SEARCH_BASE))
+            logger.error("FN:__login_with_user_pwd error:{}".format(traceback.format_exc()))
+        
     @staticmethod
     def service_account_login(account_dn, password, host, port, use_ssl=False):
         pwd = prpcrypt.decrypt(password)

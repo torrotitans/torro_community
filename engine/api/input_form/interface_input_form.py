@@ -3,14 +3,12 @@
 
 from utils.smtp_helper import notify_approvers
 from utils.api_version_verify import api_version
-import traceback
 from flask import request
 from flask_restful import Resource
 from core.input_form_singleton import input_form_singleton
 from core.form_singleton import formSingleton_singleton
 from core.org_singleton import orgSingleton_singleton
 import os
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -19,6 +17,11 @@ from common.common_request_process import req
 from db.input_form.db_input_form_parameter import inputFormApiPara
 import time
 import json
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceInputForm(Resource):
     # @api_version
     @login_required
@@ -33,15 +36,18 @@ class interfaceInputForm(Resource):
 
         request_data = req.verify_all_param(request_data, inputFormApiPara.input_form_data_POST_request)
         workspace_id = req.get_workspace_id()
+
         try:
             user_key = req.get_user_key()
             account_id = req.get_user_account_id()
             # print('user id:', user_key)
         except:
             data = response_code.GET_DATA_FAIL
-            # print(traceback.format_exc())
             data['msg'] = 'Token error or expired, please login again.'
+            logger.error("FN:interfaceInputForm_post data_error:{}".format(data))
+            logger.error("FN:interfaceInputForm_post error:{}".format(traceback.format_exc()))
             return response_result_process(data, xml=xml)
+
         try:
             form_id = request_data['form_id']
             form_data = formSingleton_singleton.get_details_form_by_id(form_id)
@@ -95,12 +101,12 @@ class interfaceInputForm(Resource):
                     data = response_code.UPDATE_DATA_FAIL
                     data['msg'] = 'Create new form success, fail to send email to approves'
         except:
-            lg.error(traceback.format_exc())
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'
+            logger.error("FN:interfaceInputForm_post data_error:{}".format(data))
+            logger.error("FN:interfaceInputForm_post error:{}".format(traceback.format_exc()))
 
-            # print(traceback.format_exc())
-        # # print(data)
+        logger.debug("FN:interfaceInputForm_post data:{}".format(data))
         return response_result_process(data, xml=xml)
 
     @login_required
@@ -178,12 +184,14 @@ class interfaceInputForm(Resource):
                         data['msg'] = 'Create new form success, fail to send email to approves'
             except:
                 data = response_code.GET_DATA_FAIL
-                # print(traceback.format_exc())
-            # # print(data)
+                logger.error("FN:interfaceInputForm_put data_error:{}".format(data))
+                logger.error("FN:interfaceInputForm_put error:{}".format(traceback.format_exc()))
+
+            logger.error("FN:interfaceInputForm_put data:{}".format(data))
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceInputForm_put error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -215,8 +223,7 @@ class interfaceInputForm(Resource):
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceInputForm_delete error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -308,8 +315,11 @@ class interfaceInputFormList(Resource):
                 output_data['data'].append(data)
 
             return output_data
+
         except:
             data = response_code.ADD_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'
-            print(traceback.format_exc())
+            logger.error("FN:interfaceInputFormList_post data_error:{}".format(data))
+            logger.error("FN:interfaceInputFormList_post error:{}".format(traceback.format_exc()))
+
             return response_result_process(data, xml=xml)
