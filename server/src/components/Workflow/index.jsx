@@ -85,7 +85,7 @@ const Workflow = ({ flowId, droppableItems }) => {
           content: e.message,
         });
       });
-  }, [submitData]);
+  }, [submitData, navigate, modalData]);
 
   const buttonClickHandle = useCallback(() => {
     if (modalData.cb) {
@@ -104,7 +104,7 @@ const Workflow = ({ flowId, droppableItems }) => {
       default:
         break;
     }
-  }, [modalData, submitData]);
+  }, [modalData, submitData, saveWorkflow]);
 
   const submitHandle = useCallback(() => {
     let checked = validateCheck(workflowData);
@@ -125,7 +125,7 @@ const Workflow = ({ flowId, droppableItems }) => {
       ...workflowData,
       modify_by: authContext.userId,
     });
-  }, [modalData, validateCheck, workflowData, authContext.userId, navigate]);
+  }, [validateCheck, workflowData, authContext.userId]);
 
   const flow = useMemo(() => {
     return workflowData ? workflowData.stages : [];
