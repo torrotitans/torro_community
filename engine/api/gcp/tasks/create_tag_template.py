@@ -3,7 +3,6 @@ from api.gcp.tasks.baseTask import baseTask
 import google
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
@@ -16,7 +15,10 @@ import copy
 from config import config
 from core.form_singleton import formSingleton_singleton
 from core.workflow_singleton import workflowSingleton_singleton
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -35,7 +37,7 @@ class CreateTagTemplate(baseTask, DbBase):
 
     def __init__(self, stage_dict):
         super(CreateTagTemplate, self).__init__(stage_dict)
-        # # print('self.stage_dict:', self.stage_dict)
+        logger.debug("FN:CreateTagTemplate init_stage_dict:{}".format(stage_dict))
 
         self.full_resource_name = None
         self.target_project = Config.DEFAULT_PROJECT
@@ -52,7 +54,8 @@ class CreateTagTemplate(baseTask, DbBase):
                 check_key = self.stage_dict.get(key, 'NotFound')
                 if check_key == 'NotFound':
                     missing_set.add(key)
-                # # print('{}: {}'.format(key, self.stage_dict[key]))
+                # slogger.debug('FN:CreateTagTemplate_execute stage_dict_key:{}'.format(self.stage_dict[key]))
+
             if len(missing_set) != 0:
                 return 'Missing parameters: {}'.format(', '.join(missing_set))
             else:
@@ -64,10 +67,13 @@ class CreateTagTemplate(baseTask, DbBase):
                 tag_template_id = tag_template_name.replace(' ', '_').lower().strip()
                 description = self.stage_dict['description']
                 field_list = self.stage_dict['field_list']
+                logger.debug('FN:CreateTagTemplate_execute res_field_list:{}'.format(field_list))
                 response = self.__get_tag_templates(tag_template_id, location, project, service)
-                # print('response field_list:', field_list)
+                logger.debug('FN:CreateTagTemplate_execute get_tag_template_res:{}'.format(response))
+
                 if 'error' not in response and 'code' not in response['error']:
                     return 'data catalog exist.'
+
                 tag_template_body = {'displayName': tag_template_name, 'fields': {}}
                 fields = {}
                 field_tamplate = {'displayName': '', 'type': {'primitiveType': ''},
@@ -100,13 +106,15 @@ class CreateTagTemplate(baseTask, DbBase):
                         continue
                     fields[field_id] = field
                 tag_template_body['fields'] = fields
-                # print('tag_template_body:', tag_template_body)
+                logger.debug('FN:CreateTagTemplate_execute tag_template_body:{}'.format(tag_template_body))
                 tag_template = service.projects().locations().tagTemplates().create(
                     parent='projects/{project}/locations/{location}'.format(project=project, location=location),
                     tagTemplateId=tag_template_id,
                     body=tag_template_body
                 ).execute()
-                # print('tag_template', tag_template)
+
+                logger.debug('FN:CreateTagTemplate_execute tag_template:{}'.format(tag_template))
+
                 # create form and get the form id
                 tag_tempalte_form_id = self.__create_tag_template_form(workspace_id)
                 # self.__create_tag_template_workflow(tag_tempalte_form_id, user_id)
@@ -121,20 +129,18 @@ class CreateTagTemplate(baseTask, DbBase):
                 sql = self.create_insert_sql(db_name, 'tagTemplatesTable',
                                              '({})'.format(', '.join(tag_template_fields)), values)
                 tag_template_id = self.insert_exec(conn, sql, return_insert_id=True)
-                # print('tagTemplatesTable insert sql:', sql)
+                logger.debug('FN:CreateTagTemplate_execute tagTemplatesTable_insert_sql:{}'.format(sql))
 
                 return 'create successfully.: {}'.format(str(tag_template_id))
 
         except HttpError as e:
             return (json.loads(e.content))
+
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
-            # print(traceback.format_exc())
+            logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
         finally:
             conn.close()
-            # pass
 
     def __create_tag_template_form(self, workspace_id):
 
@@ -145,10 +151,10 @@ class CreateTagTemplate(baseTask, DbBase):
         form = {'title': form_name, 'des': description, 'fieldList': field_list, 'hide': 1}
         # print('form:', form)
         data = formSingleton_singleton.add_new_form(form, workspace_id)
-        print('*tags table data:', data)
+        logger.debug('FN:CreateTagTemplate_execute tags_table_data:'.format(data))
+        
         if data['code'] == 200:
             tag_tempalte_form_id = data['data']['id']
-
 
         else:
             tag_tempalte_form_id = None
@@ -178,81 +184,5 @@ class CreateTagTemplate(baseTask, DbBase):
         except HttpError as e:
             return (json.loads(e.content))
         except Exception as e:
+            logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
             return {'error': {'code': 500, 'message': str(e), 'status': 'ERROR'}}
-
-
-if __name__ == '__main__':
-    x = CreateTagTemplate({"tag_template_display_name": 'Create Tag Templates Api',
-                           "description": 'testing api tasks',
-                           "field_list": [
-                               {
-                                   "style": 1,
-                                   "label": "CheckBox",
-                                   "default": "true,false",
-                                   "options": [
-                                       {
-                                           "label": "true"
-                                       },
-                                       {
-                                           "label": "false"
-                                       }
-                                   ],
-                                   "des": "",
-                                   "edit": 1,
-                                   "placeholder": ""
-                               },
-                               {
-                                   "style": 2,
-                                   "label": "Dropdown",
-                                   "default": "Option1",
-                                   "options": [
-                                       {
-                                           "label": "Option1",
-                                           "value": "Option1"
-                                       },
-                                       {
-                                           "label": "Option2",
-                                           "value": "Option2"
-                                       }
-                                   ],
-                                   "des": "",
-                                   "edit": 1,
-                                   "required": True,
-                                   "placeholder": ""
-                               },
-                               {
-                                   "style": 3,
-                                   "label": "Text",
-                                   "default": "",
-                                   "options": [],
-                                   "des": "",
-                                   "edit": 1,
-                                   "maxLength": 25,
-                                   "required": True,
-                                   "placeholder": "",
-                                   "rule": 0
-                               },
-                               {
-                                   "style": 5,
-                                   "label": "Switch",
-                                   "default": True,
-                                   "placeholder": "",
-                                   "options": [],
-                                   "des": "",
-                                   "edit": 1
-                               },
-                               {
-                                   "style": 6,
-                                   "label": "DatePicker",
-                                   "placeholder": "",
-                                   "default": "",
-                                   "options": [],
-                                   "des": "",
-                                   "required": True,
-                                   "edit": 1
-                               }
-                           ]
-                           })
-    x.execute()
-
-    # get policy api

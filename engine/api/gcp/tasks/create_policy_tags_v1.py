@@ -2,10 +2,13 @@ from api.gcp.tasks.baseTask import baseTask
 from google.cloud import datacatalog_v1beta1
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 
 class CreatePolicyTagsV1(baseTask, DbBase):
@@ -51,7 +54,7 @@ class CreatePolicyTagsV1(baseTask, DbBase):
                 description = self.stage_dict.get('description', self.arguments['description']['default'])
 
                 client = datacatalog_v1beta1.PolicyTagManagerClient()
-                print('client:', client)
+                logger.info('FN:CreatePolicyTagsV1_execute data_catalog_client:{}'.format(client))
                 activated_policy_types = self.stage_dict.get('activated_policy_types',
                                                              self.arguments['activated_policy_types']['default'])
                 parent = f"projects/{project_id}/locations/{location}"
@@ -130,7 +133,7 @@ class CreatePolicyTagsV1(baseTask, DbBase):
                             local_taxonomy_id, parent_local_id, tag_obj.name, ad_group, display_name, description,
                             create_time)
                         sql = self.create_insert_sql(db_name, 'policyTagsTable', '({})'.format(', '.join(fields)), values)
-                        # print('policyTagsTable insert sql:', sql)
+                        logger.debug('FN:CreatePolicyTagsV1_execute policyTagsTable_insert_sql:{}'.format(sql))
                         local_id = self.insert_exec(conn, sql, return_insert_id=True)
                         if tag_obj and 'sub_tags' in tag:
                             parent_tag = tag_obj.name
@@ -138,38 +141,14 @@ class CreatePolicyTagsV1(baseTask, DbBase):
                                 tag['sub_tags'][i]['parent_tag'] = parent_tag
                                 tag['sub_tags'][i]['parent_local_id'] = local_id
                             new_policy_tags_list.extend(tag['sub_tags'])
+
                     policy_tags_list = new_policy_tags_list
-                # # print('new_policy_tags_list:', policy_tags_list)
+                
+                logger.debug('FN:CreatePolicyTagsV1_execute new_policy_tags_list:{}'.format(policy_tags_list))
                 return 'create successfully.'
 
-
-
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
-            # print(traceback.format_exc())
+            logger.error("FN:CreatePolicyTagsV1_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
         finally:
             conn.close()
-
-
-if __name__ == '__main__':
-    x = CreatePolicyTagsV1({"porject_id": 'principal-yen-328302',
-                            "policy_location": 'us',
-                            "taxonomy_display_name": 'PII Data Access1',
-                            "policy_tags_list": [
-                                {'display_name': 'p1', 'description': '', 'sub_tags': [
-                                    {'display_name': 'p1_1', 'description': '', 'sub_tags': []},
-                                    {'display_name': 'p1_2', 'description': ''},
-                                ]},
-                                {'display_name': 'p2', 'description': '', 'sub_tags': [
-                                    {'display_name': 'p2_1', 'description': '', 'sub_tags': [
-                                        {'display_name': 'p2_1_1', 'description': ''}
-                                    ]}
-                                ]},
-                                {'display_name': 'p3', 'description': '', 'sub_tags': []},
-                            ]
-                            })
-    x.execute()
-
-    # get policy api

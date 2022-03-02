@@ -6,14 +6,16 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.dashboard_singleton import dashboard_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.dashboard.db_dashboard_parameter import dashboardApiPara
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class interfaceOptions(Resource):
     # @api_version
@@ -37,10 +39,12 @@ class interfaceOptions(Resource):
             except:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'Token error or expired, please login again.'
-            # # print(data)
+                logger.error('FN:interfaceOptions_get error_data:{}'.format(data))
+                logger.error("FN:interfaceOptions_get error:{}".format(traceback.format_exc()))
+
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceOptions_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
