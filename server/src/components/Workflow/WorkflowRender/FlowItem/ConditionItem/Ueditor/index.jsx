@@ -92,7 +92,6 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
       }
       tmp += "\n";
     });
-    console.log(tmp);
     return tmp;
   };
   useEffect(() => {
@@ -281,9 +280,6 @@ const Default = ({ value, options, onChange }) => {
     });
     return initialContent;
   }, [value, options]);
-
-  console.log(displayValue);
-  console.log(value);
 
   return (
     <>

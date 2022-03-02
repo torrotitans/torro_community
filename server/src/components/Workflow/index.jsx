@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import Scrollbar from "react-perfect-scrollbar";
+import { useNavigate } from "react-router-dom";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
@@ -11,17 +12,22 @@ import TextEdit from "@basics/TextEdit";
 import { DragDropContext } from "react-beautiful-dnd";
 import CallModal from "@basics/CallModal";
 import { getWorkflowData, saveWorkflowData, getFormItem } from "@lib/api";
+import { useGlobalContext } from "src/context";
 import { SUCCESS } from "src/lib/data/callStatus";
 import { sendNotify } from "src/utils/systerm-error";
 import WorkflowRender from "./WorkflowRender";
 import WorkflowDesginPanel from "./WorkflowDesginPanel";
 
 const Workflow = ({ flowId, droppableItems }) => {
+  const { authContext } = useGlobalContext();
+  const navigate = useNavigate();
+
   const [workflowData, setWorkflowData] = useState(null);
   const [formFields, setFormFields] = useState([]);
   const [flowLoading, setFlowLoading] = useState(true);
   const [editIndex, setEditIndex] = useState(null);
   const [conditionItems, setConditionItems] = useState([]);
+  const [submitData, setSubmitData] = useState();
   const [modalData, setModalData] = useState({
     open: false,
     status: 0,
@@ -52,7 +58,55 @@ const Workflow = ({ flowId, droppableItems }) => {
     return checkData;
   }, []);
 
-  const submitHandle = () => {
+  const saveWorkflow = useCallback(() => {
+    setModalData({
+      ...modalData,
+      status: 0,
+      content: "Submitting. and appreciate your patience.",
+      cb: null,
+    });
+    saveWorkflowData(submitData)
+      .then((res) => {
+        if (res.code === SUCCESS) {
+          setModalData({
+            open: true,
+            status: 2,
+            content: "workflow has been saved",
+            cb: () => {
+              navigate(`/app/workflowManagement`);
+            },
+          });
+        }
+      })
+      .catch((e) => {
+        setModalData({
+          open: true,
+          status: 3,
+          content: e.message,
+        });
+      });
+  }, [submitData]);
+
+  const buttonClickHandle = useCallback(() => {
+    if (modalData.cb) {
+      modalData.cb();
+      return;
+    }
+    switch (modalData.status) {
+      case 0:
+      case 2:
+        setModalData({ ...modalData, open: false, cb: null });
+        break;
+      case 1:
+      case 3:
+        saveWorkflow(submitData);
+        break;
+      default:
+        break;
+    }
+  }, [modalData, submitData]);
+
+  const submitHandle = useCallback(() => {
     let checked = validateCheck(workflowData);
     if (!checked.validate) {
       sendNotify({
@@ -66,53 +120,12 @@ const Workflow = ({ flowId, droppableItems }) => {
       open: true,
       status: 1,
       content: "Do you confirm to save the workflow?",
-      cb: () => {
-        setModalData({
-          ...modalData,
-          status: 0,
-          content: "Submitting. and appreciate your patience.",
-          cb: null,
-        });
-        saveWorkflowData({
-          ...workflowData,
-          create_by: "45120695",
-          modify_by: "45120695",
-        })
-          .then((res) => {
-            if (res.code === SUCCESS) {
-              setModalData({
-                open: true,
-                status: 2,
-                content: "workflow has been saved",
-                cb: () => {
-                  setModalData({
-                    open: false,
-                    status: 2,
-                    content: "workflow has been saved",
-                    cb: null,
-                  });
-                },
-              });
-            }
-          })
-          .catch((e) => {
-            setModalData({
-              open: true,
-              status: 3,
-              content: e.message,
-              cb: () => {
-                setModalData({
-                  open: false,
-                  content: e.message,
-                  cb: null,
-                  status: 3,
-                });
-              },
-            });
-          });
-      },
     });
-  };
+    setSubmitData({
+      ...workflowData,
+      modify_by: authContext.userId,
+    });
+  }, [modalData, validateCheck, workflowData, authContext.userId, navigate]);
 
   const flow = useMemo(() => {
     return workflowData ? workflowData.stages : [];
@@ -158,8 +171,6 @@ const Workflow = ({ flowId, droppableItems }) => {
       return { type: "item", data: tmpList };
     }
   }, [flowIdList, editFlow, droppableItems, conditionItems]);
-
-  console.log(dropOptions);
 
   const dropOptionMap = useMemo(() => {
     let mapData = {};
@@ -347,7 +358,7 @@ const Workflow = ({ flowId, droppableItems }) => {
         open={modalData.open}
         content={modalData.content}
         status={modalData.status}
-        buttonClickHandle={modalData.cb}
+        buttonClickHandle={buttonClickHandle}
         handleClose={() => {
           setModalData({ ...modalData, open: false, cb: null });
         }}
