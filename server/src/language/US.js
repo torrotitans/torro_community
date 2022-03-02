@@ -44,6 +44,7 @@ export default {
   dropwfItem: "Drop workflow item here.",
   checkRequest: "View approval progress",
   confirmRaise: "Do you confirm to raise this request?",
+  confirmSetup: "Do you confirm your torro setting?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
   newRequestSubmit: "New Request is submitted.",
   selectedUc: "Select use case",
@@ -214,7 +215,7 @@ export default {
   org_name: "Organization name",
   des: "Description",
   search_base: "Search base",
-  setup: "SETUP",
+  setup: "Setup",
 
   // app
   dashboard: "Dashboard",

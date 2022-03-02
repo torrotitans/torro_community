@@ -211,7 +211,7 @@ const FormItem = ({
                     {...dataProps}
                     value={value}
                     onChange={(data) => {
-                      changeCb(data);
+                      changeCb && changeCb(data);
                       onChange(data);
                     }}
                     disabled={disabled}
