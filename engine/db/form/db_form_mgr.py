@@ -55,11 +55,12 @@ class DbFormMgr(DbBase):
             table_name = 'formTable'
             fields = 'id,title,fields_num,u_max_id,creator_id,create_time,updated_time,des,hide'
             sql = self.create_select_sql(db_name, table_name, fields, condition)
-            print(sql)
+            logger.debug("FN:DbFormMgr_get_all_base_form {}_sql:{}".format(table_name,sql))
             result = self.execute_fetch_all(db_conn, sql)
             data = response_code.SUCCESS
             data['data'] = result
             return data
+
         except Exception as e:
             logger.error("FN:get_all_base_form error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
@@ -79,6 +80,7 @@ class DbFormMgr(DbBase):
             sql = self.create_select_sql(db_name, 'formTable',
                                          'id,title,fields_num,u_max_id,creator_id,create_time,updated_time,des',
                                          condition=condition)
+            logger.debug("FN:DbFormMgr_get_base_form_by_id formTable_sql:{}".format(sql))
             form_info = self.execute_fetch_one(conn, sql)
             data = response_code.SUCCESS
             data['data'] = form_info
@@ -109,13 +111,14 @@ class DbFormMgr(DbBase):
             # condition = 'workspace_id="%s" and usecase_id="%s" and id="%s"' % (wp_id, uc_id, id)
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'formTable', '*', condition=condition)
-            print(sql)
+            logger.debug("FN:DbFormMgr_get_details_form_by_id formTable_sql:{}".format(sql))
             form_info = self.execute_fetch_one(conn, sql)
             if not form_info:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'cannot find form id: {}'.format(str(id))
                 return data
-            print('form_info:', form_info)
+
+            logger.debug("FN:DbFormMgr_get_details_form_by_id form_info:{}".format(form_info))
             form_info['fieldList'] = json.loads(form_info['fields_list'])
             del form_info['fields_list']
             region_field_info = {}
@@ -125,6 +128,7 @@ class DbFormMgr(DbBase):
                     sql = self.create_select_sql(db_name, 'fieldTable',
                                                  'id,style,label,default_value,required,placeholder,value_num,value_list,edit,des,create_time,updated_time',
                                                  condition=condition)
+                    logger.debug("FN:DbFormMgr_get_details_form_by_id fieldTable_sql:{}".format(sql))
                     field_info = self.execute_fetch_one(conn, sql)
                     if int(field_info['id']) == 1:
                         region_field_info = field_info
@@ -148,11 +152,13 @@ class DbFormMgr(DbBase):
                     sql = self.create_select_sql(db_name, 'dynamicFieldTable',
                                                  'id,style,label,default_value,placeholder,value_num,des,create_time',
                                                  condition=condition)
+                    logger.debug("FN:DbFormMgr_get_details_form_by_id dynamicFieldTable_sql:{}".format(sql))
                     field_info = self.execute_fetch_one(conn, sql)
                     # get dynamicFieldValue
                     condition = "dynamic_field_id='%s'" % dynamic_field_id
                     sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
                                                  'option_label,create_time', condition=condition)
+                    logger.debug("FN:DbFormMgr_get_details_form_by_id dynamicFieldValueTable_sql:{}".format(sql))
                     values_info = self.execute_fetch_all(conn, sql)
                     field_info['options'] = []
                     # print('field_info:', field_info)
@@ -216,7 +222,7 @@ class DbFormMgr(DbBase):
             sql = self.create_select_sql(db_name, 'fieldTable',
                                          'id,u_id,style,label,default_value,required,placeholder,value_num,value_list,edit,des,create_time,updated_time',
                                          condition=condition)
-            # print(sql)
+            logger.debug("FN:DbFormMgr_get_field_template fieldTable_sql:{}".format(sql))
             fields_info = self.execute_fetch_all(conn, sql)
             dynamic_info = []
             region_field_info = {}
@@ -249,6 +255,7 @@ class DbFormMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'dynamicFieldTable',
                                              'id,style,label,default_value,placeholder,value_num,des,create_time',
                                              condition=condition)
+                logger.debug("FN:DbFormMgr_get_field_template dynamicFieldTable_sql:{}".format(sql))
                 dynamic_fields_info = self.execute_fetch_all(conn, sql)
                 for dynamic_field_info in dynamic_fields_info:
                     dynamic_field_id = dynamic_field_info['id']
@@ -280,6 +287,7 @@ class DbFormMgr(DbBase):
             if wp_id != 0:
                 condition = "ID='%s' " % (wp_id)
                 sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
+                logger.debug("FN:DbFormMgr_get_field_template workspaceTable_sql:{}".format(sql))
                 options = []
                 regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
                 # print('region_field_info:', region_field_info)
@@ -351,7 +359,7 @@ class DbFormMgr(DbBase):
                 fields = ('available', 'hide', 'updated_time', 'des')
                 values = (0, 1, update_time, 'deleted')
                 sql = self.create_update_sql(db_name, 'formTable', fields, values, form_condition)
-                # print('formTable update sql', sql)
+                logger.debug("FN:DbFormMgr_delete_form update_formTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
             else:
                 data = response_code.DELETE_DATA_FAIL
@@ -403,6 +411,7 @@ class DbFormMgr(DbBase):
             update_time)
             sql = self.create_insert_sql(db_name, 'formTable', '({})'.format(', '.join(fields)), values)
             # print('form sql:', sql)
+            logger.debug("FN:DbFormMgr_add_new_form insert_formTable_sql:{}".format(sql))
             form_id = self.insert_exec(conn, sql, return_insert_id=True)
             form['id'] = form_id
             data = response_code.SUCCESS
@@ -445,7 +454,7 @@ class DbFormMgr(DbBase):
                 fields = ('available', 'hide', 'updated_time', 'des')
                 values = (0, 1, update_time, 'updated to new form id:{}'.format(str(new_form_id)))
                 sql = self.create_update_sql(db_name, 'formTable', fields, values, form_condition)
-                # print('formTable update sql', sql)
+                logger.debug("FN:DbFormMgr_update_form update_formTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
 
                 # 3.disable all input form and workflow
@@ -455,11 +464,12 @@ class DbFormMgr(DbBase):
                     values = (0, new_form_id)
                     condition = 'form_id=%s' % form_id
                     sql = self.create_update_sql(db_name, 'workflowTable', column, values, condition)
+                    logger.debug("FN:DbFormMgr_update_form update_workflowTable_sql:{}".format(sql))
                     _ = self.updete_exec(conn, sql)
                     # print('workflow sql:', sql)
                     condition = 'form_id=%s and workspace_id="%s"' % (form_id, workspace_id)
                     sql = self.create_select_sql(db_name, 'inputFormIndexTable', 'id', condition)
-                    # print('inputFormIndexTable sql:', sql)
+                    logger.debug("FN:DbFormMgr_update_form inputFormIndexTable_sql:{}".format(sql))
                     # 3.2disable all input form
                     input_form_infos = self.execute_fetch_all(conn, sql)
                     for input_form_info in input_form_infos:
@@ -471,14 +481,14 @@ class DbFormMgr(DbBase):
                         values = (0, 0, account_id, comment, now)
                         approval_condition = "input_form_id='%s' and now_approval=1" % input_form_id
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                        # print('approvalTable update sql:', sql)
+                        logger.debug("FN:DbFormMgr_update_form update_approvalTable_sql:{}".format(sql))
                         _ = self.updete_exec(conn, sql)
                         # update input form status
                         fields = ('form_status', 'updated_time')
                         values = (5, now)
                         update_condition = 'id=%s' % (input_form_id)
                         sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                        # print('inputFormTable update sql: ', sql)
+                        logger.debug("FN:DbFormMgr_update_form update_inputFormTable_sql:{}".format(sql))
                         _ = self.updete_exec(conn, sql)
                     data = response_code.SUCCESS
                     data['data'] = form
@@ -491,7 +501,6 @@ class DbFormMgr(DbBase):
             return data
         except Exception as e:
             logger.error("FN:update_form error:{}".format(traceback.format_exc()))
-            # print(traceback.format_exc())
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -579,7 +588,7 @@ class DbFormMgr(DbBase):
             }
         }
         templateTypeList = form_mgr.get_field_template(0, workspace_id)
-        print('templateTypeList:', templateTypeList['data']['templateTypeList'])
+        logger.debug("FN:DbFormMgr_get_all_fields templateTypeList:{}".format(templateTypeList['data']['templateTypeList']))
         for index, field_info in enumerate(templateTypeList['data']['templateTypeList'][0]['fieldlist']):
             if field_info:
                 field_style = int(field_info['style'])
