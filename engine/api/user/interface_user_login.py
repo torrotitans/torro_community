@@ -4,7 +4,6 @@
 import traceback
 from flask import request
 from flask_restful import Resource
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process

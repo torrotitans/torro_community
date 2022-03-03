@@ -8,7 +8,6 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.workspace_singleton import workspace_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -18,7 +17,12 @@ from db.workspace.db_workspace_parameter import workspaceApiPara
 from utils.auth_helper import Auth
 from api.login.interface_login import interfaceLogin
 import os
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
+
 class interfaceWorkspaceSetting(Resource):
 
     @login_required
@@ -35,8 +39,8 @@ class interfaceWorkspaceSetting(Resource):
                 # print('workspace_id:', workspace_id)
             except:
                 data = response_code.GET_DATA_FAIL
-                # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
+                logger.error("FN:interfaceWorkspaceSetting_get error:{}".format(traceback.format_exc()))
                 return response_result_process(data, xml=xml)
             # ad_group_list = ['Engineer@torro.ai', 'ws_owner_group']
             data = workspace_singleton.get_workspace_info_by_ad_group(account_id)
@@ -45,10 +49,12 @@ class interfaceWorkspaceSetting(Resource):
                 data['data'] = req.verify_all_param(response_data, workspaceApiPara.getWorkspace_GET_response)
             # # print(data)
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceWorkspaceSetting_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
     @login_required
     def post(self,):
         xml = request.args.get('format')
@@ -107,7 +113,7 @@ class interfaceWorkspaceSetting(Resource):
             # # print(data)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceWorkspaceSetting_post error:{}".format(traceback.format_exc()))
             # print(traceback.format_exc())
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
@@ -142,10 +148,12 @@ class interfaceWorkspaceSetting(Resource):
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceWorkspaceSetting_put error:{}".format(traceback.format_exc()))
             # # print(traceback.format_exc())
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
+
+
     @login_required
     # delete the workspace info
     def delete(self,):
@@ -190,11 +198,10 @@ class interfaceWorkspaceSetting(Resource):
 
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, workspaceApiPara.updateWorkspace_POST_response)
-            # # print(data)
+                
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(traceback.format_exc())
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceWorkspaceSetting_delete error:{}".format(traceback.format_exc()))
             error_data = response_code.DELETE_DATA_FAIL
             return response_result_process(error_data, xml=xml)
