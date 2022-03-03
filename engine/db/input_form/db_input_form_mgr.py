@@ -325,7 +325,7 @@ class DbInputFormMgr(DbBase):
                     logger.debug("FN:DbInputFormMgr_get_input_form_data inputStageTable_sql:{}".format(sql))
                     stage_info = self.execute_fetch_one(db_conn, sql)
                     stage_info['condition_value_dict'] = json.loads(stage_info['condition_value_dict'])
-                    logger.debug("FN:DbInputFormMgr_get_input_form_data field_info:{}".format(field_info))
+                    logger.debug("FN:DbInputFormMgr_get_input_form_data stage_info:{}".format(stage_info))
                     input_form_info['workflow_stages_list'].append(stage_info)
 
                 del input_form_info['workflow_stages_id_list']
