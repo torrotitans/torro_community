@@ -77,25 +77,20 @@ const FormManagement = ({ tagTemplate }) => {
     apiCall(postData)
       .then((res) => {
         if (res.code === SUCCESS) {
-          if (formData.id === "ADD") {
-            setModalData({
-              open: true,
-              status: 2,
-              content: "New form is submitted.",
-              successCb: () => {
-                navigate(`/app/requestDetail?id=${res.data.id}`);
-              },
-            });
-          } else {
-            setModalData({
-              ...modalData,
-              status: 2,
-              content: "This form is submitted.",
-              successCb: () => {
-                navigate(`/app/requestDetail?id=${res.data.id}`);
-              },
-            });
-          }
+          setModalData({
+            ...modalData,
+            status: 2,
+            content:
+              formData.id === "ADD"
+                ? "New form is submitted."
+                : "This form is submitted.",
+            successCb: () => {
+              navigate(`/app/requestDetail?id=${res.data.id}`);
+            },
+            cb: () => {
+              navigate(`/app/dashboard`);
+            },
+          });
         }
       })
       .catch(() => {

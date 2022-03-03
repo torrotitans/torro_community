@@ -42,7 +42,7 @@ export default {
   modifyColumnTag: "Modify column tags",
   CLEAR: "CLEAR",
   dropwfItem: "Drop workflow item here.",
-  checkRequest: "View approval progress",
+  checkRequest: "View request detail",
   confirmRaise: "Do you confirm to raise this request?",
   confirmSetup: "Do you confirm your torro setting?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
