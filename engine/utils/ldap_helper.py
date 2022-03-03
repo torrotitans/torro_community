@@ -351,7 +351,7 @@ class Ldap():
                 # logger.debug('FN:get_ad_group_member entry:{}'.format(entry))
                 # attr_dict = entry['attributes']
                 member_list = Ldap.__get_ad_group_member(entry, conn)
-                logger.debug('FN:get_ad_group_member member_list:{}'.format(member_list))
+                logger.debug('FN:get_ad_group_member ad_group_name:{} member_list:{}'.format(ad_group_name, member_list))
                 return member_list, ad_group_mail
             else:
                 return None, None
