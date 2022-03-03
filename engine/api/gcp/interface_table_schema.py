@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*
 
 from core.gcp_singleton import gcpSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from flask import request
 from common.common_request_process import req
@@ -13,6 +12,10 @@ from common.common_login_helper import login_required
 from db.gcp.db_gcp_parameter import gcpApiPara
 from flask_restful import Resource
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceTableSchema(Resource):
 
     @login_required
@@ -116,7 +119,7 @@ class interfaceTableSchema(Resource):
             data = gcpSingleton_singleton.get_table_schema(request_data, user_key, workspace_id)
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceTableSchema_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return error_data
 
@@ -181,7 +184,7 @@ class interfaceTableSchema(Resource):
             data = gcpSingleton_singleton.list_table(request_data, user_key, workspace_id)
             return data
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceTableSchema_put error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return error_data
 

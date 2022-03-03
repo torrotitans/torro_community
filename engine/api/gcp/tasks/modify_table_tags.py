@@ -5,9 +5,12 @@ import json
 from db.connection_pool import MysqlConn
 from config import configuration
 from db.base import DbBase
-from utils.log_helper import lg
 import datetime
 from common.common_input_form_status import status
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class ModifyTableTags(baseTask, DbBase):
     api_type = 'gcp'
@@ -30,9 +33,10 @@ class ModifyTableTags(baseTask, DbBase):
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         conn = MysqlConn()
+        
         try:
             db_name = configuration.get_database_name()
-            print('self.stage_dict:', self.stage_dict)
+            logger.debug("FN:ModifyTableTags_execute stage_dict:{}".format(self.stage_dict))
             missing_set = set()
             for key in self.arguments:
                 # if key == 'bucket_cmek' or key == 'bucket_class' or key == 'bucket_labels':
@@ -79,7 +83,7 @@ class ModifyTableTags(baseTask, DbBase):
                     table_tag = self.__get_tags(data, tag_template_form_id, db_name, conn)
 
                     table_tag = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
-                    print(f"Created tag: {table_tag.name}")
+                    logger.debug("FN:ModifyTableTags_execute table_tag_name:{}".format(table_tag.name))
 
                 for field in fields:
                     if 'tags' in  field:
@@ -92,25 +96,28 @@ class ModifyTableTags(baseTask, DbBase):
 
                 condition = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (workspace_id, project_id, location, dataset_id, table_id)
                 sql = self.create_select_sql(db_name, 'dataOnboardTable', '*', condition=condition)
+                logger.debug("FN:ModifyTableTags_execute dataOnboardTable_sql:{}".format(sql))
                 data_info = self.execute_fetch_one(conn, sql)
                 now = str(datetime.datetime.today())
+
                 if data_info:
                     column_fields = ('workspace_id', 'data_owner', 'project_id', 'location', 'dataset_id', 'table_id', 'fields', 'table_tags', 'create_time')
                     values = (workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields), json.dumps(table_tags), now)
                     sql = self.create_update_sql(db_name, 'dataOnboardTable', column_fields, values, condition)
-                    print('ModifyTableTags update_sql dataOnboardTable:', sql)
+                    logger.debug("FN:ModifyTableTags_execute update_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
+
                 else:
                     column_fields = ('input_form_id', 'workspace_id', 'data_owner', 'project_id', 'location', 'dataset_id', 'table_id', 'fields', 'table_tags', 'create_time')
                     values = (input_form_id, workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields), json.dumps(table_tags), now)
                     sql = self.create_insert_sql(db_name, 'dataOnboardTable', '({})'.format(', '.join(column_fields)), values)
-                    print('ModifyTableTags insert_sql dataOnboardTable:', sql)
+                    logger.debug("FN:ModifyTableTags_execute insert_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.insert_exec(conn, sql)
 
             return 'update successfully'
+
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:ModifyTableTags_execute error:{}".format(traceback.format_exc()))
 
         finally:
             conn.close()
@@ -168,14 +175,3 @@ class ModifyTableTags(baseTask, DbBase):
             else:
                 continue
         return tag
-
-if __name__ == '__main__':
-    x = ModifyTableTags({
-        "porject_id": 'principal-yen-328302',
-        "dataset_name": 'austin_311',
-        "table_name": '311_service_request',
-        'column_policy_tags_dict': {
-            'unique_key': 'projects/principal-yen-328302/locations/us/taxonomies/3180233960818548921/policyTags/4851542792588671512'}
-    })
-    x.execute()
-    # print(x)

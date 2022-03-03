@@ -5,7 +5,6 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.workflow_singleton import workflowSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -13,6 +12,11 @@ from common.common_request_process import req
 from db.workflow.db_stages_parameter import stageBase
 from db.workflow.db_workflow_parameter import workflowApiPara
 from common.common_login_helper import login_required
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceEditWorkflow(Resource):
 
     # add
@@ -43,8 +47,7 @@ class interfaceEditWorkflow(Resource):
                 data['data'] = req.verify_all_param(response_data, workflowApiPara.postWorkflowData_POST_response)
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceEditWorkflow_post error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -73,7 +76,7 @@ class interfaceEditWorkflow(Resource):
 
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceEditWorkflow_delete error:{}".format(traceback.format_exc()))
             error_data = response_code.DELETE_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -93,9 +96,10 @@ class interfaceEditWorkflow(Resource):
             #     return response_result_process(data, xml=xml)
             request_data = req.verify_all_param(request_data, workflowApiPara.postWorkflowData_PULL_request)
             for index, stage in enumerate(request_data['stages']):
-                print("request_data['stages'][index] 1111:", stage)
+                logger.debug("FN:interfaceEditWorkflow_put request_data_each_stage:{}".format(stage))
                 request_data['stages'][index] = stageBase.verify_all_param(req.verify_all_param, stage)
-            print("request_data['stages'][index] 2222:", request_data['stages'])
+            
+            logger.debug("FN:interfaceEditWorkflow_put request_data_all_stage:{}".format(stage))
             # request_data = stageBase.verify_all_param(req.verify_all_param, request_data)
             workflow = request_data
             data = workflowSingleton_singleton.update_workflow(workflow)
@@ -106,7 +110,7 @@ class interfaceEditWorkflow(Resource):
 
             return response_result_process(data, xml=xml)
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceEditWorkflow_put error:{}".format(traceback.format_exc()))
             # print(traceback.format_exc())
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)

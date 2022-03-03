@@ -10,9 +10,12 @@ from common.common_response_process import response_result_process, DateEncoder
 from db.user.db_user_parameter import userApiPara
 from utils.api_version_verify import api_version
 from utils.auth_helper import Auth
-from utils.log_helper import lg
 from utils.status_code import response_code
 import json
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceOffine(Resource):
 
@@ -31,7 +34,7 @@ class interfaceOffine(Resource):
 
             login_name = request_data.get('login_name')
             # # print('login: ', login_name, login_password)
-            # 对登录情况进行验证
+            # AuthN Login
             success_flag = Auth.get_offline_password(login_name)
             if success_flag:
                 data = response_code.SUCCESS
@@ -39,7 +42,8 @@ class interfaceOffine(Resource):
             else:
                 data = response_code.GET_DATA_FAIL
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceOffine_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)

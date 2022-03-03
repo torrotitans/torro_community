@@ -3,7 +3,6 @@ from api.gcp.tasks.baseTask import baseTask
 import google
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
@@ -17,6 +16,9 @@ from config import config
 from core.form_singleton import formSingleton_singleton
 from core.workflow_singleton import workflowSingleton_singleton
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -33,7 +35,7 @@ class DeleteTagTemplate(baseTask, DbBase):
 
     def __init__(self, stage_dict):
         super(DeleteTagTemplate, self).__init__(stage_dict)
-        # # print('self.stage_dict:', self.stage_dict)
+        logger.debug('FN:DeleteTagTemplate_init stage_dict:{}'.format(self.stage_dict))
 
         self.full_resource_name = None
         self.target_project = Config.DEFAULT_PROJECT
@@ -50,7 +52,7 @@ class DeleteTagTemplate(baseTask, DbBase):
                 check_key = self.stage_dict.get(key, 'NotFound')
                 if check_key == 'NotFound':
                     missing_set.add(key)
-                # # print('{}: {}'.format(key, self.stage_dict[key]))
+
             if len(missing_set) != 0:
                 return 'Missing parameters: {}'.format(', '.join(missing_set))
             else:
@@ -81,14 +83,14 @@ class DeleteTagTemplate(baseTask, DbBase):
 
         except HttpError as e:
             return (json.loads(e.content))
-        except Exception as e:
-            lg.error(traceback.format_exc())
 
-            # print(traceback.format_exc())
+        except Exception as e:
+            logger.error("FN:DeleteTagTemplate_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
+
         finally:
             conn.close()
-            # pass
+
     def __delete_tag_template_form(self, ):
 
         # create form
@@ -96,61 +98,10 @@ class DeleteTagTemplate(baseTask, DbBase):
         form = {'id': form_id}
 
         data = formSingleton_singleton.delete_form(form)
-        print('*tags table data:', data)
+        logger.debug('FN:DeleteTagTemplate__delete_tag_template_form tags_table_data:{}'.format(data))
+        
         if data['code'] == 200:
             return 'Delete successfully.'
         else:
             return data['msg']
 
-
-    # def __create_tag_template_form(self, workspace_id):
-    #
-    #     # create form
-    #     form_name = self.stage_dict['tag_template_display_name']
-    #     description = self.stage_dict['description']
-    #     field_list = self.stage_dict['field_list']
-    #     form = {'title': form_name, 'des': description, 'fieldList': field_list}
-    #     # print('form:', form)
-    #     data = formSingleton_singleton.add_new_form(form, workspace_id)
-    #     print('*tags table data:', data)
-    #     if data['code'] == 200:
-    #         tag_tempalte_form_id = data['data']['id']
-    #
-    #
-    #     else:
-    #         tag_tempalte_form_id = None
-    #
-    #     return tag_tempalte_form_id
-    #
-    # def __create_tag_template_workflow(self, form_id, creator_id):
-    #     workflow = {'form_id': form_id, 'workflow_name': 'default workflow', 'stages': [
-    #         {"apiTaskName": "", "condition": [], "flowType": "Trigger", "id": 100, "label": "Form | data tags188"},
-    #         {"apiTaskName": "", "condition": [{"id": 1, "label": "workspace owner approval", "style": 6, "value": ""}],
-    #          "flowType": "Approval", "id": 101, "label": "Approval Process"},
-    #         {"apiTaskName": "system_create_tag", "condition": [], "flowType": "System", "id": 14,
-    #          "label": "Create Tags"}],
-    #                 'creator_id': creator_id, 'field_id_list': []}
-    #     workflowSingleton_singleton.add_new_workflow(workflow)
-    #
-    # def __get_tag_templates(self, tag_template_name, location, project, service):
-    #
-    #     try:
-    #         tag_template = service.projects().locations().tagTemplates().get(
-    #             name='projects/{project}/locations/{location}/tagTemplates/{tagtemplate}'.format(
-    #                 project=project, location=location, tagtemplate=tag_template_name),
-    #         ).execute()
-    #
-    #         return tag_template
-    #
-    #     except HttpError as e:
-    #         return (json.loads(e.content))
-    #     except Exception as e:
-    #         return {'error': {'code': 500, 'message': str(e), 'status': 'ERROR'}}
-
-
-if __name__ == '__main__':
-    x = DeleteTagTemplate({"tag_template_form_id": 394,
-                           })
-    x.execute()
-
-    # get policy api

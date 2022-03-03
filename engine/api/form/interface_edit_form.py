@@ -6,7 +6,6 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.form_singleton import formSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -14,6 +13,11 @@ from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.form.db_form_parameter import formApiPara
 from core.input_form_singleton import input_form_singleton
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 
 class interfaceEditForm(Resource):
 
@@ -40,9 +44,11 @@ class interfaceEditForm(Resource):
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
-                # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
+                logger.error("FN:interfaceEditForm_post error_data:{}".format(data))
+                logger.error("FN:interfaceEditForm_post error:{}".format(traceback.format_exc()))
                 return response_result_process(data, xml=xml)
+
             if 'tag_template' in request_data:
                 form_id = 104
             else:
@@ -72,9 +78,11 @@ class interfaceEditForm(Resource):
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, formApiPara.postFormData_POST_response)
+
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceEditForm_post error:{}".format(traceback.format_exc()))
             # print(traceback.format_exc())
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
@@ -98,9 +106,12 @@ class interfaceEditForm(Resource):
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
-                # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
+                logger.error("FN:interfaceEditForm_delete error_data:{}".format(data))
+                logger.error("FN:interfaceEditForm_delete error:{}".format(traceback.format_exc()))
+
                 return response_result_process(data, xml=xml)
+
             if 'tag_template' in request_data:
                 form_id = 106
             else:
@@ -131,8 +142,9 @@ class interfaceEditForm(Resource):
                 data['data'] = req.verify_all_param(response_data, formApiPara.postFormData_DELETE_response)
 
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceEditForm_delete error:{}".format(traceback.format_exc()))
             error_data = response_code.DELETE_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -157,9 +169,11 @@ class interfaceEditForm(Resource):
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
-                # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
+                logger.error("FN:interfaceEditForm_put error_data:{}".format(data))
+                logger.error("FN:interfaceEditForm_put error:{}".format(traceback.format_exc()))
                 return response_result_process(data, xml=xml)
+
             if 'tag_template' in request_data:
                 form_id = 105
             else:
@@ -195,8 +209,8 @@ class interfaceEditForm(Resource):
                 data['data'] = req.verify_all_param(response_data, formApiPara.postFormData_PULL_response)
 
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceEditForm_put error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
