@@ -40,17 +40,18 @@ class interfaceInputFormDetails(Resource):
                 logger.debug("FN:interfaceInputFormDetails_post user_key:{} account_id:{} \
                     input_form_id:{} approver_view:{}".format(user_key,account_id,input_form_id,approver_view))
                 
-                logger.debug("FN:interfaceInputFormDetails_post data:{}".format(data))
                 data = input_form_singleton.get_input_form_data(account_id, input_form_id, approver_view)
                 if data['code'] == 200:
                     response_data = data['data']
                     data['data'] = req.verify_all_param(response_data, dashboardApiPara.get_input_form_data_POST_response)
 
                 logger.debug("FN:interfaceInputFormDetails_post data:{}".format(data))
+                
             except:
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'Token error or expired, please login again.'
                 logger.error("FN:interfaceInputFormDetails_post data_error:{}".format(data))
+                logger.error("FN:interfaceInputFormDetails_post error:{}".format(traceback.format_exc()))
 
             return response_result_process(data, xml=xml)
 
