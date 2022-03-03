@@ -49,18 +49,19 @@ class Smtp(object):
             if self.is_tls is True or self.is_tls == 1:
                 smtpObj.starttls()
             smtpObj.login(self.mail_user, self.mail_pass)
+            logger.debug("FN:Smtp_send_email sender:{} receivers:{} message:{}".format(sender, receivers, message.as_string()))
             smtpObj.sendmail(sender, receivers, message.as_string())
             return True
         except smtplib.SMTPException:
-            logger.error("FN:send_email error:{}".format(traceback.format_exc()))
+            logger.error("FN:Smtp_send_email error:{}".format(traceback.format_exc()))
             return False
 
     @staticmethod
     def check_email_pwd(mail_host, mail_user, mail_pass, mail_port, mail_tls):
         try:
-            logger.debug("FN:check_email_pwd mail_host:{} mail_user:{} mail_port:{} mail_tls:{}".format(mail_host, mail_user, mail_port, mail_tls))
+            logger.debug("FN:Smtp_check_email_pwd mail_host:{} mail_user:{} mail_port:{} mail_tls:{}".format(mail_host, mail_user, mail_port, mail_tls))
             smtpObj = smtplib.SMTP()
-            smtpObj.connect(mail_host, mail_port)  # 25 为 SMTP 端口号
+            smtpObj.connect(mail_host, mail_port)
             smtpObj.ehlo()
             if mail_tls == 1:
                 smtpObj.starttls()
@@ -71,17 +72,18 @@ class Smtp(object):
 
             smtpObj.login(mail_user, mail_pass)
             # smtpObj.sendmail(sender, receivers, message.as_string())
-            # print("邮件发送成功")
+            logger.debug("FN:Smtp_check_email_pwd check_success:True")
+
             return True
         except smtplib.SMTPException:
-            logger.error("FN:check_email_pwd error:{}".format(traceback.format_exc()))
+            logger.error("FN:Smtp_check_email_pwd error:{}".format(traceback.format_exc()))
             return False
         
 def notify_approvers(input_form_id, approvers, text=None):
     approvers = list(set(approvers))
-    logger.info("FN:notify_approvers input_form_id:{} approvers:{}".format(input_form_id, approvers))
+    logger.info("FN:Smtp_notify_approvers input_form_id:{} approvers:{}".format(input_form_id, approvers))
     smtp = Smtp()
-    logger.debug("FN:notify_approvers mail_host:{} mail_user:{} mail_tls:{}".format(smtp.mail_host,smtp.mail_user,smtp.is_tls))
+    logger.debug("FN:Smtp_notify_approvers mail_host:{} mail_user:{} mail_tls:{}".format(smtp.mail_host,smtp.mail_user,smtp.is_tls))
     # return response_code.SUCCESS
     
     # Change the subject line for your company specific line
@@ -90,9 +92,9 @@ def notify_approvers(input_form_id, approvers, text=None):
         text = 'The waiting for approval form id is: %s' % input_form_id
         text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
 
-    logger.debug("FN:notify_approvers subject:{} body:{} receivers:".format(subject, text, approvers))
+    logger.debug("FN:Smtp_notify_approvers subject:{} body:{} receivers:".format(subject, text, approvers))
     smtp.send_email(subject, text, receivers=approvers)
     data = response_code.SUCCESS
-    logger.debug("FN:notify_approvers email_sent:True")
+    logger.debug("FN:Smtp_notify_approvers email_sent:True")
     
     return data
