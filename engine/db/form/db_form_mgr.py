@@ -640,6 +640,7 @@ class DbFormMgr(DbBase):
     def __get_dynamic_field_values(self, field_info, pass_dynamic_field_id, wp_id, db_name, conn):
 
         dynamic_field_id = pass_dynamic_field_id
+        dynamic_field_id = str(dynamic_field_id).replace('d', '')
         # check if it is point field
         if wp_id != 0:
             condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
