@@ -673,7 +673,10 @@ class DbWorkspaceMgr(DbBase):
 
             # get usecase resource
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
-            sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
+            relations = [
+                {"table_name": "usecaseTable", "join_condition": "usecaseTable.id=usecaseResourceTable.USECASE_ID"}]
+            sql = self.create_get_relation_sql(db_name, 'usecaseResourceTable', 'usecaseResourceTable.*, usecaseTable.USECASE_NAME',
+                                               relations=relations, condition=condition)
             logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id usecaseResourceTable_sql:{}".format(sql))
             return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
