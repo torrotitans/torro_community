@@ -12,7 +12,10 @@ from config import configuration
 from utils.ldap_helper import Ldap
 from db.user.db_user_mgr import user_mgr
 import json
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class DbWorkspaceMgr(DbBase):
     """
@@ -52,7 +55,7 @@ class DbWorkspaceMgr(DbBase):
                 values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
 
                 sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition=condition)
-                # print('workspaceTable sql:', sql)
+                logger.debug("FN:DbWorkspaceMgr__set_workspace workspaceTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
 
                 # update group info
@@ -61,15 +64,16 @@ class DbWorkspaceMgr(DbBase):
                     role_list = list(group_dict[ad_group_name])
                     label_list = list(group_label[ad_group_name])
                     select_condition = "GROUP_MAIL='%s' " % ad_group_name
-                    select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
-                    ad_group_info = self.execute_fetch_one(conn, select_table_sql)
+                    sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace adgroupTable_sql:{}".format(sql))
+                    ad_group_info = self.execute_fetch_one(conn, sql)
                     if ad_group_info:
                         group_id = ad_group_info['ID']
                     else:
                         values = (ad_group_name, create_time, des)
                         sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(ad_group_fields)),
                                                      values)
-                        # print('adgroupTable sql:', sql)
+                        logger.debug("FN:DbWorkspaceMgr__set_workspace insert_adgroupTable_sql:{}".format(sql))
                         group_id = self.insert_exec(conn, sql, return_insert_id=True)
 
                     # insert workspace_to_adgroupTable
@@ -78,13 +82,14 @@ class DbWorkspaceMgr(DbBase):
                     sql = self.create_insert_sql(db_name, 'workspace_to_adgroupTable',
                                                  '({})'.format(', '.join(w2a_fields)),
                                                  values)
-                    # print('workspace_to_adgroupTable sql:', sql)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace insert_workspace_to_adgroupTable_sql:{}".format(sql))
                     self.insert_exec(conn, sql, return_insert_id=True)
 
                 # update system fields
                 system_id_dict = {}
                 condition = "id=%s and workspace_id='%s'" % ('1', workspace_id)
                 sql = self.create_select_sql(db_name, 'fieldTable', '*', condition)
+                logger.debug("FN:DbWorkspaceMgr__set_workspace fieldTable_sql:{}".format(sql))
                 region_country_info = self.execute_fetch_one(conn, sql)
                 if len(region_country_info) == 0:
                     field_fields = ('id', 'workspace_id', 'u_id', 'style', 'label', 'default_value', 'placeholder',
@@ -92,7 +97,7 @@ class DbWorkspaceMgr(DbBase):
                     values = ('1', workspace_id, '0', '2', 'Region / Country', '', '', 0,
                               '[]', '0', des, create_time, create_time)
                     sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)), values)
-                    # print('fieldTable sql:', sql)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
                     self.insert_exec(conn, sql, return_insert_id=True)
                 system_id_dict['s1'] = 's1'
 
@@ -116,9 +121,10 @@ class DbWorkspaceMgr(DbBase):
                         values = (u_id, system_style, label, default_value, placeholder, value_num,
                                   json.dumps(value_list), edit, des, create_time, create_time)
                         sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
-                        # print('fieldTable sql:', sql)
+                        logger.debug("FN:DbWorkspaceMgr__set_workspace update_fieldTable_sql:{}".format(sql))
                         _ = self.updete_exec(conn, sql)
                     sql = self.create_select_sql(db_name, 'fieldTable', '*', condition=condition)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace fieldTable_sql:{}".format(sql))
                     field_infos = self.execute_fetch_all(conn, sql)
                     for field_info in field_infos:
                         system_id_dict[field_info['id']] = 's' + str(field_info['id'])
@@ -129,7 +135,7 @@ class DbWorkspaceMgr(DbBase):
                 values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
 
                 sql = self.create_insert_sql(db_name, 'workspaceTable', '({})'.format(', '.join(fields)), values)
-                # print('workspaceTable sql:', sql)
+                logger.debug("FN:DbWorkspaceMgr__set_workspace insert_workspaceTable_sql:{}".format(sql))
                 workspace_id = self.insert_exec(conn, sql, return_insert_id=True)
 
                 # insert group info
@@ -139,6 +145,7 @@ class DbWorkspaceMgr(DbBase):
                     label_list = list(group_label[ad_group_name])
                     select_condition = "GROUP_MAIL='%s' " % ad_group_name
                     select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace adgroupTable_sql:{}".format(sql))
                     ad_group_info = self.execute_fetch_one(conn, select_table_sql)
                     if ad_group_info:
                         group_id = ad_group_info['ID']
@@ -146,7 +153,7 @@ class DbWorkspaceMgr(DbBase):
                         values = (ad_group_name, create_time, des)
                         sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(ad_group_fields)),
                                                      values)
-                        # print('adgroupTable sql:', sql)
+                        logger.debug("FN:DbWorkspaceMgr__set_workspace insert_adgroupTable_sql:{}".format(sql))
                         group_id = self.insert_exec(conn, sql, return_insert_id=True)
                     # insert workspace_to_adgroupTable
                     w2a_fields = ('WORKSPACE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
@@ -154,7 +161,7 @@ class DbWorkspaceMgr(DbBase):
                     sql = self.create_insert_sql(db_name, 'workspace_to_adgroupTable',
                                                  '({})'.format(', '.join(w2a_fields)),
                                                  values)
-                    # print('workspace_to_adgroupTable sql:', sql)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace insert_workspace_to_adgroupTable_sql:{}".format(sql))
                     self.insert_exec(conn, sql, return_insert_id=True)
 
                 # insert system fields
@@ -169,7 +176,7 @@ class DbWorkspaceMgr(DbBase):
                     values = ('1', workspace_id, '0', '2', 'Region / Country', '', '', 0,
                               '[]', '0', des, create_time, create_time)
                     sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)), values)
-                    # print('fieldTable sql:', sql)
+                    logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
                     self.insert_exec(conn, sql, return_insert_id=True)
                 system_id_dict['s1'] = 's1'
 
@@ -193,7 +200,7 @@ class DbWorkspaceMgr(DbBase):
                                   json.dumps(value_list), edit, des, create_time, create_time)
                         sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)),
                                                      values)
-                        # print('fieldTable sql:', sql)
+                        logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
                         system_id = self.insert_exec(conn, sql, return_insert_id=True)
                         system_id_dict[system_item['id']] = 's' + str(system_id)
             workspace_info['workspace_id'] = workspace_id
@@ -202,9 +209,7 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace_info
             return data
         except Exception as e:
-            lg.error(e)
-            import traceback
-            # print(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr__set_workspace error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -216,7 +221,7 @@ class DbWorkspaceMgr(DbBase):
         delete_resource = []
         create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for resource_info in resource_list:
-            # print('resource_info:', resource_info)
+            logger.debug("FN:DbWorkspaceMgr__set_team_resource resource_info:{}".format(resource_info))
             if 'resource' not in resource_info or len(resource_info['resource']) < 4:
                 continue
             else:
@@ -241,13 +246,13 @@ class DbWorkspaceMgr(DbBase):
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
-            print('usecaseResourceTable insert_resource:', insert_resource)
+            logger.debug("FN:DbWorkspaceMgr__set_team_resource insert_resource:{}".format(insert_resource))
             # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
             # insert
             for values in insert_resource:
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
-                print('usecaseResourceTable one_sql:', sql)
+                logger.debug("FN:DbWorkspaceMgr__set_team_resource insert_usecaseResourceTable_sql:{}".format(sql))
                 _ = self.insert_exec(conn, sql)
             # update
             for update_record in update_resource:
@@ -255,7 +260,7 @@ class DbWorkspaceMgr(DbBase):
                 values = update_record['values']
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition="ID='%s'" % resource_id)
-                print('usecaseResourceTable update:', sql)
+                logger.debug("FN:DbWorkspaceMgr__set_team_resource update_usecaseResourceTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
             # delete
             condition = "WORKSPACE_ID='%s' and AVAILABLE=1 and ID in ('%s')" % (workspace_id, "', '".join(delete_resource))
@@ -264,9 +269,7 @@ class DbWorkspaceMgr(DbBase):
 
 
         except Exception as e:
-            lg.error(e)
-            import traceback
-            print(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr__set_team_resource error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -282,11 +285,12 @@ class DbWorkspaceMgr(DbBase):
             db_name = configuration.get_database_name()
 
             condition = "workspace_id='%s'" % id
-            delete_table_sql = self.create_delete_sql(db_name, "fieldTable", condition)
-            self.delete_exec(conn, delete_table_sql)
+            sql = self.create_delete_sql(db_name, "fieldTable", condition)
+            logger.debug("FN:DbWorkspaceMgr__delete_system_fields delete_fieldTable_sql:{}".format(sql))
+            self.delete_exec(conn, sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr__delete_system_fields error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -297,11 +301,12 @@ class DbWorkspaceMgr(DbBase):
             db_name = configuration.get_database_name()
 
             condition = "workspace_id='%s'" % id
-            delete_table_sql = self.create_update_sql(db_name, "fieldTable", condition)
-            self.delete_exec(conn, delete_table_sql)
+            sql = self.create_update_sql(db_name, "fieldTable", condition)
+            logger.debug("FN:DbWorkspaceMgr__update_system_fields update_fieldTable_sql:{}".format(sql))
+            self.delete_exec(conn, sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr__update_system_fields error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -320,11 +325,12 @@ class DbWorkspaceMgr(DbBase):
             #     delete_table_sql = self.create_delete_sql(db_name, "adgroupTable", ad_condition)
             #     self.delete_exec(conn, delete_table_sql)
 
-            delete_table_sql = self.create_delete_sql(db_name, "workspace_to_adgroupTable", condition)
-            self.delete_exec(conn, delete_table_sql)
+            sql = self.create_delete_sql(db_name, "workspace_to_adgroupTable", condition)
+            logger.debug("FN:DbWorkspaceMgr__delete_2ad_to_workspace delete_workspace_to_adgroupTable_sql:{}".format(sql))
+            self.delete_exec(conn, sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr__delete_2ad_to_workspace error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -385,7 +391,7 @@ class DbWorkspaceMgr(DbBase):
 
             condition = 'WORKSPACE_NAME="%s"' % workspace_name
             sql = self.create_select_sql(db_name, 'workspaceTable', '*', condition)
-            # print('workspaceTable: ', sql)
+            logger.debug("FN:DbWorkspaceMgr_add_new_workspace_setting workspaceTable_sql:{}".format(sql))
             workspace_infos = self.execute_fetch_all(conn, sql)
             if workspace_infos:
                 data = response_code.ADD_DATA_FAIL
@@ -394,7 +400,7 @@ class DbWorkspaceMgr(DbBase):
 
             workspace_insert = self.__set_workspace(workspace_info)
             team_resource = workspace.get('groupArr', [])
-            print('team_resource:', team_resource)
+            logger.debug("FN:DbWorkspaceMgr_add_new_workspace_setting team_resource:{}".format(team_resource))
             _ = self.__set_team_resource(workspace_insert['data']['workspace_id'], team_resource)
 
             data = response_code.SUCCESS
@@ -402,8 +408,7 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace
             return data
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_add_new_workspace_setting error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -413,7 +418,7 @@ class DbWorkspaceMgr(DbBase):
         conn = MysqlConn()
         try:
             ad_group_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
-            # print('ad_group_list:', ad_group_list)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group ad_group_list:{}".format(ad_group_list))
             db_name = configuration.get_database_name()
 
             # check if the user is org admin
@@ -422,7 +427,7 @@ class DbWorkspaceMgr(DbBase):
                 condition = 'GROUP_MAIL="%s"' % ad_group
                 ad_group_fields = '*'
                 sql = self.create_select_sql(db_name, 'adgroupTable', ad_group_fields, condition=condition)
-                # # print('131232sql', sql)
+                logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group adgroupTable_sql:{}".format(sql))
                 ad_group_info = self.execute_fetch_one(conn, sql)
                 if not ad_group_info:
                     continue
@@ -444,21 +449,21 @@ class DbWorkspaceMgr(DbBase):
                     relations = [{"table_name": "workspace_to_adgroupTable",
                                   "join_condition": "workspace_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
                     sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
-                    # # print(sql)
+                    logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspace_to_adgroupTable_sql:{}".format(sql))
                     wp_ad_info = self.execute_fetch_all(conn, sql)
                     workspace_id_set = workspace_id_set | set([str(wp_ad['WORKSPACE_ID']) for wp_ad in wp_ad_info])
                 if 'None' in workspace_id_set:
                     workspace_id_set.remove('None')
                 if not workspace_id_set:
                     return response_code.GET_DATA_FAIL
-                # # print(workspace_id_set)
+                logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspace_id_set:{}".format(workspace_id_set))
                 condition = 'ID in ({})'.format(','.join(workspace_id_set))
 
             else:
                 condition = '1=1'
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'workspaceTable', 'ID,WORKSPACE_NAME,REGOINS, CREATE_TIME', condition)
-            # # print(sql)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspaceTable_sql:{}".format(sql))
             workspace_infos = self.execute_fetch_all(conn, sql)
             return_infos = []
             for index, workspace_info in enumerate(workspace_infos):
@@ -472,7 +477,7 @@ class DbWorkspaceMgr(DbBase):
                 relations = [{"table_name": "adgroupTable",
                               "join_condition": "adgroupTable.ID=workspace_to_adgroupTable.AD_GROUP_ID"}]
                 sql = self.create_get_relation_sql(db_name, 'workspace_to_adgroupTable', '*', relations, condition)
-                # # print(sql)
+                logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspace_to_adgroupTable_sql:{}".format(sql))
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group_info in ad_group_infos:
                     label_list = json.loads(ad_group_info['LABEL_LIST'])
@@ -485,8 +490,7 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = return_infos
             return data
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -498,6 +502,7 @@ class DbWorkspaceMgr(DbBase):
             db_name = configuration.get_database_name()
             condition = "ID=%s " % (id)
             sql = self.create_select_sql(db_name, 'workspaceTable', '*', condition)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_id workspaceTable_sql:{}".format(sql))
             workspace_info = self.execute_fetch_one(conn, sql)
             if workspace_info:
                 data = response_code.SUCCESS
@@ -506,7 +511,7 @@ class DbWorkspaceMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr_get_workspace_info_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -577,7 +582,7 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr_update_workspace_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -600,7 +605,7 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = workspace
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkspaceMgr_delete_workspace_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -615,6 +620,7 @@ class DbWorkspaceMgr(DbBase):
                 return response_code.GET_DATA_FAIL
             # # print(workspace_id_set)
             # print('data', data)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id data:{}".format(data))
             workspace_info = data['data']
             return_info = {}
             workspace_id = workspace_info['ID']
@@ -634,12 +640,12 @@ class DbWorkspaceMgr(DbBase):
             return_info['approval'] = ','.join(approval_item)
             return_info['regions'] = json.loads(workspace_info['REGOINS'])
             # db_name = configuration.get_database_name()
-            # print(return_info)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id return_info:{}".format(return_info))
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
             relations = [{"table_name": "adgroupTable",
                           "join_condition": "adgroupTable.ID=workspace_to_adgroupTable.AD_GROUP_ID"}]
             sql = self.create_get_relation_sql(db_name, 'workspace_to_adgroupTable', '*', relations, condition)
-            # # print(sql)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id workspace_to_adgroupTable_sql:{}".format(sql))
             ad_group_infos = self.execute_fetch_all(conn, sql)
             for ad_group_info in ad_group_infos:
                 label_list = json.loads(ad_group_info['LABEL_LIST'])
@@ -651,6 +657,7 @@ class DbWorkspaceMgr(DbBase):
             dynamic = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
             templateTypeList = form_mgr.get_field_template(0, workspace_id)
             # print('templateTypeList:', templateTypeList['data']['templateTypeList'][0]['fieldlist'])
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id templateTypeList:{}".format(templateTypeList))
             for index, field_info in enumerate(templateTypeList['data']['templateTypeList'][0]['fieldlist']):
                 field_style = int(field_info['style'])
                 if field_style not in system:
@@ -667,6 +674,7 @@ class DbWorkspaceMgr(DbBase):
             # get usecase resource
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id usecaseResourceTable_sql:{}".format(sql))
             return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_uc_infos:
@@ -692,13 +700,12 @@ class DbWorkspaceMgr(DbBase):
                 if resource_info['id'] != None:
                     resource_infos.append(resource_info)
             return_info['groupArr'] = resource_infos
-            # print('last:', return_info)
+            logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id return_info:{}".format(return_info))
             data = response_code.SUCCESS
             data['data'] = return_info
             return data
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_get_workspace_details_info_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -715,7 +722,7 @@ class DbWorkspaceMgr(DbBase):
 
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'taxonomyTable', '*', condition='workspace_id="%s"' % workspace_id)
-            # print('taxonomyTable sql:', sql)
+            logger.debug("FN:DbWorkspaceMgr_get_policy_tags_info taxonomyTable_sql:{}".format(sql))
             taxonomy_infos = self.execute_fetch_all(conn, sql)
             taxonomy_dict = {}
             for taxonomy_info in taxonomy_infos:
@@ -727,7 +734,7 @@ class DbWorkspaceMgr(DbBase):
                     taxonomy_dict[local_taxonomy_id]['policy_tags_list'] = []
                 sql = self.create_select_sql(db_name, 'policyTagsTable', '*',
                                              condition='local_taxonomy_id=%s order by id' % local_taxonomy_id)
-                # print('policyTagsTable sql:', sql)
+                logger.debug("FN:DbWorkspaceMgr_get_policy_tags_info policyTagsTable_sql:{}".format(sql))
                 policy_tags_infos = self.execute_fetch_all(conn, sql)
                 # ret = []
                 # o = {}
@@ -760,7 +767,7 @@ class DbWorkspaceMgr(DbBase):
                     return tree, nodes
 
                 for policy_tags_info in policy_tags_infos:
-                    # # print('11111111111111111', policy_tags_info['parent_local_id'], policy_tags_nodes)
+                    logger.debug("FN:DbWorkspaceMgr_get_policy_tags_info policy_tags_info:{}".format(policy_tags_info))
                     if policy_tags_info['parent_local_id'] in policy_tags_nodes:
                         policy_tags_nodes[policy_tags_info['parent_local_id']]['sub_tags'], \
                         policy_tags_nodes = add_node(policy_tags_nodes[policy_tags_info['parent_local_id']]['sub_tags'],
@@ -783,9 +790,7 @@ class DbWorkspaceMgr(DbBase):
 
             return data
         except Exception as e:
-            lg.error(e)
-            import traceback
-            # print(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_get_policy_tags_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -855,8 +860,6 @@ class DbWorkspaceMgr(DbBase):
 
     def get_tag_template_info(self, workspace_id):
 
-        print("FN:get_tag_template_info ws_id: {}".format(workspace_id))
-
         conn = MysqlConn()
         try:
             data = workspace_mgr.get_workspace_info_by_id(workspace_id)
@@ -870,7 +873,7 @@ class DbWorkspaceMgr(DbBase):
                                          'input_form_id,display_name,workspace_id,tag_template_id,description,project_id,location,'
                                          'tag_template_form_id,creator_id,create_time',
                                          condition='workspace_id="%s" or workspace_id=0' % workspace_id)
-            # print('taxonomyTable sql:', sql)
+            logger.debug("FN:DbWorkspaceMgr_get_tag_template_info tagTemplatesTable_sql:{}".format(sql))
             taxonomy_infos = self.execute_fetch_all(conn, sql)
 
             data = response_code.SUCCESS
@@ -878,17 +881,13 @@ class DbWorkspaceMgr(DbBase):
 
             return data
         except Exception as e:
-            lg.error(e)
-            import traceback
-            # print(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_get_tag_template_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
 
 
     def get_usecase_resource(self, workspace_id):
-
-        print("FN:get_tag_template_info ws_id: {}".format(workspace_id))
 
         conn = MysqlConn()
         try:
@@ -902,8 +901,7 @@ class DbWorkspaceMgr(DbBase):
             sql = self.create_select_sql(db_name, 'usecaseResourceTable',
                                          '*',
                                          condition='(WORKSPACE_ID="%s" or WORKSPACE_ID=0) and AVAILABLE=1' % workspace_id)
-
-            # print('taxonomyTable sql:', sql)
+            logger.debug("FN:DbWorkspaceMgr_get_usecase_resource usecaseResourceTable_sql:{}".format(sql))
             return_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
             for return_uc_info in return_infos:
@@ -922,10 +920,9 @@ class DbWorkspaceMgr(DbBase):
             data['data'] = resource_infos
             return data
         except Exception as e:
-            lg.error(e)
-            import traceback
-            print(traceback.format_exc())
+            logger.error("FN:DbWorkspaceMgr_get_usecase_resource error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
+
 workspace_mgr = DbWorkspaceMgr()

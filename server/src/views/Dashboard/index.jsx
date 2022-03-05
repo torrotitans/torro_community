@@ -6,17 +6,17 @@ import cn from "classnames";
 /* material-ui */
 
 /* local Component*/
-import Frequently from "./Frequently";
+// import Frequently from "./Frequently";
 import RecordTable from "./RecordTable";
 import Text from "@basics/Text";
-import { getQueryString } from "src/utils/url-util.js";
+// import { getQueryString } from "src/utils/url-util.js";
 
 const DataUserView = () => {
-  const requestorView = getQueryString("requestor");
-  const [currentTab, setCurrentTab] = useState(requestorView ? 2 : 1);
+  // const requestorView = getQueryString("requestor");
+  const [currentTab, setCurrentTab] = useState(2);
 
   const tabList = [
-    { label: "Frequently used forms", value: 1 },
+    // { label: "Frequently used forms", value: 1 },
     { label: "Your requests", value: 2 },
     { label: "Waiting your approval", value: 3 },
   ];
@@ -32,7 +32,7 @@ const DataUserView = () => {
       case 3:
         return <RecordTable approved />;
       default:
-        return <Frequently />;
+      // return <Frequently />;
     }
   }, [currentTab]);
 

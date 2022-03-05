@@ -42,8 +42,9 @@ export default {
   modifyColumnTag: "Modify column tags",
   CLEAR: "CLEAR",
   dropwfItem: "Drop workflow item here.",
-  checkRequest: "View approval progress",
+  checkRequest: "View request detail",
   confirmRaise: "Do you confirm to raise this request?",
+  confirmSetup: "Do you confirm your torro setting?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
   newRequestSubmit: "New Request is submitted.",
   selectedUc: "Select use case",
@@ -102,6 +103,7 @@ export default {
   adminServiceAcc: "Admin Service Account",
   ucOwnerGroup: "Use case Owner Group",
   ucTeamGroup: "Use case Team Group",
+  ucLabel: "Use case Label",
   downLoadExcel: "Download excel template",
   uploadExcel: "Upload default AD group List",
 
@@ -213,7 +215,7 @@ export default {
   org_name: "Organization name",
   des: "Description",
   search_base: "Search base",
-  setup: "SETUP",
+  setup: "Setup",
 
   // app
   dashboard: "Dashboard",

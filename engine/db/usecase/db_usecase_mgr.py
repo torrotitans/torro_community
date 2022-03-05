@@ -4,7 +4,6 @@
 from common.common_input_form_status import status as Status
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import copy
 import datetime
 from utils.status_code import response_code
@@ -13,11 +12,14 @@ from db.workspace.db_workspace_mgr import workspace_mgr
 import json
 from utils.ldap_helper import Ldap
 from common.common_input_form_status import status
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class DbUseCaseMgr(DbBase):
     """
-    用户相关数据库表操作类
+    Use case related DB Operation
     """
     resource_list = ['jupyter', 'datastudio']
 
@@ -56,7 +58,7 @@ class DbUseCaseMgr(DbBase):
                 values = (workspace_id, usecase_name, validity_date, budget, input_form, region_country,
                           json.dumps(resources_access), admin_sa, allow_cross_region, create_time, des)
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
-            # print('usecaseTable sql:', sql)
+            logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecaseTable_sql:{}".format(sql))
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
 
             # insert group info
@@ -73,14 +75,14 @@ class DbUseCaseMgr(DbBase):
                     values = (ad_group_name, create_time, des)
                     sql = self.create_insert_sql(db_name, 'adgroupTable', '({})'.format(', '.join(ad_group_fields)),
                                                  values)
-                    # print('adgroupTable sql:', sql)
+                    logger.debug("FN:DbUseCaseMgr__set_usecase insert_adgroupTable_sql:{}".format(sql))
                     group_id = self.insert_exec(conn, sql, return_insert_id=True)
                 # insert workspace_to_adgroupTable
                 w2a_fields = ('USECASE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
                 values = (usecase_id, json.dumps(label_list), group_id, json.dumps(role_list))
                 sql = self.create_insert_sql(db_name, 'usecase_to_adgroupTable', '({})'.format(', '.join(w2a_fields)),
                                              values)
-                # print('usecase_to_adgroupTable sql:', sql)
+                logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecase_to_adgroupTable_sql:{}".format(sql))
                 self.insert_exec(conn, sql, return_insert_id=True)
 
             usecase_info['usecase_id'] = usecase_id
@@ -88,7 +90,7 @@ class DbUseCaseMgr(DbBase):
             data['data'] = usecase_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr__set_usecase error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -103,7 +105,7 @@ class DbUseCaseMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr__delete_usecase error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -126,7 +128,7 @@ class DbUseCaseMgr(DbBase):
             self.delete_exec(conn, delete_table_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr__delete_2ad_to_usecase error:{}".format(traceback.format_exc()))
             return response_code.DELETE_DATA_FAIL
         finally:
             conn.close()
@@ -177,22 +179,20 @@ class DbUseCaseMgr(DbBase):
 
             condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseTable', '*', condition)
-            # print('usecaseTable: ', sql)
+            logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecaseTable_sql:{}".format(sql))
             usecase_infos = self.execute_fetch_all(conn, sql)
             if usecase_infos:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'UseCase already existed'
                 return data
-            # print("usecase_info: ", usecase_info)
+            logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_info))
             usecase_insert = self.__set_usecase(usecase_info)
             data = response_code.SUCCESS
             usecase['usecase_id'] = usecase_insert['data']['usecase_id']
             data['data'] = usecase
             return data
         except Exception as e:
-            lg.error(e)
-            import traceback
-            # print(traceback.format_exc())
+            logger.error("FN:DbUseCaseMgr_add_new_usecase_setting error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -214,12 +214,12 @@ class DbUseCaseMgr(DbBase):
                               "join_condition": "usecase_to_adgroupTable.AD_GROUP_ID=adgroupTable.ID"}]
                 sql = self.create_get_relation_sql(db_name, 'adgroupTable', '*', relations, condition)
                 uc_ad_info = self.execute_fetch_all(conn, sql)
-                print('uc_ad_info sql:', sql)
+                logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group adgroupTable_sql:{}".format(sql))
                 usecase_id_set = usecase_id_set | set([str(wp_ad['USECASE_ID']) for wp_ad in uc_ad_info])
-            # # print('usecase_id_set:', usecase_id_set)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group usecase_id_set:{}".format(usecase_id_set))
             if 'None' in usecase_id_set:
                 usecase_id_set.remove('None')
-            print('usecase_id_set:', usecase_id_set)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group usecase_id_set:{}".format(usecase_id_set))
 
             if not usecase_id_set:
                 data = response_code.SUCCESS
@@ -243,12 +243,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                # print('resource_list:', self.resource_list)
                 for item in self.resource_list:
                     if item in resource_access_items:
                         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
-                # print('one_usecase:', one_usecase)
+                logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
                 condition = "USECASE_ID='%s' " % (usecase_id)
                 relations = [{"table_name": "adgroupTable",
@@ -260,20 +259,20 @@ class DbUseCaseMgr(DbBase):
                     for label in label_list:
                         one_usecase[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_usecase)
-            print('return_infos: ', return_infos)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group return_infos:{}".format(return_infos))
             data = response_code.SUCCESS
             data['data'] = return_infos
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr_get_usecase_info_by_ad_group error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
 
     # get usecase info
     def get_usecase_info_by_workspace(self, workspace_id):
+        
         conn = MysqlConn()
-        # # print('ad_group_list:', ad_group_list)
         try:
 
             condition = "WORKSPACE_ID='%s'" % workspace_id
@@ -281,7 +280,7 @@ class DbUseCaseMgr(DbBase):
             sql = self.create_select_sql(db_name, 'usecaseTable',
                                          'ID,WORKSPACE_ID,USECASE_NAME,VALIDITY_TILL,RESOURCES_ACCESS_LIST,CREATE_TIME',
                                          condition)
-            print('usecaseTable sql:', sql)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_workspace usecaseTable_sql:{}".format(sql))
             usecase_infos = self.execute_fetch_all(conn, sql)
             return_infos = []
             for index, usecase_info in enumerate(usecase_infos):
@@ -293,12 +292,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                # print('resource_list:', self.resource_list)
                 for item in self.resource_list:
                     if item in resource_access_items:
                         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
-                # print('one_usecase:', one_usecase)
+                logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_workspace one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
                 condition = "USECASE_ID='%s' " % (usecase_id)
                 relations = [{"table_name": "adgroupTable",
@@ -310,12 +308,12 @@ class DbUseCaseMgr(DbBase):
                     for label in label_list:
                         one_usecase[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_usecase)
-            print('return_infos: ', return_infos)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_workspace return_infos:{}".format(return_infos))
             data = response_code.SUCCESS
             data['data'] = return_infos
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr_get_usecase_info_by_workspace error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -327,6 +325,7 @@ class DbUseCaseMgr(DbBase):
             db_name = configuration.get_database_name()
             condition = "ID=%s " % (id)
             sql = self.create_select_sql(db_name, 'usecaseTable', '*', condition)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_id usecaseTable_sql:{}".format(sql))
             usecase_info = self.execute_fetch_one(conn, sql)
             if usecase_info:
                 data = response_code.SUCCESS
@@ -335,7 +334,7 @@ class DbUseCaseMgr(DbBase):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr_get_usecase_info_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -373,7 +372,6 @@ class DbUseCaseMgr(DbBase):
             usecase_info['resources_access'] = usecase['resources_access']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['create_time'] = create_time
-
             usecase_info['group_dict'] = {}
             usecase_info['group_label'] = {}
             group_mapping = [
@@ -399,7 +397,7 @@ class DbUseCaseMgr(DbBase):
             data['data'] = usecase
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr_update_usecase_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -413,14 +411,14 @@ class DbUseCaseMgr(DbBase):
                 data = response_code.UPDATE_DATA_FAIL
                 data['msg'] = 'the usecase does not exists, update failed'
                 return data
-            # print("get_usecase_info_by_id:", data)
+            logger.debug("FN:DbUseCaseMgr_delete_usecase_info data:{}".format(data))
             self.__delete_2ad_to_usecase(usecase_id)
             self.__delete_usecase(usecase_id)
             data = response_code.SUCCESS
             data['data'] = usecase
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbUseCaseMgr_delete_usecase_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -441,7 +439,7 @@ class DbUseCaseMgr(DbBase):
             condition = "form_id=%s and option_label='%s' and workspace_id='%s'" % (status.system_form_id['usecase'], usecase_name, workspace_id)
             sql = self.create_get_relation_sql(db_name, 'dynamicFieldValueTable', 'dynamicFieldTable.id, option_label',
                                                relations, condition)
-            print('dynamicFieldTable sql:', sql)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id dynamicFieldValueTable_sql:{}".format(sql))
             dynamic_field_infos = self.execute_fetch_all(conn, sql)
             user_input_form_id = []
             user_infos = []
@@ -453,7 +451,7 @@ class DbUseCaseMgr(DbBase):
                                                                                                         status.system_form_id[
                                                                                                             'add_user'])
                 sql = self.create_select_sql(db_name, 'dynamicField_to_inputFormTable', '*', input_form_cond)
-                print('dynamicField_to_inputFormTable sql:', sql)
+                logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id dynamicField_to_inputFormTable_sql:{}".format(sql))
                 input_form_infos = self.execute_fetch_all(conn, sql)
                 for input_form_info in input_form_infos:
                     user_input_form_id.append(input_form_info['using_input_form_id'])
@@ -506,12 +504,12 @@ class DbUseCaseMgr(DbBase):
                 return_info['resources_access_list'].append(resource_access_items[item].strip())
             return_info['resources_access_list'] = ','.join(return_info['resources_access_list'])
             # db_name = configuration.get_database_name()
-            # print(return_info)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id return_info:{}".format(return_info))
             condition = "USECASE_ID='%s' " % (usecase_id)
             relations = [
                 {"table_name": "adgroupTable", "join_condition": "adgroupTable.ID=usecase_to_adgroupTable.AD_GROUP_ID"}]
             sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
-            # # print(sql)
+            logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id usecase_to_adgroupTable_sql:{}".format(sql))
             ad_group_infos = self.execute_fetch_all(conn, sql)
             for ad_group_info in ad_group_infos:
                 label_list = json.loads(ad_group_info['LABEL_LIST'])
@@ -522,7 +520,7 @@ class DbUseCaseMgr(DbBase):
             relations = [
                 {"table_name": "dataOnboardTable", "join_condition": "dataOnboardTable.input_form_id=dataAccessTable.data_input_form_id"}]
             sql = self.create_get_relation_sql(db_name, 'dataAccessTable', 'project_id,location,dataset_id,table_id,dataAccessTable.fields,dataAccessTable.create_time', relations, condition)
-
+            logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id dataAccessTable_sql:{}".format(sql))
             data_access_infos = self.execute_fetch_all(conn, sql)
             for index in range(len(data_access_infos)):
                 data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'])
@@ -533,8 +531,7 @@ class DbUseCaseMgr(DbBase):
             data['data'] = return_info
             return data
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:DbUseCaseMgr_get_usecase_details_info_by_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -549,12 +546,11 @@ class DbUseCaseMgr(DbBase):
             fields = ('USECASE_ID', 'AVAILABLE')
             values = (usecase_id, '0')
             sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition)
-            print('update usecase id sql:', sql)
+            logger.debug("FN:DbUseCaseMgr_update_usecase_resource update_usecaseResourceTable_sql:{}".format(sql))
             _ = self.updete_exec(conn, sql)
             return response_code.SUCCESS
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:DbUseCaseMgr_update_usecase_resource error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()

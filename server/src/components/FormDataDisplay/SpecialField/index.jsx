@@ -1,6 +1,7 @@
 /* third lib*/
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { FormattedMessage as Intl } from "react-intl";
 
 /* material-ui */
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
@@ -15,6 +16,7 @@ import Model from "@basics/Modal";
 import UsecaseInfo from "@comp/UsecaseInfo";
 import { getUseCaseList } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
+import Loading from "@assets/icons/Loading";
 
 const Form = ({ formId, data }) => {
   const { control, register } = useForm(); // initialise the hook
@@ -63,7 +65,9 @@ const TableDisplay = ({ data }) => {
 
 const UseCase = ({ data }) => {
   const [useCaseId, setUsecaseId] = useState();
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     getUseCaseList()
       .then((res) => {
         if (res.data) {
@@ -72,17 +76,32 @@ const UseCase = ({ data }) => {
               setUsecaseId(item.id);
             }
           });
+          setLoading(false);
         }
       })
       .catch((e) => {
         sendNotify({ msg: e.message, status: 3, show: true });
+        setLoading(false);
       });
   }, [data]);
 
-  if (!useCaseId) {
-    return <></>;
+  if (!useCaseId && !loading) {
+    return (
+      <div className={styles.notFound}>
+        <Intl id="ucNotFound" />
+      </div>
+    );
   }
-  return <UsecaseInfo tableList={data} usecaseId={useCaseId} />;
+  return (
+    <>
+      {loading && (
+        <div className={styles.loading}>
+          <Loading />
+        </div>
+      )}
+      {!loading && <UsecaseInfo tableList={data} usecaseId={useCaseId} />}
+    </>
+  );
 };
 
 const SpecialField = ({ formId, data, special }) => {

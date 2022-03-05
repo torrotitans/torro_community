@@ -7,9 +7,12 @@ from common.common_api_version import apiVersion
 from common.common_response_code import response_code
 from common.common_response_log import ResponseLog
 from common.common_response_process import response_result_process
-from utils.log_helper import lg
 from utils.xml_json_process import xml_to_json, is_none
 from flask import g
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class requestProcess(object):
 
@@ -19,6 +22,7 @@ class requestProcess(object):
         except:
             user_key = 1
         return user_key
+    
     def get_user_account_id(self,):
         try:
             user_key = g.user_key
@@ -34,8 +38,6 @@ class requestProcess(object):
             # # print(user_key)
             workspace_id = g.workspace_id
             
-            print("FN:get_workspace_id ws_id:{}, type: {}".format(g.workspace_id,type(g.workspace_id)))
-
             # if not isinstance(workspace_id, (int, str)):
             #     workspace_id = 0
             workspace_id = int(workspace_id)
@@ -45,26 +47,25 @@ class requestProcess(object):
         return workspace_id
 
     def _xml_request(self, request, model_json=None):
-        """
-        :param data: request
-        :return:
-        """
         try:
             data = request.data
             temp = data.decode('utf-8')
+            
             if temp == '':
                 return {}
+            
             try:
                 param_temp = xml_to_json(temp)
             except Exception as e:
                 return response_code.REQUEST_PARAM_FORMAT_ERROR
+            
             param = json.loads(param_temp)
 
             root = model_json.get('root')
             body = model_json.get('body')
-
             root_data = param.get(root)
             request_param = None
+            
             if root_data:
                 body_data = root_data.get(body)
                 if body_data:
@@ -72,6 +73,7 @@ class requestProcess(object):
                         request_param = is_none(root_data)
                     else:
                         request_param = is_none(body_data)
+                        
             if root_data is None:
                 s_body_data = param.get(body)
                 if s_body_data:
@@ -81,43 +83,41 @@ class requestProcess(object):
             if isinstance(request_param, list) or request_param is None:
                 return False
             return request_param
+        
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:_xml_request error:{}".format(e))
             return False
 
     def _json_request(self, request):
-        """
-        :param request: request
-        :return:
-        """
         try:
             request_data = request.data
             req_str = request_data.decode()
+            
             if req_str == '':
                 form_data = request.form
                 data = {}
+                
                 for key in form_data:
                     try:
                         data[key] = json.loads(form_data[key])
                     except:
                         data[key] = form_data[key]
+                        
                 return data
+            
             data = json.loads(req_str)
+            
             if isinstance(data, list):
                 return False
             return data
+        
         except JSONDecodeError as e:
-            lg.error(e)
+            logger.error("FN:_json_request error:{}".format(e))
             return False
 
     def verify_one_param_type(self, param_name, value, type=None):
-        """
-        :param param_name: verification param name
-        :param value: verification param value
-        :param type: verification param type
-        :return:
-        """
         try:
+            
             if type == float:
                 v = None
                 if isinstance(value,str):
@@ -184,7 +184,8 @@ class requestProcess(object):
                     code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
                     return code
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:verify_one_param_type error:True param_name:{} value:{} type:{}".format(param_name, value, type))
+            logger.error("FN:verify_one_param_type error:{}".format(traceback.format_exc()))
             code = response_code.BAD_REQUEST
             code['msg'] = ResponseLog.wrong_param_type(param_name, type.__name__)
             return code
@@ -257,6 +258,7 @@ class requestProcess(object):
             if must:
                 request_data[i] = fields[i]['default']
             else:
+                # logger.debug("FN:verify_all_param field:{} request_data:{} field_type:{}".format(i, request_data, fields))
                 param_type = self.verify_one_param_type(i, request_data[i], fields[i]['type'])
                 if param_type:
                     request_data[i] = fields[i]['default']
@@ -270,6 +272,7 @@ class requestProcess(object):
         """
 
         for k, v in request_data.items():
+            # logger.debug("FN:verify_all_param_type k:{} v:{} field_get:{}".format(k, v, fields.get(k)))
             param_type = self.verify_one_param_type(k, v, fields.get(k))
             if param_type:
                 return param_type
@@ -284,7 +287,7 @@ class requestProcess(object):
         """
         if version == apiVersion.version1.value:
             return True, True
-        else:  # 版本信息不存在给的提示
+        else:  # Version does not exist indicator
             result = response_code.REQUEST_VERSION_ISEXISTENCE
             return False, response_result_process(result, xml=xml)
 

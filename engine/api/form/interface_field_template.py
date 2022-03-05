@@ -5,7 +5,6 @@ from utils.api_version_verify import api_version
 from flask import request
 from flask_restful import Resource
 from core.form_singleton import formSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -13,6 +12,10 @@ from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.form.db_form_parameter import formApiPara
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceFieldTemplate(Resource):
 
     # @api_version
@@ -23,9 +26,11 @@ class interfaceFieldTemplate(Resource):
             workspace_id = req.get_workspace_id()
             data = formSingleton_singleton.get_all_fields(workspace_id)
             body = modelEnum.form.value.get('body')
+
             return response_result_process(data, xml_structure_str=body, xml=xml)
+
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceFieldTemplate_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -52,8 +57,9 @@ class interfaceFieldTemplate(Resource):
                 data['data'] = req.verify_all_param(response_data, formApiPara.getFieldTemplate_POST_response)
 
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceFieldTemplate_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -80,9 +86,11 @@ class testingFieldTemplate():
                 return response_result_process(param_type, xml=xml)
             style = request_data.get('style')
             data = formSingleton_singleton.get_field_template(style)
+            
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:testingFieldTemplate_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 

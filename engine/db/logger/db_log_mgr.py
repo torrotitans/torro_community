@@ -7,10 +7,11 @@ from common.common_time import get_system_datetime
 from config import configuration
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-
-from utils.log_helper import lg
 from utils.status_code import response_code
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class DbLogMgr(DbBase):
 
@@ -49,8 +50,9 @@ class DbLogMgr(DbBase):
             data['data'] = result.get('data_list')
             data['total'] = result.get('total_count')
             return data
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_get_pages_operation_log error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
@@ -64,19 +66,26 @@ class DbLogMgr(DbBase):
         :param description:
         :return:
         """
-        db_conn = MysqlConn()
-        time_create = get_system_datetime()
-        db_name = configuration.get_database_name()
-        table_name = 'system_oper_log'
-        fields = '(user_key,ip_address,level,description,time_create)'
-        pla_data = (user_key, ip_address, level, description, time_create)
-        sql = DbBase.create_insert_sql(self, db_name, table_name, fields, pla_data)
-        DbBase.execute_sql_return_count(self, db_conn, sql)
-        db_conn.close()
+        try:
+            db_conn = MysqlConn()
+            time_create = get_system_datetime()
+            db_name = configuration.get_database_name()
+            table_name = 'system_oper_log'
+            fields = '(user_key,ip_address,level,description,time_create)'
+            pla_data = (user_key, ip_address, level, description, time_create)
+            sql = DbBase.create_insert_sql(self, db_name, table_name, fields, pla_data)
+            DbBase.execute_sql_return_count(self, db_conn, sql)
+            db_conn.close()
+
+        except:
+            logger.error("FN:DbLogMgr_add_operation_log error:{}".format(traceback.format_exc()))
+            
+        finally:
+            db_conn.close()
 
     def get_pages_system_log(self, current_page, page_size, search_data, time_scope):
         """
-        分页查询系统日志
+        page query system log
         :param current_page:
         :param page_size:
         :param search_data:
@@ -91,10 +100,10 @@ class DbLogMgr(DbBase):
             fields = 'log_key,title,source,ip_address,level,status,' \
                      'opinion,opinion_user,opinion_time,time_create,description'
             condition = ''
-            # 给定了查询字段
+            # Check if search keyword exists
             if len(json.loads(search_data)) > 0:
                 condition = self.create_vague_condition_sql(search_data)
-            # 给定了查询时间类型
+            # Search specific time period
             if time_scope:
                 time_scope = eval(time_scope)
                 start_time = time_scope[0]
@@ -104,25 +113,24 @@ class DbLogMgr(DbBase):
                 else:
                     condition += 'TIME_CREATE between ' + str(start_time) + ' and ' + str(end_time)
             sql_count, sql = self.create_get_page_sql(db_name, table_name, fields, start_page, page_size, condition)
-            # 执行查询
+            # Execute the query
             result = self.execute_fetch_pages(db_conn, sql_count, sql, current_page, page_size)
             data = response_code.SUCCESS
             data['data'] = result.get('data_list')
             data['total'] = result.get('total_count')
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_get_pages_system_log error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
 
     def update_system_log(self, log_key, opinion, opinion_user, status):
         """
-        处理后，修改日志信息
-        :param log_key:日志id
-        :param opinion:处理意见
-        :param opinion_user:处理人
-        :param status:状态
+        :param log_key
+        :param opinion
+        :param opinion_user
+        :param status
         :return:
         """
         db_conn = MysqlConn()
@@ -130,12 +138,12 @@ class DbLogMgr(DbBase):
             db_name = configuration.get_database_name()
             table_name = 'system_log'
             condition = "log_key=%s" % log_key
-            # 查看状态是否已经更新
+            # check log status if it has been updated
             sql = self.create_select_sql(db_name, table_name, 'status', condition)
             log = self.execute_fetch_one(db_conn, sql)
             if log.get('status') == 2:
                 return response_code.ALREADY_HANDLED
-            # 更新日志信息
+            # update the log
             opinion_time = get_system_datetime()
             update_group_fields = ['opinion', 'opinion_user', 'status', 'opinion_time']
             update_group_fields_value = [opinion, opinion_user, status, opinion_time]
@@ -145,14 +153,13 @@ class DbLogMgr(DbBase):
             self.updete_exec(db_conn, update_group_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_update_system_log error:{}".format(traceback.format_exc()))
             return response_code.UPDATE_DATA_FAIL
         finally:
             db_conn.close()
 
     def get_pages_message(self, user_id, current_page, page_size, search_data):
         """
-        分页查询系统消息
         :param user_id:
         :param current_page:
         :param page_size:
@@ -166,26 +173,24 @@ class DbLogMgr(DbBase):
             table_name = 'inform_message'
             fields = 'id,title,content,create_time,status'
             condition = "user_id=%s" % user_id
-            # 给定了查询字段
+            # check if search keyword exists
             if search_data:
                 condition += ' and ' + self.create_vague_condition_sql(search_data)
             sql_count, sql = self.create_get_page_sql(db_name, table_name, fields, start_page, page_size, condition)
-            # 执行查询
+            logger.error("FN:DbLogMgr_get_pages_message {}_sql:{}".format(table_name,sql))
             result = self.execute_fetch_pages(db_conn, sql_count, sql, current_page, page_size)
-            # print(sql)
             data = response_code.SUCCESS
             data['data'] = result.get('data_list')
             data['total'] = result.get('total_count')
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_get_pages_message error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
 
     def update_message_status(self, id_list):
         """
-        修改系统消息状态
         :param message_id:
         :return:
         """
@@ -196,7 +201,7 @@ class DbLogMgr(DbBase):
             table_name = 'inform_message'
             for message_id in eval(id_list):
                 condition = "id=%s" % message_id
-                # 更新系统信息
+                # Update system info
                 update_fields = ['state']
                 update_fields_value = [1]
                 update_sql = self.create_update_sql(db_name, table_name, update_fields, update_fields_value, condition)
@@ -204,7 +209,7 @@ class DbLogMgr(DbBase):
                 self.updete_exec(db_conn, update_sql)
             return response_code.SUCCESS
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_update_message_status error:{}".format(traceback.format_exc()))
             return response_code.UPDATE_DATA_FAIL
         finally:
             db_conn.close()
@@ -225,7 +230,7 @@ class DbLogMgr(DbBase):
 
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbLogMgr_get_message_count error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()

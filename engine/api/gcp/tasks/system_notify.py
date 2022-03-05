@@ -1,11 +1,15 @@
 from api.gcp.tasks.baseTask import baseTask
 from utils.ldap_helper import Ldap
 from db.base import DbBase
-from utils.log_helper import lg
 from db.connection_pool import MysqlConn
 from config import configuration
 import json
 import datetime
+import traceback
+import logging
+
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
+
 class system_notify(baseTask, DbBase):
     api_type = 'system'
     api_name = 'system_notify'
@@ -16,14 +20,15 @@ class system_notify(baseTask, DbBase):
 
     def __init__(self, stage_dict):
         super(system_notify, self).__init__(stage_dict)
-        # print('stage_dict:', stage_dict)
+
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         missing_set = set()
         for key in self.arguments:
             check_key = self.stage_dict.get(key, 'NotFound')
             if check_key == 'NotFound':
                 missing_set.add(key)
-            # # print('{}: {}'.format(key, self.stage_dict[key]))
+            # logger.debug('FN:system_notify.execute key:{} stage_dict:{}'.format(key, self.stage_dict[key]))
+            
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
@@ -46,20 +51,20 @@ class system_notify(baseTask, DbBase):
 
                 # get requestor email
                 emails = self.stage_dict['emails']
-                print('stage_dict:', self.stage_dict)
+                # logger.debug('FN:system_notify.execute stage_dict:{}'.format(self.stage_dict))
                 if not isinstance(emails, list):
                     emails = emails.split(',')
 
                 groups = self.stage_dict['groups']
                 if not isinstance(groups, list):
                     groups = groups.split(',')
-                print('groups:', groups)
+                # logger.debug('FN:system_notify.execute groups:{}'.format(groups))
                 for group in groups:
                     mail_list, _ = Ldap.get_ad_group_member(group)
-                    print('mail list:', mail_list)
+                    # logger.debug('FN:system_notify.execute mail_list:{}'.format(mail_list))
                     if mail_list:
                         emails.extend(mail_list)
-                print('emails:', emails)
+                # logger.debug('FN:system_notify.execute emails:{}'.format(emails))
                 notify_id_list = []
                 for email in emails:
                     values = (email, input_form_id, history_id, notify_msg, 0, create_time)
@@ -67,13 +72,12 @@ class system_notify(baseTask, DbBase):
                     sql = self.create_insert_sql(db_name, 'inputNotifyTable', '({})'.format(', '.join(fields)), values)
                     notify_id = self.insert_exec(conn, sql, return_insert_id=True)
                     notify_id_list.append(str(notify_id))
-                print('notify_id_list:', notify_id_list)
+                # logger.debug('FN:system_notify.execute notify_id_list:{}'.format(notify_id_list))
                 return 'create notify successfully: length{}'.format(str(len(notify_id_list)))
+            
             except Exception as e:
-                import traceback
-                lg.error(traceback.format_exc())
+                
+                logger.error("FN:system_notify_execute error:{}".format(traceback.format_exc()))
+                
             finally:
                 conn.close()
-if __name__ == '__main__':
-    pass
-

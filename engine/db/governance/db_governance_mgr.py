@@ -9,7 +9,6 @@ from db.base import DbBase
 from db.connection_pool import MysqlConn
 import json
 from utils.status_code import response_code
-from utils.log_helper import lg
 from utils.ldap_helper import Ldap
 import datetime
 import traceback
@@ -17,8 +16,13 @@ from common.common_input_form_status import status as Status
 from common.common_crypto import prpcrypt
 import os
 from config import config
+import logging
+import re
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
+email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 class DbGovernanceMgr(DbBase):
 
@@ -28,7 +32,7 @@ class DbGovernanceMgr(DbBase):
     def __check_table_id_exist(self, table_id, table_name, db_name, conn):
         condition = 'id="%s"' % table_id
         sql = self.create_select_sql(db_name, table_name, '*', condition)
-        # print('Table: ', sql)
+        logger.debug("FN:__check_table_id_exist {}_sql:{}".format(table_name, sql))
         form_info = self.execute_fetch_all(conn, sql)
         if form_info:
             return True
@@ -37,6 +41,7 @@ class DbGovernanceMgr(DbBase):
 
     def __get_adgroup_member(self, ad_group):
         return []
+    
     # change inputform status
     def change_status(self, user_key, account_id, workspace_id, inputData, system_approval_flag=False):
         conn = MysqlConn()
@@ -55,7 +60,7 @@ class DbGovernanceMgr(DbBase):
             notice_ids = []
             #  2.Also put the approver's email into the checking group
             checking_list.append(account_id)
-            # print('checking_list:', checking_list)
+            logger.debug("FN:change_status checking_list:{}".format(checking_list))
             # 2.get inputform id
             # do the form exists
             input_form_id = inputData['id']
@@ -65,6 +70,7 @@ class DbGovernanceMgr(DbBase):
                 {"table_name": "userTable", "join_condition": "userTable.ID=inputFormIndexTable.creator_id"}]
             input_form_cond = "inputFormIndexTable.id='%s'" % input_form_id
             sql = self.create_get_relation_sql(db_name, 'inputFormIndexTable', 'userTable.ACCOUNT_ID', relations=relations, condition=input_form_cond)
+            logger.debug("FN:change_status userTable_join_inputFormIndexTable_sql:{}".format(sql))
             user_info = self.execute_fetch_one(conn, sql)
             if user_info:
                 notice_ids.append(user_info['ACCOUNT_ID'])
@@ -83,7 +89,7 @@ class DbGovernanceMgr(DbBase):
 
             input_form_condition = 'id="%s" order by history_id desc' % (input_form_id)
             sql = self.create_select_sql(db_name, 'inputFormTable', '*', input_form_condition)
-            # print('formTable: ', sql)
+            logger.debug("FN:change_status inputFormTable_sql:{}".format(sql))
             form_infos = self.execute_fetch_all(conn, sql)
             if not form_infos:
                 data = response_code.ADD_DATA_FAIL
@@ -116,13 +122,14 @@ class DbGovernanceMgr(DbBase):
                 fields = ('input_form_id', 'history_id', 'creator_id', 'comment', 'create_time')
                 values = (input_form_id, history_id, user_key, comment, now)
                 sql = self.create_insert_sql(db_name, 'inputCommentTable', '({})'.format(', '.join(fields)), values)
+                logger.debug("FN:change_status inputCommentTable_sql:{}".format(sql))
                 comment_id = self.insert_exec(conn, sql, return_insert_id=True)
 
             # check the approval condition
             if form_status_code not in (Status.completed, Status.pending_approval):
                 approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                print('approvalTable: ', sql)
+                logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                 approval_infos = self.execute_fetch_all(conn, sql)
                 if not approval_infos:
                     data = response_code.UPDATE_DATA_FAIL
@@ -142,7 +149,7 @@ class DbGovernanceMgr(DbBase):
                     # if it is the last approval
                     approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                     sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-                    print('approvalTable: ', sql, now_approval_num, next_approval_num)
+                    logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                     last_approval_info = self.execute_fetch_one(conn, sql)
                     # if cannot find the next approval task, is the last approval status
                     if not last_approval_info:
@@ -153,17 +160,17 @@ class DbGovernanceMgr(DbBase):
                     if all_approval_flag == 1:
                         workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                         workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
-                        # # print('workflow_stages_id_list:', workflow_stages_id_list)
+                        logger.debug("FN:change_status workflow_stages_id_list:{}".format(workflow_stages_id_list))
                         input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
                         sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                                      input_stage_condition)
-                        # print('inputStageTable: ', sql)
+                        logger.debug("FN:change_status inputStageTable_list:{}".format(sql))
                         stage_infos = self.execute_fetch_all(conn, sql)
                         tasks = []
                         for stage_info in stage_infos:
                             tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
                                           "stages": json.loads(stage_info['condition_value_dict'])})
-                        print('taskFetcher.project_id&service_account: ', taskFetcher.project_id, taskFetcher.service_account)
+                        logger.debug("FN:change_status project_id:{} service_account:{}".format(taskFetcher.project_id, taskFetcher.service_account))
                         torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
                                                                             taskFetcher.service_account)
                         for task in tasks:
@@ -195,7 +202,7 @@ class DbGovernanceMgr(DbBase):
                                                                                                                                    )
                         # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                        # # print('approvalTable update_sql: ', sql)
+                        logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                         return_count = self.updete_exec(conn, sql)
                         if return_count == 0:
                             data = response_code.SUCCESS
@@ -212,7 +219,7 @@ class DbGovernanceMgr(DbBase):
                         approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s" % (input_form_id, now_approval_num)
                         # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                        # # print('approvalTable update_sql: ', sql)
+                        logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                         _ = self.updete_exec(conn, sql)
 
                         # next approval task
@@ -220,7 +227,7 @@ class DbGovernanceMgr(DbBase):
                         values = (1, 0)
                         approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                         sql = self.create_select_sql(db_name, 'approvalTable', '*', condition=approval_condition)
-                        print('next approvalTable sql:', now_approval_num, next_approval_num, sql)
+                        logger.debug("FN:change_status next_approvalTable_sql:{}".format(sql))
                         next_approval_items = self.execute_fetch_all(conn, sql)
                         # notify next adgroup approvers
                         next_adgroup = []
@@ -241,32 +248,37 @@ class DbGovernanceMgr(DbBase):
                             if next_approval_item and next_approval_item['label'] == 'System approval':
                                 try:
                                     token = next_approval_item['ad_group']
-                                    token_json = prpcrypt.decrypt(token)
-                                    print('LOG:: airflow token:', token, token_json)
-                                    input_form_id, form_id, approval_order, time = token_json.split('||')
-                                    retry = 0
-                                    while retry < 3:
-                                        return_flag = system_approval(token, input_form_id, form_id,
-                                                                      workspace_id, approval_order)
-                                        if not return_flag:
-                                            retry += 1
-                                            time.sleep(1)
-                                        else:
-                                            break
+                                    if(re.fullmatch(email_regex, token)):
+                                        pass
+                                    else:
+                                        # This is a valid token format, not an ADgroup
+                                        token_json = prpcrypt.decrypt(token)
+                                        logger.debug("FN:change_status airflow_token:{} airflow_token_json:{}".format(token, token_json))
+                                        input_form_id, form_id, approval_order, time = token_json.split('||')
+                                        retry = 0
+                                        while retry < 3:
+                                            return_flag = system_approval(token, input_form_id, form_id,
+                                                                        workspace_id, approval_order)
+                                            if not return_flag:
+                                                retry += 1
+                                                # time.sleep(1)
+                                            else:
+                                                break
                                 except:
-                                    print(traceback.format_exc())
+                                    logger.error("FN:change_status error:{}".format(traceback.format_exc()))
 
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                        # print('approvalTable update_sql: ', sql)
+                        logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                         return_count = self.updete_exec(conn, sql)
-                        # print('return_count:', return_count)
+                        logger.debug("FN:change_status return_count:{}".format(return_count))
                         # modify successfully, can send the email
-                        print('FN:now notice_ids:', notice_ids)
+                        logger.debug("FN:change_status notice_ids:{}".format(notice_ids))
+
                         for ad_group in next_adgroup:
                             member_list, _ = Ldap.get_ad_group_member(ad_group)
                             if member_list:
                                 notice_ids.extend(member_list)
-                        print('FN:next notice_ids:', notice_ids)
+                        logger.debug("FN:change_status next_notice_ids:{}".format(notice_ids))
                         if return_count != 0:
                             all_approval_flag = 0
 
@@ -279,7 +291,7 @@ class DbGovernanceMgr(DbBase):
                             values = (form_status_code, now)
                             update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                             sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                            # print('update_sql: ', sql)
+                            logger.debug("FN:change_status update_inputFormTable_sql:{}".format(sql))
                             return_count = self.updete_exec(conn, sql)
 
                             # checking_list = self.__get_adgroup_member(notice_ids)
@@ -307,7 +319,7 @@ class DbGovernanceMgr(DbBase):
                                                                                                                                now_approval_num,
                                                                                                                                "', '".join(checking_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                    print('approvalTable rejected sql: ', sql)
+                    logger.debug("FN:change_status rejected_approvalTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
                     if return_count == 0:
                         data = response_code.SUCCESS
@@ -321,14 +333,14 @@ class DbGovernanceMgr(DbBase):
                     approval_condition = "input_form_id='%s' and approval_num=%s and now_approval=1" % (input_form_id, now_approval_num)
                     # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                     sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                    # # print('approvalTable update_sql: ', sql)
+                    logger.debug("FN:change_status update_approvalTable_sql:{}".format(sql))
                     _ = self.updete_exec(conn, sql)
                     # changes inputform status
                     fields = ('form_status', 'updated_time')
                     values = (form_status_code, now)
                     update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                     sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                    print('update_sql: ', sql)
+                    logger.debug("FN:change_status update_inputFormTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
                     data = response_code.SUCCESS
                     data['msg'] = 'update form status to: ' + form_status
@@ -343,7 +355,7 @@ class DbGovernanceMgr(DbBase):
                 values = (0, 0, None, '', None)
                 approval_condition = "input_form_id='%s' and approval_num!=1" % (input_form_id)
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                print('approvalTable pending_approval sql: ', sql)
+                logger.debug("FN:change_status pending_approvalTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
 
                 fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
@@ -351,7 +363,7 @@ class DbGovernanceMgr(DbBase):
                 approval_condition = "input_form_id='%s' and approval_num=1 " % (input_form_id)
                 # approval_condition = "input_form_id='%s' and approval_num=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                # print('approvalTable update_sql: ', sql)
+                logger.debug("FN:change_status update_approvalTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
 
                 # changes inputform stauts
@@ -359,7 +371,7 @@ class DbGovernanceMgr(DbBase):
                 values = (form_status_code, now)
                 update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                 sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                # print('update_sql: ', sql)
+                logger.debug("FN:change_status update_inputFormTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
                 data = response_code.SUCCESS
                 data['msg'] = 'update form status to: ' + form_status
@@ -372,7 +384,7 @@ class DbGovernanceMgr(DbBase):
                 values = (0, 0, account_id, comment, now)
                 approval_condition = "input_form_id='%s' and now_approval=1" % (input_form_id)
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                print('approvalTable completed sql: ', sql)
+                logger.debug("FN:change_status complete_approvalTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
                 # if return_count == 0:
                 #     data = response_code.SUCCESS
@@ -391,7 +403,7 @@ class DbGovernanceMgr(DbBase):
                 values = (form_status_code, now)
                 update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                 sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                print('inputFormTable update_sql: ', sql)
+                logger.debug("FN:change_status update_inputFormTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
                 data = response_code.SUCCESS
                 data['msg'] = 'update form status to: ' + form_status
@@ -408,7 +420,8 @@ class DbGovernanceMgr(DbBase):
 
         except Exception as e:
             error = traceback.format_exc()
-            lg.error(error)
+            logger.error("FN:change_status error:" + e)
+            logger.error("FN:change_status error:" + error)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -423,15 +436,17 @@ class DbGovernanceMgr(DbBase):
         try:
             condition = 'ID=1'
             sql = self.create_select_sql(db_name, 'userTable', '*', condition)
-            # print('formTable: ', sql)
+            logger.debug("FN:get_admin_user_info userTable_sql:{}".format(sql))
             admin_info = self.execute_fetch_one(conn, sql)
             return admin_info
         except Exception as e:
             error = traceback.format_exc()
-            lg.error(error)
+            logger.error("FN:get_admin_user_info error:" + e)
+            logger.error("FN:get_admin_user_info error:" + error)
             return {}
         finally:
             conn.close()
+            
     # system approve
     def system_approval_trigger(self, user_key, account_id, inputData):
         conn = MysqlConn()
@@ -441,6 +456,7 @@ class DbGovernanceMgr(DbBase):
             notice_ids = []
             miss_role_list = []
             token = inputData.get('token', '')
+            logger.debug("FN:system_approval_trigger inputData_token:{}".format(token))
             token_json = json.loads(prpcrypt.decrypt(token))
             token = token_json.get('token', '||ERROR_TOKEN||')
             # do the form exists
@@ -458,7 +474,7 @@ class DbGovernanceMgr(DbBase):
             now = str(datetime.datetime.now())
             input_form_condition = 'id="%s" order by history_id desc' % (input_form_id)
             sql = self.create_select_sql(db_name, 'inputFormTable', '*', input_form_condition)
-            # print('formTable: ', sql)
+            logger.debug("FN:system_approval_trigger inputFormTable_sql:{}".format(sql))
             form_infos = self.execute_fetch_all(conn, sql)
             if not form_infos:
                 data = response_code.ADD_DATA_FAIL
@@ -473,7 +489,7 @@ class DbGovernanceMgr(DbBase):
             # check the approval condition
             approval_condition = "input_form_id='%s' and now_approval=1 and ad_group='%s'" % (input_form_id, token)
             sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-            print('approvalTable: ', sql)
+            logger.debug("FN:system_approval_trigger approvalTable_sql:{}".format(sql))
             approval_infos = self.execute_fetch_all(conn, sql)
             if not approval_infos:
                 data = response_code.UPDATE_DATA_FAIL
@@ -492,7 +508,7 @@ class DbGovernanceMgr(DbBase):
             # if it is the last approval
             approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
             sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
-            print('approvalTable: ', sql)
+            logger.debug("FN:system_approval_trigger check_last_approvalTable_sql:{}".format(sql))
             last_approval_info = self.execute_fetch_one(conn, sql)
             # if cannot find the next approval task, is the last approval status
             if not last_approval_info:
@@ -503,17 +519,17 @@ class DbGovernanceMgr(DbBase):
             if all_approval_flag == 1:
                 workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
-                # # print('workflow_stages_id_list:', workflow_stages_id_list)
+                logger.debug("FN:system_approval_trigger workflow_stages_id_list:{}".format(workflow_stages_id_list))
                 input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
                 sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                              input_stage_condition)
-                # print('inputStageTable: ', sql)
+                logger.debug("FN:system_approval_trigger inputStageTable_sql:{}".format(sql))
                 stage_infos = self.execute_fetch_all(conn, sql)
                 tasks = []
                 for stage_info in stage_infos:
                     tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
                                   "stages": json.loads(stage_info['condition_value_dict'])})
-                print('taskFetcher.project_id&service_account: ', taskFetcher.project_id, taskFetcher.service_account)
+                logger.debug("FN:system_approval_trigger project_id:{} service_account:{}".format(taskFetcher.project_id, taskFetcher.service_account))
                 torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
                                                                     taskFetcher.service_account)
                 for task in tasks:
@@ -545,6 +561,7 @@ class DbGovernanceMgr(DbBase):
                 # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                 # # print('approvalTable update_sql: ', sql)
+                logger.debug("FN:system_approval_trigger success_update_approvalTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
                 if return_count == 0:
                     data = response_code.SUCCESS
@@ -559,7 +576,7 @@ class DbGovernanceMgr(DbBase):
                 approval_condition = "input_form_id='%s' and now_approval=1 and approval_num=%s" % (input_form_id, now_approval_num)
                 # approval_condition = "input_form_id='%s' and now_approval=1 and ad_group in ('%s')" % (input_form_id, "', '".join(checking_list))
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                # # print('approvalTable update_sql: ', sql)
+                logger.debug("FN:system_approval_trigger close_same_num_update_approvalTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
 
                 # next approval task
@@ -567,7 +584,7 @@ class DbGovernanceMgr(DbBase):
                 values = (1, 0)
                 approval_condition = "input_form_id='%s' and approval_num=%s" % (input_form_id, next_approval_num)
                 sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
-                # print('approvalTable update_sql: ', sql)
+                logger.debug("FN:system_approval_trigger next_update_approvalTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
 
 
@@ -580,7 +597,7 @@ class DbGovernanceMgr(DbBase):
                     values = (form_status_code, now)
                     update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
                     sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-                    # print('update_sql: ', sql)
+                    logger.debug("FN:system_approval_trigger update_inputFormTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
 
                     # checking_list = self.__get_adgroup_member(notice_ids)
@@ -606,7 +623,8 @@ class DbGovernanceMgr(DbBase):
 
         except Exception as e:
             error = traceback.format_exc()
-            lg.error(error)
+            logger.error("FN:system_approval_trigger error:" + e)
+            logger.error("FN:system_approval_trigger error:" + error)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -622,7 +640,7 @@ class DbGovernanceMgr(DbBase):
 
             input_form_condition = 'id="%s" order by history_id desc' % (input_form_id)
             sql = self.create_select_sql(db_name, 'inputFormTable', '*', input_form_condition)
-            # print('formTable: ', sql)
+            logger.debug("FN:updateTask inputFormTable_sql:{}".format(sql))
             form_infos = self.execute_fetch_all(conn, sql)
             if not form_infos:
                 data = response_code.ADD_DATA_FAIL
@@ -638,7 +656,6 @@ class DbGovernanceMgr(DbBase):
 
             form_status_code = Status.completed
             now = str(datetime.datetime.now())
-            # print('update_sql: ', sql)
             # return_count = self.updete_exec(conn, sql)
             for i in range(len(tasks)):
                 input_stage_id = tasks[i]['id']
@@ -654,7 +671,7 @@ class DbGovernanceMgr(DbBase):
                 values = (status, logs, comment, now)
                 stage_condition = 'id="%s"' % (input_stage_id)
                 sql = self.create_update_sql(db_name, 'inputStageTable', fields, values, stage_condition)
-                # print('update_sql: ', sql)
+                logger.debug("FN:updateTask inputStageTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
 
             # update form
@@ -672,7 +689,8 @@ class DbGovernanceMgr(DbBase):
             return data
         except Exception as e:
             error = traceback.format_exc()
-            print(error)
+            logger.error("FN:updateTask error:" + e)
+            logger.error("FN:updateTask error:" + error)
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -686,26 +704,29 @@ class DbGovernanceMgr(DbBase):
             input_form_data = input_form_mgr.get_input_form_data(user_id, input_form_id)
             if input_form_data['code'] != 200:
                 return response_code.GET_DATA_FAIL
-            # print('input_form_data:', input_form_data)
+            # logger.debug("FN:add_new_usecase_setting input_form_data:{}".format(input_form_data))
 
             usecase = {'workspace_id': workspace_id}
             form_field_values_dict = input_form_data['data'][0]['form_field_values_dict']
             usecase_info = form_mgr.get_details_form_by_id(form_id)['data']
-            # # print("inputData:", inputData.keys())
+            # logger.debug("FN:add_new_usecase_setting inputData:{}".format(inputData.keys()))
+
             for index, field_item in enumerate(usecase_info['fieldList']):
                 field_key = field_item['label']
                 field_id = field_item['id']
-                # print(field_key, field_id)
+                # logger.debug("FN:add_new_usecase_setting field_key:{} field_id:{}".format(field_key, field_id))
                 usecase[field_key] = form_field_values_dict[field_id]
             # form_field_values_dict = inputData['form_field_values_dict']
             # # print("inputData:", inputData.keys())
             # print('usecase:', usecase)
+            # logger.debug("FN:add_new_usecase_setting inputData:{} usecase:{}".format(inputData.keys(), usecase))
             # exit(0)
             data = usecase_mgr.add_new_usecase_setting(usecase)
             return data
         except Exception as e:
             error = traceback.format_exc()
-            # print(error)
+            logger.error("FN:add_new_usecase_setting error:" + e)
+            logger.error("FN:add_new_usecase_setting error:" + error)
             return response_code.GET_DATA_FAIL
 
     # def add_new_policy_tags(self,  input_form_id, form_id, user_id, workspace_id):

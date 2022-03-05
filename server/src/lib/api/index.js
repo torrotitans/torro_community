@@ -91,6 +91,8 @@ const callApi = (method, url, param) => {
     body,
     method,
     credentials: "include",
+  }).catch((e) => {
+    throw new Error("API service unavaliable!");
   });
 };
 export const LoginCall = async (param) => {
@@ -384,6 +386,14 @@ export const wsDelete = async (param) => {
 export const getWsDetail = async (param) => {
   let {
     workspaceDetailGet: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
+export const getUcResource = async (param) => {
+  let {
+    useCaseResounceGet: { url, method },
   } = API_CONFIG;
 
   return await handleResponse(await callApi(method, url, param));
