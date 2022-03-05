@@ -687,7 +687,7 @@ class DbFormMgr(DbBase):
             new_field_info = self.execute_fetch_one(conn, sql)
             if new_field_info:
 
-                if wp_id != 0 and int(field_info['id']) == 1:
+                if wp_id != 0 and int(system_field_id) == 1:
                     condition = "ID='%s' " % (wp_id)
                     sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
                     logger.debug("FN:__get_dynamic_field_values workspaceTable REGOINS sql:{}".format(sql))
