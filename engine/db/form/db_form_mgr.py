@@ -674,9 +674,12 @@ class DbFormMgr(DbBase):
             field_info['default'] = field_info['default_value']
             del field_info['default_value']
         elif point_field_info['type'] == 'system':
-            system_field_id = point_field_info['point_field_id']
+            system_field_id = str(point_field_info['point_field_id']).replace('s', '')
+            if wp_id != 0:
+                condition = "workspace_id='%s' and id='%s'" % (wp_id, system_field_id)
+            else:
+                condition = "id='%s'" % system_field_id
 
-            condition = "id='%s'" % str(system_field_id).replace('s', '')
             sql = self.create_select_sql(db_name, 'fieldTable',
                                          'id,style,label,default_value,required,placeholder,value_num,value_list,edit,des,create_time,updated_time',
                                          condition=condition)
