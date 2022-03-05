@@ -690,6 +690,7 @@ class DbFormMgr(DbBase):
                 if wp_id != 0 and int(field_info['id']) == 1:
                     condition = "ID='%s' " % (wp_id)
                     sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
+                    logger.debug("FN:__get_dynamic_field_values workspaceTable REGOINS sql:{}".format(sql))
                     options = []
                     regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
                     # print('region_field_info:', region_field_info)
@@ -707,6 +708,10 @@ class DbFormMgr(DbBase):
                     del field_info['options']
                 if 'default' in field_info:
                     del field_info['default']
+                if 'label' in field_info:
+                    del new_field_info['label']
+                if 'id' in field_info:
+                    del new_field_info['id']
                 new_field_info['options'] = json.loads(new_field_info['value_list'])
                 new_field_info['default'] = new_field_info['default_value']
                 del new_field_info['value_list'], new_field_info['default_value']
