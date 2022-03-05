@@ -686,6 +686,23 @@ class DbFormMgr(DbBase):
             logger.debug("FN:__get_dynamic_field_values fieldTable sql:{}".format(sql))
             new_field_info = self.execute_fetch_one(conn, sql)
             if new_field_info:
+
+                if wp_id != 0 and int(field_info['id']) == 1:
+                    condition = "ID='%s' " % (wp_id)
+                    sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
+                    options = []
+                    regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+                    # print('region_field_info:', region_field_info)
+                    # print('regions:', regions)
+
+                    for region in regions:
+                        options.append({'label': region['region'], 'value': region['region']})
+                        for sub_region in region['countryList']:
+                            options.append({'label': sub_region['country'], 'value': sub_region['workflow']})
+                    new_field_info['options'] = options
+                    new_field_info['required'] = True
+                    new_field_info['value_num'] = len(options)
+
                 if 'options' in field_info:
                     del field_info['options']
                 if 'default' in field_info:
