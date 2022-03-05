@@ -625,7 +625,7 @@ class DbFormMgr(DbBase):
                                          values)
             # print('dynamicFieldValueTable2 sql:', sql)
             self.insert_exec(conn, sql, return_insert_id=True)
-            field_info['id'] = dynamic_field_id
+            field_info['id'] = 'd'+ str(dynamic_field_id)
 
             data = response_code.SUCCESS
             data['data'] = field_info
@@ -647,6 +647,8 @@ class DbFormMgr(DbBase):
             condition = "dynamic_field_id='%s'" % dynamic_field_id
         sql = self.create_select_sql(db_name, 'pointFieldTable',
                                      'point_field_id,type', condition=condition)
+        logger.debug("FN:__get_dynamic_field_values pointFieldTable sql:{}".format(sql))
+
         point_field_info = self.execute_fetch_one(conn, sql)
         if point_field_info['type'] == 'dynamic':
             dynamic_field_id = point_field_info['point_field_id']
@@ -661,6 +663,7 @@ class DbFormMgr(DbBase):
                 condition = "dynamic_field_id='%s'" % dynamic_field_id
             sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
                                          'option_label,create_time', condition=condition)
+            logger.debug("FN:__get_dynamic_field_values dynamicFieldValueTable sql:{}".format(sql))
             values_info = self.execute_fetch_all(conn, sql)
             field_info['options'] = []
             # print('field_info:', field_info)
@@ -676,8 +679,13 @@ class DbFormMgr(DbBase):
             sql = self.create_select_sql(db_name, 'fieldTable',
                                          'id,style,label,default_value,required,placeholder,value_num,value_list,edit,des,create_time,updated_time',
                                          condition=condition)
+            logger.debug("FN:__get_dynamic_field_values fieldTable sql:{}".format(sql))
             new_field_info = self.execute_fetch_one(conn, sql)
-            if field_info:
+            if new_field_info:
+                if 'options' in field_info:
+                    del field_info['options']
+                if 'default' in field_info:
+                    del field_info['default']
                 new_field_info['options'] = json.loads(field_info['value_list'])
                 new_field_info['default'] = new_field_info['default_value']
                 del new_field_info['value_list'], new_field_info['default_value']
