@@ -672,7 +672,7 @@ class DbWorkspaceMgr(DbBase):
             return_info['dynamic'] = dynamic
 
             # get usecase resource
-            condition = "WORKSPACE_ID='%s' " % (workspace_id)
+            condition = "usecaseResourceTable.WORKSPACE_ID='%s' " % (workspace_id)
             relations = [
                 {"table_name": "usecaseTable", "join_condition": "usecaseTable.id=usecaseResourceTable.USECASE_ID"}]
             sql = self.create_get_relation_sql(db_name, 'usecaseResourceTable', 'usecaseResourceTable.*, usecaseTable.USECASE_NAME',
