@@ -694,16 +694,16 @@ class DbFormMgr(DbBase):
                     options = []
                     regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
                     # print('region_field_info:', region_field_info)
-                    print('regions:', regions)
+                    # print('regions:', regions)
 
                     for region in regions:
                         options.append({'label': region['region'], 'value': region['region']})
                         for sub_region in region['countryList']:
                             options.append({'label': sub_region['country'], 'value': sub_region['workflow']})
-                    new_field_info['options'] = options
+                    new_field_info['value_list'] = options
                     new_field_info['required'] = True
                     new_field_info['value_num'] = len(options)
-                print('new_field_info:', new_field_info)
+                # print('new_field_info:', new_field_info)
                 if 'options' in field_info:
                     del field_info['options']
                 if 'default' in field_info:
