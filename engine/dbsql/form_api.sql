@@ -85,6 +85,18 @@ CREATE TABLE `dynamicFieldValueTable` (
   CONSTRAINT `dynamicFieldValueTable_ibfk_1` FOREIGN KEY (`dynamic_field_id`) REFERENCES `dynamicFieldTable` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+DROP TABLE IF EXISTS `pointFieldTable`;
+CREATE TABLE `pointFieldTable` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
+  `workspace_id` int NOT NULL COMMENT 'workspace id',
+  `dynamic_field_id` int NOT NULL COMMENT 'its dynamic field id in dynamicFieldTable',
+  `point_field_id` int NOT NULL COMMENT 'its point field id: can link to system field and dynamic field',
+  `input_form_id` int NOT NULL COMMENT 'input form id',
+  `type` varchar(256) DEFAULT NULL COMMENT 'system or dynamic ',
+  `create_time` datetime DEFAULT NULL COMMENT 'create_time',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `dynamicField_to_inputFormTable`;
 CREATE TABLE `dynamicField_to_inputFormTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',

@@ -150,17 +150,18 @@ class DbFormMgr(DbBase):
                                                  condition=condition)
                     field_info = self.execute_fetch_one(conn, sql)
                     # get dynamicFieldValue
-                    condition = "dynamic_field_id='%s'" % dynamic_field_id
-                    sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
-                                                 'option_label,create_time', condition=condition)
-                    values_info = self.execute_fetch_all(conn, sql)
-                    field_info['options'] = []
-                    # print('field_info:', field_info)
-                    for value_info in values_info:
-                        field_info['options'].append(
-                            {'label': value_info['option_label'], 'value': value_info['option_label']})
-                    field_info['default'] = field_info['default_value']
-                    del field_info['default_value']
+                    field_info = self.__get_dynamic_field_values(field_info, dynamic_field_id, wp_id, db_name, conn)
+                    # condition = "dynamic_field_id='%s'" % dynamic_field_id
+                    # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
+                    #                              'option_label,create_time', condition=condition)
+                    # values_info = self.execute_fetch_all(conn, sql)
+                    # field_info['options'] = []
+                    # # print('field_info:', field_info)
+                    # for value_info in values_info:
+                    #     field_info['options'].append(
+                    #         {'label': value_info['option_label'], 'value': value_info['option_label']})
+                    # field_info['default'] = field_info['default_value']
+                    # del field_info['default_value']
                     field_info['id'] = 'd' + str(field_info['id'])
                     # # print(field_info)
                     form_info['fieldList'][index] = field_info
@@ -252,26 +253,28 @@ class DbFormMgr(DbBase):
                 dynamic_fields_info = self.execute_fetch_all(conn, sql)
                 for dynamic_field_info in dynamic_fields_info:
                     dynamic_field_id = dynamic_field_info['id']
+
                     # get dynamicFieldValue
-                    if wp_id != 0:
-                        condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
-                    else:
-                        condition = "dynamic_field_id='%s'" % dynamic_field_id
-                    sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
-                                                 'option_label,create_time',
-                                                 condition=condition)
-                    values_info = self.execute_fetch_all(conn, sql)
-                    new_field_info = dynamic_field_info
-                    # # print('dynamic_field_info:', dynamic_field_info)
-                    new_field_info['options'] = []
-                    # # print('values_info:', values_info)
-                    for value_info in values_info:
-                        new_field_info['options'].append(
-                            {'label': value_info['option_label'], 'value': value_info['option_label']})
-                    new_field_info['default'] = new_field_info['default_value']
-                    # del new_field_info['default_value']
-                    # # print(new_field_info)
-                    # exit(0)
+                    new_field_info = self.__get_dynamic_field_values(dynamic_field_info, dynamic_field_id, wp_id, db_name, conn)
+                    # if wp_id != 0:
+                    #     condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
+                    # else:
+                    #     condition = "dynamic_field_id='%s'" % dynamic_field_id
+                    # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
+                    #                              'option_label,create_time',
+                    #                              condition=condition)
+                    # values_info = self.execute_fetch_all(conn, sql)
+                    # new_field_info = dynamic_field_info
+                    # # # print('dynamic_field_info:', dynamic_field_info)
+                    # new_field_info['options'] = []
+                    # # # print('values_info:', values_info)
+                    # for value_info in values_info:
+                    #     new_field_info['options'].append(
+                    #         {'label': value_info['option_label'], 'value': value_info['option_label']})
+                    # new_field_info['default'] = new_field_info['default_value']
+                    # # del new_field_info['default_value']
+                    # # # print(new_field_info)
+                    # # exit(0)
                     new_field_info['id'] = 'd' + str(new_field_info['id'])
                     new_field_info['required'] = True
                     # # print(field_info)
@@ -596,5 +599,89 @@ class DbFormMgr(DbBase):
         data['data'] = {'system': system, 'dynamic': dynamic, 'default': default}
         return data
 
+    def add_point_field(self, field_info, field_type, input_form_id, workspace_id):
+        conn = MysqlConn()
+        try:
+            db_name = configuration.get_database_name()
+            field_id = field_info['id']
+            field_label = field_info['label']
+            style = field_info['style']
+            type = field_type # system or dynamic
+            create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+            # add a new dynamic field
+            field_fields = ('style', 'form_id', 'label', 'default_value', 'placeholder',
+                            'value_num', 'create_time')
+            values = (style, '-1', field_label, '', '', 1, create_time)
+            sql = self.create_insert_sql(db_name, 'dynamicFieldTable', '({})'.format(', '.join(field_fields)), values)
+            # print('dynamicFieldTable2 sql:', sql)
+            dynamic_field_id = self.insert_exec(conn, sql, return_insert_id=True)
+
+            # link to the field
+
+            field_fields = ('workspace_id', 'dynamic_field_id', 'point_field_id', 'input_form_id', 'type', 'create_time')
+            values = (workspace_id, dynamic_field_id, field_id, input_form_id, type, create_time)
+            sql = self.create_insert_sql(db_name, 'pointFieldTable', '({})'.format(', '.join(field_fields)),
+                                         values)
+            # print('dynamicFieldValueTable2 sql:', sql)
+            self.insert_exec(conn, sql, return_insert_id=True)
+            field_info['id'] = dynamic_field_id
+
+            data = response_code.SUCCESS
+            data['data'] = field_info
+            return data
+        except Exception as e:
+            logger.error("FN:update_form error:{}".format(traceback.format_exc()))
+            # print(traceback.format_exc())
+            return response_code.GET_DATA_FAIL
+        finally:
+            conn.close()
+
+    def __get_dynamic_field_values(self, field_info, pass_dynamic_field_id, wp_id, db_name, conn):
+
+        dynamic_field_id = pass_dynamic_field_id
+        # check if it is point field
+        if wp_id != 0:
+            condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
+        else:
+            condition = "dynamic_field_id='%s'" % dynamic_field_id
+        sql = self.create_select_sql(db_name, 'pointFieldTable',
+                                     'point_field_id,type', condition=condition)
+        point_field_info = self.execute_fetch_one(conn, sql)
+        if point_field_info['type'] == 'dynamic':
+            dynamic_field_id = point_field_info['point_field_id']
+            point_field_info = None
+
+        # it is a dynamic field, get values from dynamicFieldValueTable
+        if not point_field_info:
+            # get value from dynamic value table
+            if wp_id != 0:
+                condition = "workspace_id='%s' and dynamic_field_id='%s'" % (wp_id, dynamic_field_id)
+            else:
+                condition = "dynamic_field_id='%s'" % dynamic_field_id
+            sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
+                                         'option_label,create_time', condition=condition)
+            values_info = self.execute_fetch_all(conn, sql)
+            field_info['options'] = []
+            # print('field_info:', field_info)
+            for value_info in values_info:
+                field_info['options'].append(
+                    {'label': value_info['option_label'], 'value': value_info['option_label']})
+            field_info['default'] = field_info['default_value']
+            del field_info['default_value']
+        elif point_field_info['type'] == 'system':
+            system_field_id = point_field_info['point_field_id']
+
+            condition = "id='%s'" % str(system_field_id).replace('s', '')
+            sql = self.create_select_sql(db_name, 'fieldTable',
+                                         'id,style,label,default_value,required,placeholder,value_num,value_list,edit,des,create_time,updated_time',
+                                         condition=condition)
+            new_field_info = self.execute_fetch_one(conn, sql)
+            if field_info:
+                new_field_info['options'] = json.loads(field_info['value_list'])
+                new_field_info['default'] = new_field_info['default_value']
+                del new_field_info['value_list'], new_field_info['default_value']
+                field_info.update(new_field_info)
+
+        return field_info
 form_mgr = DbFormMgr()
