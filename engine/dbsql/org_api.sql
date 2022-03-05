@@ -55,6 +55,18 @@ CREATE TABLE `usecaseResourceTable` (
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
+DROP TABLE IF EXISTS `gcpResourceTable`;
+CREATE TABLE `gcpResourceTable` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT 'resource_id',
+  `workspace_id` int NOT NULL COMMENT 'workspace_id',
+  `usecase_id` int DEFAULT '-1' COMMENT 'usecase_id',
+  `input_form_id` varchar(512) DEFAULT NULL COMMENT 'resource name',
+  `resource_label` varchar(512) DEFAULT NULL COMMENT 'resource label',
+  `resource_name` varchar(512) DEFAULT NULL COMMENT 'resource name',
+  `create_time` datetime DEFAULT NULL COMMENT 'create_time',
+  `des` varchar(128) DEFAULT NULL COMMENT 'comment',
+  PRIMARY KEY (`ID`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `usecaseTable`;
 CREATE TABLE `usecaseTable` (

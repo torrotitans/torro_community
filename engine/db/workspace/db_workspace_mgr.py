@@ -213,6 +213,7 @@ class DbWorkspaceMgr(DbBase):
 
         insert_resource = []
         update_resource = []
+        delete_resource = []
         create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for resource_info in resource_list:
             # print('resource_info:', resource_info)
@@ -225,24 +226,30 @@ class DbWorkspaceMgr(DbBase):
                 label = resource_info['resource'][3]
                 items = ','.join(resource_info['resource'][4:])
                 # print('resource_info owner_group:', owner_group)
-                if 'id' not in resource_info or resource_info['id'] in (None, ''):
+                if ('id' not in resource_info or resource_info['id'] in (None, '')) or ('option' in resource_info and resource_info['option'] == 0):
                     values = (workspace_id, owner_group, team_group, service_account, label, items, create_time)
                     # print('insert_resource item:', values)
                     insert_resource.append(values)
-                else:
+                elif 'id' in resource_info and 'option' in resource_info and resource_info['option'] == 2 and 'available' in resource_info and resource_info['available'] == 1:
+                    delete_resource.append(resource_info['id'])
+                elif 'id' in resource_info and 'option' in resource_info and resource_info['option'] == 1 and 'available' in resource_info and resource_info['available'] == 1:
                     update_record = {'id': resource_info['id'],
                                     'values': (workspace_id, owner_group, team_group, service_account, label, items, create_time)}
                     update_resource.append(update_record)
+                else:
+                    pass
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
             print('usecaseResourceTable insert_resource:', insert_resource)
             # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
+            # insert
             for values in insert_resource:
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
                 print('usecaseResourceTable one_sql:', sql)
                 _ = self.insert_exec(conn, sql)
+            # update
             for update_record in update_resource:
                 resource_id = update_record['id']
                 values = update_record['values']
@@ -250,6 +257,11 @@ class DbWorkspaceMgr(DbBase):
                 sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition="ID='%s'" % resource_id)
                 print('usecaseResourceTable update:', sql)
                 _ = self.updete_exec(conn, sql)
+            # delete
+            condition = "WORKSPACE_ID='%s' and AVAILABLE=1 and ID in ('%s')" % (workspace_id, "', '".join(delete_resource))
+            delete_table_sql = self.create_delete_sql(db_name, "usecaseResourceTable", condition)
+            self.delete_exec(conn, delete_table_sql)
+
 
         except Exception as e:
             lg.error(e)

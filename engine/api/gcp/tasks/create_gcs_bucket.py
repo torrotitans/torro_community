@@ -29,7 +29,7 @@ class CreateGCSBucket(baseTask):
             project_id = self.stage_dict['porject_id']
             bucket_name = self.stage_dict['bucket_name']
             location = self.stage_dict['bucket_location']
-            bucket_labels_str = self.stage_dict.get('bucket_labels', {})
+            bucket_labels_str = self.stage_dict.get('bucket_labels', '')
             bucket_labels = {}
             for bucket_label in bucket_labels_str.split(','):
                 key, value = bucket_label.split('=')

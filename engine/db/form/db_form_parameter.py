@@ -7,7 +7,7 @@ class formApiPara:
     getFormData_POST_response = {"id": {"type": int, "default": 355},
                                  "title": {"type": str, "default": ''},
                                  "fields_num": {"type": int, "default": 0},
-                                 "u_max_id": {"type": int, "default": 0},
+                                 "u_max_id": {"type": str, "default": ''},
                                  "creator_id": {"type": str, "default": ''},
                                  "fields_list": {"type": list(), "default": []},
                                  "des": {"type": str, "default": ''},}
