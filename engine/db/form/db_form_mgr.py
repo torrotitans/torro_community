@@ -712,7 +712,7 @@ class DbFormMgr(DbBase):
                     del new_field_info['label']
                 if 'id' in field_info:
                     del new_field_info['id']
-                new_field_info['options'] = json.loads(new_field_info['value_list'])
+                new_field_info['options'] = new_field_info['value_list']
                 new_field_info['default'] = new_field_info['default_value']
                 del new_field_info['value_list'], new_field_info['default_value']
                 field_info.update(new_field_info)
