@@ -244,9 +244,9 @@ class DbFormMgr(DbBase):
 
             if wp_id != 0:
                 if style != 0:
-                    condition = "style='%s'" % (style)
+                    condition = "style='%s' and form_id!='-1'" % (style)
                 else:
-                    condition = "1=1"
+                    condition = "1=1 and form_id!='-1'"
                 sql = self.create_select_sql(db_name, 'dynamicFieldTable',
                                              'id,style,label,default_value,placeholder,value_num,des,create_time',
                                              condition=condition)
