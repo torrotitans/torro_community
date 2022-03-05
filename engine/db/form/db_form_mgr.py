@@ -651,7 +651,7 @@ class DbFormMgr(DbBase):
         logger.debug("FN:__get_dynamic_field_values pointFieldTable sql:{}".format(sql))
 
         point_field_info = self.execute_fetch_one(conn, sql)
-        if point_field_info['type'] == 'dynamic':
+        if point_field_info and point_field_info['type'] == 'dynamic':
             dynamic_field_id = point_field_info['point_field_id']
             point_field_info = None
 
