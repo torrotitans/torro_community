@@ -7,7 +7,7 @@ class GrantRoleForGCSBucket(baseTask):
     api_name = 'GrantRoleForGCSBucket'
     arguments = {"porject_id": {"type": str, "default": ''},
                  "bucket_name": {"type": str, "default": ''},
-                 "member_roles ": {"type": dict, "default": {}}}
+                 "member_roles ": {"type": str, "default": ''}}
 
     def __init__(self, stage_dict):
         super(GrantRoleForGCSBucket, self).__init__(stage_dict)

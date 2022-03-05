@@ -20,10 +20,10 @@ config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
 
-# class GrantRoleForBQTable(baseTask):
-class GrantRoleForBQTable(baseTask, DbBase):
+# class GrantRoleForBQDataset(baseTask):
+class GrantRoleForBQDataset(baseTask, DbBase):
     api_type = 'gcp'
-    api_name = 'GrantRoleForBQTable'
+    api_name = 'GrantRoleForBQDataset'
     arguments = {
         "project_id": {"type": str, "default": ''},
         "usecase_name": {"type": str, "default": ''},
@@ -33,7 +33,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
     role_list = ['roles/bigquery.dataOwner', 'roles/bigquery.admin']
 
     def __init__(self, stage_dict):
-        super(GrantRoleForBQTable, self).__init__(stage_dict)
+        super(GrantRoleForBQDataset, self).__init__(stage_dict)
         # # print('self.stage_dict:', self.stage_dict)
 
         self.full_resource_name = None
@@ -150,7 +150,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
 
 
 if __name__ == '__main__':
-    x = GrantRoleForBQTable({"tag_template_display_name": 'Create Tag Templates Api',
+    x = GrantRoleForBQDataset({"tag_template_display_name": 'Create Tag Templates Api',
                              "description": 'testing api tasks',
                              "field_list": [
                                  {
