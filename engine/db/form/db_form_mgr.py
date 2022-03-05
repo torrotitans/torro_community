@@ -599,7 +599,7 @@ class DbFormMgr(DbBase):
         data['data'] = {'system': system, 'dynamic': dynamic, 'default': default}
         return data
 
-    def add_point_field(self, field_info, field_type, input_form_id, workspace_id):
+    def add_point_field(self, field_info, field_type, workspace_id):
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
@@ -619,8 +619,8 @@ class DbFormMgr(DbBase):
 
             # link to the field
 
-            field_fields = ('workspace_id', 'dynamic_field_id', 'point_field_id', 'input_form_id', 'type', 'create_time')
-            values = (workspace_id, dynamic_field_id, field_id, input_form_id, type, create_time)
+            field_fields = ('workspace_id', 'dynamic_field_id', 'point_field_id', 'type', 'create_time')
+            values = (workspace_id, dynamic_field_id, field_id, type, create_time)
             sql = self.create_insert_sql(db_name, 'pointFieldTable', '({})'.format(', '.join(field_fields)),
                                          values)
             # print('dynamicFieldValueTable2 sql:', sql)

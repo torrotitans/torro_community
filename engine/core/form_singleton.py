@@ -48,8 +48,8 @@ class formSingleton():
         return form_mgr.get_all_fields(workspace_id)
 
 
-    def add_point_field(self, field_info, field_type, input_form_id, workspace_id):
-        return  form_mgr.add_point_field(field_info, field_type, input_form_id, workspace_id)
+    def add_point_field(self, field_info, field_type, workspace_id):
+        return  form_mgr.add_point_field(field_info, field_type, workspace_id)
 formSingleton_singleton = formSingleton()
 
 

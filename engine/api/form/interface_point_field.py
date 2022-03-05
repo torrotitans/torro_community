@@ -50,10 +50,9 @@ class interfacePointField(Resource):
             workspace_id = req.get_workspace_id()
             field_info = request_data.get('data', {})
             field_type = request_data.get('field_type', None)
-            input_form_id = request_data.get('input_form_id', None)
-            if input_form_id is None or field_type is None:
+            if field_type is None:
                 return response_code.GET_DATA_FAIL
-            data = formSingleton_singleton.add_point_field(field_info, field_type, input_form_id, workspace_id)
+            data = formSingleton_singleton.add_point_field(field_info, field_type, workspace_id)
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, formApiPara.getFieldTemplate_POST_response)

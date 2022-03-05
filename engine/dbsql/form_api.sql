@@ -91,7 +91,6 @@ CREATE TABLE `pointFieldTable` (
   `workspace_id` int NOT NULL COMMENT 'workspace id',
   `dynamic_field_id` varchar(8) DEFAULT NULL COMMENT 'its dynamic field id in dynamicFieldTable',
   `point_field_id` varchar(8) DEFAULT NULL COMMENT 'its point field id: can link to system field and dynamic field',
-  `input_form_id` int NOT NULL COMMENT 'input form id',
   `type` varchar(256) DEFAULT NULL COMMENT 'system or dynamic ',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`id`) USING BTREE
