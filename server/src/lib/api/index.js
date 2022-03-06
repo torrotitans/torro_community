@@ -48,7 +48,14 @@ const handleObjectToFormData = (data, ss) => {
 };
 
 const handleResponse = async (response) => {
-  const body = response.json ? await response.json() : {};
+  console.log(response);
+  let body;
+
+  try {
+    body = response.json ? await response.json() : {};
+  } catch (error) {
+    throw new Error("API service unavaliable!");
+  }
   const statusCode = response.status.toString().split("");
   let technicalError = statusCode[0] === "5";
 
@@ -57,6 +64,7 @@ const handleResponse = async (response) => {
     status: response.status,
     technicalError,
   };
+
   if (response.ok) {
     if (res.errorInfo) {
       return res;

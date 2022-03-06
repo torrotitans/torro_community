@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*
 
 from flask_restful import Api
-
+from api.form.interface_point_field import interfacePointField
 from api.form.interface_base_form import interfaceBaseForm
 from api.form.interface_detail_form import interfaceDetailForm, interfaceDetailFormList
 from api.form.interface_edit_form import interfaceEditForm
@@ -41,6 +41,11 @@ from api.system.interface_system_trigger import interfaceSystemTrigger
 from api.system.interface_system_notify import interfaceSystemNotify
 api = Api()
 
+
+api.add_resource(
+    interfacePointField,
+    '/api/pointField',
+)
 
 api.add_resource(
     interfaceUsecaseResource,

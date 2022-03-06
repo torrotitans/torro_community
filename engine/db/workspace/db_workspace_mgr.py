@@ -4,6 +4,7 @@
 from common.common_input_form_status import status as Status
 from db.base import DbBase
 from db.connection_pool import MysqlConn
+from utils.log_helper import lg
 import copy
 import datetime
 from utils.status_code import response_code
@@ -217,6 +218,7 @@ class DbWorkspaceMgr(DbBase):
 
         insert_resource = []
         update_resource = []
+        delete_resource = []
         create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for resource_info in resource_list:
             logger.debug("FN:DbWorkspaceMgr__set_team_resource resource_info:{}".format(resource_info))
@@ -228,25 +230,31 @@ class DbWorkspaceMgr(DbBase):
                 service_account = resource_info['resource'][2]
                 label = resource_info['resource'][3]
                 items = ','.join(resource_info['resource'][4:])
-                # logger.debug("FN:DbWorkspaceMgr__set_team_resource owner_group:{}".format(owner_group))
-                if 'id' not in resource_info or resource_info['id'] in (None, ''):
+                # print('resource_info owner_group:', owner_group)
+                if ('id' not in resource_info or resource_info['id'] in (None, '')) or ('option' in resource_info and resource_info['option'] == 0):
                     values = (workspace_id, owner_group, team_group, service_account, label, items, create_time)
-                    # logger.debug("FN:DbWorkspaceMgr__set_team_resource insert_values:{}".format(values))
+                    # print('insert_resource item:', values)
                     insert_resource.append(values)
-                else:
+                elif 'id' in resource_info and 'option' in resource_info and resource_info['option'] == 2 and 'available' in resource_info and resource_info['available'] == 1:
+                    delete_resource.append(resource_info['id'])
+                elif 'id' in resource_info and 'option' in resource_info and resource_info['option'] == 1 and 'available' in resource_info and resource_info['available'] == 1:
                     update_record = {'id': resource_info['id'],
                                     'values': (workspace_id, owner_group, team_group, service_account, label, items, create_time)}
                     update_resource.append(update_record)
+                else:
+                    pass
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
             logger.debug("FN:DbWorkspaceMgr__set_team_resource insert_resource:{}".format(insert_resource))
             # sql, insert_data = self.create_batch_insert_sql(db_name, 'usecaseResourceTable', insert_resource)
+            # insert
             for values in insert_resource:
                 fields = ('WORKSPACE_ID', 'OWNER_GROUP', 'TEAM_GROUP', 'SERVICE_ACCOUNT', 'LABEL', 'ITEMS', 'CREATE_TIME')
                 sql = self.create_insert_sql(db_name, 'usecaseResourceTable', '({})'.format(', '.join(fields)), values)
                 logger.debug("FN:DbWorkspaceMgr__set_team_resource insert_usecaseResourceTable_sql:{}".format(sql))
                 _ = self.insert_exec(conn, sql)
+            # update
             for update_record in update_resource:
                 resource_id = update_record['id']
                 values = update_record['values']
@@ -254,6 +262,11 @@ class DbWorkspaceMgr(DbBase):
                 sql = self.create_update_sql(db_name, 'usecaseResourceTable', fields, values, condition="ID='%s'" % resource_id)
                 logger.debug("FN:DbWorkspaceMgr__set_team_resource update_usecaseResourceTable_sql:{}".format(sql))
                 _ = self.updete_exec(conn, sql)
+            # delete
+            condition = "WORKSPACE_ID='%s' and AVAILABLE=1 and ID in ('%s')" % (workspace_id, "', '".join(delete_resource))
+            delete_table_sql = self.create_delete_sql(db_name, "usecaseResourceTable", condition)
+            self.delete_exec(conn, delete_table_sql)
+
 
         except Exception as e:
             logger.error("FN:DbWorkspaceMgr__set_team_resource error:{}".format(traceback.format_exc()))
@@ -568,11 +581,9 @@ class DbWorkspaceMgr(DbBase):
             workspace['workspace_id'] = workspace_insert['data']['workspace_id']
             data['data'] = workspace
             return data
-
         except Exception as e:
             logger.error("FN:DbWorkspaceMgr_update_workspace_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
-
         finally:
             conn.close()
 
@@ -593,11 +604,9 @@ class DbWorkspaceMgr(DbBase):
             data = response_code.SUCCESS
             data['data'] = workspace
             return data
-
         except Exception as e:
             logger.error("FN:DbWorkspaceMgr_delete_workspace_info error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
-
         finally:
             conn.close()
 
@@ -643,6 +652,7 @@ class DbWorkspaceMgr(DbBase):
                 for label in label_list:
                     return_info[label] = ad_group_info['GROUP_MAIL']
 
+            # # print(sql)
             system = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
             dynamic = {1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
             templateTypeList = form_mgr.get_field_template(0, workspace_id)
@@ -662,8 +672,11 @@ class DbWorkspaceMgr(DbBase):
             return_info['dynamic'] = dynamic
 
             # get usecase resource
-            condition = "WORKSPACE_ID='%s' " % (workspace_id)
-            sql = self.create_select_sql(db_name, 'usecaseResourceTable', '*', condition)
+            condition = "usecaseResourceTable.WORKSPACE_ID='%s' " % (workspace_id)
+            relations = [
+                {"table_name": "usecaseTable", "join_condition": "usecaseTable.id=usecaseResourceTable.USECASE_ID"}]
+            sql = self.create_get_relation_sql(db_name, 'usecaseResourceTable', 'usecaseResourceTable.*, usecaseTable.USECASE_NAME',
+                                               relations=relations, condition=condition)
             logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id usecaseResourceTable_sql:{}".format(sql))
             return_uc_infos = self.execute_fetch_all(conn, sql)
             resource_infos = []
@@ -865,6 +878,7 @@ class DbWorkspaceMgr(DbBase):
                                          condition='workspace_id="%s" or workspace_id=0' % workspace_id)
             logger.debug("FN:DbWorkspaceMgr_get_tag_template_info tagTemplatesTable_sql:{}".format(sql))
             taxonomy_infos = self.execute_fetch_all(conn, sql)
+
             data = response_code.SUCCESS
             data['data'] = taxonomy_infos
 
@@ -904,7 +918,7 @@ class DbWorkspaceMgr(DbBase):
                 if resource_info['id'] != None:
                     resource_infos.append(resource_info)
             # return_info['groupArr'] = resource_infos
-            
+
             data = response_code.SUCCESS
             data['data'] = resource_infos
             return data

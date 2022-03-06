@@ -144,6 +144,7 @@ class DbInputFormMgr(DbBase):
 
     def get_input_form_data(self, account_id, input_form_id, approver_view=False):
 
+
         db_conn = MysqlConn()
         try:
             # adgroup_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
@@ -378,6 +379,7 @@ class DbInputFormMgr(DbBase):
             # input_form_list[0]['comment_history'] = comment_history
             data = response_code.SUCCESS
             data['data'] = input_form_list
+            data['approverView'] = approval_flag
             return data
 
         except Exception as e:
@@ -429,15 +431,15 @@ class DbInputFormMgr(DbBase):
                 data['msg'] = 'workflow not found'
                 return data
             else:
-                trigger_worfklow = self.__get_trigger_worflow(form_field_values_dict, workflow_infos)
+                trigger_workflow = self.__get_trigger_worflow(form_field_values_dict, workflow_infos)
 
-            if not trigger_worfklow:
+            if not trigger_workflow:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'workflow not found'
                 return data
 
-            logger.debug("FN:DbInputFormMgr_input_form_data trigger_worfklow:{}".format(trigger_worfklow))
-            stage_hash = prpcrypt.decrypt(trigger_worfklow['stage_hash'])
+            logger.debug("FN:DbInputFormMgr_input_form_data trigger_workflow:{}".format(trigger_workflow))
+            stage_hash = prpcrypt.decrypt(trigger_workflow['stage_hash'])
             old_id, last_time = stage_hash.split('||')
             logger.debug("FN:DbInputFormMgr_input_form_data old_id:{} form_id:{}".format(old_id, form_id))
             logger.debug("FN:DbInputFormMgr_input_form_data last_time:{} form_info_updated_time:{}".format(last_time, form_info['updated_time']))
@@ -463,9 +465,9 @@ class DbInputFormMgr(DbBase):
             now = str(datetime.datetime.today())
             # get approval info and workflow stages list
             fields_num = len(form_field_values_dict)
-            workflow_id = trigger_worfklow['id']
-            workflow_name = trigger_worfklow['workflow_name']
-            workflow_stages_list = json.loads(trigger_worfklow['stages'])[1:]
+            workflow_id = trigger_workflow['id']
+            workflow_name = trigger_workflow['workflow_name']
+            workflow_stages_list = json.loads(trigger_workflow['stages'])[1:]
             stages_num = len(workflow_stages_list)
 
             # get input form data and form's workflow stages list and approver stage
@@ -566,15 +568,15 @@ class DbInputFormMgr(DbBase):
                 data['msg'] = 'workflow not found'
                 return data
             else:
-                trigger_worfklow = self.__get_trigger_worflow(form_field_values_dict, workflow_infos)
+                trigger_workflow = self.__get_trigger_worflow(form_field_values_dict, workflow_infos)
 
-            if not trigger_worfklow:
+            if not trigger_workflow:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'workflow not found'
                 return data
 
-            logger.debug("FN:DbInputFormMgr_input_form_data trigger_worfklow:{}".format(trigger_worfklow))
-            stage_hash = prpcrypt.decrypt(trigger_worfklow['stage_hash'])
+            logger.debug("FN:DbInputFormMgr_input_form_data trigger_workflow:{}".format(trigger_workflow))
+            stage_hash = prpcrypt.decrypt(trigger_workflow['stage_hash'])
             old_id, last_time = stage_hash.split('||')
             # # print('id: ', old_id, form_id, int(old_id) == int(form_id))
             # # print('time: ', last_time, form_info['updated_time'], last_time == str(form_info['updated_time']))
@@ -584,9 +586,9 @@ class DbInputFormMgr(DbBase):
                 return data
 
             fields_num = len(form_field_values_dict)
-            workflow_id = trigger_worfklow['id']
-            workflow_name = trigger_worfklow['workflow_name']
-            workflow_stages_list = json.loads(trigger_worfklow['stages'])[1:]
+            workflow_id = trigger_workflow['id']
+            workflow_name = trigger_workflow['workflow_name']
+            workflow_stages_list = json.loads(trigger_workflow['stages'])[1:]
             stages_num = len(workflow_stages_list)
 
             input_form, workflow_stages_id_list, approver_info = self.__get_workflow_stages(
@@ -641,7 +643,7 @@ class DbInputFormMgr(DbBase):
             return False
 
     def __get_trigger_worflow(self, form_field_values_dict, workflow_infos):
-        trigger_worfklow = None
+        trigger_workflow = None
 
         for workflow_info in workflow_infos:
 
@@ -673,10 +675,10 @@ class DbInputFormMgr(DbBase):
                 if int(cond_type) == 3 and input_value <= cond_value:
                     match_length += 1
             if match_length == cond_length:
-                trigger_worfklow = workflow_info
+                trigger_workflow = workflow_info
                 break
 
-        return trigger_worfklow
+        return trigger_workflow
 
     def __check_usecase_resource_available(self, workspace_id, form_id, form_field_values_dict, conn, db_name):
 

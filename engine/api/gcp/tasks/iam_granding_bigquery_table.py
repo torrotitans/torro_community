@@ -3,6 +3,7 @@ from api.gcp.tasks.baseTask import baseTask
 import google
 from db.base import DbBase
 from db.connection_pool import MysqlConn
+from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
@@ -54,7 +55,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
                 check_key = self.stage_dict.get(key, 'NotFound')
                 if check_key == 'NotFound':
                     missing_set.add(key)
-                # # logger.debug('{}: {}'.format(key, self.stage_dict[key]))
+                # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
                 return 'Missing parameters: {}'.format(', '.join(missing_set))
             else:
@@ -67,10 +68,10 @@ class GrantRoleForBQTable(baseTask, DbBase):
                 data = self.__get_adgroup_service_accout(workspace_id, usecase_name, db_name, conn)
                 if data['code'] != 200:
                     return data['msg']
-                service_account = data['data']['sa']
-                ad_group_list = data['data']['ad_group_list']
+                service_account = data['data'].get('sa', None)
+                ad_group_list = data['data'].get('ad_group_list', [])
                 logger.debug("FN:GrantRoleForBQTable_execute data:{}".format(data))
-                ad_group_list = []
+                # ad_group_list = []
                 # check if already get the table access
                 table_policy = self.__grand_access_roles(service_account, ad_group_list, project_id, dataset_id,
                                                          table_id)
@@ -137,6 +138,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
 
         finally:
             conn.close()
+            # pass
 
     def __get_adgroup_service_accout(self, workspace_id, usecase_name, db_name, conn):
 
@@ -146,7 +148,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
         cond = "WORKSPACE_ID='%s' and USECASE_NAME='%s'" % (
             workspace_id, usecase_name)
         sql = self.create_select_sql(db_name, 'usecaseTable', 'ID,SERVICE_ACCOUNT', cond)
-        logger.debug('FN:GrantRoleForBQTable__get_adgroup_service_accout usecaseTable_sql:{} '.format(sql))                                   
+        logger.debug('FN:GrantRoleForBQTable__get_adgroup_service_accout usecaseTable_sql:{} '.format(sql))
         usecase_info = self.execute_fetch_one(conn, sql)
 
         if not usecase_info:
@@ -163,7 +165,7 @@ class GrantRoleForBQTable(baseTask, DbBase):
         ]
         sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', 'GROUP_MAIL', relations=relation_tables,
                                            condition=condition)
-        logger.debug('FN:GrantRoleForBQTable__get_adgroup_service_accout get_adGroup_id_sql:{} '.format(sql))                                   
+        logger.debug('FN:GrantRoleForBQTable__get_adgroup_service_accout get_adGroup_id_sql:{} '.format(sql))
         ad_group_infos = self.execute_fetch_all(conn, sql)
         for ad_group in ad_group_infos:
             ad_group_list.append(ad_group['GROUP_MAIL'])
@@ -175,7 +177,10 @@ class GrantRoleForBQTable(baseTask, DbBase):
         try:
             access_roles = ['roles/bigquery.dataViewer']
             # # default access json
-            access_json = {'roles/bigquery.dataViewer': ['serviceAccount:{}'.format(service_account)]}
+            if service_account:
+                access_json = {'roles/bigquery.dataViewer': ['serviceAccount:{}'.format(service_account)]}
+            else:
+                access_json = {}
             for ad_group in ad_group_list:
                 access_json['roles/bigquery.jobUser'].append('group:{}'.format(ad_group))
                 access_json['roles/bigquery.dataViewer'].append('group:{}'.format(ad_group))
