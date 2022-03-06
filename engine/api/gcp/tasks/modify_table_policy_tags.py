@@ -101,12 +101,12 @@ class ModifyTablePolicyTags(baseTask, DbBase):
                     logger.debug("FN:ModifyTablePolicyTags_execute update_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
 
-                else:
-                    column_fields = ('input_form_id', 'workspace_id', 'project_id', 'dataset_id', 'location', 'table_id', 'fields', 'create_time')
-                    values = (input_form_id, workspace_id, project, dataset_id, location, table_id, json.dumps(fields), now)
-                    sql = self.create_insert_sql(db_name, 'dataOnboardTable', '({})'.format(', '.join(column_fields)), values)
-                    logger.debug("FN:ModifyTablePolicyTags_execute insert_dataOnboardTable_sql:{}".format(sql))
-                    return_count = self.insert_exec(conn, sql)
+                # else:
+                #     column_fields = ('input_form_id', 'workspace_id', 'project_id', 'dataset_id', 'location', 'table_id', 'fields', 'create_time')
+                #     values = (input_form_id, workspace_id, project, dataset_id, location, table_id, json.dumps(fields), now)
+                #     sql = self.create_insert_sql(db_name, 'dataOnboardTable', '({})'.format(', '.join(column_fields)), values)
+                #     logger.debug("FN:ModifyTablePolicyTags_execute insert_dataOnboardTable_sql:{}".format(sql))
+                #     return_count = self.insert_exec(conn, sql)
 
             return 'update successfully'
 

@@ -135,7 +135,7 @@ class DbGCPMgr(DbBase):
             table_entry = datacatalog_client.lookup_entry(
                 request={"linked_resource": resource_name}
             )
-            table_tags = {}
+            table_tags = []
             column_tags = {}
             # print(table_entry)
             tags = datacatalog_client.list_tags(parent=table_entry.name)
@@ -192,14 +192,14 @@ class DbGCPMgr(DbBase):
                 return_tag = { "tag_template_form_id": tag_template_form_id, "data": form_return_data}
                 tag_column_name = tag.column
                 if tag_column_name == '':
-                    table_tags = return_tag
+                    table_tags.append(return_tag)
                 else:
                     if tag_column_name not in column_tags:
                         column_tags[tag_column_name] = return_tag
             if not table_tags:
                 table_schema['tags'] = []
             else:
-                table_schema['tags'] = [table_tags]
+                table_schema['tags'] = table_tags
             for index in range(len(table_schema['schema']['fields'])):
                 # fill column tags
                 column_name = table_schema['schema']['fields'][index]['name']
