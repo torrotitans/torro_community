@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import cn from "classnames";
 
 /* material-ui */
@@ -12,11 +12,16 @@ import styles from "./styles.module.scss";
 const TextEdit = ({ value, onChange, ...props }) => {
   const [editState, setEditState] = useState(false);
   const textDivRef = useRef();
+
+  const showEdit = useMemo(() => {
+    return !value.trim() ? true : false;
+  }, [value]);
+
   return (
     <div className={styles.textEditor}>
       <div
         className={cn(styles.textEditorBox, {
-          [styles["editState"]]: editState,
+          [styles["editState"]]: editState || showEdit,
         })}
       >
         <div
