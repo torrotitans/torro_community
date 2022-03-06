@@ -144,6 +144,7 @@ class DbInputFormMgr(DbBase):
 
     def get_input_form_data(self, account_id, input_form_id, approver_view=False):
 
+
         db_conn = MysqlConn()
         try:
             # adgroup_list = Ldap.get_member_ad_group(account_id, Status.offline_flag)
@@ -378,6 +379,7 @@ class DbInputFormMgr(DbBase):
             # input_form_list[0]['comment_history'] = comment_history
             data = response_code.SUCCESS
             data['data'] = input_form_list
+            data['approverView'] = approval_flag
             return data
 
         except Exception as e:
