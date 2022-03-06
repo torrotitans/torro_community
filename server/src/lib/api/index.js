@@ -48,7 +48,6 @@ const handleObjectToFormData = (data, ss) => {
 };
 
 const handleResponse = async (response) => {
-  console.log(response);
   let body;
 
   try {
