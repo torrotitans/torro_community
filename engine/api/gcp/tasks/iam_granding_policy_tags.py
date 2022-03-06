@@ -72,7 +72,7 @@ class GrantRoleForPolicyTags(baseTask, DbBase):
                 service_account = data['data']['sa']
                 ad_group_list = data['data']['ad_group_list']
                 logger.debug("FN:GrantRoleForPolicyTags__get_adgroup_service_accout data:{}".format(data))
-                ad_group_list = []
+                # ad_group_list = []
                 # check if already get the table access
                 success_tag_policy_list, failed_policy_list = self.__grand_access_roles(service_account, ad_group_list, project_id, dataset_id, table_id, fields, db_name, conn)
                 if failed_policy_list:
