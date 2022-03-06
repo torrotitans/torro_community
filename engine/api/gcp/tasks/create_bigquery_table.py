@@ -31,6 +31,8 @@ class CreateBQTable(baseTask):
             table_name = self.stage_dict['table_name']
             table_id = '{}.{}.{}'.format(project_id, dataset_name, table_name)
             table_schema_csv_path = self.stage_dict['table_schema_csv']
+            if isinstance(table_schema_csv_path, list):
+                table_schema_csv_path = table_schema_csv_path[0]
             table_labels_str = self.stage_dict.get('table_labels', '')
             table_labels = {}
             for table_label in table_labels_str.split(','):
