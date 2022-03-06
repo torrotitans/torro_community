@@ -32,17 +32,17 @@ class Smtp(object):
         
     def send_email(self, subject, text, receivers, sender=None, sender_name=None):
 
-        if sender is None:
-            sender = self.mail_user
-        if sender_name is None:
-            sender_name = 'TorroAdmin'
-        message = MIMEText(text, 'plain', 'utf-8')
-        message['Subject'] = Header(subject, 'utf-8')
-        if sender_name:
-            message['From'] = Header(sender_name, 'utf-8')
-        else:
-            message['From'] = Header(sender, 'utf-8')
         try:
+            if sender is None:
+                sender = self.mail_user
+            if sender_name is None:
+                sender_name = 'TorroAdmin'
+            message = MIMEText(text, 'plain', 'utf-8')
+            message['Subject'] = Header(subject, 'utf-8')
+            if sender_name:
+                message['From'] = Header(sender_name, 'utf-8')
+            else:
+                message['From'] = Header(sender, 'utf-8')
             smtpObj = smtplib.SMTP()
             smtpObj.connect(self.mail_host, self.port)
             smtpObj.ehlo()
@@ -80,21 +80,31 @@ class Smtp(object):
             return False
         
 def notify_approvers(input_form_id, approvers, text=None):
-    approvers = list(set(approvers))
-    logger.info("FN:Smtp_notify_approvers input_form_id:{} approvers:{}".format(input_form_id, approvers))
-    smtp = Smtp()
-    logger.debug("FN:Smtp_notify_approvers mail_host:{} mail_user:{} mail_tls:{}".format(smtp.mail_host,smtp.mail_user,smtp.is_tls))
-    # return response_code.SUCCESS
-    
-    # Change the subject line for your company specific line
-    subject = 'Torro - You have an new ticket message await your action'
-    if not text:
-        text = 'The waiting for approval form id is: %s' % input_form_id
-        text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
 
-    logger.debug("FN:Smtp_notify_approvers subject:{} body:{} receivers:".format(subject, text, approvers))
-    smtp.send_email(subject, text, receivers=approvers)
-    data = response_code.SUCCESS
-    logger.debug("FN:Smtp_notify_approvers email_sent:True")
+    try:
+        approvers = list(set(approvers))
+        logger.info("FN:Smtp_notify_approvers input_form_id:{} approvers:{}".format(input_form_id, approvers))
+        smtp = Smtp()
+        logger.debug("FN:Smtp_notify_approvers mail_host:{} mail_user:{} mail_tls:{}".format(smtp.mail_host,smtp.mail_user,smtp.is_tls))
+        # return response_code.SUCCESS
+        
+        # Change the subject line for your company specific line
+        subject = 'Torro - You have an new ticket message await your action'
+
+        if not text:
+            text = 'The waiting for approval form id is: %s' % input_form_id
+            text += '\n URL: '+Config.FRONTEND_URL+'/app/approvalFlow?id=%s' % input_form_id
+
+        logger.debug("FN:Smtp_notify_approvers subject:{} body:{} receivers:".format(subject, text, approvers))
+        smtp.send_email(subject, text, receivers=approvers)
+        data = response_code.SUCCESS
+        logger.debug("FN:Smtp_notify_approvers email_sent:True")
+        
+        return data
+
+    except:
+        logger.error("FN:Smtp_notify_approvers error:{}".format(traceback.format_exc()))
+
+        
     
-    return data
+    
