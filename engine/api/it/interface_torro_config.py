@@ -6,10 +6,12 @@ from flask import request
 from flask_restful import Resource
 import os
 from common.common_response_process import response_result_process
-from utils.log_helper import lg
 from utils.status_code import response_code
 import json
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceTorroConfig(Resource):
     base_dir = 'torroConfig/'
@@ -149,7 +151,7 @@ class interfaceTorroConfig(Resource):
                 data = response_code.GET_DATA_FAIL
                 data['msg'] = 'please input your config file name.'
                 return data
-            print('configName:', configName)
+            logger.debug("FN:interfaceTorroConfig_get configName:{}".format(configName))
             configName = configName.replace('.json', '')
             file_name = configName.replace('.', '/')
             full_name = self.base_dir+file_name+'.json'
@@ -166,6 +168,6 @@ class interfaceTorroConfig(Resource):
                 return data
 
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceTorroConfig_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)

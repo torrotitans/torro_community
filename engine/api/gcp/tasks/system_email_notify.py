@@ -1,11 +1,13 @@
 from api.gcp.tasks.baseTask import baseTask
 from utils.smtp_helper import notify_approvers
 from db.base import DbBase
-from utils.log_helper import lg
 from utils.ldap_helper import Ldap
 from db.connection_pool import MysqlConn
 from config import configuration
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class system_email_notify(baseTask, DbBase):
     api_type = 'system'
@@ -18,6 +20,7 @@ class system_email_notify(baseTask, DbBase):
     def __init__(self, stage_dict):
         super(system_email_notify, self).__init__(stage_dict)
         # print('stage_dict:', stage_dict)
+
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         missing_set = set()
         for key in self.arguments:
@@ -27,6 +30,7 @@ class system_email_notify(baseTask, DbBase):
             # # print('{}: {}'.format(key, self.stage_dict[key]))
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
+
         else:
             conn = MysqlConn()
             try:
@@ -36,7 +40,9 @@ class system_email_notify(baseTask, DbBase):
                 condition = "id='%s' order by history_id desc" % (input_form_id)
                 fields = '*'
                 sql = self.create_select_sql(db_name, table_name, fields, condition)
+                logger.debug("FN:system_email_notify_execute inputFormTable_sql:{}".format(sql))
                 input_form_infos = self.execute_fetch_all(conn, sql)
+                
                 if not input_form_infos:
                     raise Exception('input form not found: {}'.format(str(input_form_id)))
                 # get history id
@@ -45,15 +51,19 @@ class system_email_notify(baseTask, DbBase):
                 # print('self.stage_dict:', self.stage_dict)
                 emails = self.stage_dict['emails']
                 email_msg = str(self.stage_dict['email_msg'])
+
                 if not isinstance(emails, list):
                     emails = emails.split(',')
+
                 groups = self.stage_dict['groups']
                 if not isinstance(groups, list):
                     groups = groups.split(',')
-                print('groups:', groups)
+
+                logger.debug("FN:system_email_notify_execute groups:{}".format(groups))
                 for group in groups:
                     mail_list, _ = Ldap.get_ad_group_member(group)
-                    print('mail list:', mail_list)
+                    logger.debug("FN:system_email_notify_execute mail_list:{}".format(mail_list))
+                    
                     if mail_list:
                         emails.extend(mail_list)
 
@@ -64,10 +74,7 @@ class system_email_notify(baseTask, DbBase):
                 else:
                     return data['msg']
             except Exception as e:
-                import traceback
-                lg.error(traceback.format_exc())
+                logger.error("FN:system_email_notify_execute error:{}".format(traceback.format_exc()))
+
             finally:
                 conn.close()
-if __name__ == '__main__':
-    pass
-

@@ -8,7 +8,6 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.org_singleton import orgSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
@@ -16,6 +15,10 @@ from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.org.db_org_parameter import orgApiPara
 from utils.smtp_helper import Smtp
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceOrgSetting(Resource):
 
@@ -25,8 +28,9 @@ class interfaceOrgSetting(Resource):
             data = orgSingleton_singleton.get_org_info()
             body = modelEnum.department.value.get('body')
             return response_result_process(data, xml_structure_str=body, xml=xml)
+
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceOrgSetting_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -41,9 +45,9 @@ class interfaceOrgSetting(Resource):
             # if not request_data:
             #     data = response_code.REQUEST_PARAM_MISSED
             #     return response_result_process(data, xml=xml)
-            print("FN:interfaceOrgSetting_POST request_data:",request_data)
+            logger.debug("FN:interfaceOrgSetting_POST request_data:{}".format(request_data))
             # form/w/u-t-adjij+team.xeex
-            print('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:', orgApiPara.setOrg_POST_request)
+            logger.debug('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:{}'.format(orgApiPara.setOrg_POST_request))
             request_data = req.verify_all_param(request_data, orgApiPara.setOrg_POST_request)
             try:
                 f = request.files['cer_path']
@@ -54,9 +58,10 @@ class interfaceOrgSetting(Resource):
                 f.save(upload_path)
                 request_data['cer_path'] = upload_path
             except:
+                logger.error("FN:interfaceOrgSetting error:{}".format(traceback.format_exc()))
                 pass
             use_ssl = request_data['use_ssl']
-            print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
+            logger.debug("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             
             # Since the Flag is a true false, will convert them into int
             if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
@@ -83,25 +88,30 @@ class interfaceOrgSetting(Resource):
             smtp_pwd = request_data['smtp_pwd']
             smtp_port = request_data['smtp_port']
             smtp_tls = request_data['smtp_tls']
+
             if (isinstance(smtp_tls, str) and smtp_tls.strip().lower() == "true") or smtp_tls is True:
                 smtp_tls = 1
             else:
                 smtp_tls = 0
+
+            # Verify the SMTP Email
             smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'SMTP VERIFY FAILED.'
                 return data
+
             data = orgSingleton_singleton.add_new_org_setting(request_data)
+
             if data['code'] == 200:
                 response_data = data['data']
-                # print(response_data)
+                # logger.debug(response_data)
                 data['data'] = req.verify_all_param(response_data, orgApiPara.setOrg_POST_response)
-            # # print(data)
+            # # logger.debug(data)
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(traceback.format_exc())
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceOrgSetting_post error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -111,14 +121,14 @@ class interfaceOrgSetting(Resource):
         xml = request.args.get('format')
         try:
             request_data = req.request_process(request, xml, modelEnum.department.value)
-            # # print('request_data:', request_data)
+            # # logger.debug('request_data:', request_data)
             if isinstance(request_data, bool):
                 request_data = response_code.REQUEST_PARAM_FORMAT_ERROR
                 return response_result_process(request_data, xml=xml)
             request_data = req.verify_all_param(request_data, orgApiPara.updateOrg_POST_request)
 
             use_ssl = request_data['use_ssl']
-            print("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
+            logger.debug("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl)) 
 
             # Since the Flag is a true false, will convert them into int
             if (isinstance(use_ssl, str) and use_ssl.strip().lower() == "true") or use_ssl is True:
@@ -147,6 +157,7 @@ class interfaceOrgSetting(Resource):
                 smtp_tls = 1
             else:
                 smtp_tls = 0
+            
             smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
@@ -157,11 +168,10 @@ class interfaceOrgSetting(Resource):
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, orgApiPara.updateOrg_POST_response)
-            # # print(data)
+            # # logger.debug(data)
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceOrgSetting_put error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)

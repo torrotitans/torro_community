@@ -4,11 +4,14 @@
 import traceback
 from flask import request
 from flask_restful import Resource
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_request_process import req
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceUserLogin(Resource):
 
@@ -28,8 +31,7 @@ class interfaceUserLogin(Resource):
             # print('request_data', request.data)
 
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceUserLogin_post error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -44,7 +46,6 @@ class interfaceUserLogin(Resource):
                 return response_result_process(request_data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceUserLogin_put error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)

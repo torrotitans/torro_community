@@ -4,21 +4,19 @@
 import datetime
 from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import copy
 from utils.status_code import response_code
 from config import configuration
 from common.common_crypto import prpcrypt
 import json
-
-
 # from werkzeug.security import generate_password_hash, check_password_hash
+import traceback
+import logging
 
+logger = logging.getLogger("main." + __name__)
 
 class DbWorkflowMgr(DbBase):
-    """
-    workflow相关数据库表操作类
-    """
+ 
     # already have 0-6 approval
     defalut_stages = [
                 {
@@ -275,6 +273,8 @@ class DbWorkflowMgr(DbBase):
                     ],
                     "label": "System Task"
                 }]
+
+
     def get_all_base_workflow(self, workspace_id):
         """
         get all workflow list
@@ -295,13 +295,13 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workflowTable',
                                          'id,form_id,workflow_name,stage_hash,stage_num,creator_id,available,last_modify_id,create_time,updated_time,des',
                                          condition)
+            logger.debug("FN:DbWorkflowMgr_get_all_base_workflow workflowTable_sql:{}".format(sql))
             workflows_info = self.execute_fetch_all(conn, sql)
-            # print(sql)
             data = response_code.SUCCESS
             data['data'] = workflows_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_base_workflow error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -319,13 +319,13 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workflowTable',
                                          'id,form_id,workflow_name,stage_hash,stage_num,available,creator_id,last_modify_id,create_time,updated_time,des',
                                          condition=condition)
+            logger.debug("FN:DbWorkflowMgr_get_all_base_workflow_by_form_id workflowTable_sql:{}".format(sql))
             workflows_info = self.execute_fetch_all(conn, sql)
-            # print(sql)
             data = response_code.SUCCESS
             data['data'] = workflows_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_base_workflow_by_form_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -343,12 +343,13 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workflowTable',
                                          'id,form_id,workflow_name,stage_hash,stage_num,creator_id,last_modify_id,create_time,updated_time,des',
                                          condition=condition)
+            logger.debug("FN:DbWorkflowMgr_get_base_workflow_by_workflow_id workflowTable_sql:{}".format(sql))
             workflow_info = self.execute_fetch_one(conn, sql)
             data = response_code.SUCCESS
             data['data'] = workflow_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_base_workflow_by_workflow_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()  # get detail workflow
@@ -366,7 +367,7 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workflowTable',
                                          'id,form_id,workflow_name,stage_hash,stage_num,available,creator_id,last_modify_id,stages,field_id_list,create_time,updated_time,des',
                                          condition=condition)
-            # print('sql: ', sql)
+            logger.debug("FN:DbWorkflowMgr_get_all_details_workflow_by_form_id workflowTable_sql:{}".format(sql))
             workflows_info = self.execute_fetch_all(conn, sql)
             for index in range(len(workflows_info)):
                 workflows_info[index]['stages'] = json.loads(workflows_info[index]['stages'])
@@ -375,7 +376,7 @@ class DbWorkflowMgr(DbBase):
             data['data'] = workflows_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_details_workflow_by_form_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -393,6 +394,7 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'workflowTable',
                                          'id,form_id,workflow_name,stage_hash,stage_num,creator_id,available,last_modify_id,stages,field_id_list,create_time,updated_time,des',
                                          condition=condition)
+            logger.debug("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id workflowTable_sql:{}".format(sql))
             workflow_info = self.execute_fetch_one(conn, sql)
             workflow_info['stages'] = json.loads(workflow_info['stages'])
             workflow_info['field_id_list'] = json.loads(workflow_info['field_id_list'])
@@ -400,7 +402,7 @@ class DbWorkflowMgr(DbBase):
             data['data'] = workflow_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()  # get detail workflow
@@ -419,7 +421,7 @@ class DbWorkflowMgr(DbBase):
             condition_str = ','.join(condition_set)
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'stageTable', '*', condition=condition_str)
-            # # print(sql)
+            logger.debug("FN:DbWorkflowMgr_get_stages_with_condition stageTable_sql:{}".format(sql))
             stage_info = self.execute_fetch_all(conn, sql)
             for index in range(len(stage_info)):
                 stage_info[index]['arguments'] = json.loads(stage_info[index]['arguments'])
@@ -428,7 +430,7 @@ class DbWorkflowMgr(DbBase):
             data['data'] = stage_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_stages_with_condition error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -440,13 +442,14 @@ class DbWorkflowMgr(DbBase):
             condition = "id='%s'" % id
             db_name = configuration.get_database_name()
             sql = self.create_select_sql(db_name, 'stageTable', '*', condition=condition)
+            logger.debug("FN:DbWorkflowMgr_get_all_stages stageTable_sql:{}".format(sql))
             stage_info = self.execute_fetch_one(conn, sql)
             stage_info['arguments'] = json.loads(stage_info['arguments'])
             data = response_code.SUCCESS
             data['data'] = stage_info
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_stages error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()  # get detail workflow
@@ -463,6 +466,7 @@ class DbWorkflowMgr(DbBase):
             table_name = 'stageTable'
             fields = '*'
             sql = self.create_select_sql(db_name, table_name, fields)
+            logger.debug("FN:DbWorkflowMgr_get_all_stages {}_sql:{}".format(table_name,sql))
             result = copy.deepcopy(self.defalut_stages)
             itemList = self.execute_fetch_all(db_conn, sql)
             for index in range(len(itemList)):
@@ -472,10 +476,11 @@ class DbWorkflowMgr(DbBase):
             data['data'] = result
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_stages error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
+
     def get_all_stages_v2(self, workflow_id):
         """
         get all stage info
@@ -514,32 +519,29 @@ class DbWorkflowMgr(DbBase):
                 if 'd' in field_id and field_id not in field_id_list:
                     field_id_list.append(field_id)
                     approval_item = {"id": 3, "label": "{} approval".format(label), "value": field_id, "style": 6}
-                    print('approval_item:', result[0]['commonConditions'])
+                    logger.debug("FN:DbWorkflowMgr_get_all_stages_v2 approval_item:{}".format(result[0]['commonConditions']))
                     result[0]['commonConditions'].append(approval_item)
-            print('1234result:', result)
+            logger.debug("FN:DbWorkflowMgr_get_all_stages_v2 result:{}".format(result))
             data = response_code.SUCCESS
             data['data'] = result
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_get_all_stages_v2 error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             db_conn.close()
 
     # delete one workflow
     def delete_workflow(self, workflow):
-        """
-        删除表
-        :return:
-        """
+
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
-            # 解析参数成dict
             id = workflow['id']
-            # 判断workflow是否已经存在
+            # Check if Workflow exists
             data = self.get_base_workflow_by_workflow_id(id=id)
             # # print('data', data)
+            logger.debug("FN:DbWorkflowMgr_delete_workflow data:{}".format(data))
             if data['code'] == 200 and data['data']['stage_hash'] == workflow['stage_hash']:
                 condition = "id=%s" % id
                 delete_table_sql = self.create_delete_sql(db_name, "workflowTable", condition)
@@ -550,7 +552,7 @@ class DbWorkflowMgr(DbBase):
             return data
 
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_delete_workflow error:{}".format(traceback.format_exc()))
             conn.conn.rollback()
             return response_code.DELETE_DATA_FAIL
         finally:
@@ -572,7 +574,6 @@ class DbWorkflowMgr(DbBase):
             des = workflow.get('des', '')
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             update_time = create_time
-
             db_name = configuration.get_database_name()
 
             # get hash code
@@ -591,7 +592,7 @@ class DbWorkflowMgr(DbBase):
             values = (form_id, workflow_name, stage_hash, stage_num, creator_id, last_modify_id, stages, field_id_list,
                       create_time, update_time, des)
             sql = self.create_insert_sql(db_name, 'workflowTable', '({})'.format(', '.join(fields)), values)
-            # print('workflow sql:', sql)
+            logger.debug("FN:DbWorkflowMgr_add_new_workflow insert_workflowTable_sql:{}".format(sql))
             workflow_id = self.insert_exec(conn, sql, return_insert_id=True)
             workflow['id'] = workflow_id
             workflow['stage_hash'] = stage_hash
@@ -599,7 +600,7 @@ class DbWorkflowMgr(DbBase):
             data['data'] = workflow
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:DbWorkflowMgr_add_new_workflow error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -611,9 +612,9 @@ class DbWorkflowMgr(DbBase):
             db_name = configuration.get_database_name()
 
             workflow_id = workflow['id']
-            # 判断workflow是否已经存在
+            # Check if workflow exist
             select_workflow = self.get_base_workflow_by_workflow_id(id=workflow_id)
-            # print(select_workflow)
+            logger.debug("FN:DbWorkflowMgr_update_workflow select_workflow:{}".format(select_workflow))
             if select_workflow['code'] == 200 and select_workflow['data']['stage_hash'] == workflow['stage_hash']:
                 workflow_condition = "id='%s'" % workflow_id
 
@@ -647,7 +648,7 @@ class DbWorkflowMgr(DbBase):
                     update_time, des)
                 # update workflow
                 sql = self.create_update_sql(db_name, 'workflowTable', fields, values, workflow_condition)
-                # print('workflow sql:', sql)
+                logger.debug("FN:DbWorkflowMgr_update_workflow update_workflowTable_sql:{}".format(sql))
                 return_count = self.updete_exec(conn, sql)
                 data = response_code.SUCCESS
                 data['data'] = workflow
@@ -655,8 +656,7 @@ class DbWorkflowMgr(DbBase):
                 data = response_code.UPDATE_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:DbWorkflowMgr_update_workflow error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()

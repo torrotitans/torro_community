@@ -7,18 +7,20 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.usecase_singleton import usecaseSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.usecase.db_usecase_parameter import usecaseApiPara
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceUseCaseSetting(Resource):
 
     @login_required
-
     def post(self,):
         xml = request.args.get('format')
         try:
@@ -39,9 +41,9 @@ class interfaceUseCaseSetting(Resource):
                 data['data'] = req.verify_all_param(response_data, usecaseApiPara.setUseCase_POST_response)
             # # print(data)
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
-            # print(traceback.format_exc())
+            logger.error("FN:interfaceUseCaseSetting_post error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -77,7 +79,6 @@ class interfaceUseCaseSetting(Resource):
             return response_result_process(data, xml=xml)
 
         except Exception as e:
-            lg.error(e)
-            # # print(traceback.format_exc())
+            logger.error("FN:interfaceUseCaseSetting_put error:{}".format(traceback.format_exc()))
             error_data = response_code.ADD_DATA_FAIL
             return response_result_process(error_data, xml=xml)

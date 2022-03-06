@@ -5,13 +5,16 @@ from utils.api_version_verify import api_version
 from flask import request
 from flask_restful import Resource
 from core.workflow_singleton import workflowSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceStages(Resource):
 
     # @api_version
@@ -23,8 +26,9 @@ class interfaceStages(Resource):
             # print(data)
             body = modelEnum.department.value.get('body')
             return response_result_process(data, xml_structure_str=body, xml=xml)
+            
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceStages_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -53,7 +57,7 @@ class interfaceStages(Resource):
         except:
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'
+            logger.error("FN:interfaceStages_post data_error:{}".format(data))
+            logger.error("FN:interfaceStages_post error:{}".format(traceback.format_exc()))
 
-            lg.error(traceback.format_exc())
-        # # print(data)
         return response_result_process(data, xml=xml)

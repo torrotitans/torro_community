@@ -34,7 +34,7 @@ class system_define_field(baseTask, DbBase):
             # print('workspace_id:', workspace_id)
             conn = MysqlConn()
             db_name = configuration.get_database_name()
-            condition = "label='%s'" % (field_name)
+            condition = "label='%s' and form_id!='-1'" % (field_name)
             sql = self.create_select_sql(db_name, 'dynamicFieldTable', 'id', condition)
             dynamic_field_info = self.execute_fetch_one(conn, sql)
             # print('dynamicFieldTable1:',sql)

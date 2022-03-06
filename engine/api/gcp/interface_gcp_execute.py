@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*
 
 from core.gcp_singleton import gcpSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from flask import request
 from common.common_request_process import req
@@ -14,6 +13,10 @@ from db.gcp.db_gcp_parameter import gcpApiPara
 from db.gcp.task_operator import taskOperator
 from flask_restful import Resource
 import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
+
 class interfaceGCPExecute(Resource):
 
     @login_required
@@ -35,15 +38,9 @@ class interfaceGCPExecute(Resource):
             input_form_id = request_data.get('input_form_id', None)
             form_id = request_data.get('form_id', None)
             tasks_data = gcpSingleton_singleton.get_gcp_tasks(form_id, input_form_id)
-            # gcp_tasks = []
-            # for task in request_data['tasks']:
-            #     task_name = task['name']
-            #     stage_dict = task['stages']
-            #     task = taskFetcher.build_task_object(task_name, stage_dict)
-            #     gcp_tasks.append(task)
-            # # print(data['msg'])
-            # exit(0)
-            print('tasks_data:', tasks_data)
+
+            logger.info('FN:interfaceGCPExecute_post gcp_tasks_data:{}'.format(tasks_data))
+
             for data in tasks_data:
                 if data['code'] == 200:
                     gcp_tasks = data['data']['gcp_tasks']
@@ -54,9 +51,11 @@ class interfaceGCPExecute(Resource):
                     _ = governance_singleton.updateTask(user_key, account_id, input_form_id,workspace_id, tasks, return_msg_list)
                 else:
                     return data
+
             return response_code.SUCCESS
+
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceGCPExecute_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return error_data
 

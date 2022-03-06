@@ -6,13 +6,16 @@ import traceback
 from flask import request
 from flask_restful import Resource
 from core.user_singleton import userSingleton_singleton
-from utils.log_helper import lg
 from utils.status_code import response_code
 from common.common_model_enum import modelEnum
 from common.common_response_process import response_result_process
 from common.common_login_helper import login_required
 from common.common_request_process import req
 from db.user.db_user_parameter import userApiPara
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceUserInfo(Resource):
 
@@ -40,8 +43,9 @@ class interfaceUserInfo(Resource):
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, userApiPara.fetchUserInfo_GET_response)
             return response_result_process(data, xml=xml)
+            
         except Exception as e:
-            lg.error(traceback.format_exc())
+            logger.error("FN:interfaceUserInfo_get error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)
 
@@ -82,8 +86,8 @@ class testingDetailUser():
             user_id = request_data.get('id')
             data = userSingleton_singleton.get_details_user_by_id(user_id)
             return response_result_process(data, xml=xml)
+
         except Exception as e:
-            lg.error(e)
-            # print(traceback.userat_exc())
+            logger.error("FN:testingDetailUser_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return response_result_process(error_data, xml=xml)

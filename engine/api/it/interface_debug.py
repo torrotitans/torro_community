@@ -8,9 +8,12 @@ import os
 from common.common_model_enum import modelEnum
 from common.common_request_process import req
 from common.common_response_process import response_result_process
-from utils.log_helper import lg
 from utils.status_code import response_code
 from flask import g
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 
 class interfaceDebug(Resource):
 
@@ -36,9 +39,10 @@ class interfaceDebug(Resource):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceDebug_post error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
             return response_result_process(error_data, xml=xml)
+
     @login_required
     def put(self):
         xml = request.args.get('format')
@@ -78,6 +82,6 @@ class interfaceDebug(Resource):
                 data = response_code.GET_DATA_FAIL
             return data
         except Exception as e:
-            lg.error(e)
+            logger.error("FN:interfaceDebug_put error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
             return response_result_process(error_data, xml=xml)
