@@ -105,6 +105,7 @@ class DbOrgMgr(DbBase):
         try:
             smtp_host = smtp_info['smtp_host']
             smtp_account = smtp_info['smtp_account']
+            smtp_mail_box = smtp_info['Smtp_mail_box']
             smtp_pwd = smtp_info['smtp_pwd']
             smtp_port = smtp_info['smtp_port']
             smtp_tls = smtp_info['smtp_tls']
@@ -114,9 +115,9 @@ class DbOrgMgr(DbBase):
             db_name = configuration.get_database_name()
 
             # insert form
-            fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_PASS', 'PORT', 'USE_TLS', 'CREATE_TIME',
+            fields = ('MAIL_HOST', 'MAIL_USER', 'MAIL_BOX', 'MAIL_PASS', 'PORT', 'USE_TLS', 'CREATE_TIME',
                       'TIME_MODIFY')
-            values = (smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls, create_time, create_time)
+            values = (smtp_host, smtp_account, smtp_mail_box,  smtp_pwd, smtp_port, smtp_tls, create_time, create_time)
             sql = self.create_insert_sql(db_name, 'smtpTable', '({})'.format(', '.join(fields)), values)
             logger.debug('FN:__set_smtp smtpTable_sql:{}'.format(sql))
             smtp_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -317,6 +318,7 @@ class DbOrgMgr(DbBase):
             smtp_info = {}
             smtp_info['smtp_host'] = org['smtp_host']
             smtp_info['smtp_account'] = org['smtp_account']
+            smtp_info['Smtp_mail_box'] = org['Smtp_mail_box']
             smtp_info['smtp_pwd'] = org['smtp_pwd']
             smtp_info['smtp_port'] = org['smtp_port']
             smtp_info['smtp_tls'] = org['smtp_tls']
@@ -548,10 +550,11 @@ class DbOrgMgr(DbBase):
             else:
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
+                mail_box = smtp_info['MAIL_BOX']
                 mail_pass = smtp_info['MAIL_PASS']
                 port = smtp_info['PORT']
                 is_tls = smtp_info['USE_TLS']
-                return mail_host, mail_user, mail_pass, port, is_tls
+                return mail_host, mail_user, mail_box, mail_pass, port, is_tls
             
         except Exception as e:
             logger.error("FN:get_smtp error:{}".format(traceback.format_exc()))
