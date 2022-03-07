@@ -74,10 +74,11 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
           <TableBody>
             {filterTableList.map((item, index) => {
               let rowArr = item.resource;
+              let rowEditable = editable && !item.usecase_name;
               return (
                 <TableRow key={index}>
                   <TableCell align="center">
-                    {editable ? (
+                    {rowEditable ? (
                       <TextBox
                         value={rowArr[0]}
                         onChange={(value) => {
@@ -89,7 +90,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    {editable ? (
+                    {rowEditable ? (
                       <TextBox
                         value={rowArr[1]}
                         onChange={(value) => {
@@ -101,7 +102,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    {editable ? (
+                    {rowEditable ? (
                       <TextBox
                         value={rowArr[2]}
                         onChange={(value) => {
@@ -113,7 +114,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                     )}
                   </TableCell>
                   <TableCell align="center">
-                    {editable ? (
+                    {rowEditable ? (
                       <TextBox
                         value={rowArr[3]}
                         onChange={(value) => {
@@ -124,7 +125,7 @@ const GroupListTable = ({ data, onChange, editable = true }) => {
                       rowArr[3]
                     )}
                   </TableCell>
-                  <TableCell align="center">{rowArr[4]}</TableCell>
+                  <TableCell align="center">{item.usecase_name}</TableCell>
                 </TableRow>
               );
             })}

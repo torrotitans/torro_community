@@ -253,7 +253,11 @@ const FormDataDisplay = ({
     let defaultValue = defaultData.form_field_values_dict;
     let data = formTemplate;
     let currenFileList = data.fieldList.map((item) => {
-      item.default = defaultValue[item.id] || "";
+      if (typeof defaultValue[item.id] === "boolean") {
+        item.default = String(defaultValue[item.id]);
+      } else {
+        item.default = defaultValue[item.id] || "";
+      }
       return item;
     });
     data = {

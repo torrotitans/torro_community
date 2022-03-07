@@ -10,9 +10,14 @@ const ProgressBar = ({ progress }) => {
     progress.forEach((item, index) => {
       if (!!item.time) {
         if (index === progress.length - 1) {
-          countIndex = progress.length;
+          countIndex = progress.length - 1;
+        } else {
+          if (index === progress.length - 2) {
+            countIndex = index;
+          } else {
+            countIndex = index + 1;
+          }
         }
-        countIndex = index + 1;
       }
     });
     return unit * (count + countIndex);
