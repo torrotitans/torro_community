@@ -232,6 +232,17 @@
     },
     {
       "default": "",
+      "des": "Smtp mail box",
+      "edit": 1,
+      "id": "Smtp_mail_box",
+      "label": "Smtp mail box",
+      "options": [],
+      "placeholder": "mail@torro.ai",
+      "style": 3,
+      "required": true
+    },
+    {
+      "default": "",
       "des": "smtp account password",
       "edit": 1,
       "id": "smtp_pwd",
