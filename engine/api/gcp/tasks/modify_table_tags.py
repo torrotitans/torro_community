@@ -131,49 +131,66 @@ class ModifyTableTags(baseTask, DbBase):
             datacatalog_client.delete_tag({'name': tag.name})
 
     def __get_tags(self, data, form_id, db_name, conn, column=None):
-        # get tag template info
-        condition = "tag_template_form_id=%s" % form_id
-        sql = self.create_select_sql(db_name, 'tagTemplatesTable',
-                                     'display_name,project_id,location,tag_template_id,field_list', condition=condition)
-        tag_template_info = self.execute_fetch_one(conn, sql)
-        tag_template_name = 'projects/{}/locations/{}/tagTemplates/{}'.format(tag_template_info['project_id'],
-                                                                              tag_template_info['location'],
-                                                                              tag_template_info['tag_template_id'])
-        tag_template_field_list = json.loads(tag_template_info['field_list'])
-        display_name = tag_template_info['display_name']
-        # get form info
-        condition = "id=%s" % form_id
-        sql = self.create_select_sql(db_name, 'formTable',
-                                     'fields_list', condition=condition)
-        form_info = self.execute_fetch_one(conn, sql)
-        if not form_info:
-            return None
-        form_field_list = json.loads(form_info['fields_list'])
-        # Attach a Tag to the table.
-        tag = datacatalog_v1.types.Tag()
 
-        tag.template = tag_template_name
-        tag.name = display_name
-        if column:
-            tag.column = column
-        for field in form_field_list:
-            label = field['label']
-            field_id = label.replace(' ', '_').lower().strip()
-            style = field['style']
-            id = field['id']
-            value = ''
-            if id in data:
-                value = data[id]
-            tag.fields[field_id] = datacatalog_v1.types.TagField()
+        try:
+            # get tag template info
+            condition = "tag_template_form_id=%s" % form_id
+            sql = self.create_select_sql(db_name, 'tagTemplatesTable',
+                                        'display_name,project_id,location,tag_template_id,field_list', condition=condition)
+            logger.debug("FN:ModifyTableTags__get_tags tagTemplatesTable_sql:{}".format(sql))
+            tag_template_info = self.execute_fetch_one(conn, sql)
+            logger.debug("FN:ModifyTableTags__get_tags tag_template_info:{}".format(tag_template_info))
+            tag_template_name = 'projects/{}/locations/{}/tagTemplates/{}'.format(tag_template_info['project_id'],
+                                                                                tag_template_info['location'],
+                                                                                tag_template_info['tag_template_id'])
+            tag_template_field_list = json.loads(tag_template_info['field_list'])
+            display_name = tag_template_info['display_name']
 
-            if style == 5:
-                tag.fields[field_id].bool_value = bool(value)
-            elif style == 2:
-                tag.fields[field_id].enum_value.display_name = value
-            elif style == 1 or style == 3:
-                tag.fields[field_id].string_value = value
-            elif style == 6:
-                tag.fields[field_id].timestamp_value = value
-            else:
-                continue
-        return tag
+            # get form info
+            condition = "id=%s" % form_id
+            sql = self.create_select_sql(db_name, 'formTable','fields_list', condition=condition)
+            logger.debug("FN:ModifyTableTags__get_tags formTable_sql:{}".format(sql))
+            form_info = self.execute_fetch_one(conn, sql)
+            logger.debug("FN:ModifyTableTags__get_tags form_info:{}".format(form_info))
+
+            if not form_info:
+                return None
+
+            form_field_list = json.loads(form_info['fields_list'])
+            # Attach a Tag to the table.
+            tag = datacatalog_v1.types.Tag()
+
+            tag.template = tag_template_name
+            tag.name = display_name
+
+            if column:
+                tag.column = column
+
+            for field in form_field_list:
+                label = field['label']
+                field_id = label.replace(' ', '_').lower().strip()
+                style = field['style']
+                id = field['id']
+                value = ''
+
+                if id in data:
+                    value = data[id]
+                tag.fields[field_id] = datacatalog_v1.types.TagField()
+
+                if style == 5:
+                    tag.fields[field_id].bool_value = bool(value)
+                elif style == 2:
+                    tag.fields[field_id].enum_value.display_name = value
+                elif style == 1 or style == 3:
+                    tag.fields[field_id].string_value = value
+                elif style == 6:
+                    tag.fields[field_id].timestamp_value = value
+                else:
+                    continue
+
+            return tag
+
+
+        except:
+            logger.error("FN:ModifyTableTags__get_tags error:{}".format(traceback.format_exc()))
+        
