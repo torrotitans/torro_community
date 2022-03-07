@@ -39,7 +39,7 @@ class interfaceBaseForm(Resource):
                     "des": "try update",
                     "fields_num": 10,
                     "id": 2,
-                    "title": "Create UseCase",
+                    "title": "Create Use Case",
                     "u_max_id": "u10",
                     "updated_time": "Thu, 07 Oct 2021 09:55:04 GMT"
                 }
