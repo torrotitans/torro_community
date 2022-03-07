@@ -33,7 +33,7 @@ class ModifyTableTags(baseTask, DbBase):
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         conn = MysqlConn()
-        
+
         try:
             db_name = configuration.get_database_name()
             logger.debug("FN:ModifyTableTags_execute stage_dict:{}".format(self.stage_dict))
@@ -83,8 +83,9 @@ class ModifyTableTags(baseTask, DbBase):
                     data = table_tag['data']
                     table_tag = self.__get_tags(data, tag_template_form_id, db_name, conn)
 
+                    logger.debug("FN:ModifyTableTags_execute table_tag:{} table_entry:{}".format(table_tag,table_entry.name))
                     table_tag = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
-                    logger.debug("FN:ModifyTableTags_execute table_tag_name:{}".format(table_tag.name))
+                    # logger.debug("FN:ModifyTableTags_execute table_tag_name:{}".format(table_tag.name))
 
                 for field in fields:
                     if 'tags' in  field:
