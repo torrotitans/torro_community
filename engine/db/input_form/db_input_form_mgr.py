@@ -771,7 +771,7 @@ class DbInputFormMgr(DbBase):
                     value = form_field_values_dict[value]
                 else:
                     if style == 3:
-                        value = Template(value)
+                        value = Template(value) # ${u1}adasdadas${u2}
                         value = value.safe_substitute(form_field_values_dict)
                     if style == 5:
                         value = form_field_values_dict[value]
