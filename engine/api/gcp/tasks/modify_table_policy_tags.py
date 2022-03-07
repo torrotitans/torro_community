@@ -71,6 +71,7 @@ class ModifyTablePolicyTags(baseTask, DbBase):
                             policy_tag_id = fields[index]['policyTags']['names'][pt_index]
                             condition = "id=%s" % policy_tag_id
                             sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
+                            logger.debug("FN:ModifyTablePolicyTags_execute policyTagsTable_sql:{}".format(sql))
                             gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
                             fields[index]['policyTags']['names'][pt_index] = gcp_policy_tag_id
                             # if 'policyTags' not in fields[index]['policyTags']['names'][pt_index]:

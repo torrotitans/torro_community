@@ -71,7 +71,7 @@ class ModifyTableTags(baseTask, DbBase):
                     f"//bigquery.googleapis.com/projects/{project_id}"
                     f"/datasets/{dataset_id}/tables/{table_id}"
                 )
-                logger.debug("FN:ModifyTableTags_execute resource_name:{}".format())
+                logger.debug("FN:ModifyTableTags_execute resource_name:{}".format(resource_name))
                 table_entry = datacatalog_client.lookup_entry(
                     request={"linked_resource": resource_name}
                 )
