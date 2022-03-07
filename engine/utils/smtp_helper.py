@@ -15,9 +15,11 @@ Config = config[config_name]
 
 class Smtp(object):
     def __init__(self, ):
-        mail_host, mail_user, mail_pass, mail_port, is_tls = org_mgr.get_smtp()
+        mail_host, mail_user, mail_box, mail_pass, mail_port, is_tls = org_mgr.get_smtp()
         self.mail_host = mail_host
         self.mail_user = mail_user
+        self.mail_box = mail_box
+
         try:
             self.mail_pass = prpcrypt.decrypt(mail_pass)
         except:
@@ -34,7 +36,7 @@ class Smtp(object):
 
         try:
             if sender is None:
-                sender = self.mail_user
+                sender = self.mail_box
             if sender_name is None:
                 sender_name = 'TorroAdmin'
             message = MIMEText(text, 'plain', 'utf-8')
