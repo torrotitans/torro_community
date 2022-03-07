@@ -76,6 +76,7 @@ class ModifyTableTags(baseTask, DbBase):
                     request={"linked_resource": resource_name}
                 )
                 # clear the table tags
+                logger.debug("FN:ModifyTableTags_execute clear_tags:True")
                 self.__clear_tags(datacatalog_client, table_entry)
                 # tags
                 for table_tag in table_tags:

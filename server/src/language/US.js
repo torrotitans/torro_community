@@ -236,7 +236,7 @@ export default {
 
   formManagement: "Form management",
   workflowManagement: "Workflow management",
-  bashCommand: "Terinmal",
+  bashCommand: "Terminal",
 
   save: "Save",
   back: "Back",
