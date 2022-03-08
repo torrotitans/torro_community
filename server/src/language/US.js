@@ -222,7 +222,7 @@ export default {
   createWorkSpace: "Workspace management",
   createUc: "Create use case",
   wsManagement: "Workspace",
-  raiseTicket: "Raise ticket",
+  raiseTicket: "Raise A Request",
   ticketAction: "Workspace services",
   pickStart: "Pick a service to start",
   submit: "Submit",
@@ -234,8 +234,8 @@ export default {
   leftNav_addData: "Add new data source",
   leftNav_support: "Raise support Ticket",
 
-  formManagement: "Form management",
-  workflowManagement: "Workflow management",
+  formManagement: "Form Design",
+  workflowManagement: "Workflow Setup",
   bashCommand: "Terminal",
 
   save: "Save",
