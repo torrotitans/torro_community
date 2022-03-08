@@ -175,10 +175,10 @@ export default {
   lastModified: "Last modified",
 
   // dashboard
-  requestNum: "Request number",
-  historyId: "History id",
+  requestId: "Request ID",
+  historyId: "History ID",
   requestor: "Requestor",
-  historyRecord: "Historical submission",
+  historyRecord: "Submission history",
   reOpen: "Re-open",
   requestDetail: "Request detail",
   requestProgress: "Request progress",
@@ -223,8 +223,8 @@ export default {
   createUc: "Create use case",
   wsManagement: "Workspace",
   raiseTicket: "Raise ticket",
-  ticketAction: "Ticket Action",
-  pickStart: "Pick a form to start",
+  ticketAction: "Workspace services",
+  pickStart: "Pick a service to start",
   submit: "Submit",
 
   lefNav_create: "Create new use case",
