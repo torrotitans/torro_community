@@ -72,7 +72,7 @@ export default {
 
   // role
   it: "IT Admin",
-  dg: "Data Governer",
+  dg: "Data Governor",
   du: "Data User",
   serviceAdmin: "Root",
 
