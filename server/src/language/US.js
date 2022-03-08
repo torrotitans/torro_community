@@ -1,12 +1,12 @@
 export default {
   // Global
-  notFound: "Not found",
+  notFound: "404 Not found",
   start: "Start",
   end: "End",
   approve: "Approve",
   reject: "Reject",
-  uAreIn: "You are in ",
-  workspace: "workspace",
+  uAreIn: "You are in",
+  workspace: "Workspace",
   previewAll: "Preview all",
   approveAll: "Approve all",
   rejectAll: "Reject all",
@@ -18,7 +18,7 @@ export default {
   reSubmit: "Re-submit",
   close: "Close",
   logining: "logging in...",
-  plsSelectRole: " please select your role to login.",
+  plsSelectRole: " Please select your role to login.",
   cancel: "Cancel",
   comment: "Comment",
   newComment: "Add new comment",
@@ -32,7 +32,7 @@ export default {
   update: "Update",
   required: "Required",
   required_: "Required *",
-  maxLength: "Max length",
+  maxLength: "Maxmium length",
   itemWidth: "Item width",
   search: "Search",
   apply: "Apply",
@@ -40,22 +40,22 @@ export default {
   modifyTableTag: "Modify table tags",
   addColumnTag: "Add column tags",
   modifyColumnTag: "Modify column tags",
-  CLEAR: "CLEAR",
+  CLEAR: "Clear",
   dropwfItem: "Drop workflow item here.",
-  checkRequest: "View request detail",
-  confirmRaise: "Do you confirm to raise this request?",
-  confirmSetup: "Do you confirm your torro setting?",
+  checkRequest: "See request detail",
+  confirmRaise: "Do you confirm this request?",
+  confirmSetup: "Do you confirm the torro setting?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
-  newRequestSubmit: "New Request is submitted.",
-  selectedUc: "Select use case",
+  newRequestSubmit: "New Request has been submitted.",
+  selectedUc: "Select a use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
-  confirmLogout: "Are you sure to exit the App?",
-  gotNewRequest: "You got new notification!",
+  confirmLogout: "Are you sure to exit the Torro?",
+  gotNewRequest: "You got a new message!",
   notifyID: "Notification ID",
   request: "Request",
   time: "Time",
   youGot: "You got",
-  unread: "unread notifications",
+  unread: "unread messages",
   formName: "Form",
   msg: "Message",
   readAll: "Read all",
@@ -71,16 +71,16 @@ export default {
   workflowV: "Workflow value operation",
 
   // role
-  it: "IT ADMIN",
-  dg: "DATA GOVERNOR",
-  du: "DATA USER",
-  serviceAdmin: "TORRO ADMIN",
+  it: "IT Admin",
+  dg: "Data Governer",
+  du: "Data User",
+  serviceAdmin: "Root",
 
   // workspace
   wsCreate: "Create new workspace",
   defaultAd: "Default AD group List",
   addWs: "Add new workspace",
-  wsDetail: "Workspace Detail",
+  wsDetail: "Workspace detail",
   confirmUpdateWs: "Do you confirm to update the workspace?",
   confirmAddWS: "Do you confirm to add a new workspace?",
   wsIsAdd: "New workspace has been created.",
@@ -96,12 +96,12 @@ export default {
   wsTeamGroup: "Workspace team group",
   regionStructure: "Region / Country structure",
   addRegion: "Add region",
-  systemField: "System Define Field",
+  systemField: "System define field",
   updateSystemField: "Update system define field",
-  dynamicApprover: "Dynamic Approval Field",
+  dynamicApprover: "Dynamic approval field",
 
-  adminServiceAcc: "Admin Service Account",
-  ucOwnerGroup: "Use case Owner Group",
+  adminServiceAcc: "Admin service account",
+  ucOwnerGroup: "Use case owner group",
   ucTeamGroup: "Use case Team Group",
   ucLabel: "Use case Label",
   downLoadExcel: "Download excel template",
@@ -116,14 +116,14 @@ export default {
   userCycle: "User recertification cycle",
   ucFlow: "Use case approval flow",
   addNewAD: "Add new AD group List",
-  limit150: "Please have less than 150 records",
+  limit150: "Can not have than 150 AD groups",
 
   // policy
   confirmUpdatePolicy: "Do you confirm to update this policy?",
   confirmAddPolicy: "Do you confirm to add a new policy?",
-  policyTags: "Policy Tags",
-  policyTagOr: "Policy Tags / Column Access",
-  ColumnTags: "Column Tags",
+  policyTags: "Policy tags",
+  policyTagOr: "Policy tags / Column access",
+  ColumnTags: "Column tags",
   location: "Location",
   tagTemplateName: "Tag template name",
   templateId: "Template id",
@@ -146,31 +146,31 @@ export default {
   ucDeleted: "Use case has been deleted.",
 
   // Policy
-  policyMan: "Data Access Policy Management",
+  policyMan: "Data access policy management",
   setupPolicy: "Setup workspace data policy",
-  addPolicy: "Add new Policy",
+  addPolicy: "Add new policy",
   policyId: "Policy Id",
-  policyName: "Policy Name",
+  policyName: "Policy name",
   project: "Project",
-  createPolicy: "Create Policy",
+  createPolicy: "Create policy",
   policyTagStru: "Policy tag structure",
-  addPolicyTag: "ADD POLICY TAG",
-  addSubTag: "ADD SUBTAG",
-  deleteTag: "DELETE",
+  addPolicyTag: "Add Policy Tag",
+  addSubTag: "Add Subtag",
+  deleteTag: "Delete",
   dataGovernor: "Data Governor tag template",
   addTagTemplate: "Add tag template",
 
   //Data Onboarding
-  dataOnboarding: "Data Publishing",
+  dataOnboarding: "Data publishing",
   fieldName: "Field name",
   type: "Type",
   mode: "Mode",
-  policyTag: "Policy Tags",
+  policyTag: "Policy tags",
   description: "Description",
   resourceDetail: "Resource detail",
 
   // Data Discovery
-  dataDiscovery: "Data Discovery",
+  dataDiscovery: "Data discovery",
   filters: "Filters",
   lastModified: "Last modified",
 
@@ -180,12 +180,12 @@ export default {
   requestor: "Requestor",
   historyRecord: "Historical submission",
   reOpen: "Re-open",
-  requestDetail: "Request Detail",
+  requestDetail: "Request detail",
   requestProgress: "Request progress",
-  commnetHistory: "Comment History",
+  commnetHistory: "Comment history",
   addComment: "Add comment",
 
-  addNewCommentTips: "Do you confirm to commit new comment?",
+  addNewCommentTips: "Do you confirm to add this comment?",
   deleteCommentTips: "Do you confirm to delete this comment?",
 
   deleteSuccess: "Delete successfully!",
@@ -198,8 +198,8 @@ export default {
   // loginPage
   userName: "User name",
   pwd: "Password",
-  login: "LOGIN IN",
-  reset: "RESET",
+  login: "Login",
+  reset: "Reset",
 
   //orgSetting
   projectSetup: "Project setup config",
@@ -244,7 +244,7 @@ export default {
 
   /* moduleEdit */
   template: "Template",
-  advanceOptions: "Advance Options",
+  advanceOptions: "Advance options",
   label: "Label",
   value: "Value",
   placeholder: "Placeholder",
@@ -256,7 +256,7 @@ export default {
   addForm: "Add form",
 
   /* workflowManagement */
-  plsSelectForm: "Please select a form.",
+  plsSelectForm: "Please select a form to start a new workflow",
   addWorkflow: "Add a new workflow",
   formTrigger: "Form Trigger",
   workflowId: "Workflow id",
@@ -272,7 +272,7 @@ export default {
   name: "Name",
   plsAddSchema: "Please add your data schema.",
 
-  workflowItems: "Workflow Items",
+  workflowItems: "Workflow items",
   itemConditions: "Items conditions",
   noneConditions: "No optional conditions",
 
@@ -280,13 +280,13 @@ export default {
   visualisation: "Visualisation",
 
   //getDataAccess
-  getDataAccess: "Data Consumption Request",
+  getDataAccess: "Data consumption request",
   dataAccessCart: "List of request(s)",
   addToCart: "Add to cart",
   orderNow: "Submit for approval",
 
   /* callModel*/
-  tryAgain: "Try Again",
+  tryAgain: "Try again",
   continue: "Continue",
   confirm: "Confirm",
   almost: "Almost there!",
@@ -297,19 +297,19 @@ export default {
   confirmNewWorkflow: "Do you confirm to add a new workflow.",
   workflowCreated: "New workflow has been created.",
   workflowRemove: "Do you confirm to remove this workflow?",
-  submitting: "Submitting. And appreciate your patience.",
+  submitting: "Submitted and appreciate your patience.",
   confirmDeleteForm: "Are you confirm to delete this form?",
   formDeleted: "Your form is deleted.",
   workflowDelete: "This workflow has been deleted.",
 
   /* error msg */
-  msg404: "Resource not found. Please contanct the IT support.",
+  msg404: "Resource not found. Please contact the IT admin.",
   msg401:
-    "If you believe you have right to access the application. Please contanct your colleagues ",
-  goesWrong: "Something goes wrong.",
+    "If you believe you have right to access the application. Please contact your IT admin ",
+  goesWrong: "Something went wrong.",
   checkInput: "Something went wrong. Please double check your input.",
 
-  loadNpatience: "We are loading this page. and appreciate your patience.",
+  loadNpatience: "We are loading this page and appreciate your patience.",
 
   /* form error handle */
   textEmptpy: "Please enter ",
