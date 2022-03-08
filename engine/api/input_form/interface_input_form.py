@@ -98,8 +98,15 @@ class interfaceInputForm(Resource):
                 if data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
+                    
                     data = response_code.UPDATE_DATA_FAIL
                     data['msg'] = 'Create new form success, fail to send email to approves'
+                    logger.error("FN:interfaceInputForm_post data_error:{}".format(data))
+            else:
+                data = response_code.UPDATE_DATA_FAIL
+                data['msg'] = 'Create new form success, fail to send email to approves'
+                logger.error("FN:interfaceInputForm_post data_error:{}".format(data))
+
         except:
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Something went wrong. Please double check your input.'

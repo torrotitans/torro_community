@@ -17,7 +17,7 @@ export default {
   edit: "Edit",
   reSubmit: "Re-submit",
   close: "Close",
-  logining: "Logining...",
+  logining: "logging in...",
   plsSelectRole: " please select your role to login.",
   cancel: "Cancel",
   comment: "Comment",
