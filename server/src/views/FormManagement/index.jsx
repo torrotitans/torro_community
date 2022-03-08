@@ -20,6 +20,7 @@ import {
   postFormData,
   addFormData,
   deleteFormData,
+  getUcResource,
 } from "@lib/api";
 import DesignPanel from "./DesignPanel";
 import { sendNotify } from "src/utils/systerm-error";
@@ -27,6 +28,16 @@ import { SUCCESS } from "src/lib/data/callStatus";
 import { useGlobalContext } from "src/context";
 
 const defaultIndex = -1;
+const specialForm = [{ id: 2, torroDefField: ["s1", "u2", "u3", "u8", "u11"] }];
+const UC_FORM_ID = "2";
+const UC_PROP_MAP = {
+  u2: "owner_group",
+  u3: "team_group",
+  u8: "service_account",
+  u11: "label",
+};
+
+const UC_PROP = ["u2", "u3", "u8", "u11"];
 
 const FormManagement = ({ tagTemplate }) => {
   const { formListContext } = useGlobalContext();
@@ -48,6 +59,10 @@ const FormManagement = ({ tagTemplate }) => {
   const formList = useMemo(() => {
     return formListContext?.managementList || [];
   }, [formListContext]);
+
+  const ucForm = useMemo(() => {
+    return String(formId) === UC_FORM_ID;
+  }, [formId]);
 
   const currentModule = useMemo(() => {
     return editModuleIndex !== defaultIndex
@@ -200,12 +215,25 @@ const FormManagement = ({ tagTemplate }) => {
     [formData]
   );
 
+  const specialField = useMemo(() => {
+    if (!formData) {
+      return [];
+    }
+    let tmp = [];
+    specialForm.forEach((item) => {
+      if (item.id === formData.id) tmp = item.torroDefField || [];
+    });
+
+    return tmp;
+  }, [formData]);
+
   const renderFormItem = (items) => {
     let itemLen = items.length;
+
     return items.map((item, index) => {
       return (
         <FormItem
-          enableEdit
+          enableEdit={!specialField.includes(item.id)}
           key={index}
           data={item}
           index={index}
@@ -236,7 +264,11 @@ const FormManagement = ({ tagTemplate }) => {
                 }
           }
           control={control}
-          systemTag={item.id.startsWith("s") || item.id.startsWith("d")}
+          systemTag={
+            item.id.startsWith("s") ||
+            item.id.startsWith("d") ||
+            specialField.includes(item.id)
+          }
         />
       );
     });
@@ -261,22 +293,65 @@ const FormManagement = ({ tagTemplate }) => {
   const clickAwayHandle = (e) => {
     setEditModuleIndex(defaultIndex);
   };
-
-  const getFormData = (id) => {
-    setFormLoading(true);
-    getFormItem({ id: id })
-      .then((res) => {
-        if (res.code === SUCCESS) {
-          setFormLoading(false);
-          setFormData({
-            ...res.data,
+  const initUcDef = useCallback((tempFieldList, formData) => {
+    getUcResource()
+      .then((res2) => {
+        if (res2.data) {
+          let tmpUcDef = {};
+          Object.keys(UC_PROP_MAP).forEach((key) => {
+            tmpUcDef[key] = [];
           });
+          res2.data.forEach((item, index) => {
+            Object.keys(UC_PROP_MAP).forEach((key) => {
+              tmpUcDef[key].push(item.resource[UC_PROP_MAP[key]]);
+            });
+          });
+          tempFieldList = tempFieldList.map((item) => {
+            if (UC_PROP.includes(item.id)) {
+              item.style = 2;
+              item.options = tmpUcDef[item.id].map((val, index) => ({
+                label: val,
+                value: index,
+              }));
+            }
+            return item;
+          });
+          setFormData({
+            ...formData,
+            fieldList: tempFieldList,
+          });
+          setFormLoading(false);
         }
       })
       .catch((e) => {
         sendNotify({ msg: e.message, status: 3, show: true });
       });
-  };
+  }, []);
+
+  const getFormData = useCallback(
+    (id) => {
+      setFormLoading(true);
+      console.log(ucForm);
+      getFormItem({ id: id })
+        .then((res) => {
+          if (res.code === SUCCESS) {
+            let data = res.data;
+            if (ucForm) {
+              initUcDef(data.fieldList, data);
+              return;
+            }
+            setFormLoading(false);
+            setFormData({
+              ...res.data,
+            });
+          }
+        })
+        .catch((e) => {
+          sendNotify({ msg: e.message, status: 3, show: true });
+        });
+    },
+    [initUcDef, ucForm]
+  );
 
   useEffect(() => {
     if (!formId) {
@@ -291,7 +366,9 @@ const FormManagement = ({ tagTemplate }) => {
       return;
     }
     getFormData(formId);
-  }, [formId, tagTemplate]);
+  }, [formId, tagTemplate, getFormData]);
+
+  console.log(4);
 
   return (
     <div className={styles.formManagement}>

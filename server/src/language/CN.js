@@ -9,7 +9,7 @@ export default {
   plsSelectRole: "请选择你的角色。",
 
   // dashboard
-  requestNum: "请求ID",
+  requestId: "请求ID",
   historyId: "历史 ID",
   requestor: "请求者",
   historyRecord: "历史记录",

@@ -299,7 +299,7 @@ const RecordTable = ({ approved }) => {
                         </TableCell>
                         <TableCell align="center">
                           <Text type="subTitle">
-                            <Intl id="requestNum" />
+                            <Intl id="requestId" />
                           </Text>
                         </TableCell>
                         <TableCell align="center">
