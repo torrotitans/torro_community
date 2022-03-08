@@ -4,6 +4,10 @@ import google.auth
 import googleapiclient.discovery
 from config import config
 from common.common_input_form_status import status as Status
+import traceback
+import logging
+
+logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -26,19 +30,25 @@ class taskOperator:
 
     @staticmethod
     def execute_tasks(task_object_list, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
-        return_msg_list = []
-        for task_object in task_object_list:
-            # api_name = task_object.api_name
-            task_object.verify_all_param()
-            return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
-            # if api_name in taskOperator.db_operation:
-            #     # print('1234task {} will update db'.format(api_name))
-            #     return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
-            # else:
-            #     return_msg = task_object.execute()
-            comment = task_object.message_tranfer(return_msg)
-            return_msg_list.append((return_msg, comment))
-        return return_msg_list
+        try:
+            return_msg_list = []
+            for task_object in task_object_list:
+                # api_name = task_object.api_name
+                task_object.verify_all_param()
+                return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
+                # if api_name in taskOperator.db_operation:
+                #     # print('1234task {} will update db'.format(api_name))
+                #     return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
+                # else:
+                #     return_msg = task_object.execute()
+                comment = task_object.message_tranfer(return_msg)
+                return_msg_list.append((return_msg, comment))
+            return return_msg_list
+
+        except:
+            logger.error("FN:taskOperator_execute_tasks error:{}".format(traceback.format_exc()))
+
+        
 
 class taskFetcher:
 
