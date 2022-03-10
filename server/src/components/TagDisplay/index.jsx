@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
@@ -18,11 +18,21 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
-import { covertToHKTime } from "src/utils/timeFormat";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 const TagDisplay = ({ tagData }) => {
+  const { timeContext } = useGlobalContext();
+
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   useEffect(() => {
     if (tagData) {
@@ -74,7 +84,7 @@ const TagDisplay = ({ tagData }) => {
                           {row.label}
                         </TableCell>
                         <TableCell width="70%" align="center">
-                          {isDate ? covertToHKTime(row.default) : row.default}
+                          {isDate ? covertTime(row.default) : row.default}
                         </TableCell>
                       </TableRow>
                     );

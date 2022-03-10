@@ -41,13 +41,13 @@ import FormRender from "@comp/FormRender";
 import FormItem from "@comp/FormItem";
 import UsecaseInfo from "@comp/UsecaseInfo";
 import { GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
-import { covertToHKTime } from "src/utils/timeFormat";
+import { covertToCurrentTime } from "src/utils/timeFormat";
 import GroupListTable from "@comp/GroupListTable";
 
 const USE_CASE_FORM_ID = 2;
 
 const WorkspaceManage = () => {
-  const { setAuth, authContext } = useGlobalContext();
+  const { setAuth, authContext, timeContext } = useGlobalContext();
   const { control, register } = useForm(); // initialise the hook
 
   const [wsData, setWsData] = useState();
@@ -81,6 +81,13 @@ const WorkspaceManage = () => {
     let tmpList = wsData.ucList;
     return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [wsData, page, rowsPerPage]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -495,9 +502,7 @@ const WorkspaceManage = () => {
                                   <Text>{uc.uc_owner_group}</Text>
                                 </TableCell>
                                 <TableCell align="center">
-                                  <Text>
-                                    {covertToHKTime(uc.validity_date)}
-                                  </Text>
+                                  <Text>{covertTime(uc.validity_date)}</Text>
                                 </TableCell>
                                 <TableCell align="center">
                                   <div className={styles.operation}>

@@ -23,6 +23,7 @@ import styles from "./styles.module.scss";
 import { useGlobalContext } from "src/context";
 import { USER, GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
 // import LANGUAGE from "src/lib/data/languageType";
+import TIME_FORMAT from "src/lib/data/timeFormat";
 import Model from "@basics/Modal";
 import NotifyTable from "./NotifyTable";
 import DoubleSquare from "@assets/icons/DoubleSquare";
@@ -91,6 +92,8 @@ const UserSessionBar = () => {
   const {
     authContext,
     setAuth,
+    timeContext,
+    setTimeFormat,
     // languageContext,
     // setLanguage,
   } = useGlobalContext();
@@ -361,6 +364,19 @@ const UserSessionBar = () => {
                     }}
                   />
                 </div> */}
+                <div className={styles.optionsBox}>
+                  <Select
+                    value={timeContext.timeFormat}
+                    options={TIME_FORMAT}
+                    disableFullwidth={true}
+                    onChange={(value) => {
+                      setTimeFormat({
+                        ...timeContext,
+                        timeFormat: value,
+                      });
+                    }}
+                  />
+                </div>
                 {isLogin && (
                   <>
                     <div

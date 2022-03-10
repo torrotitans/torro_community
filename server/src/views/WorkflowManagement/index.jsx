@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 
@@ -35,11 +35,11 @@ import { SUCCESS } from "src/lib/data/callStatus";
 import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import { useGlobalContext } from "src/context";
-import { covertToHKTime } from "src/utils/timeFormat";
+import { covertToCurrentTime } from "src/utils/timeFormat";
 const TRIGGER = "Trigger";
 
 const WorkflowManagement = () => {
-  const { authContext, formListContext } = useGlobalContext();
+  const { authContext, formListContext, timeContext } = useGlobalContext();
   const navigate = useNavigate();
 
   const [formLoading, setFormLoading] = useState(true);
@@ -79,6 +79,13 @@ const WorkflowManagement = () => {
     }
     return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [tableList, page, rowsPerPage, filterVal]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const addNewWorkFlow = (item, seq) => {
     setAddModal(false);
@@ -261,7 +268,7 @@ const WorkflowManagement = () => {
                       <TableCell align="center">{row.workflow_name}</TableCell>
                       <TableCell align="center">{row.formName}</TableCell>
                       <TableCell align="center">
-                        {covertToHKTime(row.create_time)}
+                        {covertTime(row.create_time)}
                       </TableCell>
                       <TableCell align="center">
                         <div className={styles.operation}>

@@ -81,6 +81,21 @@ const GlobalContextProvider = (props) => {
     }
   );
 
+  const [timeContext, timeContextDispatch] = useReducer(
+    (state, actions) => {
+      let newState = state;
+      newState = {
+        ...state,
+        timeFormat: actions.payload.timeFormat,
+      };
+      setCookie("TORRO_TIMEZONE", actions.payload.timeFormat);
+      return newState;
+    },
+    {
+      timeFormat: getCookie("TORRO_TIMEZONE") || "Asia/Hong_Kong",
+    }
+  );
+
   const [formListContext, formListContextDispatch] = useReducer(
     (state, actions) => {
       let newState = state;
@@ -159,6 +174,13 @@ const GlobalContextProvider = (props) => {
     });
   };
 
+  const setTimeFormat = (lang) => {
+    timeContextDispatch({
+      type: "",
+      payload: lang,
+    });
+  };
+
   const setFormContext = (list) => {
     formListContextDispatch({
       type: "",
@@ -191,6 +213,8 @@ const GlobalContextProvider = (props) => {
     setWsContext,
     torroConfigContext,
     setTorroConfig,
+    timeContext,
+    setTimeFormat,
   };
 
   return (

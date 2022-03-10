@@ -27,7 +27,8 @@ import { SUCCESS } from "src/lib/data/callStatus";
 import TextBox from "@basics/TextBox";
 import SpecialField from "./SpecialField";
 import CommentSection from "../CommentSection";
-import { covertToHKTime } from "src/utils/timeFormat";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 import {
   Table,
@@ -49,12 +50,21 @@ const FormDataDisplay = ({
   approvedView,
 }) => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const { timeContext } = useGlobalContext();
+
   const [status, setStatus] = useState();
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
   const [edit, setEdit] = useState(false);
   const [commentList, setCommentList] = useState(defaultData.comment_history);
   const [specialList, setSpecialList] = useState([]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const [submitData, setSubmitData] = useState(null);
   const [comment, setComment] = useState("");
@@ -237,12 +247,12 @@ const FormDataDisplay = ({
       } else if (typeof defaultValue === "boolean") {
         return String(defaultValue);
       } else if (row.style === 6) {
-        return covertToHKTime(defaultValue);
+        return covertTime(defaultValue);
       } else {
         return defaultValue;
       }
     },
-    [formId, specialList]
+    [formId, specialList, covertTime]
   );
 
   useEffect(() => {

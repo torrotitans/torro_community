@@ -1,12 +1,20 @@
 /* third lib*/
-import React from "react";
+import React, { useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
-import { covertToHKTime } from "src/utils/timeFormat";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 const ResourceDetail = ({ tableData }) => {
+  const { timeContext } = useGlobalContext();
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
   return (
     <div className={styles.resourceDetail}>
       <div className={styles.detailItem}>
@@ -40,7 +48,7 @@ const ResourceDetail = ({ tableData }) => {
           <Intl id="createtime" />
         </div>
         <div className={styles.detailValue}>
-          {covertToHKTime(Number(tableData.creationTime))}
+          {covertTime(Number(tableData.creationTime))}
         </div>
       </div>
     </div>
