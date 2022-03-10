@@ -331,7 +331,6 @@ const FormManagement = ({ tagTemplate }) => {
   const getFormData = useCallback(
     (id) => {
       setFormLoading(true);
-      console.log(ucForm);
       getFormItem({ id: id })
         .then((res) => {
           if (res.code === SUCCESS) {
@@ -367,8 +366,6 @@ const FormManagement = ({ tagTemplate }) => {
     }
     getFormData(formId);
   }, [formId, tagTemplate, getFormData]);
-
-  console.log(4);
 
   return (
     <div className={styles.formManagement}>

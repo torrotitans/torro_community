@@ -26,6 +26,7 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToHKTime } from "src/utils/timeFormat";
 
 const TagTemplateList = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();
@@ -157,7 +158,9 @@ const TagTemplateList = ({ setStep, setCurrentId }) => {
                     </TableCell>
                     <TableCell align="center">{row.display_name}</TableCell>
                     <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">{row.create_time}</TableCell>
+                    <TableCell align="center">
+                      {covertToHKTime(row.create_time)}
+                    </TableCell>
                     <TableCell align="center">
                       <div className={styles.operation}>
                         <EditIcon

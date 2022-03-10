@@ -41,6 +41,7 @@ import FormRender from "@comp/FormRender";
 import FormItem from "@comp/FormItem";
 import UsecaseInfo from "@comp/UsecaseInfo";
 import { GOVERNOR, IT, ADMIN } from "src/lib/data/roleType.js";
+import { covertToHKTime } from "src/utils/timeFormat";
 import GroupListTable from "@comp/GroupListTable";
 
 const USE_CASE_FORM_ID = 2;
@@ -494,7 +495,9 @@ const WorkspaceManage = () => {
                                   <Text>{uc.uc_owner_group}</Text>
                                 </TableCell>
                                 <TableCell align="center">
-                                  <Text>{uc.validity_date}</Text>
+                                  <Text>
+                                    {covertToHKTime(uc.validity_date)}
+                                  </Text>
                                 </TableCell>
                                 <TableCell align="center">
                                   <div className={styles.operation}>

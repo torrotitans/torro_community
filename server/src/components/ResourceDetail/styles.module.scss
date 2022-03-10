@@ -1,0 +1,19 @@
+.resourceDetail {
+  display: flex;
+  margin-bottom: $rbwmspace20;
+  flex-wrap: wrap;
+}
+
+.detailItem {
+  width: 50%;
+  display: flex;
+  margin: $rbwmspace8 0;
+}
+.detailLabel {
+  width: 50%;
+  color: $main-purple;
+  font-weight: $bold-font-weight;
+}
+.detailValue {
+  width: 50%;
+}

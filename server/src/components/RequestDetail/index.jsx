@@ -1,5 +1,5 @@
 // third lib
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
@@ -22,7 +22,7 @@ import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import Text from "@basics/Text";
 import CallModal from "@basics/CallModal";
-import { useCallback } from "react";
+import { covertToHKTime } from "src/utils/timeFormat";
 
 const RequestDetail = ({ recordId, approvedView }) => {
   const [formLoading, setFormLoading] = useState(true);
@@ -136,7 +136,7 @@ const RequestDetail = ({ recordId, approvedView }) => {
                         <ListItemText>
                           <div className={styles.timeStamp}>
                             <TodayIcon />
-                            {row.create_time}
+                            {covertToHKTime(row.create_time)}
                           </div>
                         </ListItemText>
                         <ListItemSecondaryAction>

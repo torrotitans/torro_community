@@ -35,6 +35,7 @@ import { SUCCESS } from "src/lib/data/callStatus";
 import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
 import { useGlobalContext } from "src/context";
+import { covertToHKTime } from "src/utils/timeFormat";
 const TRIGGER = "Trigger";
 
 const WorkflowManagement = () => {
@@ -259,7 +260,9 @@ const WorkflowManagement = () => {
                       </TableCell>
                       <TableCell align="center">{row.workflow_name}</TableCell>
                       <TableCell align="center">{row.formName}</TableCell>
-                      <TableCell align="center">{row.create_time}</TableCell>
+                      <TableCell align="center">
+                        {covertToHKTime(row.create_time)}
+                      </TableCell>
                       <TableCell align="center">
                         <div className={styles.operation}>
                           <EditIcon

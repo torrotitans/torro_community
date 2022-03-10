@@ -24,6 +24,7 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToHKTime } from "src/utils/timeFormat";
 
 const PolicyTagTable = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();
@@ -117,7 +118,9 @@ const PolicyTagTable = ({ setStep, setCurrentId }) => {
                       {row.taxonomy_display_name}
                     </TableCell>
                     <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">{row.create_time}</TableCell>
+                    <TableCell align="center">
+                      {covertToHKTime(row.create_time)}
+                    </TableCell>
                     <TableCell align="center">
                       <div className={styles.operation}>
                         <EditIcon

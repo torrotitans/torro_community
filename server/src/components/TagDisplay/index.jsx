@@ -18,6 +18,7 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToHKTime } from "src/utils/timeFormat";
 
 const TagDisplay = ({ tagData }) => {
   const [formData, setFormData] = useState(null);
@@ -66,13 +67,14 @@ const TagDisplay = ({ tagData }) => {
                 </TableHead>
                 <TableBody>
                   {formData.fieldList.map((row, index) => {
+                    let isDate = row.style === 6;
                     return (
                       <TableRow key={index}>
                         <TableCell width="30%" align="center">
                           {row.label}
                         </TableCell>
                         <TableCell width="70%" align="center">
-                          {row.default}
+                          {isDate ? covertToHKTime(row.default) : row.default}
                         </TableCell>
                       </TableRow>
                     );

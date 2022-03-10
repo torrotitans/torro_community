@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
@@ -24,11 +24,11 @@ import Loading from "@assets/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
 import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
-import { useMemo } from "react";
 import TextBox from "@basics/TextBox";
 import SpecialField from "./SpecialField";
 import CommentSection from "../CommentSection";
-// import renderOption from "src/utils/renderOption";
+import { covertToHKTime } from "src/utils/timeFormat";
+
 import {
   Table,
   TableBody,
@@ -236,10 +236,9 @@ const FormDataDisplay = ({
         }
       } else if (typeof defaultValue === "boolean") {
         return String(defaultValue);
+      } else if (row.style === 6) {
+        return covertToHKTime(defaultValue);
       } else {
-        // if (row.style === 1) {
-        //   return renderOption(defaultValue, options);
-        // }
         return defaultValue;
       }
     },

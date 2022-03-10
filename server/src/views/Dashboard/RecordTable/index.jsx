@@ -30,6 +30,7 @@ import { sendNotify } from "src/utils/systerm-error";
 import { useCallback } from "react";
 import Button from "@basics/Button";
 import { useGlobalContext } from "src/context";
+import { covertToHKTime } from "src/utils/timeFormat";
 
 const tabList = [
   { label: "Pending requests", value: [[0, "="]], style: "pending" },
@@ -357,7 +358,7 @@ const RecordTable = ({ approved }) => {
                             {formIdMap[row.form_id] || "Unknown"}
                           </TableCell>
                           <TableCell align="center">
-                            {row.create_time}
+                            {covertToHKTime(row.create_time)}
                           </TableCell>
                           <TableCell align="center">
                             <div className={styles.operation}>
