@@ -167,7 +167,7 @@ const FormItem = ({
       })}
       style={{ width: data.width + "%" }}
       onDoubleClick={() => {
-        onEdit && onEdit(true);
+        enableEdit && onEdit && onEdit(true);
       }}
     >
       <div className={styles.formControl}>

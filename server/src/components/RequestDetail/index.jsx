@@ -1,5 +1,5 @@
 // third lib
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
@@ -22,9 +22,12 @@ import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import Text from "@basics/Text";
 import CallModal from "@basics/CallModal";
-import { useCallback } from "react";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 const RequestDetail = ({ recordId, approvedView }) => {
+  const { timeContext } = useGlobalContext();
+
   const [formLoading, setFormLoading] = useState(true);
   const [tableList, setTableList] = useState([]);
   const [formData, setFormData] = useState();
@@ -44,6 +47,13 @@ const RequestDetail = ({ recordId, approvedView }) => {
     setDefaultData(changeData);
     setModalData({ ...modalData, open: false });
   };
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const InitDetailPage = useCallback(() => {
     setFormLoading(true);
@@ -136,7 +146,7 @@ const RequestDetail = ({ recordId, approvedView }) => {
                         <ListItemText>
                           <div className={styles.timeStamp}>
                             <TodayIcon />
-                            {row.create_time}
+                            {covertTime(row.create_time)}
                           </div>
                         </ListItemText>
                         <ListItemSecondaryAction>

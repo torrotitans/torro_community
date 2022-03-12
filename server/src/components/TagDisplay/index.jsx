@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 /* material-ui */
 import Paper from "@material-ui/core/Paper";
@@ -18,10 +18,21 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 const TagDisplay = ({ tagData }) => {
+  const { timeContext } = useGlobalContext();
+
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   useEffect(() => {
     if (tagData) {
@@ -66,13 +77,14 @@ const TagDisplay = ({ tagData }) => {
                 </TableHead>
                 <TableBody>
                   {formData.fieldList.map((row, index) => {
+                    let isDate = row.style === 6;
                     return (
                       <TableRow key={index}>
                         <TableCell width="30%" align="center">
                           {row.label}
                         </TableCell>
                         <TableCell width="70%" align="center">
-                          {row.default}
+                          {isDate ? covertTime(row.default) : row.default}
                         </TableCell>
                       </TableRow>
                     );
