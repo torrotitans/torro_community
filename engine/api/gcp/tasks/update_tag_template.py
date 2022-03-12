@@ -139,7 +139,7 @@ class UpdateTagTemplate(baseTask):
 
                 return 'update successfully.: {}'.format(str(tag_template_id))
 
-            self.
+            # self.
 
         except HttpError as e:
             return (json.loads(e.content))
