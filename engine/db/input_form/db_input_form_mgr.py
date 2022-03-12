@@ -731,8 +731,8 @@ class DbInputFormMgr(DbBase):
             if field_style == 4:
                 form_field_input_dict[field_id] = {'style': field_style, 'value': []}
                 for file_path in value:
-                    upload_blob(Config.DEFAULT_BUCEKT, file_path, file_path[2:])
                     print('BUCEKT:', Config.DEFAULT_BUCEKT, file_path, file_path[2:])
+                    upload_blob(Config.DEFAULT_BUCEKT, file_path, file_path[2:])
                     form_field_input_dict[field_id]['value'].append(
                         'gs://{}/{}'.format(Config.DEFAULT_BUCEKT, file_path[2:]))
             else:

@@ -63,7 +63,7 @@ class interfaceInputForm(Resource):
             # # print('request.form:', request.form)
             # # print('request.files: ', request.files)
 
-            # # print('file_list: ', file_list)
+            print('file_list: ', file_list)
             for file in file_list:
                 file_id = file[0][:2]
                 # print("file_id:", file_id)
@@ -81,7 +81,7 @@ class interfaceInputForm(Resource):
                         os.makedirs(upload_path)
                     upload_path += file.filename
                     file.save(upload_path)
-                    # print('file_contents: ', type(file_contents), file_contents)
+                    print('file_contents: ', type(file_contents), file_contents)
                     request_data['form_field_values_dict'][file_id].append(upload_path)
             request_data['field_ids'] = field_ids
             # print('request_data: ', request_data)
@@ -161,7 +161,7 @@ class interfaceInputForm(Resource):
                             os.makedirs(upload_path)
                         upload_path += file.filename
                         file.save(upload_path)
-                        # print('file_contents: ', type(file_contents), file_contents)
+                        print('file_contents: ', type(file_contents), file_contents)
                         request_data['form_field_values_dict'][file_id].append(upload_path)
                 request_data['field_ids'] = field_ids
                 # print('request_data: ', request_data)
