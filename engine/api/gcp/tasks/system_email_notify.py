@@ -1,6 +1,5 @@
 from api.gcp.tasks.baseTask import baseTask
 from utils.smtp_helper import notify_approvers
-from db.base import DbBase
 from utils.ldap_helper import Ldap
 from db.connection_pool import MysqlConn
 from config import configuration
@@ -9,7 +8,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class system_email_notify(baseTask, DbBase):
+class system_email_notify(baseTask):
     api_type = 'system'
     api_name = 'system_email_notify'
     arguments = {

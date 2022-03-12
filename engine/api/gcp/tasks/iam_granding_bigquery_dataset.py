@@ -1,14 +1,9 @@
 from api.gcp.tasks.baseTask import baseTask
 # from google.cloud import datacatalog_v1beta1
-import google
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 from utils.log_helper import lg
-import datetime
 from utils.status_code import response_code
 from config import configuration
-import google.auth
-import googleapiclient.discovery
 from googleapiclient.errors import HttpError
 import json
 import os
@@ -21,7 +16,7 @@ Config = config[config_name]
 
 
 # class GrantRoleForBQDataset(baseTask):
-class GrantRoleForBQDataset(baseTask, DbBase):
+class GrantRoleForBQDataset(baseTask):
     api_type = 'gcp'
     api_name = 'GrantRoleForBQDataset'
     arguments = {

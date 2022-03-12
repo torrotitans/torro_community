@@ -60,5 +60,7 @@ class CreateBQTable(baseTask):
             if table_labels:
                 table.labels = table_labels
                 table = client.update_table(table, ["labels"])  # API request
+            usecase_id = -1
+            self.records_resource(workspace_id, input_form_id, usecase_id, 'BigQuery', table_name)
 
             return  "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)

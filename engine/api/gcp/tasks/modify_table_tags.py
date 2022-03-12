@@ -4,7 +4,6 @@ from api.gcp.tasks.baseTask import baseTask
 import json
 from db.connection_pool import MysqlConn
 from config import configuration
-from db.base import DbBase
 import datetime
 from common.common_input_form_status import status
 import traceback
@@ -12,7 +11,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class ModifyTableTags(baseTask, DbBase):
+class ModifyTableTags(baseTask):
     api_type = 'gcp'
 
     api_name = 'ModifyTableTags'

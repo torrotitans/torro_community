@@ -1,16 +1,14 @@
 from api.gcp.tasks.baseTask import baseTask
 from utils.ldap_helper import Ldap
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 from config import configuration
-import json
 import datetime
 import traceback
 import logging
 
 logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
-class system_notify(baseTask, DbBase):
+class system_notify(baseTask):
     api_type = 'system'
     api_name = 'system_notify'
     arguments = {

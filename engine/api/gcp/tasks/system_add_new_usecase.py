@@ -1,9 +1,8 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
 from db.usecase.db_usecase_mgr import usecase_mgr
-import json
-import datetime
-class system_add_new_usecase(baseTask, DbBase):
+
+
+class system_add_new_usecase(baseTask):
     api_type = 'system'
     api_name = 'system_add_new_usecase'
     arguments = {

@@ -170,27 +170,27 @@ class DbFormMgr(DbBase):
                     field_info['id'] = 'd' + str(field_info['id'])
                     # # print(field_info)
                     form_info['fieldList'][index] = field_info
-                if 'u' in field_item['id']:
-                    user_field_id = str(field_item['id']).replace('u', '')
-                    # get dynamicFieldValue
-                    print('field_item:', field_item)
-                    field_info = self.__get_user_field_values(field_item, user_field_id, wp_id, db_name, conn)
-                    print('field_info:', field_item)
-
-                    # condition = "user_field_id='%s'" % user_field_id
-                    # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
-                    #                              'option_label,create_time', condition=condition)
-                    # values_info = self.execute_fetch_all(conn, sql)
-                    # field_info['options'] = []
-                    # # print('field_info:', field_info)
-                    # for value_info in values_info:
-                    #     field_info['options'].append(
-                    #         {'label': value_info['option_label'], 'value': value_info['option_label']})
-                    # field_info['default'] = field_info['default_value']
-                    # del field_info['default_value']
-                    field_info['id'] = 'u' + str(field_info['id'])
-                    # # print(field_info)
-                    form_info['fieldList'][index] = field_info
+                # if 'u' in field_item['id']:
+                #     user_field_id = str(field_item['id']).replace('u', '')
+                #     # get dynamicFieldValue
+                #     print('field_item:', field_item)
+                #     field_info = self.__get_user_field_values(field_item, user_field_id, wp_id, db_name, conn)
+                #     print('field_info:', field_item)
+                #
+                #     # condition = "user_field_id='%s'" % user_field_id
+                #     # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
+                #     #                              'option_label,create_time', condition=condition)
+                #     # values_info = self.execute_fetch_all(conn, sql)
+                #     # field_info['options'] = []
+                #     # # print('field_info:', field_info)
+                #     # for value_info in values_info:
+                #     #     field_info['options'].append(
+                #     #         {'label': value_info['option_label'], 'value': value_info['option_label']})
+                #     # field_info['default'] = field_info['default_value']
+                #     # del field_info['default_value']
+                #     field_info['id'] = 'u' + str(field_info['id'])
+                #     # # print(field_info)
+                #     form_info['fieldList'][index] = field_info
 
             if wp_id != 0:
                 condition = "ID=%s " % (wp_id)

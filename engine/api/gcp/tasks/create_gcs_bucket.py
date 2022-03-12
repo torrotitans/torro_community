@@ -50,4 +50,8 @@ class CreateGCSBucket(baseTask):
             if bucket_cmek:
                 bucket.default_kms_key_name = bucket_cmek
             bucket.patch()
+
+            usecase_id = -1
+            self.records_resource(workspace_id, input_form_id, usecase_id, 'Storage', bucket_name)
+
             return "Bucket {} created.".format(bucket.name)

@@ -1,7 +1,6 @@
 from api.gcp.tasks.baseTask import baseTask
 # from google.cloud import datacatalog_v1beta1
 import google
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 import datetime
 from utils.status_code import response_code
@@ -24,7 +23,7 @@ Config = config[config_name]
 
 
 # class DeleteTagTemplate(baseTask):
-class DeleteTagTemplate(baseTask, DbBase):
+class DeleteTagTemplate(baseTask):
     api_type = 'gcp'
     api_name = 'DeleteTagTemplate'
     arguments = {
