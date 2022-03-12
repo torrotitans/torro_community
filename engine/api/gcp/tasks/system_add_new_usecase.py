@@ -11,11 +11,12 @@ class system_add_new_usecase(baseTask):
         'validity_date': {"type": str, "default": ''},
         "uc_des": {"type": str, "default": ''},
         'admin_sa': {"type": str, "default": ''},
-        "budget": {"type": str, "default": ''},
+        "budget": {"type": int, "default": 0},
         'allow_cross_region': {"type": str, "default": ''},
         "resources_access": {"type": str, "default": ''},
         "uc_team_group": {"type": str, "default": ''},
         "uc_owner_group": {"type": str, "default": ''},
+        "uc_label": {"type": str, "default": ''},
     }
 
     def __init__(self, stage_dict):
@@ -42,6 +43,7 @@ class system_add_new_usecase(baseTask):
             usecase_info['usecase_name'] = self.stage_dict['usecase_name']
             usecase_info['resources_access'] = self.stage_dict['resources_access']
             usecase_info['uc_team_group'] = self.stage_dict['uc_team_group']
+            usecase_info['uc_label'] = self.stage_dict['uc_label']
             uc_owner_group = self.stage_dict['uc_owner_group']
             usecase_info['uc_owner_group'] = uc_owner_group
             usecase_info['uc_input_form'] = input_form_id

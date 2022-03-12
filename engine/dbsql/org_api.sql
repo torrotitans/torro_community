@@ -77,6 +77,7 @@ CREATE TABLE `usecaseTable` (
   `BUDGET` varchar(128) DEFAULT NULL COMMENT 'usecase_name budget',
   `INPUT_FORM_ID` int NOT NULL COMMENT 'input_form_id',
   `REGION_COUNTRY` varchar(128) DEFAULT NULL COMMENT 'usecase_name region/country',
+  `USECASE_LABEL` varchar(128) DEFAULT NULL COMMENT 'usecase label',
   `RESOURCES_ACCESS_LIST` text COMMENT 'usecase_name resource access list',
   `SERVICE_ACCOUNT` text COMMENT 'usecase_name service account',
   `CROSS_REGION` text COMMENT 'will the usecase_name use data cross region',
