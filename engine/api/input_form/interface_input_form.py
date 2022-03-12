@@ -288,7 +288,7 @@ class interfaceInputFormList(Resource):
                             os.makedirs(upload_path)
                         upload_path += file.filename
                         file.save(upload_path)
-                        # print('file_contents: ', type(file_contents), file_contents)
+                        print('file_contents: ', type(file_contents), file_contents)
                         one_data['form_field_values_dict'][file_id].append(upload_path)
                 one_data['field_ids'] = field_ids
 
