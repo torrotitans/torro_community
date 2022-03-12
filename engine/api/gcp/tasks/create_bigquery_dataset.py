@@ -56,7 +56,7 @@ class CreateBQDataset(baseTask):
                 dataset = dataset.from_api_repr(dataset_param)
             bq_client.create_dataset(dataset)
 
-            usecase_name = self.stage_dict['usecase_name']
+            usecase_name = self.stage_dict.get('usecase_name', None)
             self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery', dataset_name)
 
 

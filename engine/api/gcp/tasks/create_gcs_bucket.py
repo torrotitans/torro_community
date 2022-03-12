@@ -52,7 +52,7 @@ class CreateGCSBucket(baseTask):
                 bucket.default_kms_key_name = bucket_cmek
             bucket.patch()
 
-            usecase_id = -1
-            self.records_resource(workspace_id, input_form_id, usecase_id, 'Storage', bucket_name)
+            usecase_name = self.stage_dict.get('usecase_name', None)
+            self.records_resource(workspace_id, input_form_id, usecase_name, 'Storage', bucket_name)
 
             return "Bucket {} created.".format(bucket.name)
