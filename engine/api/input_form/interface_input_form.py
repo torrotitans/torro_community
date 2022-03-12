@@ -270,7 +270,7 @@ class interfaceInputFormList(Resource):
                 # # print('request.form:', request.form)
                 # # print('request.files: ', request.files)
 
-                # # print('file_list: ', file_list)
+                print('file_list: ', file_list)
                 for file in file_list:
                     file_id = file[0][:2]
                     # print("file_id:", file_id)
