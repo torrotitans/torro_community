@@ -12,7 +12,7 @@ import json
 logger = logging.getLogger("main." + __name__)
 
 
-class baseTask(metaclass=abc.ABCMeta, DbBase):
+class baseTask(DbBase, metaclass=abc.ABCMeta):
     api_type = 'system'
     api_name = 'baseTask'
     arguments = {}
