@@ -27,10 +27,10 @@ class CreateBQDataset(baseTask):
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
-            project_id = self.stage_dict['porject_id']
-            dataset_name = self.stage_dict['dataset_name']
-            location = self.stage_dict['dataset_location']
-            dataset_labels_str = self.stage_dict.get('dataset_labels', '')
+            project_id = self.stage_dict['porject_id'].strip()
+            dataset_name = self.stage_dict['dataset_name'].strip()
+            location = self.stage_dict['dataset_location'].strip()
+            dataset_labels_str = self.stage_dict.get('dataset_labels', '').strip()
             dataset_labels = {}
             for dataset_label in dataset_labels_str.split(','):
                 key, value = dataset_label.split('=')

@@ -130,7 +130,7 @@ CREATE TABLE `smtpTable` (
   `ID` int(11) NOT NULL AUTO_INCREMENT COMMENT 'smtp_id',
   `MAIL_HOST` varchar(64) DEFAULT NULL COMMENT 'smtp host',
   `MAIL_USER` varchar(64) DEFAULT NULL COMMENT 'smtp user',
-  `MAIL_BOX` varchar(64) DEFAULT NULL COMMENT 'smtp user',
+  `MAIL_BOX` varchar(64) DEFAULT NULL COMMENT 'smtp box',
   `MAIL_PASS` varchar(64) DEFAULT NULL COMMENT 'smtp pwd',
   `PORT` int(11) DEFAULT NULL COMMENT 'ldap port',
   `USE_TLS` boolean DEFAULT true COMMENT 'ues tls',

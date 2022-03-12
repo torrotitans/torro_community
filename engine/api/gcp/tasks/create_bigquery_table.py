@@ -27,9 +27,9 @@ class CreateBQTable(baseTask):
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
-            project_id = self.stage_dict['porject_id']
-            dataset_name = self.stage_dict['dataset_name']
-            table_name = self.stage_dict['table_name']
+            project_id = self.stage_dict['porject_id'].strip()
+            dataset_name = self.stage_dict['dataset_name'].strip()
+            table_name = self.stage_dict['table_name'].strip()
             table_id = '{}.{}.{}'.format(project_id, dataset_name, table_name)
             table_schema_csv_path = self.stage_dict['table_schema_csv']
             if isinstance(table_schema_csv_path, list):

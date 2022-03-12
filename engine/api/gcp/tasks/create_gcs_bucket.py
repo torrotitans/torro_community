@@ -27,17 +27,17 @@ class CreateGCSBucket(baseTask):
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
-            project_id = self.stage_dict['porject_id']
-            bucket_name = self.stage_dict['bucket_name']
-            location = self.stage_dict['bucket_location']
-            bucket_labels_str = self.stage_dict.get('bucket_labels', '')
+            project_id = self.stage_dict['porject_id'].strip()
+            bucket_name = self.stage_dict['bucket_name'].strip()
+            location = self.stage_dict['bucket_location'].strip()
+            bucket_labels_str = self.stage_dict.get('bucket_labels', '').strip()
             bucket_labels = {}
             for bucket_label in bucket_labels_str.split(','):
                 key, value = bucket_label.split('=')
                 bucket_labels[key.strip()] = value.strip()
 
-            bucket_class = self.stage_dict.get('bucket_class', None)
-            bucket_cmek = self.stage_dict.get('bucket_cmek', None)
+            bucket_class = self.stage_dict.get('bucket_class', None).strip()
+            bucket_cmek = self.stage_dict.get('bucket_cmek', None).strip()
             storage_client = storage.Client(project_id)
 
             bucket = storage_client.create_bucket(bucket_name, location=location)
