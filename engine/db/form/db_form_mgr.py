@@ -173,9 +173,9 @@ class DbFormMgr(DbBase):
                 if 'u' in field_item['id']:
                     user_field_id = str(field_item['id']).replace('u', '')
                     # get dynamicFieldValue
-                    logging.debug('field_item:', field_item)
+                    print('field_item:', field_item)
                     field_info = self.__get_user_field_values(field_item, user_field_id, wp_id, db_name, conn)
-                    logging.debug('field_info:', field_item)
+                    print('field_info:', field_item)
 
                     # condition = "user_field_id='%s'" % user_field_id
                     # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
