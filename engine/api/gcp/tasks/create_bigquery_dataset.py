@@ -4,6 +4,7 @@ class CreateBQDataset(baseTask):
     api_type = 'gcp'
     api_name = 'CreateBQDataset'
     arguments = {"porject_id": {"type": str, "default": ''},
+                 "usecase_name": {"type": str, "default": ''},
                  "dataset_location": {"type": str, "default": ''},
                  "dataset_name": {"type": str, "default": ''},
                  # "dataset_class ": {"type": str, "default": ''},
@@ -55,8 +56,8 @@ class CreateBQDataset(baseTask):
                 dataset = dataset.from_api_repr(dataset_param)
             bq_client.create_dataset(dataset)
 
-            usecase_id = -1
-            self.records_resource(workspace_id, input_form_id, usecase_id, 'BigQuery', dataset_name)
+            usecase_name = self.stage_dict['usecase_name']
+            self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery', dataset_name)
 
 
             return print("Created dataset {}.{}".format(bq_client.project, dataset.dataset_id))

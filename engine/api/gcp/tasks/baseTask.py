@@ -40,10 +40,19 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
             data['data'] = str(log).replace('\'', '"')
         return data
 
-    def records_resource(self, workspace_id, input_form_id, usecase_id, resource_label, resource_name):
+    def records_resource(self, workspace_id, input_form_id, usecase_name, resource_label, resource_name):
         conn = MysqlConn()
         try:
             db_name = configuration.get_database_name()
+
+            cond = "WORKSPACE_ID='%s' and USECASE_NAME='%s'" % (
+                workspace_id, usecase_name)
+            sql = self.create_select_sql(db_name, 'usecaseTable', 'ID,', cond)
+            usecase_info = self.execute_fetch_one(conn, sql)
+            if not usecase_info:
+                usecase_id = -1
+            else:
+                usecase_id = usecase_info['ID']
 
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             fields = (

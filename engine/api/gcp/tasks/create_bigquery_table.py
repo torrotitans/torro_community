@@ -5,6 +5,7 @@ class CreateBQTable(baseTask):
     api_type = 'gcp'
     api_name = 'CreateBQTable'
     arguments = {"porject_id": {"type": str, "default": ''},
+                 "usecase_name": {"type": str, "default": ''},
                  "dataset_name": {"type": str, "default": ''},
                  "table_name": {"type": str, "default": ''},
                  "table_labels": {"type": str, "default": ''},
@@ -60,7 +61,8 @@ class CreateBQTable(baseTask):
             if table_labels:
                 table.labels = table_labels
                 table = client.update_table(table, ["labels"])  # API request
-            usecase_id = -1
-            self.records_resource(workspace_id, input_form_id, usecase_id, 'BigQuery', table_name)
+
+            usecase_name = self.stage_dict['usecase_name']
+            self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery', table_name)
 
             return  "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)

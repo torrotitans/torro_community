@@ -4,6 +4,7 @@ class CreateGCSBucket(baseTask):
     api_type = 'gcp'
     api_name = 'CreateGCSBucket'
     arguments = {"porject_id": {"type": str, "default": ''},
+                 "usecase_name": {"type": str, "default": ''},
                  "bucket_location": {"type": str, "default": ''},
                  "bucket_name": {"type": str, "default": ''},
                  "bucket_class ": {"type": str, "default": ''},
