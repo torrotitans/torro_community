@@ -99,6 +99,7 @@ class interfaceOrgSetting(Resource):
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'SMTP VERIFY FAILED.'
+                logger.debug("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
                 return data
 
             data = orgSingleton_singleton.add_new_org_setting(request_data)

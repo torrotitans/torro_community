@@ -74,9 +74,9 @@ class Smtp(object):
             except:
                 mail_pass = mail_pass
 
-            # smtpObj.login(mail_user, mail_pass)
+            smtpObj.login(mail_user, mail_pass)
             # smtpObj.sendmail(sender, receivers, message.as_string())
-            # logger.debug("FN:Smtp_check_email_pwd check_success:True")
+            logger.debug("FN:Smtp_check_email_pwd check_success:True")
 
             return True
         except smtplib.SMTPException:
