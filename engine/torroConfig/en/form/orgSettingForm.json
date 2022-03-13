@@ -3,23 +3,23 @@
   "fieldList": [
     {
       "default": "",
-      "des": "Host",
+      "des": "LDAP Host",
       "edit": 1,
       "id": "host",
-      "label": "Host",
+      "label": "LDAP Host",
       "options": [],
-      "placeholder": "Host",
+      "placeholder": "ldaps://host or ldap://host",
       "style": 3,
       "required": true
     },
     {
       "default": "",
-      "des": "port",
+      "des": "LDAP Port",
       "edit": 1,
       "id": "port",
-      "label": "Port",
+      "label": "LDAP Port",
       "options": [],
-      "placeholder": "Port",
+      "placeholder": "LDAP Port",
       "style": 3,
       "required": true
     },
