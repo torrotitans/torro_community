@@ -32,6 +32,7 @@ class DbUseCaseMgr(DbBase):
             workspace_id = usecase_info['workspace_id']
             region_country = usecase_info['region_country']
             validity_date = usecase_info['validity_date']
+            uc_label = usecase_info['uc_label']
             des = usecase_info['uc_des']
             budget = usecase_info['budget']
             admin_sa = usecase_info['admin_sa']
@@ -47,16 +48,16 @@ class DbUseCaseMgr(DbBase):
             # insert workspace
             if usecase_id is not None:
                 fields = ('ID', 'WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
-                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT',
+                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
                 values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, allow_cross_region, create_time, des)
+                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
             else:
                 fields = ('WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
-                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT',
+                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
                 values = (workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, allow_cross_region, create_time, des)
+                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecaseTable_sql:{}".format(sql))
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -158,6 +159,7 @@ class DbUseCaseMgr(DbBase):
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['create_time'] = create_time
             usecase_info['uc_input_form'] = usecase['uc_input_form']
+            usecase_info['uc_label'] = usecase['uc_label']
             usecase_info['group_dict'] = {}
             usecase_info['group_label'] = {}
             group_mapping = [
@@ -370,6 +372,7 @@ class DbUseCaseMgr(DbBase):
             usecase_info['allow_cross_region'] = usecase['allow_cross_region']
             usecase_info['usecase_name'] = usecase_name
             usecase_info['resources_access'] = usecase['resources_access']
+            usecase_info['uc_label'] = usecase['uc_label']
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['create_time'] = create_time
             usecase_info['group_dict'] = {}
@@ -489,6 +492,7 @@ class DbUseCaseMgr(DbBase):
             return_info['validity_date'] = usecase_info['VALIDITY_TILL']
             return_info['budget'] = usecase_info['BUDGET']
             return_info['region_country'] = usecase_info['REGION_COUNTRY']
+            return_info['prefix'] = usecase_info['USECASE_LABEL']
             allow_cross_region = usecase_info['CROSS_REGION']
             if int(allow_cross_region) == 1:
                 return_info['allow_cross_region'] = 'true'
@@ -525,6 +529,13 @@ class DbUseCaseMgr(DbBase):
             for index in range(len(data_access_infos)):
                 data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'])
             return_info['data_access'] = data_access_infos
+
+            # get gcp resource
+            cond = "workspace_id='%s' and usecase_id='%s'" % (
+                workspace_id, usecase_id)
+            sql = self.create_select_sql(db_name, 'gcpResourceTable', '*', cond)
+            resource_infos = self.execute_fetch_all(conn, sql)
+            return_info['usecase_resource'] = resource_infos
 
             # print('last:', return_info)
             data = response_code.SUCCESS

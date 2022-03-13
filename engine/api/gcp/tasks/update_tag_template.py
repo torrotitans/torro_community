@@ -1,7 +1,6 @@
 from api.gcp.tasks.baseTask import baseTask
 # from google.cloud import datacatalog_v1beta1
 import google
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 import datetime
 from utils.status_code import response_code
@@ -24,7 +23,7 @@ config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
 # class UpdateTagTemplate(baseTask):
-class UpdateTagTemplate(baseTask, DbBase):
+class UpdateTagTemplate(baseTask):
     api_type = 'gcp'
     api_name = 'UpdateTagTemplate'
     arguments = {
@@ -139,6 +138,8 @@ class UpdateTagTemplate(baseTask, DbBase):
                 # print('tagTemplatesTable insert sql:', sql)
 
                 return 'update successfully.: {}'.format(str(tag_template_id))
+
+            # self.
 
         except HttpError as e:
             return (json.loads(e.content))

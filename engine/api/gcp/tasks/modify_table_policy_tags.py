@@ -4,7 +4,6 @@ from google.cloud import bigquery
 from google.cloud.bigquery.schema import SchemaField
 from db.connection_pool import MysqlConn
 from config import configuration
-from db.base import DbBase
 import json
 import datetime
 import traceback
@@ -12,7 +11,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class ModifyTablePolicyTags(baseTask, DbBase):
+class ModifyTablePolicyTags(baseTask):
     api_type = 'gcp'
 
     api_name = 'ModifyTablePolicyTags'

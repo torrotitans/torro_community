@@ -1,6 +1,5 @@
 from api.gcp.tasks.baseTask import baseTask
 from google.cloud import datacatalog_v1beta1
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 import datetime
 from utils.status_code import response_code
@@ -11,7 +10,7 @@ import logging
 logger = logging.getLogger("main." + __name__)
 
 
-class CreatePolicyTagsV1(baseTask, DbBase):
+class CreatePolicyTagsV1(baseTask):
     api_type = 'gcp'
     api_name = 'CreatePolicyTagsV1'
     arguments = {"porject_id": {"type": str, "default": ''},

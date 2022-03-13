@@ -37,6 +37,8 @@ class Smtp(object):
         try:
             if sender is None:
                 sender = self.mail_box
+            if not sender:
+                return True
             if sender_name is None:
                 sender_name = 'TorroAdmin'
             message = MIMEText(text, 'plain', 'utf-8')

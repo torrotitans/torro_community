@@ -1,9 +1,8 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
 import json
 from core.form_singleton import formSingleton_singleton
 
-class system_create_form(baseTask, DbBase):
+class system_create_form(baseTask):
     api_type = 'system'
     api_name = 'system_create_form'
     arguments = {

@@ -1,7 +1,6 @@
 from api.gcp.tasks.baseTask import baseTask
 # from google.cloud import datacatalog_v1beta1
 import google
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 import datetime
 from utils.status_code import response_code
@@ -12,8 +11,6 @@ from googleapiclient.errors import HttpError
 import json
 import os
 from config import config
-from core.form_singleton import formSingleton_singleton
-from core.workflow_singleton import workflowSingleton_singleton
 import traceback
 import logging
 
@@ -23,7 +20,7 @@ config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
 # class GrantRoleForPolicyTags(baseTask):
-class GrantRoleForPolicyTags(baseTask, DbBase):
+class GrantRoleForPolicyTags(baseTask):
     api_type = 'gcp'
     api_name = 'GrantRoleForPolicyTags'
     arguments = {

@@ -88,7 +88,8 @@ DROP TABLE IF EXISTS `pointFieldTable`;
 CREATE TABLE `pointFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
   `workspace_id` int NOT NULL COMMENT 'workspace id',
-  `dynamic_field_id` varchar(8) DEFAULT NULL COMMENT 'its dynamic field id in dynamicFieldTable',
+  `form_id` int NOT NULL COMMENT 'form_id',
+  `user_field_id` varchar(8) DEFAULT NULL COMMENT 'its user field id',
   `point_field_id` varchar(8) DEFAULT NULL COMMENT 'its point field id: can link to system field and dynamic field',
   `type` varchar(256) DEFAULT NULL COMMENT 'system or dynamic ',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',

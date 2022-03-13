@@ -42,14 +42,14 @@ def download_blob(bucket_name, source_blob_name, destination_file_name):
     # any content from Google Cloud Storage. As we don't need additional data,
     # using `Bucket.blob` is preferred here.
     blob = bucket.blob(source_blob_name)
-    flie_str = blob.download_as_string(destination_file_name)
+    blob.download_to_filename(destination_file_name)
 
     print(
         "Downloaded storage object {} from bucket {} to local file {}.".format(
             source_blob_name, bucket_name, destination_file_name
         )
     )
-    return flie_str
+    return destination_file_name
 
 if __name__ == '__main__':
     pass

@@ -1,10 +1,9 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
 from db.connection_pool import MysqlConn
 from config import configuration
 import datetime
 
-class system_define_field(baseTask, DbBase):
+class system_define_field(baseTask):
     api_type = 'system'
     api_name = 'system_define_field'
     arguments = {

@@ -1,5 +1,5 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
+
 import json
 from core.form_singleton import formSingleton_singleton
 from core.workflow_singleton import workflowSingleton_singleton
@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class system_create_tag_template_form(baseTask, DbBase):
+class system_create_tag_template_form(baseTask):
     api_type = 'system'
     api_name = 'system_create_tag_template_form'
     arguments = {
