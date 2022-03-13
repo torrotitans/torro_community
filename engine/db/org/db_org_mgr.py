@@ -546,7 +546,7 @@ class DbOrgMgr(DbBase):
             smtp_info = self.execute_fetch_one(conn, sql)
             
             if not smtp_info:
-                return '', '', '', ''
+                return None, None, None, None, None, None
             else:
                 mail_host = smtp_info['MAIL_HOST']
                 mail_user = smtp_info['MAIL_USER']
@@ -558,7 +558,7 @@ class DbOrgMgr(DbBase):
             
         except Exception as e:
             logger.error("FN:get_smtp error:{}".format(traceback.format_exc()))
-            return None, None, None, None, None
+            return None, None, None, None, None, None
         
         finally:
             conn.close()

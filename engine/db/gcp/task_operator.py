@@ -34,7 +34,7 @@ class taskOperator:
             return_msg_list = []
             for task_object in task_object_list:
                 # api_name = task_object.api_name
-                task_object.verify_all_param()
+                # task_object.verify_all_param()
                 return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
                 # if api_name in taskOperator.db_operation:
                 #     # print('1234task {} will update db'.format(api_name))

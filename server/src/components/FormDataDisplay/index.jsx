@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
@@ -24,11 +24,12 @@ import Loading from "@assets/icons/Loading";
 import { sendNotify } from "src/utils/systerm-error";
 import CallModal from "@basics/CallModal";
 import { SUCCESS } from "src/lib/data/callStatus";
-import { useMemo } from "react";
 import TextBox from "@basics/TextBox";
 import SpecialField from "./SpecialField";
 import CommentSection from "../CommentSection";
-// import renderOption from "src/utils/renderOption";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
+
 import {
   Table,
   TableBody,
@@ -49,12 +50,21 @@ const FormDataDisplay = ({
   approvedView,
 }) => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const { timeContext } = useGlobalContext();
+
   const [status, setStatus] = useState();
   const [formData, setFormData] = useState(null);
   const [formLoading, setFormLoading] = useState(true);
   const [edit, setEdit] = useState(false);
   const [commentList, setCommentList] = useState(defaultData.comment_history);
   const [specialList, setSpecialList] = useState([]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const [submitData, setSubmitData] = useState(null);
   const [comment, setComment] = useState("");
@@ -236,14 +246,13 @@ const FormDataDisplay = ({
         }
       } else if (typeof defaultValue === "boolean") {
         return String(defaultValue);
+      } else if (row.style === 6) {
+        return covertTime(defaultValue);
       } else {
-        // if (row.style === 1) {
-        //   return renderOption(defaultValue, options);
-        // }
         return defaultValue;
       }
     },
-    [formId, specialList]
+    [formId, specialList, covertTime]
   );
 
   useEffect(() => {

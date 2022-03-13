@@ -1,9 +1,7 @@
 from api.gcp.tasks.baseTask import baseTask
 # from google.cloud import datacatalog_v1beta1
 import google
-from db.base import DbBase
 from db.connection_pool import MysqlConn
-from utils.log_helper import lg
 import datetime
 from utils.status_code import response_code
 from config import configuration
@@ -14,8 +12,6 @@ import json
 import os
 import traceback
 from config import config
-from core.form_singleton import formSingleton_singleton
-from core.workflow_singleton import workflowSingleton_singleton
 import traceback
 import logging
 
@@ -25,7 +21,7 @@ Config = config[config_name]
 
 
 # class GrantRoleForBQTable(baseTask):
-class GrantRoleForBQTable(baseTask, DbBase):
+class GrantRoleForBQTable(baseTask):
     api_type = 'gcp'
     api_name = 'GrantRoleForBQTable'
     arguments = {

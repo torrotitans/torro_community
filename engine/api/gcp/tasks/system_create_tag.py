@@ -1,5 +1,4 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
 import json
 import datetime
 from core.input_form_singleton import input_form_singleton
@@ -12,7 +11,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class system_create_tag(baseTask, DbBase):
+class system_create_tag(baseTask):
     api_type = 'system'
     api_name = 'system_create_tag'
     arguments = {}

@@ -4,6 +4,7 @@ class CreateBQDataset(baseTask):
     api_type = 'gcp'
     api_name = 'CreateBQDataset'
     arguments = {"porject_id": {"type": str, "default": ''},
+                 "usecase_name": {"type": str, "default": ''},
                  "dataset_location": {"type": str, "default": ''},
                  "dataset_name": {"type": str, "default": ''},
                  # "dataset_class ": {"type": str, "default": ''},
@@ -26,10 +27,10 @@ class CreateBQDataset(baseTask):
         if len(missing_set) != 0:
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
-            project_id = self.stage_dict['porject_id']
-            dataset_name = self.stage_dict['dataset_name']
-            location = self.stage_dict['dataset_location']
-            dataset_labels_str = self.stage_dict.get('dataset_labels', '')
+            project_id = self.stage_dict['porject_id'].strip()
+            dataset_name = self.stage_dict['dataset_name'].strip().replace(' ', '').replace('-', '_')
+            location = self.stage_dict['dataset_location'].strip()
+            dataset_labels_str = self.stage_dict.get('dataset_labels', '').strip()
             dataset_labels = {}
             for dataset_label in dataset_labels_str.split(','):
                 key, value = dataset_label.split('=')
@@ -48,11 +49,15 @@ class CreateBQDataset(baseTask):
             #     dataset.storage_class = dataset_class
             if dataset_labels:
                 dataset.labels = dataset_labels
-            if dataset_cmek:
-                dataset_param = dataset.to_api_repr()
-                dataset_param['defaultEncryptionConfiguration'] = bigquery.EncryptionConfiguration(
-                    dataset_cmek).to_api_repr()
-                dataset = dataset.from_api_repr(dataset_param)
+            # if dataset_cmek:
+            #     dataset_param = dataset.to_api_repr()
+            #     dataset_param['defaultEncryptionConfiguration'] = bigquery.EncryptionConfiguration(
+            #         dataset_cmek).to_api_repr()
+            #     dataset = dataset.from_api_repr(dataset_param)
             bq_client.create_dataset(dataset)
+
+            usecase_name = self.stage_dict.get('usecase_name', None)
+            self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery', dataset_name)
+
 
             return print("Created dataset {}.{}".format(bq_client.project, dataset.dataset_id))

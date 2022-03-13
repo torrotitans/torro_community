@@ -35,7 +35,7 @@ class interfaceUseCaseInfo(Resource):
                 data = response_code.GET_DATA_FAIL
                 # print(traceback.format_exc())
                 data['msg'] = 'Token error or expired, please login again.'
-                logger.error("FN:interfaceUseCaseInfo_get data_error:{}".format())
+                # logger.error("FN:interfaceUseCaseInfo_get data_error:{}".format())
                 logger.error("FN:interfaceUseCaseInfo_get error:{}".format(traceback.format_exc()))
                 return response_result_process(data, xml=xml)
 

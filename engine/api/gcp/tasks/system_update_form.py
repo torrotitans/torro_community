@@ -1,9 +1,7 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
-import json
 from core.form_singleton import formSingleton_singleton
 
-class system_update_form(baseTask, DbBase):
+class system_update_form(baseTask):
     api_type = 'system'
     api_name = 'system_update_form'
     arguments = {

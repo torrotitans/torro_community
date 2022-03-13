@@ -1,11 +1,7 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
-from db.connection_pool import MysqlConn
-from config import configuration
-import datetime
 from core.form_singleton import formSingleton_singleton
 
-class system_delete_form(baseTask, DbBase):
+class system_delete_form(baseTask):
     api_type = 'system'
     api_name = 'system_delete_form'
     arguments = {

@@ -125,10 +125,10 @@ class DevelopmentConfig(Config):
     DEBUG = True
 
     FRONTEND_URL = 'http://34.79.84.83'
-    DEFAULT_BUCEKT = 'torro_landing_bucket_dev_337903'
-    DEFAULT_PROJECT = 'ninth-iris-337903'
+    DEFAULT_BUCEKT = 'golden-joy-339514-prod'
+    DEFAULT_PROJECT = 'golden-joy-339514'
     DEFAULT_REGION = 'asia-east2'
-    DEFAULT_SA = '848522805991-compute@developer.gserviceaccount.com'
+    DEFAULT_SA = '1010950633330-compute@developer.gserviceaccount.com'
     BUCEKT_CMKE = None
     pass
 

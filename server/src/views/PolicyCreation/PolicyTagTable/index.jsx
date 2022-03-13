@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import Button from "@basics/Button";
 import Loading from "@assets/icons/Loading";
 import { getPolicys } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
+import { useGlobalContext } from "src/context";
 import {
   Table,
   TableBody,
@@ -24,9 +25,11 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToCurrentTime } from "src/utils/timeFormat";
 
 const PolicyTagTable = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();
+  const { timeContext } = useGlobalContext();
 
   const [policyTagList, setPolicyTagList] = useState([]);
   const [page, setPage] = useState(0);
@@ -37,6 +40,13 @@ const PolicyTagTable = ({ setStep, setCurrentId }) => {
     let tmpList = policyTagList;
     return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [policyTagList, page, rowsPerPage]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -117,7 +127,9 @@ const PolicyTagTable = ({ setStep, setCurrentId }) => {
                       {row.taxonomy_display_name}
                     </TableCell>
                     <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">{row.create_time}</TableCell>
+                    <TableCell align="center">
+                      {covertTime(row.create_time)}
+                    </TableCell>
                     <TableCell align="center">
                       <div className={styles.operation}>
                         <EditIcon

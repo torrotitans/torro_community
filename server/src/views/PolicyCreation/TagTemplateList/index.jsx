@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useNavigate } from "react-router-dom";
 
@@ -26,9 +26,12 @@ import {
   TableRow,
   TableCell,
 } from "@basics/Table";
+import { covertToCurrentTime } from "src/utils/timeFormat";
+import { useGlobalContext } from "src/context";
 
 const TagTemplateList = ({ setStep, setCurrentId }) => {
   const navigate = useNavigate();
+  const { timeContext } = useGlobalContext();
 
   const [tagTemplateList, setTagTemplateLisst] = useState([]);
   const [page, setPage] = useState(0);
@@ -45,6 +48,13 @@ const TagTemplateList = ({ setStep, setCurrentId }) => {
     let tmpList = tagTemplateList;
     return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [tagTemplateList, page, rowsPerPage]);
+
+  const covertTime = useCallback(
+    (date) => {
+      return covertToCurrentTime(date, timeContext.timeFormat);
+    },
+    [timeContext]
+  );
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -157,7 +167,9 @@ const TagTemplateList = ({ setStep, setCurrentId }) => {
                     </TableCell>
                     <TableCell align="center">{row.display_name}</TableCell>
                     <TableCell align="center">{row.description}</TableCell>
-                    <TableCell align="center">{row.create_time}</TableCell>
+                    <TableCell align="center">
+                      {covertTime(row.create_time)}
+                    </TableCell>
                     <TableCell align="center">
                       <div className={styles.operation}>
                         <EditIcon

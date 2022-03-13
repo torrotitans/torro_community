@@ -1,8 +1,4 @@
 from api.gcp.tasks.baseTask import baseTask
-from db.base import DbBase
-from db.usecase.db_usecase_mgr import usecase_mgr
-import json
-import datetime
 from db.connection_pool import MysqlConn
 from utils.status_code import response_code
 from config import configuration
@@ -11,7 +7,7 @@ import logging
 
 logger = logging.getLogger("main." + __name__)
 
-class system_add_user_to_usecase(baseTask, DbBase):
+class system_add_user_to_usecase(baseTask):
     api_type = 'system'
     api_name = 'system_add_user_to_usecase'
     arguments = {

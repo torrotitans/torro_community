@@ -21,6 +21,7 @@ import CallModal from "@basics/CallModal";
 import Loading from "@assets/icons/Loading";
 import DesignPanel from "./DesignPanel";
 import TableTagDisplay from "@comp/TableTag";
+import ResourceDetail from "@comp/ResourceDetail";
 import {
   getOnBoardDataForm,
   getRequiredTableTag,
@@ -32,6 +33,7 @@ import {
 import { SUCCESS } from "src/lib/data/callStatus";
 import Button from "@basics/Button";
 import { sendNotify } from "src/utils/systerm-error";
+
 import {
   Table,
   TableBody,
@@ -504,34 +506,7 @@ const DataOnBoarding = () => {
                   <Intl id="resourceDetail" />
                 </Text>
               </div>
-              <div className={styles.resourceDetail}>
-                <div className={styles.detailItem}>
-                  <div className={styles.detailLabel}>Name</div>
-                  <div className={styles.detailValue}>
-                    {tableData.tableReference.tableId}
-                  </div>
-                </div>
-                <div className={styles.detailItem}>
-                  <div className={styles.detailLabel}>Type</div>
-                  <div className={styles.detailValue}>{tableData.type}</div>
-                </div>
-                <div className={styles.detailItem}>
-                  <div className={styles.detailLabel}>Location</div>
-                  <div className={styles.detailValue}>{tableData.location}</div>
-                </div>
-                <div className={styles.detailItem}>
-                  <div className={styles.detailLabel}>Description</div>
-                  <div className={styles.detailValue}>
-                    {tableData.description}
-                  </div>
-                </div>
-                <div className={styles.detailItem}>
-                  <div className={styles.detailLabel}>CreationTime</div>
-                  <div className={styles.detailValue}>
-                    {tableData.creationTime}
-                  </div>
-                </div>
-              </div>
+              <ResourceDetail tableData={tableData} />
               {tableTags && tableTags.length > 0 && (
                 <div>
                   <div className={styles.secondTitle}>
