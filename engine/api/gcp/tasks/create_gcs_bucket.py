@@ -28,7 +28,7 @@ class CreateGCSBucket(baseTask):
             return 'Missing parameters: {}'.format(', '.join(missing_set))
         else:
             project_id = self.stage_dict['porject_id'].strip()
-            bucket_name = self.stage_dict['bucket_name'].strip()
+            bucket_name = self.stage_dict['bucket_name'].strip().replace(' ', '').replace('_', '-').lower()
             location = self.stage_dict['bucket_location'].strip()
             bucket_labels_str = self.stage_dict.get('bucket_labels', '').strip()
             bucket_labels = {}
