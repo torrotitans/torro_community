@@ -95,7 +95,7 @@ class interfaceInputForm(Resource):
                     text = data['msg']
                 data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
                 data3 = orgSingleton_singleton.insert_notification(data['data']['approvers']+[account_id], data['data']['id'], data['data']['history_id'], text)
-                if data2['code'] == 200:
+                if data2 and data2['code'] == 200:
                     data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                 else:
                     data = response_code.UPDATE_DATA_FAIL
@@ -177,7 +177,7 @@ class interfaceInputForm(Resource):
                                                                        data['data']['id'], data['data']['history_id'],
                                                                        text)
 
-                    if data2['code'] == 200:
+                    if data2 and data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data, inputFormApiPara.input_form_data_POST_response)
                     else:
                         data = response_code.UPDATE_DATA_FAIL
@@ -305,7 +305,7 @@ class interfaceInputFormList(Resource):
                                                                        data['data']['id'], data['data']['history_id'],
                                                                        text)
 
-                    if data2['code'] == 200:
+                    if data2 and data2['code'] == 200:
                         data['data'] = req.verify_all_param(response_data,
                                                             inputFormApiPara.input_form_data_POST_response)
                     else:
