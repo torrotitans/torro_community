@@ -171,8 +171,7 @@ class DbFormMgr(DbBase):
                     # # print(field_info)
                     form_info['fieldList'][index] = field_info
                 if 'u' in field_item['id']:
-                    print('1111111111field_item:', field_item)
-
+                    print('1111111111field_item:', field_item )
                 #     user_field_id = str(field_item['id']).replace('u', '')
                 #     # get dynamicFieldValue
                 #     print('field_item:', field_item)
