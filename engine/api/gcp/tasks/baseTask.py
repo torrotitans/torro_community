@@ -47,7 +47,7 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
 
             cond = "WORKSPACE_ID='%s' and USECASE_NAME='%s'" % (
                 workspace_id, usecase_name)
-            sql = self.create_select_sql(db_name, 'usecaseTable', 'ID,', cond)
+            sql = self.create_select_sql(db_name, 'usecaseTable', 'ID', cond)
             usecase_info = self.execute_fetch_one(conn, sql)
             if not usecase_info:
                 usecase_id = -1
