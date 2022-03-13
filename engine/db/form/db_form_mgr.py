@@ -188,7 +188,7 @@ class DbFormMgr(DbBase):
                     #         {'label': value_info['option_label'], 'value': value_info['option_label']})
                     # field_info['default'] = field_info['default_value']
                     # del field_info['default_value']
-                    field_info['id'] = 'u' + str(field_info['id'])
+                    # field_info['id'] = 'u' + str(field_info['id'])
                     print('2222222222field_item::', field_info)
 
                     form_info['fieldList'][index] = field_info
