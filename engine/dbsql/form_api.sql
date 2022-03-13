@@ -89,6 +89,7 @@ CREATE TABLE `pointFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
   `workspace_id` int NOT NULL COMMENT 'workspace id',
   `form_id` int NOT NULL COMMENT 'form_id',
+  `label` varchar(256) DEFAULT NULL COMMENT 'field label',
   `user_field_id` varchar(8) DEFAULT NULL COMMENT 'its user field id',
   `point_field_id` varchar(8) DEFAULT NULL COMMENT 'its point field id: can link to system field and dynamic field',
   `type` varchar(256) DEFAULT NULL COMMENT 'system or dynamic ',

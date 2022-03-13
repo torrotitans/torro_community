@@ -492,6 +492,7 @@ class DbUseCaseMgr(DbBase):
             return_info['validity_date'] = usecase_info['VALIDITY_TILL']
             return_info['budget'] = usecase_info['BUDGET']
             return_info['region_country'] = usecase_info['REGION_COUNTRY']
+            return_info['prefix'] = usecase_info['USECASE_LABEL']
             allow_cross_region = usecase_info['CROSS_REGION']
             if int(allow_cross_region) == 1:
                 return_info['allow_cross_region'] = 'true'
