@@ -1,8 +1,8 @@
 from api.gcp.tasks.baseTask import baseTask
 from google.cloud import bigquery
-from utils import bucket_object_helper
+# from utils import bucket_object_helper
 import json
-import os
+# import os
 import csv
 class CreateBQTable(baseTask):
     api_type = 'gcp'
@@ -49,17 +49,17 @@ class CreateBQTable(baseTask):
             print('label:', table_labels)
             schema = []
 
-            bucket_name = table_schema_csv_path.split('/')[0].replace('gs://', '')
-            object_name = table_schema_csv_path.split('/')[-1]
-            blob_name = table_schema_csv_path.replace('gs://'+bucket_name+'/', '')
-            temp_file_name = 'temp/'+table_schema_csv_path.replace('gs://', '')
-            temp_path = temp_file_name.replace(object_name, '')
-            print('create table path:', bucket_name, object_name, blob_name)
-            print('temp path:', temp_file_name, temp_path)
-            if not os.path.exists(temp_path):
-                os.makedirs(temp_path)
-            bucket_object_helper.download_blob(bucket_name, blob_name, temp_file_name)
-            fr = open(temp_file_name, 'r')
+            # bucket_name = table_schema_csv_path.split('/')[0].replace('gs://', '')
+            # object_name = table_schema_csv_path.split('/')[-1]
+            # blob_name = table_schema_csv_path.replace('gs://'+bucket_name+'/', '')
+            # temp_file_name = 'temp/'+table_schema_csv_path.replace('gs://', '')
+            # temp_path = temp_file_name.replace(object_name, '')
+            # print('create table path:', bucket_name, object_name, blob_name)
+            # print('temp path:', temp_file_name, temp_path)
+            # if not os.path.exists(temp_path):
+            #     os.makedirs(temp_path)
+            # bucket_object_helper.download_blob(bucket_name, blob_name, temp_file_name)
+            fr = open(table_schema_csv_path, 'r')
             f = csv.reader(fr)
             for index, line in enumerate(f):
                 if index == 0:
@@ -67,7 +67,7 @@ class CreateBQTable(baseTask):
                 column_schema = bigquery.SchemaField(line[0].strip(), line[1].strip(), mode=line[2].strip())
                 schema.append(column_schema)
             fr.close()
-            os.system('rm -rf {}'.format(temp_path))
+            # os.system('rm -rf {}'.format(temp_path))
             print('schema:', schema)
             # exit(0)
             # create table
