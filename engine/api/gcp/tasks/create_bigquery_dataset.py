@@ -7,7 +7,7 @@ class CreateBQDataset(baseTask):
                  "usecase_name": {"type": str, "default": ''},
                  "dataset_location": {"type": str, "default": ''},
                  "dataset_name": {"type": str, "default": ''},
-                 # "dataset_class ": {"type": str, "default": ''},
+                 "dataset_class ": {"type": str, "default": ''},
                  "dataset_cmek": {"type": str, "default": ''},
                  "dataset_labels": {"type": str, "default": ''}}
 
@@ -57,7 +57,7 @@ class CreateBQDataset(baseTask):
             bq_client.create_dataset(dataset)
 
             usecase_name = self.stage_dict.get('usecase_name', None)
-            self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery', dataset_name)
+            self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery Dataset', dataset_name)
 
 
             return print("Created dataset {}.{}".format(bq_client.project, dataset.dataset_id))
