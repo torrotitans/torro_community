@@ -142,6 +142,7 @@ const UsecaseInfo = ({ usecaseId }) => {
               u8: ucData.service_account,
               u9: ucData.resources_access_list,
               u10: ucData.allow_cross_region,
+              u11: ucData.prefix,
             },
             user_infos: ucData.user_infos,
           };
