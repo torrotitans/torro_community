@@ -41,6 +41,7 @@ class CreateGCSBucket(baseTask):
             storage_client = storage.Client(project_id)
 
             bucket = storage_client.create_bucket(bucket_name, location=location)
+            print('bucket_class:', bucket_class)
             if bucket_class:
                 bucket.storage_class = bucket_class
             if bucket_labels:

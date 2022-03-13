@@ -58,7 +58,7 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
             fields = (
                 'workspace_id', 'usecase_id', 'input_form_id', 'resource_label', 'resource_name', 'create_time', 'des')
             values = (
-                workspace_id, usecase_id, input_form_id, resource_label, resource_name, create_time)
+                workspace_id, usecase_id, input_form_id, resource_label, resource_name, create_time, '')
             sql = self.create_insert_sql(db_name, 'gcpResourceTable', '({})'.format(', '.join(fields)), values)
             _ = self.insert_exec(conn, sql)
 
