@@ -451,8 +451,9 @@ class DbFormMgr(DbBase):
                     copy_id_flag = True
                     # link to the field
                     u_id_int = int(u_id[1:])
-                    field_fields = ('workspace_id', 'form_id', 'user_field_id', 'point_field_id', 'type', 'create_time')
-                    values = (workspace_id, form_id, u_id_int, field_id, style, create_time)
+                    label = field.get('label', u_id)
+                    field_fields = ('workspace_id', 'form_id', 'label', 'user_field_id', 'point_field_id', 'type', 'create_time')
+                    values = (workspace_id, form_id, label, u_id_int, field_id, style, create_time)
                     sql = self.create_insert_sql(db_name, 'pointFieldTable', '({})'.format(', '.join(field_fields)),
                                                  values)
                     # print('dynamicFieldValueTable2 sql:', sql)
@@ -792,13 +793,13 @@ class DbFormMgr(DbBase):
         else:
             condition = "user_field_id='%s'" % user_field_id
         sql = self.create_select_sql(db_name, 'pointFieldTable',
-                                     'point_field_id,type', condition=condition)
+                                     'point_field_id,type,label', condition=condition)
         logger.debug("FN:__get_dynamic_field_values pointFieldTable sql:{}".format(sql))
 
         point_field_info = self.execute_fetch_one(conn, sql)
         if not point_field_info:
             return field_info
-
+        field_info['label'] = point_field_info['label']
         # it is a dynamic field, get values from dynamicFieldValueTable
         if point_field_info['type'] == 'dynamic':
             point_field_id = str(point_field_info['point_field_id']).replace('d', '')
