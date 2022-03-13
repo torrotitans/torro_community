@@ -417,10 +417,10 @@ class DbFormMgr(DbBase):
                     tp_max_id = field['id']
                 if 'u' in tp_max_id:
                     # get max uid
-                    tp_max_id = int(tp_max_id[1:])
                     if tp_max_id > u_max_num:
-                        u_max_num = tp_max_id
-                        u_max_id = field_id
+                        u_max_num = int(tp_max_id[1:])
+                        u_max_id = tp_max_id
+
             fields_list = json.dumps(form['fieldList'])
             creator_id = form.get('creator_id', '')
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
