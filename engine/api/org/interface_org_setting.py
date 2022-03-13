@@ -98,12 +98,12 @@ class interfaceOrgSetting(Resource):
                 smtp_tls = 0
 
             # Verify the SMTP Email
-            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
-            if not smtp_flag:
-                data = response_code.ADD_DATA_FAIL
-                data['msg'] = 'SMTP VERIFY FAILED.'
-                logger.error("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
-                return data
+            # smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
+            # if not smtp_flag:
+            #     data = response_code.ADD_DATA_FAIL
+            #     data['msg'] = 'SMTP VERIFY FAILED.'
+            #     logger.error("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
+            #     return data
 
             logger.debug("FN:interfaceOrgSetting_POST smtp_test:sucess")
             data = orgSingleton_singleton.add_new_org_setting(request_data)
