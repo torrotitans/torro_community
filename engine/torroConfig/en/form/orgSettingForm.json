@@ -61,7 +61,7 @@
       "id": "admin_pwd",
       "label": "Admin Password",
       "options": [],
-      "placeholder": "Admin Password",
+      "placeholder": "*******",
       "style": 3,
       "required": true
     },
@@ -72,7 +72,7 @@
       "id": "admin_group",
       "label": "Admin AD Group",
       "options": [],
-      "placeholder": "Admin AD Group",
+      "placeholder": "admin@torro.ai",
       "style": 3,
       "required": true
     },
@@ -83,7 +83,7 @@
       "id": "base_group",
       "label": "User AD Group",
       "options": [],
-      "placeholder": "User AD Group",
+      "placeholder": "user@torro.ai",
       "style": 3,
       "required": true
     },
@@ -165,7 +165,7 @@
       "required": true
     },
     {
-      "default": ",ou=Group,dc=torro,dc=ai",
+      "default": "ou=Group,dc=torro,dc=ai",
       "des": "LDAP Group Search Base",
       "edit": 1,
       "id": "group_search_base",
@@ -248,7 +248,7 @@
       "id": "smtp_pwd",
       "label": "SMTP Password",
       "options": [],
-      "placeholder": "SMTP Password",
+      "placeholder": "*******",
       "style": 3,
       "required": true
     },
