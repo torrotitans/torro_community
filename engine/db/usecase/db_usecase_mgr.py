@@ -529,6 +529,13 @@ class DbUseCaseMgr(DbBase):
                 data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'])
             return_info['data_access'] = data_access_infos
 
+            # get gcp resource
+            cond = "workspace_id='%s' and usecase_id='%s'" % (
+                workspace_id, usecase_id)
+            sql = self.create_select_sql(db_name, 'gcpResourceTable', '*', cond)
+            resource_infos = self.execute_fetch_all(conn, sql)
+            return_info['usecase_resource'] = resource_infos
+
             # print('last:', return_info)
             data = response_code.SUCCESS
             data['data'] = return_info
