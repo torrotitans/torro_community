@@ -54,6 +54,8 @@ class CreateBQTable(baseTask):
             blob_name = table_schema_csv_path.replace('gs://'+bucket_name+'/', '')
             temp_file_name = 'temp/'+table_schema_csv_path.replace('gs://', '')
             temp_path = temp_file_name.replace(object_name, '')
+            print('create table path:', bucket_name, object_name, blob_name)
+            print('temp path:', temp_file_name, temp_path)
             if not os.path.exists(temp_path):
                 os.makedirs(temp_path)
             bucket_object_helper.download_blob(bucket_name, blob_name, temp_file_name)
