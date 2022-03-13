@@ -80,7 +80,10 @@ class interfaceOrgSetting(Resource):
             if not login_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'LDAP VERIFY FAILED.'
+                logger.error("FN:interfaceOrgSetting_POST ldap_fail:{}".format(data))
                 return data
+            
+            logger.debug("FN:interfaceOrgSetting_POST ldap_test:sucess")
 
             # check smtp connect
             smtp_host = request_data['smtp_host']
@@ -99,9 +102,10 @@ class interfaceOrgSetting(Resource):
             if not smtp_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'SMTP VERIFY FAILED.'
-                logger.debug("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
+                logger.error("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
                 return data
 
+            logger.debug("FN:interfaceOrgSetting_POST smtp_test:sucess")
             data = orgSingleton_singleton.add_new_org_setting(request_data)
 
             if data['code'] == 200:
