@@ -90,7 +90,7 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
               : value.textContent || value;
         }
       }
-      tmp += "\n";
+      if (tempDiv.childNodes.length > 1) tmp += "\n";
     });
     return tmp;
   };
