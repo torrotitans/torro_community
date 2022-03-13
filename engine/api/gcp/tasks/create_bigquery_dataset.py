@@ -49,11 +49,11 @@ class CreateBQDataset(baseTask):
             #     dataset.storage_class = dataset_class
             if dataset_labels:
                 dataset.labels = dataset_labels
-            if dataset_cmek:
-                dataset_param = dataset.to_api_repr()
-                dataset_param['defaultEncryptionConfiguration'] = bigquery.EncryptionConfiguration(
-                    dataset_cmek).to_api_repr()
-                dataset = dataset.from_api_repr(dataset_param)
+            # if dataset_cmek:
+            #     dataset_param = dataset.to_api_repr()
+            #     dataset_param['defaultEncryptionConfiguration'] = bigquery.EncryptionConfiguration(
+            #         dataset_cmek).to_api_repr()
+            #     dataset = dataset.from_api_repr(dataset_param)
             bq_client.create_dataset(dataset)
 
             usecase_name = self.stage_dict.get('usecase_name', None)
