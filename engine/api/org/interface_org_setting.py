@@ -49,17 +49,17 @@ class interfaceOrgSetting(Resource):
             # form/w/u-t-adjij+team.xeex
             logger.debug('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:{}'.format(orgApiPara.setOrg_POST_request))
             request_data = req.verify_all_param(request_data, orgApiPara.setOrg_POST_request)
-            try:
-                f = request.files['cer_path']
-                upload_path = './data/ldap_file/'
-                if not os.path.exists(upload_path):
-                    os.makedirs(upload_path)
-                upload_path += f.filename
-                f.save(upload_path)
-                request_data['cer_path'] = upload_path
-            except:
-                logger.error("FN:interfaceOrgSetting error:{}".format(traceback.format_exc()))
-                pass
+            # try:
+            #     f = request.files['cer_path']
+            #     upload_path = './data/ldap_file/'
+            #     if not os.path.exists(upload_path):
+            #         os.makedirs(upload_path)
+            #     upload_path += f.filename
+            #     f.save(upload_path)
+            #     request_data['cer_path'] = upload_path
+            # except:
+            #     logger.error("FN:interfaceOrgSetting error:{}".format(traceback.format_exc()))
+            #     pass
             use_ssl = request_data['use_ssl']
             logger.debug("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             
