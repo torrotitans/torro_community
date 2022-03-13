@@ -7,7 +7,7 @@ class CreateGCSBucket(baseTask):
                  "usecase_name": {"type": str, "default": ''},
                  "bucket_location": {"type": str, "default": ''},
                  "bucket_name": {"type": str, "default": ''},
-                 "bucket_class ": {"type": str, "default": ''},
+                 "bucket_class": {"type": str, "default": ''},
                  "bucket_cmek": {"type": str, "default": ''},
                  "bucket_labels": {"type": str, "default": ''}}
 
