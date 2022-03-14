@@ -10,7 +10,7 @@ import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 import Input from "@material-ui/core/Input";
 
-const UploadDesign = ({ data, onChange }) => {
+const UploadDesign = ({ data, onChange, onlyLabel }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,22 +37,26 @@ const UploadDesign = ({ data, onChange }) => {
           }}
         />
       </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="multiple" />:
-          </Text>
-        </div>
-        <Checkbox
-          checked={data.multiple || false}
-          onChange={() => {
-            onChange({
-              ...data,
-              multiple: !data.multiple,
-            });
-          }}
-        />
-      </div>
+      {!onlyLabel && (
+        <>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="multiple" />:
+              </Text>
+            </div>
+            <Checkbox
+              checked={data.multiple || false}
+              onChange={() => {
+                onChange({
+                  ...data,
+                  multiple: !data.multiple,
+                });
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

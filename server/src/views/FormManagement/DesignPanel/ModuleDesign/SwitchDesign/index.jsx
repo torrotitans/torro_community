@@ -10,7 +10,7 @@ import Input from "@material-ui/core/Input";
 import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
-const SwitchDesign = ({ data, onChange }) => {
+const SwitchDesign = ({ data, onChange, onlyLabel }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,41 +37,45 @@ const SwitchDesign = ({ data, onChange }) => {
           }}
         />
       </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="des" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.des}
-          disableUnderline
-          variant="outlined"
-          onChange={(e) => {
-            onChange({
-              ...data,
-              des: e.target.value,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="default" />:
-          </Text>
-        </div>
-        <Checkbox
-          checked={data.default}
-          onChange={() => {
-            onChange({
-              ...data,
-              default: !data.default,
-            });
-          }}
-        />
-      </div>
+      {!onlyLabel && (
+        <>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="des" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.des}
+              disableUnderline
+              variant="outlined"
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  des: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="default" />:
+              </Text>
+            </div>
+            <Checkbox
+              checked={data.default}
+              onChange={() => {
+                onChange({
+                  ...data,
+                  default: !data.default,
+                });
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

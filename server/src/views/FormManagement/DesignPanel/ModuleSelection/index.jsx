@@ -172,7 +172,11 @@ const ModuleSelection = ({ data, template, onChange, tagTemplate }) => {
               }}
             />
           </div>
-          {data.edit === 1 && <ModuleEdit data={data} onChange={onChange} />}
+          <ModuleEdit
+            onlyLabel={data.edit !== 1}
+            data={data}
+            onChange={onChange}
+          />
         </div>
       )}
     </>
