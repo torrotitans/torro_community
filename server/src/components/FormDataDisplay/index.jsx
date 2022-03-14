@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
@@ -47,7 +47,8 @@ const FormDataDisplay = ({
   defaultData,
   enableReOpen,
   setEditView,
-  approvedView,
+  approverView,
+  isApprover,
 }) => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
   const { timeContext } = useGlobalContext();
@@ -73,10 +74,6 @@ const FormDataDisplay = ({
     status: 0,
     content: "",
   });
-
-  const isCurrentApprover = useMemo(() => {
-    return approvedView;
-  }, [approvedView]);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall;
@@ -375,7 +372,7 @@ const FormDataDisplay = ({
                   }}
                 />
               </div>
-              {isCurrentApprover && status === 0 && (
+              {approverView && isApprover && status === 0 && (
                 <div className={styles.buttonWrapper}>
                   <Button
                     className={styles.button}
@@ -397,7 +394,7 @@ const FormDataDisplay = ({
                   </Button>
                 </div>
               )}
-              {!approvedView && enableReOpen && (
+              {!approverView && enableReOpen && (
                 <div className={styles.buttonWrapper}>
                   <Button
                     className={styles.button}
