@@ -3,18 +3,19 @@
 import google
 import os
 from google.cloud import storage
-from config import config
+from config import config as sysConfig
 from db.connection_pool import MysqlConn
 import googleapiclient.discovery
 from config import configuration
 from db.base import DbBase
 import traceback
+from logging import config
 import logging
 
 logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
-Config = config[config_name]
+Config = sysConfig[config_name]
 
 
 def init_gcp():

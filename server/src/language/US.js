@@ -148,7 +148,7 @@ export default {
   // Policy
   policyMan: "Data Access Policy Management",
   setupPolicy: "Setup Workspace Data Policy",
-  addPolicy: "Add nNw Policy",
+  addPolicy: "Add New Policy",
   policyId: "Policy ID",
   policyName: "Policy Name",
   project: "Project",
