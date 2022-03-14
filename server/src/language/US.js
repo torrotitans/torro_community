@@ -154,7 +154,7 @@ export default {
   project: "Project",
   createPolicy: "Create Policy",
   policyTagStru: "Policy tag structure",
-  addPolicyTag: "ADD POLICY TAG",
+  addPolicyTag: "Add policy tag",
   addSubTag: "ADD SUBTAG",
   deleteTag: "DELETE",
   dataGovernor: "Data Governor tag template",
