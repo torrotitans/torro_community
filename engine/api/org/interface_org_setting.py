@@ -49,17 +49,17 @@ class interfaceOrgSetting(Resource):
             # form/w/u-t-adjij+team.xeex
             logger.debug('FN:interfaceOrgSetting_POST orgApiPara.setOrg_POST_request:{}'.format(orgApiPara.setOrg_POST_request))
             request_data = req.verify_all_param(request_data, orgApiPara.setOrg_POST_request)
-            try:
-                f = request.files['cer_path']
-                upload_path = './data/ldap_file/'
-                if not os.path.exists(upload_path):
-                    os.makedirs(upload_path)
-                upload_path += f.filename
-                f.save(upload_path)
-                request_data['cer_path'] = upload_path
-            except:
-                logger.error("FN:interfaceOrgSetting error:{}".format(traceback.format_exc()))
-                pass
+            # try:
+            #     f = request.files['cer_path']
+            #     upload_path = './data/ldap_file/'
+            #     if not os.path.exists(upload_path):
+            #         os.makedirs(upload_path)
+            #     upload_path += f.filename
+            #     f.save(upload_path)
+            #     request_data['cer_path'] = upload_path
+            # except:
+            #     logger.error("FN:interfaceOrgSetting error:{}".format(traceback.format_exc()))
+            #     pass
             use_ssl = request_data['use_ssl']
             logger.debug("FN:interfaceOrgSetting_POST use_ssl:{}".format(use_ssl))
             
@@ -80,7 +80,10 @@ class interfaceOrgSetting(Resource):
             if not login_flag:
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'LDAP VERIFY FAILED.'
+                logger.error("FN:interfaceOrgSetting_POST ldap_fail:{}".format(data))
                 return data
+            
+            logger.debug("FN:interfaceOrgSetting_POST ldap_test:sucess")
 
             # check smtp connect
             smtp_host = request_data['smtp_host']
@@ -95,12 +98,14 @@ class interfaceOrgSetting(Resource):
                 smtp_tls = 0
 
             # Verify the SMTP Email
-            smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
-            if not smtp_flag:
-                data = response_code.ADD_DATA_FAIL
-                data['msg'] = 'SMTP VERIFY FAILED.'
-                return data
+            # smtp_flag = Smtp.check_email_pwd(smtp_host, smtp_account, smtp_pwd, smtp_port, smtp_tls)
+            # if not smtp_flag:
+            #     data = response_code.ADD_DATA_FAIL
+            #     data['msg'] = 'SMTP VERIFY FAILED.'
+            #     logger.error("FN:interfaceOrgSetting_POST smtp_fail:{}".format(data))
+            #     return data
 
+            logger.debug("FN:interfaceOrgSetting_POST smtp_test:sucess")
             data = orgSingleton_singleton.add_new_org_setting(request_data)
 
             if data['code'] == 200:

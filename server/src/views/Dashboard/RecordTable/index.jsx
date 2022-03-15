@@ -33,15 +33,15 @@ import { useGlobalContext } from "src/context";
 import { covertToCurrentTime } from "src/utils/timeFormat";
 
 const tabList = [
-  { label: "Pending requests", value: [[0, "="]], style: "pending" },
-  { label: "Rejected requests", value: [[1, "="]], style: "reject" },
+  { label: "Pending Requests", value: [[0, "="]], style: "pending" },
+  { label: "Rejected Requests", value: [[1, "="]], style: "reject" },
   {
-    label: "Approved requests",
+    label: "Approved Requests",
     value: [[3, "="], [4, "="], "OR"],
     style: "approved",
   },
   {
-    label: "Close requests",
+    label: "Closed Requests",
     value: [[2, "="], [5, "="], [6, "="], "OR"],
     style: "close",
   },

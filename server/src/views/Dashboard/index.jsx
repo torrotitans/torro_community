@@ -17,8 +17,8 @@ const DataUserView = () => {
 
   const tabList = [
     // { label: "Frequently used forms", value: 1 },
-    { label: "Your requests", value: 2 },
-    { label: "Waiting your approval", value: 3 },
+    { label: "Your Requests", value: 2 },
+    { label: "Waiting Your Approval", value: 3 },
   ];
 
   const tabClickHandle = useCallback((value) => {
