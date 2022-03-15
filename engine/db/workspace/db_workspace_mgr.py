@@ -538,7 +538,9 @@ class DbWorkspaceMgr(DbBase):
                     words = sentence.split(" ")
                     if words[2] == "IT":
                         workspace_info['it_approval'] = "Need workspace IT approval"
+                        workspace_info['head_approval'] = ""
                     else:
+                        workspace_info['it_approval'] = ""
                         workspace_info['head_approval'] = "Need workspace Head approval"
 
             else:
@@ -547,7 +549,9 @@ class DbWorkspaceMgr(DbBase):
                 if len(words) > 0:
                     if words[2] == "IT":
                         workspace_info['it_approval'] = "Need workspace IT approval"
+                        workspace_info['head_approval'] = ""
                     else:
+                        workspace_info['it_approval'] = ""
                         workspace_info['head_approval'] = "Need workspace Head approval"
                 else:
                     workspace_info['it_approval'] = ""
