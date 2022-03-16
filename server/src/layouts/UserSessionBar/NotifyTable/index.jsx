@@ -52,11 +52,13 @@ const NotifyTable = ({ notify, viewRequest, unRead, readAll }) => {
             <span className={styles.unread}>{unRead.length}</span>{" "}
             <Intl id="unread" />
           </Text>
-          <div className={styles.readAll} onClick={readAll}>
-            <Text type="subTitle">
-              <Intl id="readAll" />
-            </Text>
-          </div>
+          {unRead.length > 0 && (
+            <div className={styles.readAll} onClick={readAll}>
+              <Text type="subTitle">
+                <Intl id="readAll" />
+              </Text>
+            </div>
+          )}
         </div>
 
         <TableContainer component={Paper}>
