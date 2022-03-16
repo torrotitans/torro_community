@@ -417,7 +417,7 @@ class DbFormMgr(DbBase):
                     tp_max_id = field['id']
                 if 'u' in tp_max_id:
                     # get max uid
-                    if tp_max_id > u_max_num:
+                    if int(tp_max_id[1:]) > u_max_num:
                         u_max_num = int(tp_max_id[1:])
                         u_max_id = tp_max_id
 

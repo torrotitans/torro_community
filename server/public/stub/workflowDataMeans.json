@@ -72,7 +72,7 @@
         {
           "des": "choose your dataset region",
           "id": "dataset_location",
-          "label": "DataSet Location",
+          "label": "Dataset Location",
           "regExp": "",
           "style": 3,
           "value": ""
@@ -80,7 +80,7 @@
         {
           "des": "input your dataset name",
           "id": "dataset_name",
-          "label": "DataSet Name",
+          "label": "Dataset Name",
           "regExp": "",
           "style": 3,
           "value": ""
@@ -88,7 +88,7 @@
         {
           "des": "input your dataset cmek, will use the default gcp key if no input",
           "id": "dataset_cmek",
-          "label": "DataSet CMEK",
+          "label": "Dataset CMEK",
           "regExp": "",
           "style": 3,
           "value": ""
@@ -104,7 +104,7 @@
         {
           "des": "input your dataset label, for example: dataset_owner=second,dataset_expire=9days",
           "id": "dataset_label",
-          "label": "DataSet Label",
+          "label": "Dataset Label",
           "regExp": "",
           "style": 3,
           "value": ""

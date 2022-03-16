@@ -527,14 +527,37 @@ class DbWorkspaceMgr(DbBase):
                 data['msg'] = 'the workspace does not exists, update failed'
                 return data
 
-            self.__delete_2ad_to_workspace(workspace_id)
-            # self.__delete_groups(workspace_id)
-            # self.__delete_workspace(workspace_id)
-            # self.__update_system_fields(workspace_id)
             workspace_info = {}
             workspace_name = workspace['ws_name']
             workspace_info['des'] = workspace['ws_des']
-            workspace_info['it_approval'], workspace_info['head_approval'] = str(workspace['approval']).split(',')
+
+            workspace_approval = str(workspace['approval']).split(',')
+            if len(workspace_approval) > 0:
+                # There are 2 approvals
+                for sentence in workspace_approval:
+                    words = sentence.split(" ")
+                    if words[2] == "IT":
+                        workspace_info['it_approval'] = "Need workspace IT approval"
+                        workspace_info['head_approval'] = ""
+                    else:
+                        workspace_info['it_approval'] = ""
+                        workspace_info['head_approval'] = "Need workspace Head approval"
+
+            else:
+                # there are only one approval
+                words = workspace_approval.split(" ")
+                if len(words) > 0:
+                    if words[2] == "IT":
+                        workspace_info['it_approval'] = "Need workspace IT approval"
+                        workspace_info['head_approval'] = ""
+                    else:
+                        workspace_info['it_approval'] = ""
+                        workspace_info['head_approval'] = "Need workspace Head approval"
+                else:
+                    workspace_info['it_approval'] = ""
+                    workspace_info['head_approval'] = ""
+                
+            # workspace_info['it_approval'], workspace_info['head_approval'] = str(workspace['approval']).split(',')
             workspace_info['cycle'] = workspace['cycle']
             workspace_info['group_dict'] = {}
             workspace_info['group_label'] = {}
@@ -572,6 +595,9 @@ class DbWorkspaceMgr(DbBase):
             workspace_info['workspace_name'] = workspace_name
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             workspace_info['create_time'] = create_time
+
+            # Clear old AD records
+            self.__delete_2ad_to_workspace(workspace_id)
 
             workspace_insert = self.__set_workspace(workspace_info, workspace_id)
             team_resource = workspace.get('groupArr', [])

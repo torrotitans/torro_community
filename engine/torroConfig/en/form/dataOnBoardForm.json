@@ -2,12 +2,12 @@
   "gcp": [
     {
       "default": "GCP",
-      "des": "Resource type",
+      "des": "Resource Type",
       "edit": 1,
       "id": "resourceType",
-      "label": "Resource type",
+      "label": "Resource Type",
       "options": [{ "label": "GCP" }, { "label": "Hive" }],
-      "placeholder": "Resource type",
+      "placeholder": "Resource Type",
       "style": 8,
       "required": true,
       "width": 100
@@ -49,12 +49,12 @@
   "hive": [
     {
       "default": "GCP",
-      "des": "Resource type",
+      "des": "Resource Type",
       "edit": 1,
       "id": "resourceType",
-      "label": "Resource type",
+      "label": "Resource Type",
       "options": [{ "label": "GCP" }, { "label": "Hive" }],
-      "placeholder": "Resource type",
+      "placeholder": "Resource Type",
       "style": 8,
       "required": true,
       "width": 100
@@ -64,7 +64,7 @@
       "des": "Service path",
       "edit": 1,
       "id": "projectId",
-      "label": "Service path",
+      "label": "Service Path",
       "options": [],
       "placeholder": "Service path",
       "style": 3,
@@ -88,7 +88,7 @@
       "id": "tableName",
       "label": "Table",
       "options": [],
-      "placeholder": "Table name",
+      "placeholder": "Table Name",
       "style": 3,
       "required": true
     }

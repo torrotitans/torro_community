@@ -63,10 +63,10 @@
     },
     {
       "default": "",
-      "des": "User recertification cycle",
+      "des": "User Recertification Cycle",
       "edit": 1,
       "id": "cycle",
-      "label": "User recertification cycle",
+      "label": "User Recertification Cycle",
       "options": [
         { "label": "Monthly", "value": "Monthly" },
         { "label": "Quarterly", "value": "Quarterly" },
@@ -78,10 +78,10 @@
     },
     {
       "default": "",
-      "des": "Use case approval flow",
+      "des": "Use Case Approval flow",
       "edit": 1,
       "id": "approval",
-      "label": "Use case approval flow",
+      "label": "Use Case Approval flow",
       "options": [
         {
           "label": "Need workspace IT approval"

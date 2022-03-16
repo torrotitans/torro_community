@@ -39,7 +39,7 @@
       "des": "Table",
       "edit": 1,
       "id": "tableName",
-      "label": "Table name",
+      "label": "Table / View",
       "options": [],
       "placeholder": "Table",
       "style": 3,
