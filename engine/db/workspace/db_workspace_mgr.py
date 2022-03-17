@@ -101,14 +101,11 @@ class DbWorkspaceMgr(DbBase):
                     self.insert_exec(conn, sql, return_insert_id=True)
                 system_id_dict['s1'] = 's1'
 
-                # update group info
-                condition = "workspace_id='%s'" % workspace_id
-                field_fields = ('u_id', 'style', 'label', 'default_value', 'placeholder',
-                                'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
                 for system_style in system:
                     for system_item in system[system_style]:
-                        # if 's' in system_item['id']:
-                        #     continue
+                        u_id = int(system_item['id'].replace('s', '').replace('u', ''))
+
+                        condition = "workspace_id='%s' and id='%s' " % (workspace_id, u_id)
                         default_value = system_item.get('default', '')
                         des = system_item.get('des', '')
                         edit = system_item.get('edit', 1)
@@ -118,11 +115,35 @@ class DbWorkspaceMgr(DbBase):
                         value_list = system_item.get('options', [])
                         value_num = len(value_list)
 
-                        values = (u_id, system_style, label, default_value, placeholder, value_num,
-                                  json.dumps(value_list), edit, des, create_time, create_time)
-                        sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
-                        logger.debug("FN:DbWorkspaceMgr__set_workspace update_fieldTable_sql:{}".format(sql))
-                        _ = self.updete_exec(conn, sql)
+                        insert_flag = 0
+                        if u_id != 1:
+                            sql = self.create_select_sql(db_name, 'fieldTable', 'id', condition=condition)
+                            print('fieldTable sql:', sql)
+                            field_info = self.execute_fetch_one(conn, sql)
+                            if not field_info:
+                                insert_flag = 1
+                        # s1 is region system field, so it cannot be the existing system field, add new one for it.
+                        elif u_id == 1:
+                            insert_flag = 1
+                        if insert_flag:
+                            # insert field info
+                            field_fields = ('workspace_id', 'style', 'label', 'default_value', 'placeholder',
+                                            'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
+                            values = (workspace_id, system_style, label, default_value, placeholder, value_num,
+                                      json.dumps(value_list), edit, des, create_time, create_time)
+                            sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)), values)
+                            logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
+                            _ = self.insert_exec(conn, sql)
+                        else:
+                            # update group info
+                            field_fields = ('style', 'label', 'default_value', 'placeholder',
+                                            'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
+                            values = (system_style, label, default_value, placeholder, value_num,
+                                      json.dumps(value_list), edit, des, create_time, create_time)
+                            sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
+                            logger.debug("FN:DbWorkspaceMgr__set_workspace update_fieldTable_sql:{}".format(sql))
+                            _ = self.updete_exec(conn, sql)
+                    condition = "workspace_id='%s'" % (workspace_id)
                     sql = self.create_select_sql(db_name, 'fieldTable', '*', condition=condition)
                     logger.debug("FN:DbWorkspaceMgr__set_workspace fieldTable_sql:{}".format(sql))
                     field_infos = self.execute_fetch_all(conn, sql)
@@ -164,9 +185,8 @@ class DbWorkspaceMgr(DbBase):
                     logger.debug("FN:DbWorkspaceMgr__set_workspace insert_workspace_to_adgroupTable_sql:{}".format(sql))
                     self.insert_exec(conn, sql, return_insert_id=True)
 
-                # insert system fields
+                # insert region system fields
                 system_id_dict = {}
-
                 condition = "id=%s and workspace_id='%s'" % ('1', workspace_id)
                 sql = self.create_select_sql(db_name, 'fieldTable', '*', condition)
                 region_country_info = self.execute_fetch_one(conn, sql)
@@ -183,26 +203,26 @@ class DbWorkspaceMgr(DbBase):
                 # insert group info
                 field_fields = ('workspace_id', 'u_id', 'style', 'label', 'default_value', 'placeholder',
                                 'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
-                for system_style in system:
-                    for system_item in system[system_style]:
-                        # if 's' in system_item['id']:
-                        #     continue
-                        default_value = system_item.get('default', '')
-                        des = system_item.get('des', '')
-                        edit = system_item.get('edit', 1)
-                        label = system_item['label']
-                        placeholder = system_item.get('placeholder', '')
-                        u_id = int(system_item['id'].replace('s', '').replace('u', ''))
-                        value_list = system_item.get('options', [])
-                        value_num = len(value_list)
-
-                        values = (workspace_id, u_id, system_style, label, default_value, placeholder, value_num,
-                                  json.dumps(value_list), edit, des, create_time, create_time)
-                        sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)),
-                                                     values)
-                        logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
-                        system_id = self.insert_exec(conn, sql, return_insert_id=True)
-                        system_id_dict[system_item['id']] = 's' + str(system_id)
+                # for system_style in system:
+                #     for system_item in system[system_style]:
+                #         # if 's' in system_item['id']:
+                #         #     continue
+                #         default_value = system_item.get('default', '')
+                #         des = system_item.get('des', '')
+                #         edit = system_item.get('edit', 1)
+                #         label = system_item['label']
+                #         placeholder = system_item.get('placeholder', '')
+                #         u_id = int(system_item['id'].replace('s', '').replace('u', ''))
+                #         value_list = system_item.get('options', [])
+                #         value_num = len(value_list)
+                #
+                #         values = (workspace_id, u_id, system_style, label, default_value, placeholder, value_num,
+                #                   json.dumps(value_list), edit, des, create_time, create_time)
+                #         sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)),
+                #                                      values)
+                #         logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
+                #         system_id = self.insert_exec(conn, sql, return_insert_id=True)
+                #         system_id_dict[system_item['id']] = 's' + str(system_id)
             workspace_info['workspace_id'] = workspace_id
             workspace_info['system_id_dict'] = system_id_dict
             data = response_code.SUCCESS
