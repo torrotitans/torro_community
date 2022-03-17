@@ -111,7 +111,7 @@ class DbWorkspaceMgr(DbBase):
                         edit = system_item.get('edit', 1)
                         label = system_item['label']
                         placeholder = system_item.get('placeholder', '')
-                        u_id = int(system_item['id'].replace('s', '').replace('u', ''))
+                        # u_id = int(system_item['id'].replace('s', '').replace('u', ''))
                         value_list = system_item.get('options', [])
                         value_num = len(value_list)
 
