@@ -142,7 +142,7 @@ const FormManagement = ({ tagTemplate }) => {
     let currentModule = formData.fieldList[editModuleIndex];
     formData.fieldList[editModuleIndex] = replace
       ? { id: currentModule.id, ...data }
-      : { ...currentModule, ...data };
+      : { ...currentModule, ...data, u_id: currentModule.u_id };
     setFormData({ ...formData });
   };
 
@@ -367,6 +367,8 @@ const FormManagement = ({ tagTemplate }) => {
     getFormData(formId);
   }, [formId, tagTemplate, getFormData]);
 
+  console.log(formData);
+
   return (
     <div className={styles.formManagement}>
       <div className={styles.formControl} onClick={clickAwayHandle}>
@@ -410,6 +412,7 @@ const FormManagement = ({ tagTemplate }) => {
                       des: "",
                       edit: 1,
                       id: "u" + (maxFieldId + 1),
+                      u_id: "u" + (maxFieldId + 1),
                       label: "Text",
                       options: [],
                       placeholder: "",

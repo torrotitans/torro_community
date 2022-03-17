@@ -158,7 +158,6 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
   }, [id]);
 
   useEffect(() => {
-    debugger;
     var initialContent = value.replace(/\$\{u(\d+)\}/g, (...args) => {
       for (var i = 0; i < options.length; i++) {
         var tmpVariable = options[i];

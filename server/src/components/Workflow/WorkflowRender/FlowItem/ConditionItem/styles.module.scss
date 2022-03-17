@@ -30,3 +30,9 @@
   margin-left: $rbwmspace8;
   cursor: pointer;
 }
+
+.required {
+  color: $main-red;
+  display: inline-block;
+  margin-left: $rbwmspace4;
+}

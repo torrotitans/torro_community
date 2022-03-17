@@ -18,7 +18,7 @@ const ruleOptions = [
   { label: "Phone", value: 3 },
 ];
 
-const TextDesign = ({ data, onChange }) => {
+const TextDesign = ({ data, onChange, onlyLabel }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -45,138 +45,142 @@ const TextDesign = ({ data, onChange }) => {
           }}
         />
       </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="des" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.des}
-          disableUnderline
-          variant="outlined"
-          onChange={(e) => {
-            onChange({
-              ...data,
-              des: e.target.value,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="required" />:
-          </Text>
-        </div>
-        <Checkbox
-          checked={data.required}
-          onChange={(e) => {
-            onChange({
-              ...data,
-              required: !data.required,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="itemWidth" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.width === undefined ? 33 : data.width}
-          disableUnderline
-          variant="outlined"
-          inputProps={{ type: "number" }}
-          onChange={(e) => {
-            let value = e.target.value;
-            if (value <= 100) {
-              onChange({
-                ...data,
-                width: value,
-              });
-            }
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="maxLength" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.maxLength}
-          disableUnderline
-          variant="outlined"
-          inputProps={{ type: "number" }}
-          onChange={(e) => {
-            let value = e.target.value;
-            if (value.length > 3) {
-              value = value.slice(0, 3);
-            }
-            onChange({
-              ...data,
-              maxLength: value,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="placeholder" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.placeholder}
-          disableUnderline
-          variant="outlined"
-          onChange={(e) => {
-            onChange({
-              ...data,
-              placeholder: e.target.value,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="defaultvalue" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.default}
-          disableUnderline
-          variant="outlined"
-          onChange={(e) => {
-            onChange({
-              ...data,
-              default: e.target.value,
-            });
-          }}
-        />
-      </div>
-      <div className={cn(styles.editItem, styles.columItem)}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="options" />:
-          </Text>
-        </div>
-        <Select
-          value={data.rule}
-          options={ruleOptions}
-          onChange={(value) => {}}
-        />
-      </div>
+      {!onlyLabel && (
+        <>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="des" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.des}
+              disableUnderline
+              variant="outlined"
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  des: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="required" />:
+              </Text>
+            </div>
+            <Checkbox
+              checked={data.required}
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  required: !data.required,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="itemWidth" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.width === undefined ? 33 : data.width}
+              disableUnderline
+              variant="outlined"
+              inputProps={{ type: "number" }}
+              onChange={(e) => {
+                let value = e.target.value;
+                if (value <= 100) {
+                  onChange({
+                    ...data,
+                    width: value,
+                  });
+                }
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="maxLength" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.maxLength}
+              disableUnderline
+              variant="outlined"
+              inputProps={{ type: "number" }}
+              onChange={(e) => {
+                let value = e.target.value;
+                if (value.length > 3) {
+                  value = value.slice(0, 3);
+                }
+                onChange({
+                  ...data,
+                  maxLength: value,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="placeholder" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.placeholder}
+              disableUnderline
+              variant="outlined"
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  placeholder: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="defaultvalue" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.default}
+              disableUnderline
+              variant="outlined"
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  default: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className={cn(styles.editItem, styles.columItem)}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="options" />:
+              </Text>
+            </div>
+            <Select
+              value={data.rule}
+              options={ruleOptions}
+              onChange={(value) => {}}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
