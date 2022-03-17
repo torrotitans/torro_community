@@ -42,7 +42,7 @@ class DbUseCaseMgr(DbBase):
             input_form = usecase_info.get('uc_input_form', -1)
 
             resources_access = usecase_info['resources_access'].split(',')
-            if (resources_access > 1 ):
+            if (len(resources_access) > 1 ):
                 if (resources_access[0][0] == "J"):
                     jupyter_access = resources_access[0]
                 else:
