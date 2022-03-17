@@ -40,6 +40,19 @@ class DbUseCaseMgr(DbBase):
             usecase_name = usecase_info['usecase_name']
             create_time = usecase_info['create_time']
             input_form = usecase_info.get('uc_input_form', -1)
+
+            resources_access = usecase_info['resources_access'].split(',')
+            if (resources_access > 1 ):
+                if (resources_access[0][0] == "J"):
+                    jupyter_access = resources_access[0]
+                else:
+                    studio_access = resources_access[1]
+            else:
+                if (resources_access[0][0] == "J"):
+                    jupyter_access = resources_access[0]
+                else:
+                    studio_access = resources_access[0]
+
             jupyter_access, studio_access = usecase_info['resources_access'].split(',')
             resources_access = {'jupyter': jupyter_access, 'datastudio': studio_access}
 
@@ -189,6 +202,7 @@ class DbUseCaseMgr(DbBase):
                 return data
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_info))
             usecase_insert = self.__set_usecase(usecase_info)
+            logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_insert))
             data = response_code.SUCCESS
             usecase['usecase_id'] = usecase_insert['data']['usecase_id']
             data['data'] = usecase
