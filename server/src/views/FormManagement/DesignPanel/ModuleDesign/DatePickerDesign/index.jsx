@@ -10,7 +10,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
-const DatePickerDesign = ({ data, onChange }) => {
+const DatePickerDesign = ({ data, onChange, onlyLabel }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,41 +37,45 @@ const DatePickerDesign = ({ data, onChange }) => {
           }}
         />
       </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="des" />:
-          </Text>
-        </div>
-        <Input
-          className={styles.editInput}
-          value={data.des}
-          disableUnderline
-          variant="outlined"
-          onChange={(e) => {
-            onChange({
-              ...data,
-              des: e.target.value,
-            });
-          }}
-        />
-      </div>
-      <div className={styles.editItem}>
-        <div className={styles.label}>
-          <Text type="subTitle">
-            <Intl id="required" />:
-          </Text>
-        </div>
-        <Checkbox
-          checked={data.required}
-          onChange={(e) => {
-            onChange({
-              ...data,
-              required: !data.required,
-            });
-          }}
-        />
-      </div>
+      {!onlyLabel && (
+        <>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="des" />:
+              </Text>
+            </div>
+            <Input
+              className={styles.editInput}
+              value={data.des}
+              disableUnderline
+              variant="outlined"
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  des: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.editItem}>
+            <div className={styles.label}>
+              <Text type="subTitle">
+                <Intl id="required" />:
+              </Text>
+            </div>
+            <Checkbox
+              checked={data.required}
+              onChange={(e) => {
+                onChange({
+                  ...data,
+                  required: !data.required,
+                });
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };

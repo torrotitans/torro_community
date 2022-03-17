@@ -153,6 +153,7 @@ const CommonCondition = ({
     <>
       <div className={styles.conditionLabel} title={item.des}>
         {item.label}:
+        {!item.optional && <span className={styles.required}>*</span>}
       </div>
       <div className={styles.conditionValue}>
         {item.style === 1 && (

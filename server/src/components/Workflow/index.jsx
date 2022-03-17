@@ -46,14 +46,22 @@ const Workflow = ({ flowId, droppableItems }) => {
       checkData.msg = "Approval process is require in each workflow.";
     } else {
       let stages = workflowData.stages;
-      stages.forEach((item) => {
+
+      for (let index = 0; index < stages.length; index++) {
+        const item = stages[index];
+
+        if (item.flowType === "Approval" && item.condition.length < 1) {
+          checkData.validate = false;
+          checkData.msg = `${item.label} need to have at least one approver`;
+          break;
+        }
         item.condition.forEach((con) => {
-          if (!con.value && item.flowType !== "Approval") {
+          if (!con.value && item.flowType !== "Approval" && !con.optional) {
             checkData.validate = false;
             checkData.msg = `${item.label} has condition value is Empty`;
           }
         });
-      });
+      }
     }
     return checkData;
   }, []);

@@ -33,6 +33,7 @@ const RequestDetail = ({ recordId, approvedView }) => {
   const [formData, setFormData] = useState();
   const [changeData, setChangeData] = useState();
   const [editView, setEditView] = useState(false);
+  const [isApprover, setIsApprover] = useState(false);
   const [defaultData, setDefaultData] = useState({
     index: 0,
     data: null,
@@ -65,6 +66,7 @@ const RequestDetail = ({ recordId, approvedView }) => {
           res.data.forEach((item) => {
             if (item.createTime > latestRecord.createTime) latestRecord = item;
           });
+          setIsApprover(res.approverView);
           setDefaultData({ index: 0, data: latestRecord });
           setTableList(res.data);
           getFormItem({
@@ -118,7 +120,8 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   formId={formData.id}
                   formTemplate={formData}
                   recordId={recordId}
-                  approvedView={approvedView}
+                  approverView={approvedView}
+                  isApprover={isApprover}
                   defaultData={defaultData.data}
                   enableReOpen={defaultData.index === 0}
                   setEditView={setEditView}
