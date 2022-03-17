@@ -127,18 +127,18 @@ class DbWorkspaceMgr(DbBase):
                             insert_flag = 1
                         if insert_flag:
                             # insert field info
-                            field_fields = ('workspace_id', 'style', 'label', 'default_value', 'placeholder',
+                            field_fields = ('u_id', 'workspace_id', 'style', 'label', 'default_value', 'placeholder',
                                             'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
-                            values = (workspace_id, system_style, label, default_value, placeholder, value_num,
+                            values = (u_id, workspace_id, system_style, label, default_value, placeholder, value_num,
                                       json.dumps(value_list), edit, des, create_time, create_time)
                             sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)), values)
                             logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
                             _ = self.insert_exec(conn, sql)
                         else:
                             # update group info
-                            field_fields = ('style', 'label', 'default_value', 'placeholder',
+                            field_fields = ('u_id', 'style', 'label', 'default_value', 'placeholder',
                                             'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
-                            values = (system_style, label, default_value, placeholder, value_num,
+                            values = (u_id, system_style, label, default_value, placeholder, value_num,
                                       json.dumps(value_list), edit, des, create_time, create_time)
                             sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
                             logger.debug("FN:DbWorkspaceMgr__set_workspace update_fieldTable_sql:{}".format(sql))
