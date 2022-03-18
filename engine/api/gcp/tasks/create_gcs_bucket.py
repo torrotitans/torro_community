@@ -49,8 +49,8 @@ class CreateGCSBucket(baseTask):
                 for label in bucket_labels:
                     labels["label"] = bucket_labels[label]
                 bucket.labels = labels
-            # if bucket_cmek:
-            #     bucket.default_kms_key_name = bucket_cmek
+            if bucket_cmek:
+                bucket.default_kms_key_name = bucket_cmek
             bucket.patch()
 
             usecase_name = self.stage_dict.get('usecase_name', None)
