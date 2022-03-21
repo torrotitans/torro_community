@@ -175,7 +175,7 @@ class DbFormMgr(DbBase):
                     user_field_id = str(field_item['id']).replace('u', '')
                     # get dynamicFieldValue
                     # print('field_item:', field_item)
-                    field_info = self.__get_user_field_values(field_item, user_field_id, wp_id, db_name, conn)
+                    field_info = self.__get_user_field_values(id, field_item, user_field_id, wp_id, db_name, conn)
 
                     # condition = "user_field_id='%s'" % user_field_id
                     # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable',
@@ -783,15 +783,15 @@ class DbFormMgr(DbBase):
 
         return field_info
 
-    def __get_user_field_values(self, field_info, pass_user_field_id, wp_id, db_name, conn):
+    def __get_user_field_values(self, form_id, field_info, pass_user_field_id, wp_id, db_name, conn):
 
         user_field_id = pass_user_field_id
         user_field_id = str(user_field_id).replace('u', '')
         # check if it is point field
         if wp_id != 0:
-            condition = "workspace_id='%s' and user_field_id='%s'" % (wp_id, user_field_id)
+            condition = "workspace_id='%s' and user_field_id='%s' and form_id='%s'" % (wp_id, user_field_id, form_id)
         else:
-            condition = "user_field_id='%s'" % user_field_id
+            condition = "form_id='%s' and user_field_id='%s'" % (form_id, user_field_id)
         sql = self.create_select_sql(db_name, 'pointFieldTable',
                                      'point_field_id,type,label', condition=condition)
         logger.debug("FN:__get_dynamic_field_values pointFieldTable sql:{}".format(sql))
