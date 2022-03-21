@@ -153,7 +153,7 @@ class GrantRoleForPolicyTags(baseTask):
         if not usecase_info:
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Cannot find usecase: {}'.format(
-                '.'.join([workspace_id, usecase_name]))
+                '.'.join([str(workspace_id), str(usecase_name)]))
             return data
 
         service_account = usecase_info['SERVICE_ACCOUNT']
@@ -178,8 +178,10 @@ class GrantRoleForPolicyTags(baseTask):
         try:
             access_roles = ['roles/datacatalog.categoryFineGrainedReader']
             # # default access json
-            access_json = {'roles/datacatalog.categoryFineGrainedReader': ['serviceAccount:{}'.format(service_account)]}
-
+            if service_account:
+                access_json = {'roles/datacatalog.categoryFineGrainedReader': ['serviceAccount:{}'.format(service_account)]}
+            else:
+                access_json = {'roles/datacatalog.categoryFineGrainedReader': []}
             for ad_group in ad_group_list:
                 access_json['roles/datacatalog.categoryFineGrainedReader'].append('group:{}'.format(ad_group))
 
