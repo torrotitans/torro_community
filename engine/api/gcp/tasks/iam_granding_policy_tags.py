@@ -153,7 +153,7 @@ class GrantRoleForPolicyTags(baseTask):
         if not usecase_info:
             data = response_code.GET_DATA_FAIL
             data['msg'] = 'Cannot find usecase: {}'.format(
-                '.'.join([workspace_id, usecase_name]))
+                '.'.join([str(workspace_id), str(usecase_name)]))
             return data
 
         service_account = usecase_info['SERVICE_ACCOUNT']
