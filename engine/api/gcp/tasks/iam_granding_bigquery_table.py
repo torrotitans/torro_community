@@ -176,9 +176,9 @@ class GrantRoleForBQTable(baseTask):
             if service_account:
                 access_json = {'roles/bigquery.dataViewer': ['serviceAccount:{}'.format(service_account)]}
             else:
-                access_json = {}
+                access_json = {'roles/bigquery.dataViewer': []}
             for ad_group in ad_group_list:
-                access_json['roles/bigquery.jobUser'].append('group:{}'.format(ad_group))
+                # access_json['roles/bigquery.jobUser'].append('group:{}'.format(ad_group))
                 access_json['roles/bigquery.dataViewer'].append('group:{}'.format(ad_group))
             logger.debug('FN:GrantRoleForBQTable__grand_access_roles access_json:{} '.format(access_json))
             credentials, project = google.auth.default()

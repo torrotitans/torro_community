@@ -178,8 +178,10 @@ class GrantRoleForPolicyTags(baseTask):
         try:
             access_roles = ['roles/datacatalog.categoryFineGrainedReader']
             # # default access json
-            access_json = {'roles/datacatalog.categoryFineGrainedReader': ['serviceAccount:{}'.format(service_account)]}
-
+            if service_account:
+                access_json = {'roles/datacatalog.categoryFineGrainedReader': ['serviceAccount:{}'.format(service_account)]}
+            else:
+                access_json = {'roles/datacatalog.categoryFineGrainedReader': []}
             for ad_group in ad_group_list:
                 access_json['roles/datacatalog.categoryFineGrainedReader'].append('group:{}'.format(ad_group))
 

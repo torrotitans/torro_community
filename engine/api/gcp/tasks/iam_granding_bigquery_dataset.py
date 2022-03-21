@@ -111,9 +111,12 @@ class GrantRoleForBQDataset(baseTask):
     def __grand_access_roles(self, service_account, ad_group_list, project_id, dataset_id):
         try:
             # # default access json
-            access_json = {'roles/bigquery.dataViewer': [('userByEmail', service_account)], 'roles/bigquery.jobUser': []}
+            if service_account:
+                access_json = {'roles/bigquery.dataViewer': ['serviceAccount:{}'.format(service_account)]}
+            else:
+                access_json = {'roles/bigquery.dataViewer': []}
             for ad_group in ad_group_list:
-                access_json['roles/bigquery.jobUser'].append(('groupByEmail', ad_group))
+                # access_json['roles/bigquery.jobUser'].append(('groupByEmail', ad_group))
                 access_json['roles/bigquery.dataViewer'].append(('groupByEmail', ad_group))
             print('access_json:', access_json)
 
