@@ -372,7 +372,7 @@ const FormDataDisplay = ({
                   }}
                 />
               </div>
-              {approverView && isApprover && status === 0 && (
+              {approverView && status === 0 && (
                 <div className={styles.buttonWrapper}>
                   <Button
                     className={styles.button}
