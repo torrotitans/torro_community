@@ -74,6 +74,7 @@ DROP TABLE IF EXISTS `usecaseTable`;
 CREATE TABLE `usecaseTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'usecase_id',
   `WORKSPACE_ID` int NOT NULL COMMENT 'workspace_id',
+  `CREATOR_ID` int NOT NULL COMMENT 'creator_id',
   `USECASE_NAME` varchar(128) DEFAULT NULL COMMENT 'usecase_name',
   `VALIDITY_TILL` varchar(128) DEFAULT NULL COMMENT 'usecase_name validity till',
   `BUDGET` varchar(128) DEFAULT NULL COMMENT 'usecase_name budget',

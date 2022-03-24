@@ -39,38 +39,30 @@ class DbUseCaseMgr(DbBase):
             allow_cross_region = bool(usecase_info['allow_cross_region'])
             usecase_name = usecase_info['usecase_name']
             create_time = usecase_info['create_time']
+            creator_id = usecase_info['user_id']
             input_form = usecase_info.get('uc_input_form', -1)
 
             resources_access = usecase_info['resources_access'].split(',')
-            if (len(resources_access) > 1 ):
-                if (resources_access[0][0] == "J"):
-                    jupyter_access = resources_access[0]
-                else:
-                    studio_access = resources_access[1]
-            else:
-                if (resources_access[0][0] == "J"):
-                    jupyter_access = resources_access[0]
-                else:
-                    studio_access = resources_access[0]
-
-            jupyter_access, studio_access = usecase_info['resources_access'].split(',')
-            resources_access = {'jupyter': jupyter_access, 'datastudio': studio_access}
+            # Break the resources_access individually
+            resources = {}
+            for r in resources_access:
+                for rl in self.resource_list:
+                    if rl == r.lower():
+                        resources[rl] = r
 
             db_name = configuration.get_database_name()
 
             # insert workspace
-            if usecase_id is not None:
-                fields = ('ID', 'WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
+            fields = ('ID', 'WORKSPACE_ID', 'CREATOR_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
-            else:
-                fields = ('WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
-                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
-                          'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
+            values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
+                          json.dumps(resources), admin_sa, uc_label, allow_cross_region, create_time, des)
+            
+            if usecase_id is None:
+                fields = fields[1:]
+                values = values[1:]
+
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecaseTable_sql:{}".format(sql))
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -158,21 +150,19 @@ class DbUseCaseMgr(DbBase):
                 return data
 
             db_name = configuration.get_database_name()
-            usecase_info = {}
-            usecase_name = usecase['usecase_name']
-            usecase_info['workspace_id'] = usecase['workspace_id']
-            usecase_info['region_country'] = usecase['region_country']
-            usecase_info['validity_date'] = usecase['validity_date']
-            usecase_info['uc_des'] = usecase['uc_des']
-            usecase_info['admin_sa'] = usecase['admin_sa']
-            usecase_info['budget'] = usecase['budget']
-            usecase_info['allow_cross_region'] = usecase['allow_cross_region']
-            usecase_info['usecase_name'] = usecase_name
-            usecase_info['resources_access'] = usecase['resources_access']
-            create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            usecase_info['create_time'] = create_time
-            usecase_info['uc_input_form'] = usecase['uc_input_form']
-            usecase_info['uc_label'] = usecase['uc_label']
+            usecase_info = usecase
+            # usecase_info['usecase_name'] = usecase['usecase_name']
+            # usecase_info['workspace_id'] = usecase['workspace_id']
+            # usecase_info['region_country'] = usecase['region_country']
+            # usecase_info['validity_date'] = usecase['validity_date']
+            # usecase_info['uc_des'] = usecase['uc_des']
+            # usecase_info['admin_sa'] = usecase['admin_sa']
+            # usecase_info['budget'] = usecase['budget']
+            # usecase_info['allow_cross_region'] = usecase['allow_cross_region']
+            # usecase_info['resources_access'] = usecase['resources_access']
+            # usecase_info['uc_input_form'] = usecase['uc_input_form']
+            # usecase_info['uc_label'] = usecase['uc_label']
+            usecase_info['create_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['group_dict'] = {}
             usecase_info['group_label'] = {}
             group_mapping = [
@@ -192,7 +182,8 @@ class DbUseCaseMgr(DbBase):
                 else:
                     usecase_info['group_label'][ad_group].append(label)
 
-            condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
+            # Check if use case name exist
+            condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_info['usecase_name'], workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseTable', '*', condition)
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecaseTable_sql:{}".format(sql))
             usecase_infos = self.execute_fetch_all(conn, sql)
@@ -200,6 +191,8 @@ class DbUseCaseMgr(DbBase):
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'UseCase already existed'
                 return data
+
+            # Continue if this use case name is not in use
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_info))
             usecase_insert = self.__set_usecase(usecase_info)
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_insert))
