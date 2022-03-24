@@ -27,14 +27,12 @@ CREATE TABLE `userTable` (
   `ACCOUNT_NAME` varchar(128) DEFAULT NULL COMMENT 'account_name',
   `ACCOUNT_ID` varchar(128) DEFAULT NULL COMMENT 'account_id',
   `ACCOUNT_CN` varchar(128) DEFAULT NULL COMMENT 'account_cn',
-
   `PASS_WORD` varchar(256) DEFAULT NULL COMMENT 'password',
-  `GROUP_LIST` varchar(1024) DEFAULT NULL COMMENT 'ad group list',
+  `GROUP_LIST` text DEFAULT NULL COMMENT 'ad group list',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
-  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-
 insert into userTable values (1, 'TorroAdmin', 'TorroAdmin', 'TorroAdmin', 'torro123456', '[]', '2021-05-29', 'the first user');
 
 DROP TABLE IF EXISTS `user_to_adgroupTable`;

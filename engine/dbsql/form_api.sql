@@ -14,7 +14,7 @@ CREATE TABLE `formTable` (
   `hide` int DEFAULT '0' COMMENT 'if show the form in ui or not',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   `updated_time` datetime DEFAULT NULL COMMENT 'last_updated_time',
-  `des` varchar(1024) DEFAULT NULL COMMENT 'description',
+  `des` text DEFAULT NULL COMMENT 'description',
   `u_max_id` varchar(8) DEFAULT '0' COMMENT 'user field max id',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -51,11 +51,12 @@ CREATE TABLE `fieldTable` (
   `value_list` text COMMENT 'value list',
   `edit` varchar(1024) DEFAULT '0' COMMENT 'if this field can be edited',
   `required` tinyint(1) DEFAULT '1' COMMENT 'required field',
-  `des` varchar(1024) DEFAULT NULL COMMENT 'description',
+  `des` text DEFAULT NULL COMMENT 'description',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   `updated_time` datetime DEFAULT NULL COMMENT 'last_updated_time',
   PRIMARY KEY (`id`,`workspace_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `dynamicFieldTable`;
 CREATE TABLE `dynamicFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
@@ -65,19 +66,20 @@ CREATE TABLE `dynamicFieldTable` (
   `default_value` varchar(256) DEFAULT NULL COMMENT 'field default value',
   `placeholder` varchar(256) DEFAULT NULL COMMENT 'placeholder',
   `value_num` int DEFAULT NULL COMMENT 'how many value of this fields',
-  `des` varchar(1024) DEFAULT NULL COMMENT 'description',
+  `des` text DEFAULT NULL COMMENT 'description',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-insert into dynamicFieldTable values (15, 2, 2, 'Use case', '', '', 0, 'default usecase dynamic field', '2021-12-08 10:17:00');
+insert into dynamicFieldTable values (15, 2, 2, 'Use Case', '', '', 0, 'default usecase dynamic field', '2021-12-08 10:17:00');
+
 DROP TABLE IF EXISTS `dynamicFieldValueTable`;
 CREATE TABLE `dynamicFieldValueTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field-value id',
   `workspace_id` int NOT NULL COMMENT 'workspace id',
   `dynamic_field_id` int NOT NULL COMMENT 'dynamic field id',
   `input_form_id` int NOT NULL COMMENT 'input form id',
-  `option_label` varchar(256) DEFAULT NULL COMMENT 'how many value of this fields',
-  `option_value` varchar(256) DEFAULT NULL COMMENT 'how many value of this fields',
+  `option_label` varchar(1024) DEFAULT NULL COMMENT 'how many value of this fields',
+  `option_value` varchar(1024) DEFAULT NULL COMMENT 'how many value of this fields',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `dynamicFieldValueTable_ibfk_1` (`dynamic_field_id`),
@@ -89,7 +91,7 @@ CREATE TABLE `pointFieldTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'field_id',
   `workspace_id` int NOT NULL COMMENT 'workspace id',
   `form_id` int NOT NULL COMMENT 'form_id',
-  `label` varchar(256) DEFAULT NULL COMMENT 'field label',
+  `label` varchar(1024) DEFAULT NULL COMMENT 'field label',
   `user_field_id` varchar(8) DEFAULT NULL COMMENT 'its user field id',
   `point_field_id` varchar(8) DEFAULT NULL COMMENT 'its point field id: can link to system field and dynamic field',
   `type` varchar(256) DEFAULT NULL COMMENT 'system or dynamic ',
@@ -101,7 +103,7 @@ DROP TABLE IF EXISTS `dynamicField_to_inputFormTable`;
 CREATE TABLE `dynamicField_to_inputFormTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `dynamic_field_id` varchar(8) NOT NULL COMMENT 'dynamic field id',
-  `option_label` varchar(256) DEFAULT NULL,
+  `option_label` varchar(1024) DEFAULT NULL,
   `using_form_id` int NOT NULL COMMENT 'which form id this input form belong to',
   `using_input_form_id` int NOT NULL COMMENT 'the input form id using this dynamic field',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
@@ -118,6 +120,7 @@ CREATE TABLE `inputFormIndexTable` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 INSERT INTO `inputFormIndexTable` (`id`, `creator_id`, `form_id`, `workspace_id`) VALUES (498,'354',104,362);
+
 DROP TABLE IF EXISTS `inputFormTable`;
 CREATE TABLE `inputFormTable` (
   `id` int NOT NULL COMMENT 'input form id',
@@ -136,6 +139,7 @@ CREATE TABLE `inputFormTable` (
   CONSTRAINT `inputFormTable_ibfk_1` FOREIGN KEY (`id`) REFERENCES `inputFormIndexTable` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 INSERT INTO `inputFormTable` (`id`, `history_id`, `workflow_id`, `workflow_name`, `fields_num`, `stages_num`, `form_status`, `form_field_values_dict`, `workflow_stages_id_list`, `create_time`, `updated_time`) VALUES (498,495,428,'new workFlow',3,2,2,'{\"u1\": {\"style\": 3, \"value\": \"Data Approval Tag\"}, \"u3\": {\"style\": 3, \"value\": [{\"default\": \"\", \"des\": \"AD group for Data Approvers\", \"edit\": 1, \"id\": \"u1\", \"label\": \"Data Approver AD group\", \"options\": [], \"placeholder\": \"\", \"style\": 3, \"required\": true, \"maxLength\": 900, \"rule\": 0}]}, \"u2\": {\"style\": 3, \"value\": \"Tag template description\"}}','[499]','2021-12-26 09:28:01','2021-12-26 09:28:39');
+
 DROP TABLE IF EXISTS `inputStageTable`;
 CREATE TABLE `inputStageTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'stage_id',
@@ -152,6 +156,7 @@ CREATE TABLE `inputStageTable` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 INSERT INTO `inputStageTable` (`id`, `stage_id`, `stage_index`, `stage_group`, `apiTaskName`, `condition_value_dict`, `status`, `logs`, `comment`, `create_time`, `updated_time`) VALUES (499,36,1,'GoogleCloud','CreateTagTemplate','{\"tag_template_display_name\": \"Data Approval Tag\", \"description\": \"Tag template description\", \"field_list\": [{\"default\": \"\", \"des\": \"AD group for Data Approvers\", \"edit\": 1, \"id\": \"u1\", \"label\": \"Data Approver AD group\", \"options\": [], \"placeholder\": \"\", \"style\": 3, \"required\": true, \"maxLength\": 900, \"rule\": 0}]}',1,'create successfully.: 0','create successfully.: 0','2021-12-26 09:28:01','2021-12-26 09:28:39');
+
 DROP TABLE IF EXISTS `inputCommentTable`;
 CREATE TABLE `inputCommentTable` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'comment_id',
