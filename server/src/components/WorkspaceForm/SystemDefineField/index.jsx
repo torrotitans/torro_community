@@ -90,6 +90,8 @@ const SystemDefineField = ({
     setDefineData(tmpData);
   };
 
+  console.log(fieldTemplate);
+
   const renderFormItem = (items) => {
     return items.map((item, index) => {
       return (

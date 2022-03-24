@@ -19,26 +19,9 @@
 .leftPanelContainer {
   padding: 0 $rbwmspace20;
 }
-.filterBox {
-  width: 100%;
-  margin-bottom: $rbwmspace20;
-}
-.filterItem {
-  display: flex;
-}
 .title {
   color: $main-purple;
   margin-bottom: $rbwmspace44;
-}
-
-.filter {
-  display: flex;
-  align-items: center;
-  margin-bottom: $rbwmspace40;
-}
-.filterPanel {
-  color: $main-purple;
-  flex: 1;
 }
 
 .tableSearch {
@@ -63,63 +46,6 @@
 .secondTitle {
   color: $main-purple;
   margin-bottom: $rbwmspace20;
-}
-
-.selectAll {
-  svg {
-    color: $white;
-  }
-}
-.dataTable {
-  flex: 1;
-  > div {
-    height: 100%;
-  }
-  &.tableLoading table {
-    height: 100%;
-  }
-}
-
-.policyTag {
-  padding: $rbwmspace8;
-  background: gainsboro;
-  border-radius: 4px;
-  display: inline-block;
-  margin: $rbwmspace4;
-  min-width: $rbwmspace16;
-  min-height: $rbwmspace12;
-  position: relative;
-  border-radius: $rbwmspace8;
-
-  .delete {
-    position: absolute;
-    top: -$rbwmspace12;
-    right: -$rbwmspace12;
-    cursor: pointer;
-    display: none;
-    svg {
-      width: $rbwmspace20;
-      height: $rbwmspace20;
-    }
-  }
-
-  &:hover {
-    .delete {
-      display: block;
-    }
-  }
-}
-
-.policyName {
-  display: inline-block;
-  font-weight: $bold-font-weight;
-  color: black;
-  margin-right: $rbwmspace8;
-}
-
-.policytagname {
-  font-weight: $bold-font-weight;
-  color: grey;
 }
 
 .dataRightPanel {
@@ -147,8 +73,6 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: $rbwmspace20;
-}
-.cartContent {
 }
 
 .cartItemList {

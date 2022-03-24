@@ -39,6 +39,7 @@ const FormItem = ({
   systemTag,
   fullWidth,
   changeCb,
+  specialField,
 }) => {
   const FormComponent = useMemo(() => {
     let type = Number(data.style);
@@ -157,6 +158,17 @@ const FormItem = ({
     };
   }, [data.maxLength]);
 
+  const dataRequired = useMemo(() => {
+    return (
+      data.required ||
+      data.id.startsWith("s") ||
+      data.id.startsWith("d") ||
+      data?.u_id?.startsWith("s") ||
+      data?.u_id?.startsWith("d") ||
+      specialField?.includes(data.id)
+    );
+  }, [data, specialField]);
+
   return (
     <div
       key={data.id}
@@ -179,7 +191,7 @@ const FormItem = ({
                 (<Intl id="system" />)
               </span>
             )}
-            {data.required && <span className={styles.required}>*</span>}
+            {dataRequired && <span className={styles.required}>*</span>}
           </Text>
         </FormLabel>
         <div className={styles.textInput}>
@@ -189,7 +201,7 @@ const FormItem = ({
             defaultValue={defaultValue}
             rules={{
               required: {
-                value: data.required,
+                value: dataRequired,
                 message: (
                   <>
                     <Intl id={preFix(data.style)} />
@@ -197,7 +209,7 @@ const FormItem = ({
                   </>
                 ),
               },
-              maxLength: maxLength,
+              maxLength: Number(data.style) === 3 ? maxLength : null,
               pattern: pattern,
             }}
             render={({
