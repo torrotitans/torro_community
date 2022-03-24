@@ -56,7 +56,7 @@ class DbUseCaseMgr(DbBase):
             fields = ('ID', 'WORKSPACE_ID', 'CREATOR_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
-            values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
+            values = (usecase_id, workspace_id, creator_id, usecase_name, validity_date, budget, input_form, region_country,
                           json.dumps(resources), admin_sa, uc_label, allow_cross_region, create_time, des)
             
             if usecase_id is None:
