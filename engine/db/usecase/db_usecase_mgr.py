@@ -21,7 +21,7 @@ class DbUseCaseMgr(DbBase):
     """
     Use case related DB Operation
     """
-    resource_list = ['jupyter', 'datastudio']
+    # resource_list = ['jupyter', 'datastudio']
 
     def __set_usecase(self, usecase_info, usecase_id=None):
 
@@ -46,9 +46,7 @@ class DbUseCaseMgr(DbBase):
             # Break the resources_access individually
             resources = {}
             for r in resources_access:
-                for rl in self.resource_list:
-                    if rl == r.lower():
-                        resources[rl] = r
+                resources[r.lower()] = r
 
             db_name = configuration.get_database_name()
 
@@ -63,6 +61,7 @@ class DbUseCaseMgr(DbBase):
                 fields = fields[1:]
                 values = values[1:]
 
+            # Insert use case into usecasetable
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecaseTable_sql:{}".format(sql))
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -73,8 +72,8 @@ class DbUseCaseMgr(DbBase):
                 role_list = group_dict[ad_group_name]
                 label_list = group_label[ad_group_name]
                 select_condition = "GROUP_MAIL='%s' " % ad_group_name
-                select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
-                ad_group_info = self.execute_fetch_one(conn, select_table_sql)
+                sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
+                ad_group_info = self.execute_fetch_one(conn, sql)
                 if ad_group_info:
                     group_id = ad_group_info['ID']
                 else:
@@ -252,9 +251,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                for item in self.resource_list:
-                    if item in resource_access_items:
-                        one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                # for item in self.resource_list:
+                #     if item in resource_access_items:
+                #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                for item in resource_access_items:
+                    one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
                 logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
@@ -301,9 +302,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                for item in self.resource_list:
-                    if item in resource_access_items:
-                        one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                # for item in self.resource_list:
+                #     if item in resource_access_items:
+                #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                for item in resource_access_items:
+                    one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
                 logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_workspace one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
@@ -511,8 +514,12 @@ class DbUseCaseMgr(DbBase):
             return_info['create_time'] = usecase_info['CREATE_TIME']
             return_info['resources_access_list'] = []
             resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-            for item in self.resource_list:
+            # for item in self.resource_list:
+            #     return_info['resources_access_list'].append(resource_access_items[item].strip())
+            
+            for item in resource_access_items:
                 return_info['resources_access_list'].append(resource_access_items[item].strip())
+
             return_info['resources_access_list'] = ','.join(return_info['resources_access_list'])
             # db_name = configuration.get_database_name()
             logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id return_info:{}".format(return_info))
