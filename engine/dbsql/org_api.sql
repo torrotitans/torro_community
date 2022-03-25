@@ -5,9 +5,10 @@ CREATE TABLE `orgTable` (
   `PROJECT_NAME` varchar(128) DEFAULT NULL COMMENT 'project name',
   `AIRFLOW_URL` varchar(1024) DEFAULT NULL COMMENT 'aiflow url',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
-  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `org_to_adgroupTable`;
 CREATE TABLE `org_to_adgroupTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'org id',
@@ -26,9 +27,10 @@ CREATE TABLE `workspaceTable` (
   `HEAD_APPROVAL` tinyint(1) DEFAULT '1' COMMENT 'Need workspace Head approval',
   `REGOINS` text COMMENT 'Need workspace Head approval',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
-  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `workspace_to_adgroupTable`;
 CREATE TABLE `workspace_to_adgroupTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -51,7 +53,7 @@ CREATE TABLE `usecaseResourceTable` (
   `ITEMS` text COMMENT 'items',
   `AVAILABLE` int DEFAULT '1' COMMENT 'available flag',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
-  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
@@ -64,7 +66,7 @@ CREATE TABLE `gcpResourceTable` (
   `resource_label` varchar(512) DEFAULT NULL COMMENT 'resource label',
   `resource_name` varchar(512) DEFAULT NULL COMMENT 'resource name',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
-  `des` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `des` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
@@ -72,6 +74,7 @@ DROP TABLE IF EXISTS `usecaseTable`;
 CREATE TABLE `usecaseTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'usecase_id',
   `WORKSPACE_ID` int NOT NULL COMMENT 'workspace_id',
+  `CREATOR_ID` int NOT NULL COMMENT 'creator_id',
   `USECASE_NAME` varchar(128) DEFAULT NULL COMMENT 'usecase_name',
   `VALIDITY_TILL` varchar(128) DEFAULT NULL COMMENT 'usecase_name validity till',
   `BUDGET` varchar(128) DEFAULT NULL COMMENT 'usecase_name budget',
@@ -82,9 +85,10 @@ CREATE TABLE `usecaseTable` (
   `SERVICE_ACCOUNT` text COMMENT 'usecase_name service account',
   `CROSS_REGION` text COMMENT 'will the usecase_name use data cross region',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
-  `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
+  `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
 DROP TABLE IF EXISTS `usecase_to_adgroupTable`;
 CREATE TABLE `usecase_to_adgroupTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'id',
