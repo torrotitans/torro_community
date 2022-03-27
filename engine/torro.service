@@ -1,0 +1,16 @@
+[Unit]
+Description=Torro Engine Service
+After=mysqld.service
+StartLimitBurst=5
+StartLimitIntervalSec=10
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+User=root
+WorkingDirectory = /root/torro_community/engine
+ExecStart=/usr/local/bin/gunicorn -b 0.0.0.0:8080 main:app --workers 3 --timeout 6000
+
+[Install]
+WantedBy=multi-user.target

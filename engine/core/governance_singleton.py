@@ -21,9 +21,9 @@ class governanceSingleton():
 
         return governance_mgr.updateTask(user_key, account_id, input_form_id, workspace_id, tasks, return_msg_list)
 
-    def add_new_usecase(self, input_form_id, form_id, user_id, workspace_id):
+    # def add_new_usecase(self, input_form_id, form_id, user_id, workspace_id):
 
-        return governance_mgr.add_new_usecase_setting(input_form_id, form_id, user_id, workspace_id)
+    #     return governance_mgr.add_new_usecase_setting(input_form_id, form_id, user_id, workspace_id)
 
     def get_admin_user_info(self):
 

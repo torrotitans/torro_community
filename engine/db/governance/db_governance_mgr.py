@@ -695,39 +695,39 @@ class DbGovernanceMgr(DbBase):
         finally:
             conn.close()
 
-    def add_new_usecase_setting(self, input_form_id, form_id, user_id, workspace_id):
+    # def add_new_usecase_setting(self, input_form_id, form_id, user_id, workspace_id):
 
-        from db.usecase.db_usecase_mgr import usecase_mgr
-        from db.form.db_form_mgr import form_mgr
-        from db.input_form.db_input_form_mgr import input_form_mgr
-        try:
-            input_form_data = input_form_mgr.get_input_form_data(user_id, input_form_id)
-            if input_form_data['code'] != 200:
-                return response_code.GET_DATA_FAIL
-            # logger.debug("FN:add_new_usecase_setting input_form_data:{}".format(input_form_data))
+    #     from db.usecase.db_usecase_mgr import usecase_mgr
+    #     from db.form.db_form_mgr import form_mgr
+    #     from db.input_form.db_input_form_mgr import input_form_mgr
+    #     try:
+    #         input_form_data = input_form_mgr.get_input_form_data(user_id, input_form_id)
+    #         if input_form_data['code'] != 200:
+    #             return response_code.GET_DATA_FAIL
+    #         # logger.debug("FN:add_new_usecase_setting input_form_data:{}".format(input_form_data))
 
-            usecase = {'workspace_id': workspace_id}
-            form_field_values_dict = input_form_data['data'][0]['form_field_values_dict']
-            usecase_info = form_mgr.get_details_form_by_id(form_id)['data']
-            # logger.debug("FN:add_new_usecase_setting inputData:{}".format(inputData.keys()))
+    #         usecase = {'workspace_id': workspace_id}
+    #         form_field_values_dict = input_form_data['data'][0]['form_field_values_dict']
+    #         usecase_info = form_mgr.get_details_form_by_id(form_id)['data']
+    #         # logger.debug("FN:add_new_usecase_setting inputData:{}".format(inputData.keys()))
 
-            for index, field_item in enumerate(usecase_info['fieldList']):
-                field_key = field_item['label']
-                field_id = field_item['id']
-                # logger.debug("FN:add_new_usecase_setting field_key:{} field_id:{}".format(field_key, field_id))
-                usecase[field_key] = form_field_values_dict[field_id]
-            # form_field_values_dict = inputData['form_field_values_dict']
-            # # print("inputData:", inputData.keys())
-            # print('usecase:', usecase)
-            # logger.debug("FN:add_new_usecase_setting inputData:{} usecase:{}".format(inputData.keys(), usecase))
-            # exit(0)
-            data = usecase_mgr.add_new_usecase_setting(usecase)
-            return data
-        except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:add_new_usecase_setting error:" + e)
-            logger.error("FN:add_new_usecase_setting error:" + error)
-            return response_code.GET_DATA_FAIL
+    #         for index, field_item in enumerate(usecase_info['fieldList']):
+    #             field_key = field_item['label']
+    #             field_id = field_item['id']
+    #             # logger.debug("FN:add_new_usecase_setting field_key:{} field_id:{}".format(field_key, field_id))
+    #             usecase[field_key] = form_field_values_dict[field_id]
+    #         # form_field_values_dict = inputData['form_field_values_dict']
+    #         # # print("inputData:", inputData.keys())
+    #         # print('usecase:', usecase)
+    #         # logger.debug("FN:add_new_usecase_setting inputData:{} usecase:{}".format(inputData.keys(), usecase))
+    #         # exit(0)
+    #         data = usecase_mgr.add_new_usecase_setting(usecase)
+    #         return data
+    #     except Exception as e:
+    #         error = traceback.format_exc()
+    #         logger.error("FN:add_new_usecase_setting error:" + e)
+    #         logger.error("FN:add_new_usecase_setting error:" + error)
+    #         return response_code.GET_DATA_FAIL
 
     # def add_new_policy_tags(self,  input_form_id, form_id, user_id, workspace_id):
     #
