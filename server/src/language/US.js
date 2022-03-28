@@ -59,7 +59,7 @@ export default {
   formName: "Form",
   msg: "Message",
   readAll: "Read All",
-
+  done: "Done",
   country: "Country",
   region: "Region",
   countryList: "Country List",

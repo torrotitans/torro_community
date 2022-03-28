@@ -198,8 +198,8 @@ const ModuleSelection = ({
           {data.id.startsWith("u") && (
             <ModuleEdit
               systemCopy={
-                String(data?.u_id)?.startsWith("s") ||
-                String(data?.u_id)?.startsWith("d")
+                String(data?.point_id)?.startsWith("s") ||
+                String(data?.point_id)?.startsWith("d")
               }
               data={data}
               onChange={onChange}

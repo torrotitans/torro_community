@@ -165,12 +165,12 @@ const FormItem = ({
       data.required ||
       data.id.startsWith("s") ||
       data.id.startsWith("d") ||
-      String(data?.u_id)?.startsWith("s") ||
-      String(data?.u_id)?.startsWith("d") ||
+      String(data?.point_id)?.startsWith("s") ||
+      String(data?.point_id)?.startsWith("d") ||
       specialField?.includes(data.id)
     );
   }, [data, specialField]);
-  console.log(typeof data?.u_id);
+
   return (
     <div
       key={data.id}
@@ -193,8 +193,8 @@ const FormItem = ({
                 (<Intl id="system" />)
               </span>
             )}
-            {(String(data?.u_id)?.startsWith("s") ||
-              String(data?.u_id)?.startsWith("d")) && (
+            {(String(data?.point_id)?.startsWith("s") ||
+              String(data?.point_id)?.startsWith("d")) && (
               <span className={styles.systemTag}>
                 (<Intl id="copy" />)
               </span>
