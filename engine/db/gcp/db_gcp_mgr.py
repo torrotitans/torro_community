@@ -114,16 +114,22 @@ class DbGCPMgr(DbBase):
                 field['fields'][index] = self.policy_tags_loop(field['fields'][index], db_name, conn)
         return field
 
-    def column_tags_loop(self, field, parent_name):
+    def column_tags_loop(self, field, parent_name, column_tags):
         if parent_name:
             field['column_name'] = parent_name + '.' + field['name']
         else:
             field['column_name'] = field['name']
         if field['type'] != 'RECORD':
+            column_name = field['column_name']
+            if column_name in column_tags:
+                if 'tags' not in field:
+                    field['tags'] = []
+                field['tags'].append(column_tags[column_name])
+
             return field
         else:
             for index in range(len(field['fields'])):
-                field['fields'][index] = self.column_tags_loop(field['fields'][index], field['column_name'])
+                field['fields'][index] = self.column_tags_loop(field['fields'][index], field['column_name'], column_tags)
             return field
 
     def get_table_schema(self, request_data, user_key, workspace_id):
@@ -236,12 +242,12 @@ class DbGCPMgr(DbBase):
                 # fill column tags
                 # get record column name
                 table_schema['schema']['fields'][index] = self.column_tags_loop(table_schema['schema']['fields'][index],
-                                                                                '')
-                column_name = table_schema['schema']['fields'][index]['column_name']
-                if column_name in column_tags:
-                    if 'tags' not in table_schema['schema']['fields'][index]:
-                        table_schema['schema']['fields'][index]['tags'] = []
-                    table_schema['schema']['fields'][index]['tags'].append(column_tags[column_name])
+                                                                                '', column_tags)
+                # column_name = table_schema['schema']['fields'][index]['column_name']
+                # if column_name in column_tags:
+                #     if 'tags' not in table_schema['schema']['fields'][index]:
+                #         table_schema['schema']['fields'][index]['tags'] = []
+                #     table_schema['schema']['fields'][index]['tags'].append(column_tags[column_name])
 
                 # replace column policy tags
                 table_schema['schema']['fields'][index] = self.policy_tags_loop(table_schema['schema']['fields'][index],

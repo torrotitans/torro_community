@@ -32,6 +32,7 @@ class GrantRoleForPolicyTags(baseTask):
         "fields": {"type": list, "default": []},
     }
     role_list = ['roles/datacatalog.categoryFineGrainedReader', 'roles/iam.securityReviewer', 'roles/dlp.serviceAgent']
+    gcp_policy_tag_id_set = set()
 
     def __init__(self, stage_dict):
         super(GrantRoleForPolicyTags, self).__init__(stage_dict)
@@ -139,6 +140,24 @@ class GrantRoleForPolicyTags(baseTask):
         finally:
             conn.close()
 
+    def record_loop(self, field, db_name, conn):
+        if field['type'] != 'RECORD':
+
+            if 'policyTags' in field and 'names' in field['policyTags']:
+                field_policy_tags = field['policyTags']['names']
+                for policy_tag_id in field_policy_tags:
+                    condition = "id=%s" % policy_tag_id
+                    sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
+                    logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles policyTagsTable_sql:{}".format(sql))
+                    gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
+                    logger.debug(
+                        "FN:GrantRoleForPolicyTags__grand_access_roles gcp_policy_tag_id:{}".format(gcp_policy_tag_id))
+                    self.gcp_policy_tag_id_set.add(gcp_policy_tag_id+'||'+str(policy_tag_id))
+        else:
+            for index in range(len(field['fields'])):
+                field['fields'][index] = self.record_loop(field['fields'][index], db_name, conn)
+        return field
+
     def __get_adgroup_service_accout(self, workspace_id, usecase_name, db_name, conn):
 
         service_account = None
@@ -192,54 +211,62 @@ class GrantRoleForPolicyTags(baseTask):
             success_tag_policy_list = []
             failed_policy_tag_policy_list = []
             for field_info in fields:
-                if 'policyTags' not in field_info or 'names' not in field_info['policyTags']:
+                field_info = self.record_loop(field_info, db_name, conn)
+                # if 'policyTags' not in field_info or 'names' not in field_info['policyTags']:
+                #     continue
+                # field_policy_tags = field_info['policyTags']['names']
+                # for policy_tag_id in field_policy_tags:
+                #
+                #     condition = "id=%s" % policy_tag_id
+                #     sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
+                #     logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles policyTagsTable_sql:{}".format(sql))
+                #     gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
+                #     logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles gcp_policy_tag_id:{}".format(gcp_policy_tag_id))
+            for policy_tag_id_tuple_str in self.gcp_policy_tag_id_set:
+                try:
+                    gcp_policy_tag_id, policy_tag_id = policy_tag_id_tuple_str.split('||')
+                except:
                     continue
-                field_policy_tags = field_info['policyTags']['names']
-                for policy_tag_id in field_policy_tags:
+                try:
+                    logger.debug(
+                        "FN:GrantRoleForPolicyTags__grand_access_roles gcp_policy_tag_id:{} policy_tag_id:{}".format(
+                            gcp_policy_tag_id, policy_tag_id))
+                    policy_tag_policy = service.projects().locations().taxonomies().policyTags().getIamPolicy(
+                        resource=gcp_policy_tag_id
+                    ).execute()
+                    if 'etag' not in policy_tag_policy:
+                        return 'Get policy tags failed for: {}'.format(gcp_policy_tag_id)
 
-                    condition = "id=%s" % policy_tag_id
-                    sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
-                    logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles policyTagsTable_sql:{}".format(sql))
-                    gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
-                    logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles gcp_policy_tag_id:{}".format(gcp_policy_tag_id))
+                    if 'bindings' not in policy_tag_policy and 'etag' in policy_tag_policy:
+                        policy_tag_policy['bindings'] = []
 
-                    try:
-                        policy_tag_policy = service.projects().locations().taxonomies().policyTags().getIamPolicy(
-                            resource=gcp_policy_tag_id
-                        ).execute()
-                        if 'etag' not in policy_tag_policy:
-                            return 'Get policy tags failed for: {}'.format(gcp_policy_tag_id)
+                    category_fine_grained_reader_flag = 0
+                    for index, role_info in enumerate(policy_tag_policy['bindings']):
+                        role = role_info['role']
+                        if role == access_roles[0]:
+                            category_fine_grained_reader_flag = 1
+                            now_members = policy_tag_policy['bindings'][index]['members']
+                            logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles now_members:{} access_json_role:{}".format(now_members, access_json[role]))
+                            now_members.extend(access_json[role])
+                            policy_tag_policy['bindings'][index]['members'] = list(set(now_members))
 
-                        if 'bindings' not in policy_tag_policy and 'etag' in policy_tag_policy:
-                            policy_tag_policy['bindings'] = []
+                    if category_fine_grained_reader_flag == 0:
+                        role = access_roles[0]
+                        policy_tag_policy['bindings'].append({'role': role,
+                                                         'members': access_json[role]})
 
-                        category_fine_grained_reader_flag = 0
-                        for index, role_info in enumerate(policy_tag_policy['bindings']):
-                            role = role_info['role']
-                            if role == access_roles[0]:
-                                category_fine_grained_reader_flag = 1
-                                now_members = policy_tag_policy['bindings'][index]['members']
-                                logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles now_members:{} access_json_role:{}".format(now_members, access_json[role]))
-                                now_members.extend(access_json[role])
-                                policy_tag_policy['bindings'][index]['members'] = list(set(now_members))
+                    logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles policy_tag_policy:{}".format(policy_tag_policy))
+                    return_policy_tag_policy = service.projects().locations().taxonomies().policyTags().setIamPolicy(
+                        resource=gcp_policy_tag_id,
+                        body={'policy': policy_tag_policy}
+                    ).execute()
+                    logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles return_policy_tag_policy:{}".format(return_policy_tag_policy))
+                    success_tag_policy_list.append(str(policy_tag_id))
 
-                        if category_fine_grained_reader_flag == 0:
-                            role = access_roles[0]
-                            policy_tag_policy['bindings'].append({'role': role,
-                                                             'members': access_json[role]})
-
-                        logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles policy_tag_policy:{}".format(policy_tag_policy))
-                        return_policy_tag_policy = service.projects().locations().taxonomies().policyTags().setIamPolicy(
-                            resource=gcp_policy_tag_id,
-                            body={'policy': policy_tag_policy}
-                        ).execute()
-                        logger.debug("FN:GrantRoleForPolicyTags__grand_access_roles return_policy_tag_policy:{}".format(return_policy_tag_policy))
-                        success_tag_policy_list.append(str(policy_tag_id))
-
-                    except:
-                        logger.error("FN:GrantRoleForPolicyTags__grand_access_roles failed_policy_tag_policy_error:{}".format(policy_tag_id))
-                        logger.error("FN:GrantRoleForPolicyTags__grand_access_roles error:{}".format(traceback.format_exc()))
-                        failed_policy_tag_policy_list.append(str(policy_tag_id))
+                except:
+                    logger.error("FN:GrantRoleForPolicyTags__grand_access_roles failed_policy_tag_policy_error:{}".format(policy_tag_id))
+                    logger.error("FN:GrantRoleForPolicyTags__grand_access_roles error:{}".format(traceback.format_exc()))
+                    failed_policy_tag_policy_list.append(str(policy_tag_id))
 
             return success_tag_policy_list, failed_policy_tag_policy_list
 
