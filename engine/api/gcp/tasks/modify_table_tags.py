@@ -29,16 +29,24 @@ class ModifyTableTags(baseTask):
         self.full_resource_name = ''
         self.target_project = stage_dict['project_id']
 
-    def record_loop(self, field, parent_name):
+    def record_loop(self, field, parent_name, table_entry, datacatalog_client, db_name, conn):
         if parent_name:
             field['column_name'] = parent_name + '.' + field['name']
         else:
             field['column_name'] = field['name']
         if field['type'] != 'RECORD':
+            if 'tags' in field:
+                column_name = field['column_name']
+                for field_tag in field['tags']:
+                    tag_template_form_id = field_tag['tag_template_form_id']
+                    data = field_tag['data']
+                    column_tag = self.__get_tags(data, tag_template_form_id, db_name, conn, column=column_name)
+                    print('2222222222column_tag:', column_tag)
+                    _ = datacatalog_client.create_tag(parent=table_entry.name, tag=column_tag)
             return field
         else:
             for index in range(len(field['fields'])):
-                field['fields'][index] = self.record_loop(field['fields'][index], field['column_name'])
+                field['fields'][index] = self.record_loop(field['fields'][index], field['column_name'], table_entry, datacatalog_client, db_name, conn)
             return field
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
@@ -95,19 +103,20 @@ class ModifyTableTags(baseTask):
                     table_tag = self.__get_tags(data, tag_template_form_id, db_name, conn)
 
                     logger.debug("FN:ModifyTableTags_execute table_tag:{} table_entry:{}".format(table_tag,table_entry.name))
-                    table_tag = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
+                    _ = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
                     # logger.debug("FN:ModifyTableTags_execute table_tag_name:{}".format(table_tag.name))
                 # loop the record column name
                 for index in range(len(fields)):
-                    fields[index] = self.record_loop(fields[index], '')
-                for field in fields:
-                    if 'tags' in field:
-                        column_name = field['column_name']
-                        for field_tag in field['tags']:
-                            tag_template_form_id = field_tag['tag_template_form_id']
-                            data = field_tag['data']
-                            column_tag = self.__get_tags(data, tag_template_form_id, db_name, conn, column=column_name)
-                            _ = datacatalog_client.create_tag(parent=table_entry.name, tag=column_tag)
+                    fields[index] = self.record_loop(fields[index], '', table_entry, datacatalog_client, db_name, conn)
+                print('111111111111111111fields:', fields)
+                # for field in fields:
+                #     if 'tags' in field:
+                #         column_name = field['column_name']
+                #         for field_tag in field['tags']:
+                #             tag_template_form_id = field_tag['tag_template_form_id']
+                #             data = field_tag['data']
+                #             column_tag = self.__get_tags(data, tag_template_form_id, db_name, conn, column=column_name)
+                #             _ = datacatalog_client.create_tag(parent=table_entry.name, tag=column_tag)
 
                 condition = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (workspace_id, project_id, location, dataset_id, table_id)
                 sql = self.create_select_sql(db_name, 'dataOnboardTable', '*', condition=condition)
