@@ -138,7 +138,7 @@ class DbFormMgr(DbBase):
                         region_field_info['default'] = region_field_info['default_value']
                         del region_field_info['value_list'], region_field_info['default_value']
                         region_field_info['id'] = 's' + str(region_field_info['id'])
-                        continue
+                        # continue
                     else:
                         field_info['options'] = json.loads(field_info['value_list'])
                         field_info['default'] = field_info['default_value']
