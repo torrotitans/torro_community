@@ -35,8 +35,6 @@ class ModifyTableTags(baseTask):
         else:
             field['column_name'] = field['name']
         if field['type'] != 'RECORD':
-            return field
-        else:
             if 'tags' in field:
                 column_name = field['column_name']
                 for field_tag in field['tags']:
@@ -45,6 +43,8 @@ class ModifyTableTags(baseTask):
                     column_tag = self.__get_tags(data, tag_template_form_id, db_name, conn, column=column_name)
                     print('2222222222column_tag:', column_tag)
                     _ = datacatalog_client.create_tag(parent=table_entry.name, tag=column_tag)
+            return field
+        else:
             for index in range(len(field['fields'])):
                 field['fields'][index] = self.record_loop(field['fields'][index], field['column_name'], table_entry, datacatalog_client, db_name, conn)
             return field
