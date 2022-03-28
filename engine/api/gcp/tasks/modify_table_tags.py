@@ -103,7 +103,7 @@ class ModifyTableTags(baseTask):
                     table_tag = self.__get_tags(data, tag_template_form_id, db_name, conn)
 
                     logger.debug("FN:ModifyTableTags_execute table_tag:{} table_entry:{}".format(table_tag,table_entry.name))
-                    table_tag = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
+                    _ = datacatalog_client.create_tag(parent=table_entry.name, tag=table_tag)
                     # logger.debug("FN:ModifyTableTags_execute table_tag_name:{}".format(table_tag.name))
                 # loop the record column name
                 for index in range(len(fields)):
