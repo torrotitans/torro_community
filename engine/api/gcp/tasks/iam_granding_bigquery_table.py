@@ -191,7 +191,9 @@ class GrantRoleForBQTable(baseTask):
             ).execute()
 
             logger.debug('FN:GrantRoleForBQTable__grand_access_roles table_policy:{} '.format(table_policy))
-            if 'bindings' not in table_policy:
+            if 'bindings' not in table_policy and 'etag' in table_policy:
+                table_policy['bindings'] = []
+            elif 'bindings' not in table_policy:
                 return 'Get table policy failed for: {}'.format(
                     '.'.join([project_id, dataset_id, table_id]))
             # job_user_flag = 0
