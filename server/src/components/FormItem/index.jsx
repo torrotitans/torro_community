@@ -11,6 +11,7 @@ import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/Close";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 /* local components & methods */
 import Text from "@basics/Text";
@@ -29,6 +30,7 @@ const FormItem = ({
   index,
   onDelete,
   onEdit,
+  onCopy,
   onUp,
   onDown,
   control,
@@ -39,6 +41,7 @@ const FormItem = ({
   systemTag,
   fullWidth,
   changeCb,
+  specialField,
 }) => {
   const FormComponent = useMemo(() => {
     let type = Number(data.style);
@@ -157,6 +160,17 @@ const FormItem = ({
     };
   }, [data.maxLength]);
 
+  const dataRequired = useMemo(() => {
+    return (
+      data.required ||
+      data.id.startsWith("s") ||
+      data.id.startsWith("d") ||
+      String(data?.u_id)?.startsWith("s") ||
+      String(data?.u_id)?.startsWith("d") ||
+      specialField?.includes(data.id)
+    );
+  }, [data, specialField]);
+  console.log(typeof data?.u_id);
   return (
     <div
       key={data.id}
@@ -179,7 +193,13 @@ const FormItem = ({
                 (<Intl id="system" />)
               </span>
             )}
-            {data.required && <span className={styles.required}>*</span>}
+            {(String(data?.u_id)?.startsWith("s") ||
+              String(data?.u_id)?.startsWith("d")) && (
+              <span className={styles.systemTag}>
+                (<Intl id="copy" />)
+              </span>
+            )}
+            {dataRequired && <span className={styles.required}>*</span>}
           </Text>
         </FormLabel>
         <div className={styles.textInput}>
@@ -189,7 +209,7 @@ const FormItem = ({
             defaultValue={defaultValue}
             rules={{
               required: {
-                value: data.required,
+                value: dataRequired,
                 message: (
                   <>
                     <Intl id={preFix(data.style)} />
@@ -197,7 +217,7 @@ const FormItem = ({
                   </>
                 ),
               },
-              maxLength: maxLength,
+              maxLength: Number(data.style) === 3 ? maxLength : null,
               pattern: pattern,
             }}
             render={({
@@ -246,6 +266,9 @@ const FormItem = ({
               {onUp && <ArrowUpward className={styles.icon} onClick={onUp} />}
               {onDown && (
                 <ArrowDownward className={styles.icon} onClick={onDown} />
+              )}
+              {onCopy && (
+                <FileCopyIcon className={styles.icon} onClick={onCopy} />
               )}
             </>
           )}

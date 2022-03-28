@@ -1,0 +1,78 @@
+.filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: $rbwmspace40;
+  button {
+    margin-right: $rbwmspace20;
+  }
+}
+
+.selectAll {
+  svg {
+    color: $white;
+  }
+}
+
+.operation {
+  cursor: pointer;
+  margin-left: 1rem;
+  align-items: center;
+  svg {
+    color: $text-grey;
+    width: 1.5rem;
+    height: 1.5rem;
+    &:nth-child(1) {
+      margin-right: $rbwmspace8;
+    }
+    &:hover {
+      color: $main-purple;
+    }
+  }
+}
+
+.policyTag,
+.columnTag {
+  padding: $rbwmspace8;
+  background: gainsboro;
+  border-radius: 4px;
+  display: inline-block;
+  margin: $rbwmspace4;
+  min-width: $rbwmspace16;
+  min-height: $rbwmspace12;
+  position: relative;
+  border-radius: $rbwmspace8;
+
+  .delete {
+    position: absolute;
+    top: -$rbwmspace12;
+    right: -$rbwmspace12;
+    cursor: pointer;
+    display: none;
+    svg {
+      width: $rbwmspace20;
+      height: $rbwmspace20;
+    }
+  }
+
+  &:hover {
+    .delete {
+      display: block;
+    }
+  }
+}
+.columnTag {
+  cursor: pointer;
+}
+
+.policyName {
+  display: inline-block;
+  font-weight: $bold-font-weight;
+  color: black;
+  margin-right: $rbwmspace8;
+}
+
+.policytagname {
+  font-weight: $bold-font-weight;
+  color: grey;
+}

@@ -1,7 +1,7 @@
 [
   {
     "formId": null,
-    "label": "Use case",
+    "label": "Use Case",
     "comp": "UseCase",
     "showValue": true
   },
@@ -43,7 +43,7 @@
   },
   {
     "formId": 3,
-    "label": "policy_data_structure",
+    "label": "Policy Tags",
     "comp": "PolicyTree",
     "showValue": ""
   },

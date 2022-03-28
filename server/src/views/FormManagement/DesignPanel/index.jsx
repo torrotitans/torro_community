@@ -18,6 +18,7 @@ const DesignPanel = ({
   addForm,
   deleteForm,
   tagTemplate,
+  existIdList,
 }) => {
   const [template, setTemplate] = useState([]);
 
@@ -129,6 +130,7 @@ const DesignPanel = ({
             data={currentModule}
             onChange={onChange}
             tagTemplate={tagTemplate}
+            existIdList={existIdList}
           />
         </Scrollbar>
       )}

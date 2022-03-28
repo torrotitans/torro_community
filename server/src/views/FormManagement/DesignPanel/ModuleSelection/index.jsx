@@ -22,9 +22,25 @@ import UploadDesign from "../ModuleDesign/UploadDesign";
 import SwitchDesign from "../ModuleDesign/SwitchDesign";
 import DatePickerDesign from "../ModuleDesign/DatePickerDesign";
 
-const ModuleTemplate = ({ templateData, setTemplate }) => {
+const ModuleTemplate = ({ templateData, setTemplate, existIdList }) => {
   let systemList = templateData.systemList;
   let dynamicList = templateData.dynamicList;
+
+  const remainSystemList = useMemo(() => {
+    if (!systemList || systemList.length < 1) {
+      return [];
+    }
+
+    return systemList.filter((item) => !existIdList.includes(item.id));
+  }, [systemList, existIdList]);
+
+  const remainDynamicList = useMemo(() => {
+    if (!dynamicList || dynamicList.length < 1) {
+      return [];
+    }
+
+    return dynamicList.filter((item) => !existIdList.includes(item.id));
+  }, [dynamicList, existIdList]);
 
   return (
     <>
@@ -39,9 +55,9 @@ const ModuleTemplate = ({ templateData, setTemplate }) => {
         </Text>
       </div>
 
-      {systemList && systemList.length > 0 && (
+      {remainSystemList.length > 0 && (
         <Collapse title={<Intl id="sysField" />}>
-          {systemList.map((item, index) => {
+          {remainSystemList.map((item, index) => {
             return (
               <div
                 key={index}
@@ -56,9 +72,9 @@ const ModuleTemplate = ({ templateData, setTemplate }) => {
           })}
         </Collapse>
       )}
-      {dynamicList && dynamicList.length > 0 && (
+      {remainDynamicList.length > 0 && (
         <Collapse title={<Intl id="dynamicApproval" />}>
-          {dynamicList.map((item, index) => {
+          {remainDynamicList.map((item, index) => {
             return (
               <div
                 key={index}
@@ -77,7 +93,13 @@ const ModuleTemplate = ({ templateData, setTemplate }) => {
   );
 };
 
-const ModuleSelection = ({ data, template, onChange, tagTemplate }) => {
+const ModuleSelection = ({
+  data,
+  template,
+  onChange,
+  tagTemplate,
+  existIdList,
+}) => {
   const curModuleStyle = useMemo(() => {
     return data.style;
   }, [data]);
@@ -168,15 +190,21 @@ const ModuleSelection = ({ data, template, onChange, tagTemplate }) => {
             <ModuleTemplate
               templateData={currentTemplate}
               setTemplate={(data) => {
-                onChange(data, true);
+                onChange(data);
               }}
+              existIdList={existIdList}
             />
           </div>
-          <ModuleEdit
-            onlyLabel={data.edit !== 1}
-            data={data}
-            onChange={onChange}
-          />
+          {data.id.startsWith("u") && (
+            <ModuleEdit
+              systemCopy={
+                String(data?.u_id)?.startsWith("s") ||
+                String(data?.u_id)?.startsWith("d")
+              }
+              data={data}
+              onChange={onChange}
+            />
+          )}
         </div>
       )}
     </>

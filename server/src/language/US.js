@@ -69,6 +69,7 @@ export default {
   group: "Group",
   wsAdgroup: "Workspace AD Group",
   workflowV: "Workflow Value",
+  copy: "Copy",
 
   // role
   it: "IT Admin",

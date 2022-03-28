@@ -10,7 +10,7 @@ import Input from "@material-ui/core/Input";
 import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
-const SwitchDesign = ({ data, onChange, onlyLabel }) => {
+const SwitchDesign = ({ data, onChange, systemCopy }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,7 +37,7 @@ const SwitchDesign = ({ data, onChange, onlyLabel }) => {
           }}
         />
       </div>
-      {!onlyLabel && (
+      {!systemCopy && (
         <>
           <div className={styles.editItem}>
             <div className={styles.label}>

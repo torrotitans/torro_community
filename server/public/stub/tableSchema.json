@@ -1,0 +1,122 @@
+{
+  "code": 200,
+  "msg": "request success!",
+  "data": {
+    "kind": "bigquery#table",
+    "etag": "jVBNHeGk8R4pFDiBRZ3B4w==",
+    "id": "golden-joy-339514:cbs.customers_view",
+    "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/golden-joy-339514/datasets/cbs/tables/customers_view",
+    "tableReference": {
+      "projectId": "golden-joy-339514",
+      "datasetId": "cbs",
+      "tableId": "customers_view"
+    },
+    "schema": {
+      "fields": [
+        {
+          "name": "workclass",
+          "type": "STRING"
+        },
+        {
+          "name": "fnlwgt",
+          "type": "INTEGER"
+        },
+        {
+          "name": "education",
+          "type": "STRING"
+        },
+        {
+          "name": "education_num",
+          "type": "INTEGER"
+        },
+        {
+          "name": "marital_status",
+          "type": "STRING"
+        },
+        {
+          "name": "occupation",
+          "type": "STRING"
+        },
+        {
+          "name": "relationship",
+          "type": "STRING"
+        },
+        {
+          "name": "capital_gain",
+          "type": "INTEGER"
+        },
+        {
+          "name": "capital_loss",
+          "type": "INTEGER"
+        },
+        {
+          "name": "hours_per_week",
+          "type": "INTEGER"
+        },
+        {
+          "name": "native_country",
+          "type": "STRING"
+        },
+        {
+          "name": "income",
+          "type": "STRING"
+        },
+        {
+          "name": "demo",
+          "type": "RECORD",
+          "fields": [
+            {
+              "name": "age",
+              "type": "INTEGER"
+            },
+            {
+              "name": "race",
+              "type": "STRING"
+            },
+            {
+              "name": "sex",
+              "type": "STRING"
+            },
+            {
+              "name": "demo2",
+              "type": "RECORD",
+              "fields": [
+                {
+                  "name": "age",
+                  "type": "INTEGER"
+                },
+                {
+                  "name": "race",
+                  "type": "STRING"
+                },
+                {
+                  "name": "sex",
+                  "type": "STRING"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "numBytes": "0",
+    "numLongTermBytes": "0",
+    "numRows": "0",
+    "creationTime": "1646832341018",
+    "lastModifiedTime": "1646832341018",
+    "type": "VIEW",
+    "view": {
+      "query": "SELECT\r\n  * EXCEPT (age,\r\n    race,\r\n    sex),\r\n  STRUCT(age,\r\n    race,\r\n    sex) AS demo\r\nFROM\r\n  `golden-joy-339514.cbs.customers`",
+      "useLegacySql": false
+    },
+    "location": "asia-east2",
+    "tags": [
+      {
+        "tag_template_form_id": 419,
+        "data": {
+          "u1": "ws_wsb_cbs@torro.ai"
+        }
+      }
+    ]
+  }
+}

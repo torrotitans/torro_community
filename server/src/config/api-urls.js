@@ -197,8 +197,9 @@ const config = {
   },
 
   tableSchemaGet: {
-    url: `${BASE_API_URL}/api/tableSchema`,
-    method: POST,
+    // url: `${BASE_API_URL}/api/tableSchema`,
+    url: `/stub/tableSchema.json`,
+    method: GET,
   },
 
   policyTagGet: {

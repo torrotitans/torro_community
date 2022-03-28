@@ -10,7 +10,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 
-const DatePickerDesign = ({ data, onChange, onlyLabel }) => {
+const DatePickerDesign = ({ data, onChange, systemCopy }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,7 +37,7 @@ const DatePickerDesign = ({ data, onChange, onlyLabel }) => {
           }}
         />
       </div>
-      {!onlyLabel && (
+      {!systemCopy && (
         <>
           <div className={styles.editItem}>
             <div className={styles.label}>

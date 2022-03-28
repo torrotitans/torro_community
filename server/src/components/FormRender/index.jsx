@@ -23,6 +23,7 @@ import { SUCCESS } from "src/lib/data/callStatus";
 import { useMemo } from "react";
 
 const UC_FORM_ID = "2";
+const specialForm = [{ id: 2, torroDefField: ["s1", "u2", "u3", "u8", "u11"] }];
 const UC_PROP_MAP = {
   u2: "owner_group",
   u3: "team_group",
@@ -48,6 +49,18 @@ const FormRender = ({ formId, onBack, defaultData }) => {
   const ucForm = useMemo(() => {
     return formId === UC_FORM_ID;
   }, [formId]);
+
+  const specialField = useMemo(() => {
+    if (!formData) {
+      return [];
+    }
+    let tmp = [];
+    specialForm.forEach((item) => {
+      if (item.id === formData.id) tmp = item.torroDefField || [];
+    });
+
+    return tmp;
+  }, [formData]);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall = defaultData ? updateFormRequest : raiseFormRequest;
@@ -137,11 +150,12 @@ const FormRender = ({ formId, onBack, defaultData }) => {
                 });
               }
             }}
+            specialField={specialField}
           />
         );
       });
     },
-    [control, register, setValue, ucForm]
+    [control, register, setValue, ucForm, specialField]
   );
 
   const initUcDef = useCallback((tempFieldList, formData) => {
