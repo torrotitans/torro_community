@@ -83,7 +83,7 @@ class GrantRoleForPolicyTags(baseTask):
                 table_info = self.execute_fetch_one(conn, sql)
                 if not table_info:
                     return 'Table is not onboard: {}'.format(
-                        '.'.join([str(workspace_id), project_id, dataset_id, table_id]))
+                        '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
                 data_input_form_id = table_info['input_form_id']
                 # check if usecase exist
                 condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
