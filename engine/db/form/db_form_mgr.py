@@ -142,8 +142,8 @@ class DbFormMgr(DbBase):
                     else:
                         field_info['options'] = json.loads(field_info['value_list'])
                         field_info['default'] = field_info['default_value']
-                    del field_info['value_list'], field_info['default_value']
-                    field_info['id'] = 's' + str(field_info['id'])
+                        del field_info['value_list'], field_info['default_value']
+                        field_info['id'] = 's' + str(field_info['id'])
                     # # print(field_info)
                     form_info['fieldList'][index] = field_info
                 if 'd' in field_item['id']:
