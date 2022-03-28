@@ -43,7 +43,7 @@
   },
   {
     "formId": 3,
-    "label": "policy_data_structure",
+    "label": "Policy Tags",
     "comp": "PolicyTree",
     "showValue": ""
   },
