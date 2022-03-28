@@ -15,19 +15,23 @@
       "fields": [
         {
           "name": "workclass",
-          "type": "STRING"
+          "type": "STRING",
+          "policyTags": { "names": [14] }
         },
         {
           "name": "fnlwgt",
-          "type": "INTEGER"
+          "type": "INTEGER",
+          "policyTags": { "names": [14] }
         },
         {
           "name": "education",
-          "type": "STRING"
+          "type": "STRING",
+          "policyTags": { "names": [15] }
         },
         {
           "name": "education_num",
-          "type": "INTEGER"
+          "type": "INTEGER",
+          "policyTags": { "names": [15] }
         },
         {
           "name": "marital_status",
@@ -67,7 +71,8 @@
           "fields": [
             {
               "name": "age",
-              "type": "INTEGER"
+              "type": "INTEGER",
+              "policyTags": { "names": [14] }
             },
             {
               "name": "race",
@@ -83,15 +88,19 @@
               "fields": [
                 {
                   "name": "age",
-                  "type": "INTEGER"
+                  "type": "INTEGER",
+                  "policyTags": { "names": [14] }
                 },
+
                 {
                   "name": "race",
-                  "type": "STRING"
+                  "type": "STRING",
+                  "policyTags": { "names": [14] }
                 },
                 {
                   "name": "sex",
-                  "type": "STRING"
+                  "type": "STRING",
+                  "policyTags": { "names": [14] }
                 }
               ]
             }
@@ -104,7 +113,7 @@
     "numRows": "0",
     "creationTime": "1646832341018",
     "lastModifiedTime": "1646832341018",
-    "type": "VIEW",
+    "type": "TABLE",
     "view": {
       "query": "SELECT\r\n  * EXCEPT (age,\r\n    race,\r\n    sex),\r\n  STRUCT(age,\r\n    race,\r\n    sex) AS demo\r\nFROM\r\n  `golden-joy-339514.cbs.customers`",
       "useLegacySql": false
