@@ -154,6 +154,12 @@ nohup gunicorn -b 0.0.0.0:8080 main:app --workers 3 --timeout 6000 &
 # If the system approval failed and timeout exceed worker timeout, 
 # then it will cause the server to crash and restart
 ```
+or via systemd
+```bash
+cp torro.service /etc/systemd/system/
+systemctl start torro.service
+systemctl enable torro.service
+```
 
 Go to your website and then use default account 
 Acc: TorroAdmin

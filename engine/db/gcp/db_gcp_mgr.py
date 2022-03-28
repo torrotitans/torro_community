@@ -94,6 +94,38 @@ class DbGCPMgr(DbBase):
         finally:
             conn.close()
 
+    def policy_tags_loop(self, field, db_name, conn):
+        if field['type'] != 'RECORD':
+            if 'policyTags' in field:
+                policy_tags = field['policyTags']['names']
+                local_policy_tag_id = []
+                for gcp_policy_tag_id in policy_tags:
+                    cond = "gcp_policy_tag_id='%s'" % gcp_policy_tag_id
+                    sql = self.create_select_sql(db_name, 'policyTagsTable', 'id,ad_group', cond)
+                    logger.debug("FN:DbGCPMgr_get_table_schema policyTagsTable_sql:{}".format(sql))
+                    policy_tag_info = self.execute_fetch_one(conn, sql)
+                    if policy_tag_info:
+                        local_policy_tag_id.append(policy_tag_info['id'])
+                    else:
+                        local_policy_tag_id = [None]
+                field['policyTags']['names'] = local_policy_tag_id
+        else:
+            for index in range(len(field['fields'])):
+                field['fields'][index] = self.policy_tags_loop(field['fields'][index], db_name, conn)
+        return field
+
+    def column_tags_loop(self, field, parent_name):
+        if parent_name:
+            field['column_name'] = parent_name + '.' + field['name']
+        else:
+            field['column_name'] = field['name']
+        if field['type'] != 'RECORD':
+            return field
+        else:
+            for index in range(len(field['fields'])):
+                field['fields'][index] = self.column_tags_loop(field['fields'][index], field['column_name'])
+            return field
+
     def get_table_schema(self, request_data, user_key, workspace_id):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
@@ -102,7 +134,7 @@ class DbGCPMgr(DbBase):
 
             # 1. check if the table is onboarded
 
-            # 2.
+            # 2. get columm tags
             project_id = request_data['projectId']
             dataset_id = request_data['datasetName']
             table_id = request_data['tableName']
@@ -202,25 +234,31 @@ class DbGCPMgr(DbBase):
                 table_schema['tags'] = table_tags
             for index in range(len(table_schema['schema']['fields'])):
                 # fill column tags
-                column_name = table_schema['schema']['fields'][index]['name']
+                # get record column name
+                table_schema['schema']['fields'][index] = self.column_tags_loop(table_schema['schema']['fields'][index],
+                                                                                '')
+                column_name = table_schema['schema']['fields'][index]['column_name']
                 if column_name in column_tags:
                     if 'tags' not in table_schema['schema']['fields'][index]:
                         table_schema['schema']['fields'][index]['tags'] = []
                     table_schema['schema']['fields'][index]['tags'].append(column_tags[column_name])
+
                 # replace column policy tags
-                if 'policyTags' in table_schema['schema']['fields'][index]:
-                    policy_tags = table_schema['schema']['fields'][index]['policyTags']['names']
-                    local_policy_tag_id = []
-                    for gcp_policy_tag_id in policy_tags:
-                        cond = "gcp_policy_tag_id='%s'" % gcp_policy_tag_id
-                        sql = self.create_select_sql(db_name, 'policyTagsTable', 'id,ad_group', cond)
-                        logger.debug("FN:DbGCPMgr_get_table_schema policyTagsTable_sql:{}".format(sql))
-                        policy_tag_info = self.execute_fetch_one(conn, sql)
-                        if policy_tag_info:
-                            local_policy_tag_id.append(policy_tag_info['id'])
-                        else:
-                            local_policy_tag_id = [None]
-                    table_schema['schema']['fields'][index]['policyTags']['names'] = local_policy_tag_id
+                table_schema['schema']['fields'][index] = self.policy_tags_loop(table_schema['schema']['fields'][index],
+                                                                                db_name, conn)
+                # if 'policyTags' in table_schema['schema']['fields'][index]:
+                #     policy_tags = table_schema['schema']['fields'][index]['policyTags']['names']
+                #     local_policy_tag_id = []
+                #     for gcp_policy_tag_id in policy_tags:
+                #         cond = "gcp_policy_tag_id='%s'" % gcp_policy_tag_id
+                #         sql = self.create_select_sql(db_name, 'policyTagsTable', 'id,ad_group', cond)
+                #         logger.debug("FN:DbGCPMgr_get_table_schema policyTagsTable_sql:{}".format(sql))
+                #         policy_tag_info = self.execute_fetch_one(conn, sql)
+                #         if policy_tag_info:
+                #             local_policy_tag_id.append(policy_tag_info['id'])
+                #         else:
+                #             local_policy_tag_id = [None]
+                #     table_schema['schema']['fields'][index]['policyTags']['names'] = local_policy_tag_id
             data = response_code.SUCCESS
             data['data'] = table_schema
 

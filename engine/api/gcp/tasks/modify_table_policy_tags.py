@@ -27,6 +27,27 @@ class ModifyTablePolicyTags(baseTask):
         self.full_resource_name = ''
         self.target_project = stage_dict['project_id']
 
+    def record_loop(self, field, db_name, conn):
+        if field['type'] != 'RECORD':
+            if 'tags' in field:
+                del field['tags']
+            if 'policyTags' in field and 'names' in field['policyTags']:
+                policy_tags_length = len(field['policyTags']['names'])
+                for pt_index in range(policy_tags_length):
+                    # for now, every column can just have one policy tags
+                    if pt_index != 0:
+                        break
+                    policy_tag_id = field['policyTags']['names'][pt_index]
+                    condition = "id=%s" % policy_tag_id
+                    sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
+                    logger.debug("FN:ModifyTablePolicyTags_execute policyTagsTable_sql:{}".format(sql))
+                    gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
+                    field['policyTags']['names'][pt_index] = gcp_policy_tag_id
+        else:
+            for index in range(len(field['fields'])):
+                field['fields'][index] = self.record_loop(field['fields'][index], db_name, conn)
+        return field
+
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         conn = MysqlConn()
@@ -59,23 +80,25 @@ class ModifyTablePolicyTags(baseTask):
                 new_schema = []
                 fields = self.stage_dict['fields']
                 for index in range(len(fields)):
-                    if 'tags' in fields[index]:
-                        del fields[index]['tags']
-                    if 'policyTags' in fields[index] and 'names' in fields[index]['policyTags']:
-                        policy_tags_length = len(fields[index]['policyTags']['names'])
-                        for pt_index in range(policy_tags_length):
-                            # for now, every column can just have one policy tags
-                            if pt_index != 0:
-                                break
-                            policy_tag_id = fields[index]['policyTags']['names'][pt_index]
-                            condition = "id=%s" % policy_tag_id
-                            sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
-                            logger.debug("FN:ModifyTablePolicyTags_execute policyTagsTable_sql:{}".format(sql))
-                            gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
-                            fields[index]['policyTags']['names'][pt_index] = gcp_policy_tag_id
-                            # if 'policyTags' not in fields[index]['policyTags']['names'][pt_index]:
-                            #     fields[index]['policyTags']['names'][
-                            #         pt_index] = "projects/geometric-ocean-333410/locations/asia-east2/taxonomies/1346075789958397800/policyTags/8605754121758499097"
+
+                    fields[index] = self.record_loop(fields[index], db_name, conn)
+                    # if 'tags' in fields[index]:
+                    #     del fields[index]['tags']
+                    # if 'policyTags' in fields[index] and 'names' in fields[index]['policyTags']:
+                    #     policy_tags_length = len(fields[index]['policyTags']['names'])
+                    #     for pt_index in range(policy_tags_length):
+                    #         # for now, every column can just have one policy tags
+                    #         if pt_index != 0:
+                    #             break
+                    #         policy_tag_id = fields[index]['policyTags']['names'][pt_index]
+                    #         condition = "id=%s" % policy_tag_id
+                    #         sql = self.create_select_sql(db_name, 'policyTagsTable', 'gcp_policy_tag_id', condition=condition)
+                    #         logger.debug("FN:ModifyTablePolicyTags_execute policyTagsTable_sql:{}".format(sql))
+                    #         gcp_policy_tag_id = self.execute_fetch_one(conn, sql)['gcp_policy_tag_id']
+                    #         fields[index]['policyTags']['names'][pt_index] = gcp_policy_tag_id
+                    #         # if 'policyTags' not in fields[index]['policyTags']['names'][pt_index]:
+                    #         #     fields[index]['policyTags']['names'][
+                    #         #         pt_index] = "projects/geometric-ocean-333410/locations/asia-east2/taxonomies/1346075789958397800/policyTags/8605754121758499097"
 
                     new_field = SchemaField.from_api_repr(fields[index])
                     new_schema.append(new_field)

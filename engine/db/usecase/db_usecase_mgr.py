@@ -21,7 +21,7 @@ class DbUseCaseMgr(DbBase):
     """
     Use case related DB Operation
     """
-    resource_list = ['jupyter', 'datastudio']
+    # resource_list = ['jupyter', 'datastudio']
 
     def __set_usecase(self, usecase_info, usecase_id=None):
 
@@ -39,25 +39,29 @@ class DbUseCaseMgr(DbBase):
             allow_cross_region = bool(usecase_info['allow_cross_region'])
             usecase_name = usecase_info['usecase_name']
             create_time = usecase_info['create_time']
+            creator_id = usecase_info['user_id']
             input_form = usecase_info.get('uc_input_form', -1)
-            jupyter_access, studio_access = usecase_info['resources_access'].split(',')
-            resources_access = {'jupyter': jupyter_access, 'datastudio': studio_access}
+
+            resources_access = usecase_info['resources_access'].split(',')
+            # Break the resources_access individually
+            resources = {}
+            for r in resources_access:
+                resources[r.lower()] = r
 
             db_name = configuration.get_database_name()
 
             # insert workspace
-            if usecase_id is not None:
-                fields = ('ID', 'WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
+            fields = ('ID', 'WORKSPACE_ID', 'CREATOR_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (usecase_id, workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
-            else:
-                fields = ('WORKSPACE_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
-                          'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
-                          'CROSS_REGION', 'CREATE_TIME', 'DES')
-                values = (workspace_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources_access), admin_sa, uc_label, allow_cross_region, create_time, des)
+            values = (usecase_id, workspace_id, creator_id, usecase_name, validity_date, budget, input_form, region_country,
+                          json.dumps(resources), admin_sa, uc_label, allow_cross_region, create_time, des)
+            
+            if usecase_id is None:
+                fields = fields[1:]
+                values = values[1:]
+
+            # Insert use case into usecasetable
             sql = self.create_insert_sql(db_name, 'usecaseTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecaseTable_sql:{}".format(sql))
             usecase_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -68,8 +72,8 @@ class DbUseCaseMgr(DbBase):
                 role_list = group_dict[ad_group_name]
                 label_list = group_label[ad_group_name]
                 select_condition = "GROUP_MAIL='%s' " % ad_group_name
-                select_table_sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
-                ad_group_info = self.execute_fetch_one(conn, select_table_sql)
+                sql = self.create_select_sql(db_name, "adgroupTable", "*", select_condition)
+                ad_group_info = self.execute_fetch_one(conn, sql)
                 if ad_group_info:
                     group_id = ad_group_info['ID']
                 else:
@@ -145,21 +149,19 @@ class DbUseCaseMgr(DbBase):
                 return data
 
             db_name = configuration.get_database_name()
-            usecase_info = {}
-            usecase_name = usecase['usecase_name']
-            usecase_info['workspace_id'] = usecase['workspace_id']
-            usecase_info['region_country'] = usecase['region_country']
-            usecase_info['validity_date'] = usecase['validity_date']
-            usecase_info['uc_des'] = usecase['uc_des']
-            usecase_info['admin_sa'] = usecase['admin_sa']
-            usecase_info['budget'] = usecase['budget']
-            usecase_info['allow_cross_region'] = usecase['allow_cross_region']
-            usecase_info['usecase_name'] = usecase_name
-            usecase_info['resources_access'] = usecase['resources_access']
-            create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            usecase_info['create_time'] = create_time
-            usecase_info['uc_input_form'] = usecase['uc_input_form']
-            usecase_info['uc_label'] = usecase['uc_label']
+            usecase_info = usecase
+            # usecase_info['usecase_name'] = usecase['usecase_name']
+            # usecase_info['workspace_id'] = usecase['workspace_id']
+            # usecase_info['region_country'] = usecase['region_country']
+            # usecase_info['validity_date'] = usecase['validity_date']
+            # usecase_info['uc_des'] = usecase['uc_des']
+            # usecase_info['admin_sa'] = usecase['admin_sa']
+            # usecase_info['budget'] = usecase['budget']
+            # usecase_info['allow_cross_region'] = usecase['allow_cross_region']
+            # usecase_info['resources_access'] = usecase['resources_access']
+            # usecase_info['uc_input_form'] = usecase['uc_input_form']
+            # usecase_info['uc_label'] = usecase['uc_label']
+            usecase_info['create_time'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             usecase_info['group_dict'] = {}
             usecase_info['group_label'] = {}
             group_mapping = [
@@ -179,7 +181,8 @@ class DbUseCaseMgr(DbBase):
                 else:
                     usecase_info['group_label'][ad_group].append(label)
 
-            condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
+            # Check if use case name exist
+            condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_info['usecase_name'], workspace_id)
             sql = self.create_select_sql(db_name, 'usecaseTable', '*', condition)
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecaseTable_sql:{}".format(sql))
             usecase_infos = self.execute_fetch_all(conn, sql)
@@ -187,8 +190,11 @@ class DbUseCaseMgr(DbBase):
                 data = response_code.ADD_DATA_FAIL
                 data['msg'] = 'UseCase already existed'
                 return data
+
+            # Continue if this use case name is not in use
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_info))
             usecase_insert = self.__set_usecase(usecase_info)
+            logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_insert))
             data = response_code.SUCCESS
             usecase['usecase_id'] = usecase_insert['data']['usecase_id']
             data['data'] = usecase
@@ -245,9 +251,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                for item in self.resource_list:
-                    if item in resource_access_items:
-                        one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                # for item in self.resource_list:
+                #     if item in resource_access_items:
+                #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                for item in resource_access_items:
+                    one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
                 logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_ad_group one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
@@ -294,9 +302,11 @@ class DbUseCaseMgr(DbBase):
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
                 resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-                for item in self.resource_list:
-                    if item in resource_access_items:
-                        one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                # for item in self.resource_list:
+                #     if item in resource_access_items:
+                #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
+                for item in resource_access_items:
+                    one_usecase['resources_access_list'].append(resource_access_items[item].strip())
                 one_usecase['resources_access_list'] = ','.join(one_usecase['resources_access_list'])
                 logger.debug("FN:DbUseCaseMgr_get_usecase_info_by_workspace one_usecase:{}".format(one_usecase))
                 # db_name = configuration.get_database_name()
@@ -504,8 +514,12 @@ class DbUseCaseMgr(DbBase):
             return_info['create_time'] = usecase_info['CREATE_TIME']
             return_info['resources_access_list'] = []
             resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
-            for item in self.resource_list:
+            # for item in self.resource_list:
+            #     return_info['resources_access_list'].append(resource_access_items[item].strip())
+            
+            for item in resource_access_items:
                 return_info['resources_access_list'].append(resource_access_items[item].strip())
+
             return_info['resources_access_list'] = ','.join(return_info['resources_access_list'])
             # db_name = configuration.get_database_name()
             logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id return_info:{}".format(return_info))
