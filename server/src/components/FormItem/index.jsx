@@ -11,6 +11,7 @@ import Edit from "@material-ui/icons/Edit";
 import Delete from "@material-ui/icons/Close";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 /* local components & methods */
 import Text from "@basics/Text";
@@ -29,6 +30,7 @@ const FormItem = ({
   index,
   onDelete,
   onEdit,
+  onCopy,
   onUp,
   onDown,
   control,
@@ -163,12 +165,12 @@ const FormItem = ({
       data.required ||
       data.id.startsWith("s") ||
       data.id.startsWith("d") ||
-      data?.u_id?.startsWith("s") ||
-      data?.u_id?.startsWith("d") ||
+      String(data?.u_id)?.startsWith("s") ||
+      String(data?.u_id)?.startsWith("d") ||
       specialField?.includes(data.id)
     );
   }, [data, specialField]);
-
+  console.log(typeof data?.u_id);
   return (
     <div
       key={data.id}
@@ -189,6 +191,12 @@ const FormItem = ({
             {systemTag && (
               <span className={styles.systemTag}>
                 (<Intl id="system" />)
+              </span>
+            )}
+            {(String(data?.u_id)?.startsWith("s") ||
+              String(data?.u_id)?.startsWith("d")) && (
+              <span className={styles.systemTag}>
+                (<Intl id="copy" />)
               </span>
             )}
             {dataRequired && <span className={styles.required}>*</span>}
@@ -258,6 +266,9 @@ const FormItem = ({
               {onUp && <ArrowUpward className={styles.icon} onClick={onUp} />}
               {onDown && (
                 <ArrowDownward className={styles.icon} onClick={onDown} />
+              )}
+              {onCopy && (
+                <FileCopyIcon className={styles.icon} onClick={onCopy} />
               )}
             </>
           )}

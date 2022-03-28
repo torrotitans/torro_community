@@ -12,7 +12,7 @@ import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 import KeyPairGroup from "@basics/KeyPairGroup";
 
-const DropdownDesign = ({ data, onChange, onlyLabel }) => {
+const DropdownDesign = ({ data, onChange, systemCopy }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -39,7 +39,7 @@ const DropdownDesign = ({ data, onChange, onlyLabel }) => {
           }}
         />
       </div>
-      {!onlyLabel && (
+      {!systemCopy && (
         <>
           <div className={styles.editItem}>
             <div className={styles.label}>
