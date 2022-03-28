@@ -138,11 +138,12 @@ class DbFormMgr(DbBase):
                         region_field_info['default'] = region_field_info['default_value']
                         del region_field_info['value_list'], region_field_info['default_value']
                         region_field_info['id'] = 's' + str(region_field_info['id'])
-                        continue
-                    field_info['options'] = json.loads(field_info['value_list'])
-                    field_info['default'] = field_info['default_value']
-                    del field_info['value_list'], field_info['default_value']
-                    field_info['id'] = 's' + str(field_info['id'])
+                        # continue
+                    else:
+                        field_info['options'] = json.loads(field_info['value_list'])
+                        field_info['default'] = field_info['default_value']
+                        del field_info['value_list'], field_info['default_value']
+                        field_info['id'] = 's' + str(field_info['id'])
                     # # print(field_info)
                     form_info['fieldList'][index] = field_info
                 if 'd' in field_item['id']:
@@ -267,7 +268,7 @@ class DbFormMgr(DbBase):
                 del new_field_info['value_list'], new_field_info['default_value']
                 # # print(new_field_info)
                 new_field_info['id'] = 's' + str(new_field_info['id'])
-                new_field_info['u_id'] = 'u' + str(new_field_info['u_id'])
+                # new_field_info['u_id'] = 'u' + str(new_field_info['u_id'])
                 fields_info[index] = new_field_info
 
             if wp_id != 0:

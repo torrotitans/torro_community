@@ -228,6 +228,9 @@ class GrantRoleForPolicyTags(baseTask):
                 except:
                     continue
                 try:
+                    logger.debug(
+                        "FN:GrantRoleForPolicyTags__grand_access_roles gcp_policy_tag_id:{} policy_tag_id:{}".format(
+                            gcp_policy_tag_id, policy_tag_id))
                     policy_tag_policy = service.projects().locations().taxonomies().policyTags().getIamPolicy(
                         resource=gcp_policy_tag_id
                     ).execute()
