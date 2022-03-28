@@ -100,6 +100,7 @@ class ModifyTableTags(baseTask):
                 # loop the record column name
                 for index in range(len(fields)):
                     fields[index] = self.record_loop(fields[index], '')
+                print('fields:', fields)
                 for field in fields:
                     if 'tags' in field:
                         column_name = field['column_name']
