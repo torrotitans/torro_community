@@ -197,9 +197,9 @@ class DbFormMgr(DbBase):
 
             if wp_id != 0:
                 condition = "ID=%s " % (wp_id)
-                sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
+                sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
                 options = []
-                regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
                 # print('region_field_info:', region_field_info)
                 # print('regions:', regions)
 
@@ -312,10 +312,10 @@ class DbFormMgr(DbBase):
 
             if wp_id != 0:
                 condition = "ID='%s' " % (wp_id)
-                sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
+                sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
                 logger.debug("FN:DbFormMgr_get_field_template workspaceTable_sql:{}".format(sql))
                 options = []
-                regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
                 # print('region_field_info:', region_field_info)
                 # print('regions:', regions)
 
@@ -755,10 +755,10 @@ class DbFormMgr(DbBase):
         #
         #         if wp_id != 0 and int(system_field_id) == 1:
         #             condition = "ID='%s' " % (wp_id)
-        #             sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
-        #             logger.debug("FN:__get_dynamic_field_values workspaceTable REGOINS sql:{}".format(sql))
+        #             sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
+        #             logger.debug("FN:__get_dynamic_field_values workspaceTable REGIONS sql:{}".format(sql))
         #             options = []
-        #             regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+        #             regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
         #             # print('region_field_info:', region_field_info)
         #             # print('regions:', regions)
         #
@@ -826,10 +826,10 @@ class DbFormMgr(DbBase):
 
                     if wp_id != 0 and int(system_field_id) == 1:
                         condition = "ID='%s' " % (wp_id)
-                        sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
-                        logger.debug("FN:__get_dynamic_field_values workspaceTable REGOINS sql:{}".format(sql))
+                        sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
+                        logger.debug("FN:__get_dynamic_field_values workspaceTable REGIONS sql:{}".format(sql))
                         options = []
-                        regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+                        regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
                         # print('region_field_info:', region_field_info)
                         # print('regions:', regions)
 
@@ -904,10 +904,10 @@ class DbFormMgr(DbBase):
         #
         #         if wp_id != 0 and int(system_field_id) == 1:
         #             condition = "ID='%s' " % (wp_id)
-        #             sql = self.create_select_sql(db_name, 'workspaceTable', 'REGOINS', condition)
-        #             logger.debug("FN:__get_dynamic_field_values workspaceTable REGOINS sql:{}".format(sql))
+        #             sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
+        #             logger.debug("FN:__get_dynamic_field_values workspaceTable REGIONS sql:{}".format(sql))
         #             options = []
-        #             regions = json.loads(self.execute_fetch_one(conn, sql)['REGOINS'])
+        #             regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
         #             # print('region_field_info:', region_field_info)
         #             # print('regions:', regions)
         #

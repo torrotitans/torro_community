@@ -25,7 +25,7 @@ CREATE TABLE `workspaceTable` (
   `RECERTIFICATION_CYCLE` varchar(128) DEFAULT NULL COMMENT 'recertification cycle',
   `IT_APPROVAL` tinyint(1) DEFAULT '1' COMMENT 'Need workspace IT approval',
   `HEAD_APPROVAL` tinyint(1) DEFAULT '1' COMMENT 'Need workspace Head approval',
-  `REGOINS` text COMMENT 'Need workspace Head approval',
+  `REGIONS` text COMMENT 'Need workspace Head approval',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `DES` text DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE

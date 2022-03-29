@@ -75,7 +75,7 @@ class DbInputFormMgr(DbBase):
             workspace_info = self.execute_fetch_one(conn, sql)
             logger.debug("FN:DbInputFormMgr__get_workspace_region_group workspace_info:{}".format(workspace_info))
             if workspace_info:
-                regions = json.loads(workspace_info['REGOINS'])
+                regions = json.loads(workspace_info['REGIONS'])
                 # # print(regions)
                 for region_info in regions:
                     if adgroup is not None:
