@@ -419,9 +419,7 @@ class DbGovernanceMgr(DbBase):
             return data
 
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:change_status error:" + e)
-            logger.error("FN:change_status error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -440,9 +438,7 @@ class DbGovernanceMgr(DbBase):
             admin_info = self.execute_fetch_one(conn, sql)
             return admin_info
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:get_admin_user_info error:" + e)
-            logger.error("FN:get_admin_user_info error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return {}
         finally:
             conn.close()
@@ -622,9 +618,7 @@ class DbGovernanceMgr(DbBase):
             return data
 
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:system_approval_trigger error:" + e)
-            logger.error("FN:system_approval_trigger error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -688,9 +682,7 @@ class DbGovernanceMgr(DbBase):
             # data['data'] = {'history_id': history_id}
             return data
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:updateTask error:{}".format(e))
-            logger.error("FN:updateTask error:{}".format(error))
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
