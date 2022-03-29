@@ -135,7 +135,7 @@ class DbGovernanceMgr(DbBase):
                     data = response_code.UPDATE_DATA_FAIL
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
-                    data['msg'] = 'you do not in the approval ad group.'
+                    data['msg'] = 'You are not in the approval ad group.'
                     data['data']['history_id'] = history_id
                     return data
                 now_approval_num = int(approval_infos[0]['approval_num'])
@@ -689,8 +689,8 @@ class DbGovernanceMgr(DbBase):
             return data
         except Exception as e:
             error = traceback.format_exc()
-            logger.error("FN:updateTask error:" + e)
-            logger.error("FN:updateTask error:" + error)
+            logger.error("FN:updateTask error:{}".format(e))
+            logger.error("FN:updateTask error:{}".format(error))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
