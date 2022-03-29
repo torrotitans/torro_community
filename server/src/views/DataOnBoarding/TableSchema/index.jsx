@@ -406,8 +406,6 @@ const TableSchema = ({
     setAddState(false);
   };
 
-  console.log(tableData);
-
   const handleApply = useCallback(
     (data, type) => {
       if (type === "POLICY") {

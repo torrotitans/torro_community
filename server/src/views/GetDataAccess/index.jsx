@@ -54,6 +54,7 @@ const GetDataAccess = () => {
   const [onBoardDataForm, setOnBoardDataForm] = useState(null);
   const [useCaseList, setUseCaseList] = useState([]);
   const [selectedUc, setSelectedUc] = useState("");
+  const [selectedList, setSelectedList] = useState([]);
 
   const tableForm = useMemo(() => {
     if (!onBoardDataForm) {
@@ -130,6 +131,43 @@ const GetDataAccess = () => {
       });
 
       let requestList = cartList.map((item) => {
+        let selectedList = item.selectedList;
+        let tmp = [...item.schema.fields];
+        let list = [];
+        const removeNotSelected = (data, parentIndex) => {
+          for (let i = data.length - 1; i >= 0; i--) {
+            let item = data[i];
+            let index = i;
+            let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
+            if (item.type === "RECORD") {
+              removeNotSelected(item.fields, currIndex);
+            } else {
+              let policTagId = item?.policyTags?.names[0] || "";
+              if (policTagId && !selectedList.includes(policTagId)) {
+                let indexArr =
+                  typeof currIndex === "string"
+                    ? currIndex.split(".")
+                    : [currIndex];
+                let objPointer = null;
+                list.push(currIndex);
+
+                indexArr.forEach((tmpIndex, arrIndex) => {
+                  if (!objPointer) {
+                    objPointer = tmp[tmpIndex];
+                    if (arrIndex === indexArr.length - 1) {
+                      tmp.splice(index, 1);
+                    }
+                  } else if (arrIndex === indexArr.length - 1) {
+                    objPointer.fields.splice(tmpIndex, 1);
+                  } else {
+                    objPointer = objPointer.fields[tmpIndex];
+                  }
+                });
+              }
+            }
+          }
+        };
+        removeNotSelected(item.schema.fields);
         return {
           form_id: GET_ACCESS_FORM_ID,
           form_field_values_dict: {
@@ -138,7 +176,7 @@ const GetDataAccess = () => {
             u3: item?.location,
             u4: item?.tableReference.datasetId,
             u5: item?.tableReference.tableId,
-            u6: item?.selectedColumns,
+            u6: tmp,
           },
         };
       });
@@ -185,17 +223,11 @@ const GetDataAccess = () => {
 
   const addCartHandle = useCallback(
     (selectedList) => {
-      if (selectedList.length < 1) {
-        return;
-      }
-      let columns = tableData.schema.fields.filter((item, index) => {
-        return selectedList.includes(index);
-      });
       if (tableData.seq != null) {
         let tmp = [...cartList];
         tmp.splice(tableData.seq, 1, {
           ...tableData,
-          selectedColumns: columns,
+          selectedList: selectedList,
         });
         setCartList(tmp);
       } else {
@@ -223,13 +255,14 @@ const GetDataAccess = () => {
           ...cartList,
           {
             ...tableData,
-            selectedColumns: columns,
             seq: cartList.length,
+            selectedList: selectedList,
           },
         ]);
       }
 
       setTableData(null);
+      setSelectedList([]);
     },
     [tableData, cartList]
   );
@@ -245,14 +278,7 @@ const GetDataAccess = () => {
 
   const showBackItem = useCallback((item) => {
     setTableData(item);
-    let selectedField = item.selectedColumns.map((item) => item.name);
-    let selectedIndex = [];
-    item.schema.fields.forEach((item, index) => {
-      if (selectedField.includes(item.name)) {
-        selectedIndex.push(index);
-      }
-    });
-    // setSelectedList(selectedIndex);
+    setSelectedList(item.selectedList);
   }, []);
 
   useEffect(() => {
@@ -263,6 +289,7 @@ const GetDataAccess = () => {
         .then((res) => {
           setTableData(res.data);
           setFormLoading(false);
+          setSelectedList([]);
         })
         .catch((e) => {
           sendNotify({ msg: e.message, status: 3, show: true });
@@ -381,6 +408,7 @@ const GetDataAccess = () => {
                     tagTemplateList={tagTemplateList}
                     policyMap={policyMap}
                     addCartHandle={addCartHandle}
+                    alreadySelected={selectedList}
                   />
                 </>
               )}
@@ -414,7 +442,7 @@ const GetDataAccess = () => {
                                 </ListItemText>
                                 <ListItemText
                                   className={styles.columnLengh}
-                                >{`${row.selectedColumns.length} columns`}</ListItemText>
+                                >{`${row.schema.fields.length} columns`}</ListItemText>
                               </div>
                               <Delete
                                 onClick={() => {

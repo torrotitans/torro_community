@@ -31,6 +31,7 @@ const NestedRowList = ({
   onSelect,
   tagTemplateMap,
   policyMap,
+  selectedList,
 }) => {
   return (
     <>
@@ -44,6 +45,7 @@ const NestedRowList = ({
             onSelect={onSelect}
             tagTemplateMap={tagTemplateMap}
             policyMap={policyMap}
+            selectedList={selectedList}
           />
         );
       })}
@@ -55,9 +57,9 @@ const SchemaRow = ({
   row,
   rowIndex,
   onSelect,
-  checked,
   tagTemplateMap,
   policyMap,
+  selectedList,
 }) => {
   const [open, setOpen] = useState(false);
   const schemaRowIndex = rowIndex;
@@ -69,6 +71,7 @@ const SchemaRow = ({
 
   const sepPadding = 2;
   const isRecord = row.type === "RECORD";
+  const mustCheck = !row.policyTags || row.policyTags.names.length < 1;
 
   return (
     <>
@@ -76,10 +79,14 @@ const SchemaRow = ({
         <TableCell align="center">
           <Checkbox
             color="primary"
-            checked={checked}
+            checked={
+              mustCheck ||
+              (!mustCheck && selectedList.includes(row.policyTags.names[0]))
+            }
             onChange={() => {
-              onSelect(schemaRowIndex);
+              onSelect(row.policyTags.names[0]);
             }}
+            disabled={mustCheck}
           />
         </TableCell>
         <TableCell
@@ -152,6 +159,7 @@ const SchemaRow = ({
           onSelect={onSelect}
           tagTemplateMap={tagTemplateMap}
           policyMap={policyMap}
+          selectedList={selectedList}
         />
       )}
     </>
@@ -163,16 +171,15 @@ const TableSchema = ({
   policyMap,
   tagTemplateList,
   addCartHandle,
+  alreadySelected,
 }) => {
   const [page, setPage] = useState(0);
-  const [selectedList, setSelectedList] = useState([]);
+  const [selectedList, setSelectedList] = useState(alreadySelected || []);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
   }, [tableData]);
-
-  console.log(selectedList);
 
   const tagTemplateMap = useMemo(() => {
     let map = {};
@@ -190,16 +197,44 @@ const TableSchema = ({
     return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   }, [tableList, page, rowsPerPage]);
 
-  const enableAddTagBtn = useMemo(() => {
-    return selectedList.length > 0;
-  }, [selectedList]);
+  const existPolicyTag = useMemo(() => {
+    if (!tableData) {
+      return;
+    }
+    let list = [];
+
+    const extraPolicyTag = (data, parentIndex) => {
+      data.fields.forEach((item, index) => {
+        let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
+        if (item.type === "RECORD") {
+          extraPolicyTag(item, currIndex);
+        } else {
+          if (item?.policyTags?.names.length > 0) {
+            if (!list.includes(item?.policyTags?.names[0])) {
+              list.push(item?.policyTags?.names[0]);
+            }
+          }
+        }
+      });
+    };
+    extraPolicyTag(tableData.schema);
+    return list;
+  }, [tableData]);
+
+  console.log(existPolicyTag);
 
   const isSelectedAll = useMemo(() => {
-    if (!selectedList || !tableList) {
+    if (!selectedList.length || !tableList) {
       return false;
     }
-    return selectedList.length === tableList.length;
-  }, [selectedList, tableList]);
+    let seletAll = existPolicyTag;
+    existPolicyTag.forEach((index) => {
+      if (!selectedList.includes(index)) {
+        seletAll = false;
+      }
+    });
+    return seletAll;
+  }, [tableList, selectedList, existPolicyTag]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -214,12 +249,9 @@ const TableSchema = ({
     if (isSelectedAll) {
       setSelectedList([]);
     } else {
-      let tmp = tableList.map((item, index) => {
-        return index;
-      });
-      setSelectedList(tmp);
+      setSelectedList(JSON.parse(JSON.stringify(existPolicyTag)));
     }
-  }, [tableList, isSelectedAll, setSelectedList]);
+  }, [isSelectedAll, setSelectedList, existPolicyTag]);
 
   const onSelect = (currIndex) => {
     if (!selectedList.includes(currIndex)) {
@@ -242,7 +274,6 @@ const TableSchema = ({
             addCartHandle(selectedList);
             setSelectedList([]);
           }}
-          disabled={!enableAddTagBtn}
         >
           <Intl id="addToCart" />
         </Button>
@@ -303,6 +334,7 @@ const TableSchema = ({
                   tagTemplateMap={tagTemplateMap}
                   policyMap={policyMap}
                   checked={selectedList.includes(currentIndex)}
+                  selectedList={selectedList}
                   onSelect={onSelect}
                 />
               );

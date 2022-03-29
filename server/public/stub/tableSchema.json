@@ -105,6 +105,16 @@
               ]
             }
           ]
+        },
+        {
+          "name": "fnlwgt2",
+          "type": "INTEGER",
+          "policyTags": { "names": [14] }
+        },
+        {
+          "name": "education2",
+          "type": "STRING",
+          "policyTags": { "names": [15] }
         }
       ]
     },
