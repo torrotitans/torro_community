@@ -204,7 +204,7 @@ class DbFormMgr(DbBase):
                 # print('regions:', regions)
 
                 for region in regions:
-                    options.append({'label': region['region'], 'value': region['region']})
+                    options.append({'label': region['region'], 'value': region['workflow']})
                     for sub_region in region['countryList']:
                         options.append({'label': sub_region['country'], 'value': sub_region['workflow']})
                 region_field_info['options'] = options
