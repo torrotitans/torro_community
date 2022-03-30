@@ -47,7 +47,7 @@ export default {
   confirmSetup: "Do you confirm the torro setting?",
   confirmOnboard: "Do you confirm to onBoard this Project?",
   newRequestSubmit: "New request has been submitted!",
-  selectedUc: "Please select a use case",
+  selectedUc: "Assign to use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
   confirmLogout: "Are you sure to exit the Torro?",
   gotNewRequest: "You got a new message!",

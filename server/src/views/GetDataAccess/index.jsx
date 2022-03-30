@@ -123,7 +123,7 @@ const GetDataAccess = () => {
   }, [modalData, submitData, navigate]);
 
   const orderHandle = useCallback(() => {
-    if (cartList.length > 0) {
+    if (cartList.length > 0 && selectedUc) {
       setModalData({
         open: true,
         status: 1,
@@ -474,7 +474,7 @@ const GetDataAccess = () => {
               <Button
                 filled
                 onClick={orderHandle}
-                disabled={cartList.length < 1}
+                disabled={!selectedUc || cartList.length < 1}
                 size="small"
               >
                 <Intl id="submit" />
