@@ -205,16 +205,17 @@ class DbInputFormMgr(DbBase):
                 else:
                     member_list = []
                 logger.debug("FN:DbInputFormMgr_get_input_form_data now_approval_flag:{} account_id:{} member_list:{} approver_group:{}".format(now_approval_flag, account_id, member_list, approver_group))
+                if int(now_approval_flag) == 1 and account_id in member_list:
+                    approval_flag = True
                 # if approver_view is true, need to check if the users are the approvers
-                if approver_view:
-                    if int(now_approval_flag) == 1 and account_id in member_list:
-                        approval_flag = True
-                    # else:
-                    #     data = response_code.GET_DATA_FAIL
-                    #     data['msg'] = 'Permission denied.'
-                    #     return data
-                else:
-                    pass
+                # if approver_view:
+                #
+                #     # else:
+                #     #     data = response_code.GET_DATA_FAIL
+                #     #     data['msg'] = 'Permission denied.'
+                #     #     return data
+                # else:
+                #     pass
                 if approver_comment is None:
                     approver_comment = ''
 
@@ -287,16 +288,16 @@ class DbInputFormMgr(DbBase):
                 status_history_list.append(status_history)
                 old_status_history_list.append({'label': status_label, 'operator': '', 'comment': '', 'time': None})
 
-            # if it is an approval page, user need to in the approval group
-            if approver_view and approval_flag:
-                pass
-            # if it is not an approval page, everyone can read it
-            elif not approver_view:
-                pass
-            else:
-                data = response_code.GET_DATA_FAIL
-                data['msg'] = 'you do not have access to view this page.'
-                return data
+            # # if it is an approval page, user need to belong to the approval group
+            # if approver_view and approval_flag:
+            #     pass
+            # # if it is not an approval page, everyone can read it
+            # elif not approver_view:
+            #     pass
+            # else:
+            #     data = response_code.GET_DATA_FAIL
+            #     data['msg'] = 'you do not have access to view this page.'
+            #     return data
 
             for input_form_info in input_form_infos:
                 history_id = int(input_form_info['history_id'])
