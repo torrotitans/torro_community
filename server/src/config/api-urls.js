@@ -198,6 +198,7 @@ const config = {
 
   tableSchemaGet: {
     url: `${BASE_API_URL}/api/tableSchema`,
+    // url: `/stub/tableSchema.json`,
     method: POST,
   },
 

@@ -18,7 +18,7 @@ const ruleOptions = [
   { label: "Phone", value: 3 },
 ];
 
-const TextDesign = ({ data, onChange, onlyLabel }) => {
+const TextDesign = ({ data, onChange, systemCopy }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -45,7 +45,7 @@ const TextDesign = ({ data, onChange, onlyLabel }) => {
           }}
         />
       </div>
-      {!onlyLabel && (
+      {!systemCopy && (
         <>
           <div className={styles.editItem}>
             <div className={styles.label}>

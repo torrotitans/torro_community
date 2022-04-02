@@ -10,7 +10,7 @@ import Text from "@basics/Text";
 import styles from "../styles.module.scss";
 import Input from "@material-ui/core/Input";
 
-const UploadDesign = ({ data, onChange, onlyLabel }) => {
+const UploadDesign = ({ data, onChange, systemCopy }) => {
   return (
     <div className={styles.ModuleEdit}>
       <div className={styles.title}>
@@ -37,7 +37,7 @@ const UploadDesign = ({ data, onChange, onlyLabel }) => {
           }}
         />
       </div>
-      {!onlyLabel && (
+      {!systemCopy && (
         <>
           <div className={styles.editItem}>
             <div className={styles.label}>

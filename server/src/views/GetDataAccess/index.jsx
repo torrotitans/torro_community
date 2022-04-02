@@ -6,9 +6,6 @@ import ScrollBar from "react-perfect-scrollbar";
 import { useNavigate } from "react-router-dom";
 
 /* material-ui */
-import Paper from "@material-ui/core/Paper";
-import TablePagination from "@material-ui/core/TablePagination";
-import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -32,17 +29,9 @@ import {
   raiseFormRequestList,
 } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
-import { openTips } from "src/utils/systemTips";
-import {
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@basics/Table";
 import TableTagDisplay from "@comp/TableTag";
 import Select from "@basics/Select";
+import TableSchema from "./TableSchema";
 
 const GET_ACCESS_FORM_ID = 108;
 
@@ -58,16 +47,14 @@ const GetDataAccess = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [tableData, setTableData] = useState(null);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [policys, setPolicys] = useState([]);
-  const [selectedList, setSelectedList] = useState([]);
   const [cartList, setCartList] = useState([]);
   const [tagTemplateList, setTagTempalteList] = useState([]);
   const [submitData, setSubmitData] = useState(null);
   const [onBoardDataForm, setOnBoardDataForm] = useState(null);
   const [useCaseList, setUseCaseList] = useState([]);
   const [selectedUc, setSelectedUc] = useState("");
+  const [selectedList, setSelectedList] = useState([]);
 
   const tableForm = useMemo(() => {
     if (!onBoardDataForm) {
@@ -85,23 +72,6 @@ const GetDataAccess = () => {
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
   }, [tableData]);
-
-  const filterTableList = useMemo(() => {
-    if (!tableList) {
-      return [];
-    }
-    let tmpList = tableList;
-    return tmpList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [tableList, page, rowsPerPage]);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const submitHandle = (data) => {
     setSearchQuery(data);
@@ -153,7 +123,7 @@ const GetDataAccess = () => {
   }, [modalData, submitData, navigate]);
 
   const orderHandle = useCallback(() => {
-    if (cartList.length > 0) {
+    if (cartList.length > 0 && selectedUc) {
       setModalData({
         open: true,
         status: 1,
@@ -161,6 +131,43 @@ const GetDataAccess = () => {
       });
 
       let requestList = cartList.map((item) => {
+        let selectedList = item.selectedList;
+        let tmp = [...item.schema.fields];
+        let list = [];
+        const removeNotSelected = (data, parentIndex) => {
+          for (let i = data.length - 1; i >= 0; i--) {
+            let item = data[i];
+            let index = i;
+            let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
+            if (item.type === "RECORD") {
+              removeNotSelected(item.fields, currIndex);
+            } else {
+              let policTagId = item?.policyTags?.names[0] || "";
+              if (policTagId && !selectedList.includes(policTagId)) {
+                let indexArr =
+                  typeof currIndex === "string"
+                    ? currIndex.split(".")
+                    : [currIndex];
+                let objPointer = null;
+                list.push(currIndex);
+
+                indexArr.forEach((tmpIndex, arrIndex) => {
+                  if (!objPointer) {
+                    objPointer = tmp[tmpIndex];
+                    if (arrIndex === indexArr.length - 1) {
+                      tmp.splice(index, 1);
+                    }
+                  } else if (arrIndex === indexArr.length - 1) {
+                    objPointer.fields.splice(tmpIndex, 1);
+                  } else {
+                    objPointer = objPointer.fields[tmpIndex];
+                  }
+                });
+              }
+            }
+          }
+        };
+        removeNotSelected(item.schema.fields);
         return {
           form_id: GET_ACCESS_FORM_ID,
           form_field_values_dict: {
@@ -169,7 +176,7 @@ const GetDataAccess = () => {
             u3: item?.location,
             u4: item?.tableReference.datasetId,
             u5: item?.tableReference.tableId,
-            u6: item?.selectedColumns,
+            u6: tmp,
           },
         };
       });
@@ -184,7 +191,7 @@ const GetDataAccess = () => {
     setModalData({ ...modalData, open: false, cb: null });
   };
 
-  const policMap = useMemo(() => {
+  const policyMap = useMemo(() => {
     let map = {};
     if (policys.length > 0) {
       policys.forEach((item) => {
@@ -198,14 +205,6 @@ const GetDataAccess = () => {
     }
     return map;
   }, [policys]);
-
-  const tagTemplateMap = useMemo(() => {
-    let map = {};
-    tagTemplateList.forEach((item) => {
-      map[item.tag_template_form_id] = item.display_name;
-    });
-    return map;
-  }, [tagTemplateList]);
 
   const renderFormItem = (items, disabled) => {
     return items.map((item, index) => {
@@ -222,100 +221,51 @@ const GetDataAccess = () => {
     });
   };
 
-  const isSelectedAll = useMemo(() => {
-    if (!selectedList || !tableList) {
-      return false;
-    }
-    return selectedList.length === tableList.length;
-  }, [selectedList, tableList]);
-
-  const onSelectAllClick = useCallback(() => {
-    if (isSelectedAll) {
-      setSelectedList([]);
-    } else {
-      let tmp = tableList.map((item, index) => {
-        return index;
-      });
-      setSelectedList(tmp);
-    }
-  }, [tableList, isSelectedAll]);
-
-  const isSelected = useCallback(
-    (index) => {
-      let calcIndex = page * rowsPerPage + index;
-      return selectedList.includes(calcIndex);
-    },
-    [selectedList, page, rowsPerPage]
-  );
-
-  const onSelect = useCallback(
-    (index) => {
-      let calcIndex = page * rowsPerPage + index;
-      if (!selectedList.includes(calcIndex)) {
-        let tmp = [...selectedList, calcIndex];
-        setSelectedList(tmp);
-      } else {
-        let currentIndex = selectedList.indexOf(calcIndex);
-        let tmp = [...selectedList];
-        tmp.splice(currentIndex, 1);
-        setSelectedList(tmp);
-      }
-    },
-    [selectedList, page, rowsPerPage]
-  );
-
-  const enableAddTagBtn = useMemo(() => {
-    return selectedList.length > 0;
-  }, [selectedList]);
-
-  const addCartHandle = useCallback(() => {
-    if (!enableAddTagBtn) {
-      return;
-    }
-    let columns = tableData.schema.fields.filter((item, index) => {
-      return selectedList.includes(index);
-    });
-    if (tableData.seq != null) {
-      let tmp = [...cartList];
-      tmp.splice(tableData.seq, 1, {
-        ...tableData,
-        selectedColumns: columns,
-      });
-      setCartList(tmp);
-    } else {
-      let exist;
-      cartList.forEach((item) => {
-        if (
-          item?.tableReference.projectId ===
-            tableData?.tableReference.projectId &&
-          item?.tableReference.datasetId ===
-            tableData?.tableReference.datasetId &&
-          item?.tableReference.tableId === tableData?.tableReference.tableId
-        ) {
-          exist = true;
-        }
-      });
-      if (exist) {
-        sendNotify({
-          msg: "Have exist data resouce in cart list",
-          status: 3,
-          show: true,
-        });
-        return;
-      }
-      setCartList([
-        ...cartList,
-        {
+  const addCartHandle = useCallback(
+    (selectedList) => {
+      if (tableData.seq != null) {
+        let tmp = [...cartList];
+        tmp.splice(tableData.seq, 1, {
           ...tableData,
-          selectedColumns: columns,
-          seq: cartList.length,
-        },
-      ]);
-    }
+          selectedList: selectedList,
+        });
+        setCartList(tmp);
+      } else {
+        let exist;
+        cartList.forEach((item) => {
+          if (
+            item?.tableReference.projectId ===
+              tableData?.tableReference.projectId &&
+            item?.tableReference.datasetId ===
+              tableData?.tableReference.datasetId &&
+            item?.tableReference.tableId === tableData?.tableReference.tableId
+          ) {
+            exist = true;
+          }
+        });
+        if (exist) {
+          sendNotify({
+            msg: "Have exist data resouce in cart list",
+            status: 3,
+            show: true,
+          });
+          return;
+        }
+        setCartList([
+          ...cartList,
+          {
+            ...tableData,
+            seq: cartList.length,
+            selectedList: selectedList,
+          },
+        ]);
+      }
 
-    setTableData(null);
-    setSelectedList([]);
-  }, [selectedList, enableAddTagBtn, tableData, cartList]);
+      setTableData(null);
+      setSelectedList([]);
+    },
+    [tableData, cartList]
+  );
 
   const removeCartItem = useCallback(
     (seq) => {
@@ -328,14 +278,7 @@ const GetDataAccess = () => {
 
   const showBackItem = useCallback((item) => {
     setTableData(item);
-    let selectedField = item.selectedColumns.map((item) => item.name);
-    let selectedIndex = [];
-    item.schema.fields.forEach((item, index) => {
-      if (selectedField.includes(item.name)) {
-        selectedIndex.push(index);
-      }
-    });
-    setSelectedList(selectedIndex);
+    setSelectedList(item.selectedList);
   }, []);
 
   useEffect(() => {
@@ -346,6 +289,7 @@ const GetDataAccess = () => {
         .then((res) => {
           setTableData(res.data);
           setFormLoading(false);
+          setSelectedList([]);
         })
         .catch((e) => {
           sendNotify({ msg: e.message, status: 3, show: true });
@@ -459,150 +403,12 @@ const GetDataAccess = () => {
                       </div>
                     </div>
                   )}
-                  <div className={styles.filter}>
-                    <Button
-                      filled
-                      onClick={addCartHandle}
-                      disabled={!enableAddTagBtn}
-                    >
-                      <Intl id="addToCart" />
-                    </Button>
-                  </div>
-                  <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell align="center">
-                            <div className={styles.selectAll}>
-                              <Checkbox
-                                color="primary"
-                                checked={isSelectedAll}
-                                onChange={onSelectAllClick}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Text type="subTitle">
-                              <Intl id="fieldName" />
-                            </Text>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Text type="subTitle">
-                              <Intl id="type" />
-                            </Text>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Text type="subTitle">
-                              <Intl id="mode" />
-                            </Text>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Text type="subTitle">
-                              <Intl id="ColumnTags" />
-                            </Text>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Text type="subTitle">
-                              <Intl id="policyTagOr" />
-                            </Text>
-                          </TableCell>
-                          <TableCell align="center" width="25%">
-                            <Text type="subTitle">
-                              <Intl id="description" />
-                            </Text>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filterTableList.map((row, rowIndex) => (
-                          <TableRow key={rowIndex}>
-                            <TableCell align="center">
-                              <Checkbox
-                                color="primary"
-                                checked={isSelected(rowIndex)}
-                                onChange={() => {
-                                  onSelect(rowIndex);
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell align="center">{row.name}</TableCell>
-                            <TableCell align="center">{row.type}</TableCell>
-                            <TableCell align="center">{row.mode}</TableCell>
-                            <TableCell align="center">
-                              {row.tags &&
-                                row.tags.map((item, index) => {
-                                  return (
-                                    <div key={index}>
-                                      {tagTemplateMap[
-                                        item.tag_template_form_id
-                                      ] && (
-                                        <div
-                                          className={styles.policyTag}
-                                          key={index}
-                                          onClick={() => {
-                                            openTips({
-                                              style: 1,
-                                              tagData: item,
-                                            });
-                                          }}
-                                        >
-                                          <span className={styles.policyName}>
-                                            {
-                                              tagTemplateMap[
-                                                item.tag_template_form_id
-                                              ]
-                                            }
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.policyTags &&
-                                row.policyTags.names.map((item, index) => {
-                                  return (
-                                    <div key={index}>
-                                      {policMap[item] && (
-                                        <div
-                                          className={styles.policyTag}
-                                          key={index}
-                                        >
-                                          <span className={styles.policyName}>
-                                            {
-                                              policMap[item]
-                                                .taxonomy_display_name
-                                            }{" "}
-                                            :
-                                          </span>
-                                          <span
-                                            className={styles.policytagname}
-                                          >
-                                            {policMap[item].display_name}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.description}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={tableList.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                  <TableSchema
+                    tableData={tableData}
+                    tagTemplateList={tagTemplateList}
+                    policyMap={policyMap}
+                    addCartHandle={addCartHandle}
+                    alreadySelected={selectedList}
                   />
                 </>
               )}
@@ -636,7 +442,7 @@ const GetDataAccess = () => {
                                 </ListItemText>
                                 <ListItemText
                                   className={styles.columnLengh}
-                                >{`${row.selectedColumns.length} columns`}</ListItemText>
+                                >{`${row.schema.fields.length} columns`}</ListItemText>
                               </div>
                               <Delete
                                 onClick={() => {
@@ -668,7 +474,7 @@ const GetDataAccess = () => {
               <Button
                 filled
                 onClick={orderHandle}
-                disabled={cartList.length < 1}
+                disabled={!selectedUc || cartList.length < 1}
                 size="small"
               >
                 <Intl id="submit" />

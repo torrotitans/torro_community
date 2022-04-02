@@ -1,17 +1,17 @@
-.dataOnboarding {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  min-width: 90rem;
+.filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: $rbwmspace40;
+  button {
+    margin-right: $rbwmspace20;
+  }
 }
 
-.dataContainer {
-  width: 100%;
-  min-height: 100%;
-  background-color: $white;
-  padding: $rbwmspace44;
-  display: flex;
-  flex-direction: column;
+.selectAll {
+  svg {
+    color: $white;
+  }
 }
 
 .operation {
@@ -42,7 +42,6 @@
   min-height: $rbwmspace12;
   position: relative;
   border-radius: $rbwmspace8;
-  cursor: pointer;
 
   .delete {
     position: absolute;

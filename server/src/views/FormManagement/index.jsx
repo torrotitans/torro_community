@@ -70,6 +70,22 @@ const FormManagement = ({ tagTemplate }) => {
       : null;
   }, [editModuleIndex, formData]);
 
+  const maxFieldId = useMemo(() => {
+    let maxId = 0;
+    if (formData) {
+      formData.fieldList.forEach((item) => {
+        if (item.id && item.id.indexOf("u") !== -1) {
+          let tmpId = item.id.replace("u", "");
+          if (Number(tmpId) > maxId) {
+            maxId = Number(tmpId);
+          }
+        }
+      });
+    }
+
+    return maxId;
+  }, [formData]);
+
   const saveFormData = useCallback(() => {
     let apiCall = formData.id === "ADD" ? addFormData : postFormData;
     let postData = {
@@ -138,11 +154,25 @@ const FormManagement = ({ tagTemplate }) => {
     });
   };
 
-  const handleDataChange = (data, replace) => {
-    let currentModule = formData.fieldList[editModuleIndex];
-    formData.fieldList[editModuleIndex] = replace
-      ? { id: currentModule.id, ...data }
-      : { ...currentModule, ...data, u_id: currentModule.u_id };
+  const handleDataChange = (data, defaultTemplate) => {
+    if (defaultTemplate) {
+      if (
+        currentModule.id.startsWith("s") ||
+        currentModule.id.startsWith("d")
+      ) {
+        formData.fieldList[editModuleIndex] = {
+          ...data,
+          id: "u" + (maxFieldId + 1),
+        };
+      } else {
+        formData.fieldList[editModuleIndex] = {
+          ...data,
+          id: currentModule.id,
+        };
+      }
+    } else {
+      formData.fieldList[editModuleIndex] = data;
+    }
     setFormData({ ...formData });
   };
 
@@ -215,6 +245,22 @@ const FormManagement = ({ tagTemplate }) => {
     [formData]
   );
 
+  const copySystemFieldHandle = useCallback(
+    (item) => {
+      let tempList = JSON.parse(JSON.stringify(formData.fieldList));
+      tempList.push({
+        ...item,
+        point_id: item.id,
+        id: "u" + (maxFieldId + 1),
+      });
+      setFormData({
+        ...formData,
+        fieldList: tempList,
+      });
+    },
+    [formData, maxFieldId]
+  );
+
   const specialField = useMemo(() => {
     if (!formData) {
       return [];
@@ -226,6 +272,8 @@ const FormManagement = ({ tagTemplate }) => {
 
     return tmp;
   }, [formData]);
+
+  console.log(formData);
 
   const renderFormItem = (items) => {
     let itemLen = items.length;
@@ -249,16 +297,23 @@ const FormManagement = ({ tagTemplate }) => {
               setEditModuleIndex(defaultIndex);
             }
           }}
+          onCopy={
+            item.id.startsWith("s") || item.id.startsWith("d")
+              ? () => {
+                  copySystemFieldHandle(item);
+                }
+              : null
+          }
           onUp={
             index === 0
-              ? false
+              ? null
               : () => {
                   upHandle(index);
                 }
           }
           onDown={
             index === itemLen - 1
-              ? false
+              ? null
               : () => {
                   downHandle(index);
                 }
@@ -274,20 +329,11 @@ const FormManagement = ({ tagTemplate }) => {
     });
   };
 
-  const maxFieldId = useMemo(() => {
-    let maxId = 0;
-    if (formData) {
-      formData.fieldList.forEach((item) => {
-        if (item.id.indexOf("u") !== -1) {
-          let tmpId = item.id.replace("u", "");
-          if (Number(tmpId) > maxId) {
-            maxId = Number(tmpId);
-          }
-        }
-      });
+  const existIdList = useMemo(() => {
+    if (!formData) {
+      return [];
     }
-
-    return maxId;
+    return formData.fieldList.map((item) => item.id);
   }, [formData]);
 
   const clickAwayHandle = (e) => {
@@ -367,8 +413,6 @@ const FormManagement = ({ tagTemplate }) => {
     getFormData(formId);
   }, [formId, tagTemplate, getFormData]);
 
-  console.log(formData);
-
   return (
     <div className={styles.formManagement}>
       <div className={styles.formControl} onClick={clickAwayHandle}>
@@ -412,7 +456,7 @@ const FormManagement = ({ tagTemplate }) => {
                       des: "",
                       edit: 1,
                       id: "u" + (maxFieldId + 1),
-                      u_id: "u" + (maxFieldId + 1),
+                      point_id: "",
                       label: "Text",
                       options: [],
                       placeholder: "",
@@ -457,9 +501,8 @@ const FormManagement = ({ tagTemplate }) => {
         formList={formList}
         currentForm={formData}
         currentModule={currentModule}
-        onChange={(data) => {
-          handleDataChange(data);
-        }}
+        existIdList={existIdList}
+        onChange={handleDataChange}
         tagTemplate={tagTemplate}
         formChange={(id) => {
           const tempData = formList.find((item) => {
