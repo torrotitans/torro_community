@@ -7,8 +7,6 @@ import cn from "classnames";
 /* material-ui */
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
 import TodayIcon from "@material-ui/icons/Today";
 import LaunchIcon from "@material-ui/icons/Launch";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -17,7 +15,6 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import FormDataDisplay from "../FormDataDisplay";
 import styles from "./styles.module.scss";
 import Loading from "@assets/icons/Loading";
-import HeadLine from "@basics/HeadLine";
 import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import Text from "@basics/Text";
@@ -126,59 +123,53 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   enableReOpen={defaultData.index === 0}
                   setEditView={setEditView}
                 />
-              </div>
-            </ScrollBar>
-          </div>
-
-          <div className={styles.history}>
-            <ScrollBar>
-              <div className={styles.historyContent}>
-                <HeadLine>
-                  <Intl id="historyRecord" />
-                </HeadLine>
-                <div className={styles.historyTable}>
-                  <List>
-                    {tableList.map((row, index) => (
-                      <ListItem
-                        key={index}
-                        className={cn({
-                          [styles["active"]]: defaultData.index === index,
-                        })}
-                      >
-                        <ListItemText>{row.history_id}</ListItemText>
-                        <ListItemText>
-                          <div className={styles.timeStamp}>
-                            <TodayIcon />
-                            {covertTime(row.create_time)}
+                <div className={styles.history}>
+                  <Text type="title">
+                    <Intl id="historyRecord" />
+                  </Text>
+                  <div className={styles.historyTable}>
+                    <List>
+                      {tableList.map((row, index) => (
+                        <ListItem
+                          key={index}
+                          className={cn(styles.historyItem, {
+                            [styles["active"]]: defaultData.index === index,
+                          })}
+                        >
+                          <div className={styles.historyItemBox}>
+                            {row.history_id}
+                            <div className={styles.timeStamp}>
+                              <TodayIcon />
+                              {covertTime(row.create_time)}
+                            </div>
+                            <LaunchIcon
+                              className={styles.launchIcon}
+                              onClick={() => {
+                                if (editView) {
+                                  setChangeData({
+                                    index: index,
+                                    data: row,
+                                  });
+                                  setModalData({
+                                    ...modalData,
+                                    open: true,
+                                    status: 1,
+                                    content:
+                                      "Switch to this record will miss your current input.",
+                                  });
+                                } else {
+                                  setDefaultData({
+                                    index: index,
+                                    data: row,
+                                  });
+                                }
+                              }}
+                            />
                           </div>
-                        </ListItemText>
-                        <ListItemSecondaryAction>
-                          <LaunchIcon
-                            onClick={() => {
-                              if (editView) {
-                                setChangeData({
-                                  index: index,
-                                  data: row,
-                                });
-                                setModalData({
-                                  ...modalData,
-                                  open: true,
-                                  status: 1,
-                                  content:
-                                    "Switch to this record will miss your current input.",
-                                });
-                              } else {
-                                setDefaultData({
-                                  index: index,
-                                  data: row,
-                                });
-                              }
-                            }}
-                          />
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    ))}
-                  </List>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </div>
                 </div>
               </div>
             </ScrollBar>
