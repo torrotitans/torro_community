@@ -39,7 +39,7 @@ CREATE TABLE `tagTemplatesTable` (
   `location` varchar(256) DEFAULT NULL COMMENT 'location',
   `display_name` varchar(256) DEFAULT NULL COMMENT 'display_name',
   `tag_template_id` varchar(1024) DEFAULT NULL COMMENT 'tag_template_id',
-  `field_list` text COMMENT 'field_list',
+  `field_list` longtext COMMENT 'field_list',
   `description` text DEFAULT NULL COMMENT 'description',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`input_form_id`) USING BTREE
@@ -56,7 +56,7 @@ CREATE TABLE `dataOnboardTable` (
   `dataset_id` varchar(256) NOT NULL COMMENT 'dataset_id',
   `table_id` varchar(256) NOT NULL COMMENT 'table_id',
   `fields` text NOT NULL COMMENT 'fields',
-  `table_tags` text COMMENT 'table_tags',
+  `table_tags` longtext COMMENT 'table_tags',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`input_form_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -66,7 +66,7 @@ CREATE TABLE `dataAccessTable` (
   `data_access_input_form_id` int NOT NULL COMMENT 'data_access_input_form_id',
   `data_input_form_id` int NOT NULL COMMENT 'input_form_id',
   `usecase_id` varchar(256) NOT NULL COMMENT 'usecase_id',
-  `fields` text COMMENT 'fields',
+  `fields` longtext COMMENT 'fields',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   PRIMARY KEY (`data_access_input_form_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

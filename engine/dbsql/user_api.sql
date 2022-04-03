@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `roleTable`;
 CREATE TABLE `roleTable` (
   `ID` int NOT NULL AUTO_INCREMENT COMMENT 'role_id',
   `NAME` varchar(64) DEFAULT NULL COMMENT 'role_name',
-  `API_PERMISSION_LIST` text COMMENT 'api permission list',
+  `API_PERMISSION_LIST` longtext COMMENT 'api permission list',
   `CREATE_TIME` datetime DEFAULT NULL COMMENT 'create_time',
   `DES` varchar(128) DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`ID`) USING BTREE
