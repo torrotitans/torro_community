@@ -10,7 +10,10 @@ import os
 import traceback
 from config import config
 from google.cloud import bigquery
+import traceback
+import logging
 
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
 
@@ -60,7 +63,7 @@ class GrantRoleForBQDataset(baseTask):
                     return data['msg']
                 service_account = data['data']['sa']
                 ad_group_list = data['data'].get('ad_group_list', [])
-                print('sa and ad:', data)
+                logger.debug("FN:GrantRoleForBQDataset_execute data:{}".format(data))
                 # ad_group_list = []
                 # check if already get the table access
                 for dataset_id in dataset_id_list:
@@ -72,8 +75,7 @@ class GrantRoleForBQDataset(baseTask):
         except HttpError as e:
             return (json.loads(e.content))
         except Exception as e:
-            import traceback
-            lg.error(traceback.format_exc())
+            logger.error("FN:GrantRoleForBQDataset_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
         finally:
             conn.close()
@@ -118,7 +120,8 @@ class GrantRoleForBQDataset(baseTask):
             for ad_group in ad_group_list:
                 # access_json['roles/bigquery.jobUser'].append(('groupByEmail', ad_group))
                 access_json['roles/bigquery.dataViewer'].append(('groupByEmail', ad_group))
-            print('access_json:', access_json)
+
+            logger.debug("FN:GrantRoleForBQDataset__grand_access_roles access_json:{}".format(access_json))
 
 
             client = bigquery.Client(project_id)
@@ -138,12 +141,11 @@ class GrantRoleForBQDataset(baseTask):
             dataset.access_entries = entries
             _ = client.update_dataset(dataset, ['access_entries'])
 
-            print(
-                "Updated dataset '{}' with modified permissions.".format(dataset_id)
-            )
+
+            logger.debug("FN:GrantRoleForBQDataset__grand_access_roles dataset_id_with_modified_permission:{}".format(dataset_id))
 
         except:
-            lg.error(traceback.format_exc())
+            logger.error("FN:GrantRoleForBQDataset__grand_access_roles error:{}".format(traceback.format_exc()))
             return None
 
 

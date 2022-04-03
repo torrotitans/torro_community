@@ -15,7 +15,6 @@ class CreateBQDataset(baseTask):
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         try:
-
             project_id = self.stage_dict['porject_id'].strip()
             dataset_name = self.stage_dict['dataset_name'].strip().replace(' ', '').replace('-', '_')
             location = self.stage_dict['dataset_location'].strip()
@@ -30,7 +29,7 @@ class CreateBQDataset(baseTask):
             # dataset = client.create_dataset(dataset, timeout=30)
             # storage_client = storage.Client(project_id)
 
-            logger.debug("FN:CreateBQDataset_execute stage_dic:{}".format(self.stage_dict))
+            logger.debug("FN:CreateBQDataset_execute project_id:{} dataset_name:{} location:{}".format(project_id, dataset_name, location))
             bq_client = bigquery.Client(project=project_id)
             dataset_id = "{}.{}".format(project_id, dataset_name)
             dataset = bigquery.Dataset(dataset_id)
@@ -47,7 +46,6 @@ class CreateBQDataset(baseTask):
                 dataset = dataset.from_api_repr(dataset_param)
 
             bq_client.create_dataset(dataset)
-
             usecase_name = self.stage_dict.get('usecase_name', None)
             self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery Dataset', dataset_name)
 
