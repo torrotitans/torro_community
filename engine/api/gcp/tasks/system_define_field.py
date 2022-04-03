@@ -32,31 +32,36 @@ class system_define_field(baseTask):
             # print('stage_dict:', self.stage_dict)
             # print('workspace_id:', workspace_id)
             conn = MysqlConn()
-            db_name = configuration.get_database_name()
-            condition = "label='%s' and form_id!='-1'" % (field_name)
-            sql = self.create_select_sql(db_name, 'dynamicFieldTable', 'id', condition)
-            dynamic_field_info = self.execute_fetch_one(conn, sql)
-            # print('dynamicFieldTable1:',sql)
-            if not dynamic_field_info:
+            try:
+                db_name = configuration.get_database_name()
+                condition = "label='%s' and form_id!='-1'" % (field_name)
+                sql = self.create_select_sql(db_name, 'dynamicFieldTable', 'id', condition)
+                dynamic_field_info = self.execute_fetch_one(conn, sql)
+                # print('dynamicFieldTable1:',sql)
+                if not dynamic_field_info:
 
-                field_fields = ('style', 'form_id', 'label', 'default_value', 'placeholder',
-                                   'value_num', 'create_time')
-                values = ('2', form_id, field_name, '', '', 1, now)
-                sql = self.create_insert_sql(db_name, 'dynamicFieldTable', '({})'.format(', '.join(field_fields)), values)
-                # print('dynamicFieldTable2 sql:', sql)
-                dynamic_field_id = self.insert_exec(conn, sql, return_insert_id=True)
-            else:
-                dynamic_field_id = dynamic_field_info['id']
-                condition = "workspace_id='%s' and dynamic_field_id=%s and option_label='%s'" % (workspace_id, dynamic_field_id, option_label)
-                sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'id', condition)
-                dynamic_field_value_info = self.execute_fetch_one(conn, sql)
-                if dynamic_field_value_info:
-                    return 'Label:{} has already in Field:{}'.format(option_label, field_name)
+                    field_fields = ('style', 'form_id', 'label', 'default_value', 'placeholder',
+                                       'value_num', 'create_time')
+                    values = ('2', form_id, field_name, '', '', 1, now)
+                    sql = self.create_insert_sql(db_name, 'dynamicFieldTable', '({})'.format(', '.join(field_fields)), values)
+                    # print('dynamicFieldTable2 sql:', sql)
+                    dynamic_field_id = self.insert_exec(conn, sql, return_insert_id=True)
+                else:
+                    dynamic_field_id = dynamic_field_info['id']
+                    condition = "workspace_id='%s' and dynamic_field_id=%s and option_label='%s'" % (workspace_id, dynamic_field_id, option_label)
+                    sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'id', condition)
+                    dynamic_field_value_info = self.execute_fetch_one(conn, sql)
+                    if dynamic_field_value_info:
+                        return 'Label:{} has already in Field:{}'.format(option_label, field_name)
 
-            field_fields = ('workspace_id', 'dynamic_field_id', 'input_form_id', 'option_label', 'option_value', 'create_time')
-            values = (workspace_id, dynamic_field_id, input_form_id, option_label, options_value, now)
-            sql = self.create_insert_sql(db_name, 'dynamicFieldValueTable', '({})'.format(', '.join(field_fields)),
-                                         values)
-            # print('dynamicFieldValueTable2 sql:', sql)
-            self.insert_exec(conn, sql, return_insert_id=True)
+                field_fields = ('workspace_id', 'dynamic_field_id', 'input_form_id', 'option_label', 'option_value', 'create_time')
+                values = (workspace_id, dynamic_field_id, input_form_id, option_label, options_value, now)
+                sql = self.create_insert_sql(db_name, 'dynamicFieldValueTable', '({})'.format(', '.join(field_fields)),
+                                             values)
+                # print('dynamicFieldValueTable2 sql:', sql)
+                self.insert_exec(conn, sql, return_insert_id=True)
+            except Exception as e:
+                return "Created field: {}".format(field_name)
+            finally:
+                conn.close()
             return "Created field: {}".format(field_name)

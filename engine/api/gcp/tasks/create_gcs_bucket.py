@@ -32,9 +32,10 @@ class CreateGCSBucket(baseTask):
             location = self.stage_dict['bucket_location'].strip()
             bucket_labels_str = self.stage_dict.get('bucket_labels', '').strip()
             bucket_labels = {}
-            for bucket_label in bucket_labels_str.split(','):
-                key, value = bucket_label.split('=')
-                bucket_labels[key.strip()] = value.strip()
+            if bucket_labels_str:
+                for bucket_label in bucket_labels_str.split(','):
+                    key, value = bucket_label.split('=')
+                    bucket_labels[key.strip()] = value.strip()
 
             bucket_class = self.stage_dict.get('bucket_class', None).strip()
             bucket_cmek = self.stage_dict.get('bucket_cmek', None).strip()
