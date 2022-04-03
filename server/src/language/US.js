@@ -70,6 +70,7 @@ export default {
   wsAdgroup: "Workspace AD Group",
   workflowV: "Workflow Value",
   copy: "Copy",
+  dataAccess: "Data access",
 
   // role
   it: "IT Admin",
@@ -169,6 +170,11 @@ export default {
   policyTag: "Policy Tags",
   description: "Description",
   resourceDetail: "Resource Detail",
+  projectName: "Project name",
+  dataSet: "Dataset",
+  tableName: "Table name",
+  fields: "Fields",
+  applyTime: "Apply time",
 
   // Data Discovery
   dataDiscovery: "Data Discovery",

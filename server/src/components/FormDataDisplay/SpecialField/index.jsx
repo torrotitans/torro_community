@@ -99,7 +99,13 @@ const UseCase = ({ data }) => {
           <Loading />
         </div>
       )}
-      {!loading && <UsecaseInfo tableList={data} usecaseId={useCaseId} />}
+      {!loading && (
+        <UsecaseInfo
+          tableList={data}
+          usecaseId={useCaseId}
+          detailDisplay={true}
+        />
+      )}
     </>
   );
 };
