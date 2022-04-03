@@ -1,5 +1,5 @@
 // third lib
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
@@ -45,6 +45,15 @@ const RequestDetail = ({ recordId, approvedView }) => {
     setDefaultData(changeData);
     setModalData({ ...modalData, open: false });
   };
+
+  const enableReOpen = useMemo(() => {
+    if (!formData) {
+      return;
+    }
+    let formId = Number(formData.id);
+
+    return defaultData.index === 0 && (formId > 350 || [1, 2].includes(formId));
+  }, [defaultData.index, formData]);
 
   const covertTime = useCallback(
     (date) => {
@@ -120,57 +129,56 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   approverView={approvedView}
                   isApprover={isApprover}
                   defaultData={defaultData.data}
-                  enableReOpen={defaultData.index === 0}
+                  enableReOpen={enableReOpen}
                   setEditView={setEditView}
                 />
-                <div className={styles.history}>
-                  <Text type="title">
-                    <Intl id="historyRecord" />
-                  </Text>
-                  <div className={styles.historyTable}>
-                    <List>
-                      {tableList.map((row, index) => (
-                        <ListItem
-                          key={index}
-                          className={cn(styles.historyItem, {
-                            [styles["active"]]: defaultData.index === index,
-                          })}
-                        >
-                          <div className={styles.historyItemBox}>
-                            {row.history_id}
-                            <div className={styles.timeStamp}>
-                              <TodayIcon />
-                              {covertTime(row.create_time)}
+                {tableList && tableList.length > 1 && (
+                  <div className={styles.history}>
+                    <Text type="title">
+                      <Intl id="historyRecord" />
+                    </Text>
+                    <div className={styles.historyTable}>
+                      <List>
+                        {tableList.map((row, index) => (
+                          <ListItem
+                            key={index}
+                            className={cn(styles.historyItem, {
+                              [styles["active"]]: defaultData.index === index,
+                            })}
+                            onClick={() => {
+                              if (editView) {
+                                setChangeData({
+                                  index: index,
+                                  data: row,
+                                });
+                                setModalData({
+                                  ...modalData,
+                                  open: true,
+                                  status: 1,
+                                  content:
+                                    "Switch to this record will miss your current input.",
+                                });
+                              } else {
+                                setDefaultData({
+                                  index: index,
+                                  data: row,
+                                });
+                              }
+                            }}
+                          >
+                            <div className={styles.historyItemBox}>
+                              <div className={styles.timeStamp}>
+                                <TodayIcon />
+                                {covertTime(row.create_time)}
+                              </div>
+                              <LaunchIcon className={styles.launchIcon} />
                             </div>
-                            <LaunchIcon
-                              className={styles.launchIcon}
-                              onClick={() => {
-                                if (editView) {
-                                  setChangeData({
-                                    index: index,
-                                    data: row,
-                                  });
-                                  setModalData({
-                                    ...modalData,
-                                    open: true,
-                                    status: 1,
-                                    content:
-                                      "Switch to this record will miss your current input.",
-                                  });
-                                } else {
-                                  setDefaultData({
-                                    index: index,
-                                    data: row,
-                                  });
-                                }
-                              }}
-                            />
-                          </div>
-                        </ListItem>
-                      ))}
-                    </List>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </ScrollBar>
           </div>
