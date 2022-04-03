@@ -23,9 +23,8 @@ class DbUseCaseMgr(DbBase):
     """
     # resource_list = ['jupyter', 'datastudio']
 
-    def __set_usecase(self, usecase_info, usecase_id=None):
+    def __set_usecase(self, usecase_info, usecase_id=None, conn=None, db_name=None):
 
-        conn = MysqlConn()
         try:
             group_dict = usecase_info['group_dict']
             group_label = usecase_info['group_label']
@@ -47,8 +46,6 @@ class DbUseCaseMgr(DbBase):
             resources = {}
             for r in resources_access:
                 resources[r.lower()] = r
-
-            db_name = configuration.get_database_name()
 
             # insert workspace
             fields = ('ID', 'WORKSPACE_ID', 'CREATOR_ID', 'USECASE_NAME', 'VALIDITY_TILL', 'BUDGET', 'INPUT_FORM_ID',
@@ -193,7 +190,7 @@ class DbUseCaseMgr(DbBase):
 
             # Continue if this use case name is not in use
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_info))
-            usecase_insert = self.__set_usecase(usecase_info)
+            usecase_insert = self.__set_usecase(usecase_info , conn=conn, db_name=db_name)
             logger.debug("FN:DbUseCaseMgr_add_new_usecase_setting usecase_info:{}".format(usecase_insert))
             data = response_code.SUCCESS
             usecase['usecase_id'] = usecase_insert['data']['usecase_id']
@@ -355,6 +352,7 @@ class DbUseCaseMgr(DbBase):
     def update_usecase_info(self, usecase):
         conn = MysqlConn()
         try:
+            db_name = configuration.get_database_name()
             usecase_id = usecase['id']
             workspace_id = usecase['workspace_id']
 
@@ -404,7 +402,7 @@ class DbUseCaseMgr(DbBase):
                 else:
                     usecase_info['group_label'][ad_group].append(label)
 
-            usecase_insert = self.__set_usecase(usecase_info, usecase_id)
+            usecase_insert = self.__set_usecase(usecase_info, usecase_id, conn=conn, db_name=db_name)
             data = response_code.SUCCESS
             usecase['usecase_id'] = usecase_insert['data']['usecase_id']
             data['data'] = usecase
