@@ -31,6 +31,7 @@ import {
 } from "@lib/api";
 
 import { sendNotify } from "src/utils/systerm-error";
+import DataAccess from "./DataAccess";
 const USE_CASE_FORM_ID = 2;
 
 const UseCaseRow = ({ user, userColumnKey }) => {
@@ -89,7 +90,7 @@ const UseCaseRow = ({ user, userColumnKey }) => {
     </React.Fragment>
   );
 };
-const UsecaseInfo = ({ usecaseId }) => {
+const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
   const [useCaseDetail, setUseCaseDetail] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -145,6 +146,7 @@ const UsecaseInfo = ({ usecaseId }) => {
               u11: ucData.prefix,
             },
             user_infos: ucData.user_infos,
+            data_access: ucData.data_access ? ucData.data_access : [],
           };
           let data = res3.data;
           let tempFieldList = data.fieldList.map((item) => {
@@ -235,6 +237,9 @@ const UsecaseInfo = ({ usecaseId }) => {
             </>
           )}
         </div>
+        {!detailDisplay && ucData && ucData.data_access && (
+          <DataAccess dataAccessList={ucData.data_access} />
+        )}
       </div>
     </div>
   );

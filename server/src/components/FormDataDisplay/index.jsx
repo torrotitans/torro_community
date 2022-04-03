@@ -1,5 +1,5 @@
 /* third lib*/
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
@@ -74,6 +74,10 @@ const FormDataDisplay = ({
     status: 0,
     content: "",
   });
+
+  const isCurrentApprover = useMemo(() => {
+    return approverView && isApprover;
+  }, [approverView, isApprover]);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall;
@@ -204,7 +208,6 @@ const FormDataDisplay = ({
     (row) => {
       let label = row.label;
       let defaultValue = row.default;
-      // let options = row.options;
       let special;
       specialList.forEach((item) => {
         if (
@@ -372,7 +375,7 @@ const FormDataDisplay = ({
                   }}
                 />
               </div>
-              {approverView && status === 0 && (
+              {isCurrentApprover && status === 0 && (
                 <div className={styles.buttonWrapper}>
                   <Button
                     className={styles.button}

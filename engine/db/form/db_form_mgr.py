@@ -202,7 +202,7 @@ class DbFormMgr(DbBase):
                 regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
                 # print('region_field_info:', region_field_info)
                 # print('regions:', regions)
-
+ 
                 for region in regions:
                     options.append({'label': region['region'], 'value': region['workflow']})
                     for sub_region in region['countryList']:

@@ -63,6 +63,17 @@ const wsItemList = [
   // },
 ];
 
+const LinkWrapper = ({ children, link, closeHandle }) => {
+  if (link) {
+    return (
+      <Link onClick={closeHandle} to={link}>
+        {children}
+      </Link>
+    );
+  }
+  return <>{children}</>;
+};
+
 const LeftNav = ({ open, closeHandle }) => {
   const { authContext, formListContext, setFormContext } = useGlobalContext();
 
@@ -223,18 +234,8 @@ const LeftNav = ({ open, closeHandle }) => {
     >
       {navList.map((item) => {
         const Icon = item.icon;
-        const LinkWrapper = ({ children }) => {
-          if (item.link) {
-            return (
-              <Link onClick={closeHandle} to={item.link}>
-                {children}
-              </Link>
-            );
-          }
-          return <>{children}</>;
-        };
         return (
-          <LinkWrapper key={item.id} to={item.link ? item.link : ""}>
+          <LinkWrapper key={item.id} link={item.link} closeHandle={closeHandle}>
             <div className={styles.navItem}>
               {Icon && <Icon className={styles.navLogo} />}
               <div className={styles.navLabel}>

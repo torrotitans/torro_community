@@ -250,7 +250,7 @@ const FormManagement = ({ tagTemplate }) => {
       let tempList = JSON.parse(JSON.stringify(formData.fieldList));
       tempList.push({
         ...item,
-        u_id: item.id,
+        point_id: item.id,
         id: "u" + (maxFieldId + 1),
       });
       setFormData({
@@ -272,6 +272,8 @@ const FormManagement = ({ tagTemplate }) => {
 
     return tmp;
   }, [formData]);
+
+  console.log(formData);
 
   const renderFormItem = (items) => {
     let itemLen = items.length;
@@ -454,7 +456,7 @@ const FormManagement = ({ tagTemplate }) => {
                       des: "",
                       edit: 1,
                       id: "u" + (maxFieldId + 1),
-                      u_id: "",
+                      point_id: "",
                       label: "Text",
                       options: [],
                       placeholder: "",

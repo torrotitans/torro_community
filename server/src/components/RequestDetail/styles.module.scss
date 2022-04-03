@@ -35,21 +35,13 @@
 }
 
 .history {
-  width: 30rem;
-  margin-left: $rbwmspace20;
-  height: 100%;
-  padding: $rbwmspace20 0 0 0;
   background-color: $white;
-
   color: $main-purple;
-}
-
-.historyContent {
-  margin-left: $rbwmspace20;
+  padding: $rbwmspace40 $rbwmspace40 $rbwmspace40 $rbwmspace40;
 }
 
 .historyTable {
-  margin-top: $rbwmspace40;
+  margin-top: $rbwmspace16;
   color: #333;
 
   .active {
@@ -62,12 +54,23 @@
     cursor: pointer;
   }
 }
-
+.historyItem {
+  padding: 0 !important;
+  margin-bottom: $rbwmspace16;
+  cursor: pointer;
+}
+.historyItemBox {
+  display: flex;
+  align-items: center;
+}
 .timeStamp {
   display: flex;
   align-items: center;
-
   svg {
     margin-right: $rbwmspace12;
   }
+}
+
+.launchIcon {
+  margin-left: $rbwmspace40;
 }

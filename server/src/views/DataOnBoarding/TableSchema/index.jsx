@@ -36,7 +36,6 @@ const NestedRowList = ({
   handleDeleteTag,
   openColumnTag,
   selectedList,
-  parentChecked,
   parentTags,
   parentPolicyTag,
 }) => {
@@ -55,7 +54,7 @@ const NestedRowList = ({
             handleDeletePolicyTag={handleDeletePolicyTag}
             handleDeleteTag={handleDeleteTag}
             openColumnTag={openColumnTag}
-            checked={parentChecked || selectedList.includes(schemaRowIndex)}
+            checked={selectedList.includes(schemaRowIndex)}
             selectedList={selectedList}
             parentTags={parentTags}
             parentPolicyTag={parentPolicyTag}
@@ -76,8 +75,6 @@ const SchemaRow = ({
   handleDeletePolicyTag,
   handleDeleteTag,
   selectedList,
-  parentTags,
-  parentPolicyTag,
   openColumnTag,
 }) => {
   const [open, setOpen] = useState(false);
@@ -91,19 +88,19 @@ const SchemaRow = ({
   const sepPadding = 2;
   const isRecord = row.type === "RECORD";
 
-  console.log(schemaRowIndex, checked);
-
   return (
     <>
       <TableRow>
         <TableCell align="center">
-          <Checkbox
-            color="primary"
-            checked={checked}
-            onChange={() => {
-              onSelect(schemaRowIndex);
-            }}
-          />
+          {!isRecord && (
+            <Checkbox
+              color="primary"
+              checked={checked}
+              onChange={() => {
+                onSelect(schemaRowIndex);
+              }}
+            />
+          )}
         </TableCell>
         <TableCell
           style={{ textIndent: sepPadding * (indexArr.length - 1) + "rem" }}
@@ -191,7 +188,6 @@ const SchemaRow = ({
           handleDeleteTag={handleDeleteTag}
           openColumnTag={openColumnTag}
           selectedList={selectedList}
-          parentChecked={checked}
           parentTags={row.tag}
           parentPolicyTag={row.policyTags}
         />
@@ -213,8 +209,6 @@ const TableSchema = ({
   const [addState, setAddState] = useState(false);
   const [type, setType] = useState(0);
 
-  console.log(tableData);
-
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
   }, [tableData]);
@@ -224,8 +218,7 @@ const TableSchema = ({
   }, [tableData]);
 
   const isView = useMemo(() => {
-    // return tableData?.type === "VIEW";
-    return false;
+    return tableData?.type === "VIEW";
   }, [tableData]);
 
   const tagTemplateMap = useMemo(() => {
@@ -252,12 +245,39 @@ const TableSchema = ({
     return selectedList.length > 0;
   }, [selectedList]);
 
+  const allSelectedIndex = useMemo(() => {
+    if (!tableData) {
+      return;
+    }
+    let list = [];
+
+    const addChildIndex = (data, parentIndex) => {
+      data.fields.forEach((item, index) => {
+        let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
+        if (item.type === "RECORD") {
+          addChildIndex(item, currIndex);
+        } else {
+          list.push(currIndex);
+        }
+      });
+    };
+
+    addChildIndex(tableData.schema);
+    return list;
+  }, [tableData]);
+
   const isSelectedAll = useMemo(() => {
     if (!selectedList || !tableList) {
       return false;
     }
-    return selectedList.length === tableList.length;
-  }, [selectedList, tableList]);
+    let seletAll = true;
+    allSelectedIndex.forEach((index) => {
+      if (!selectedList.includes(index)) {
+        seletAll = false;
+      }
+    });
+    return seletAll;
+  }, [tableList, selectedList, allSelectedIndex]);
 
   const checkedTagList = useMemo(() => {
     if (type === 1) {
@@ -300,12 +320,9 @@ const TableSchema = ({
     if (isSelectedAll) {
       setSelectedList([]);
     } else {
-      let tmp = tableList.map((item, index) => {
-        return index;
-      });
-      setSelectedList(tmp);
+      setSelectedList(JSON.parse(JSON.stringify(allSelectedIndex)));
     }
-  }, [tableList, isSelectedAll, setSelectedList]);
+  }, [isSelectedAll, setSelectedList, allSelectedIndex]);
 
   const onSelect = (currIndex) => {
     if (!selectedList.includes(currIndex)) {

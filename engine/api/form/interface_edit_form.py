@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*
 
-from utils.api_version_verify import api_version
-import traceback
+from utils.smtp_helper import notify_approvers
+from core.org_singleton import orgSingleton_singleton
 from flask import request
 from flask_restful import Resource
 from core.form_singleton import formSingleton_singleton
@@ -41,6 +41,7 @@ class interfaceEditForm(Resource):
             workspace_id = req.get_workspace_id()
             try:
                 user_key = req.get_user_key()
+                account_id = req.get_user_account_id()
                 # print('user id:', user_key)
             except:
                 data = response_code.GET_DATA_FAIL
@@ -78,6 +79,19 @@ class interfaceEditForm(Resource):
             if data['code'] == 200:
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, formApiPara.postFormData_POST_response)
+                # email notify
+                text = ''
+                if 'msg' in data:
+                    text = data['msg']
+                data2 = notify_approvers(data['data']['id'], data['data']['approvers'])
+                data3 = orgSingleton_singleton.insert_notification(data['data']['approvers']+[account_id], data['data']['id'], data['data']['history_id'], text)
+                if data2 and data2['code'] == 200:
+                    data['data'] = req.verify_all_param(response_data, formApiPara.postFormData_POST_response)
+                else:
+
+                    data = response_code.UPDATE_DATA_FAIL
+                    data['msg'] = 'Create new form success, fail to send email to approves'
+                    logger.error("FN:interfaceInputForm_post data_error:{}".format(data))
 
             return response_result_process(data, xml=xml)
 

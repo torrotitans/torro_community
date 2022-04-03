@@ -7,17 +7,17 @@
 .dataContainer {
   width: 100%;
   height: 100%;
-  background-color: $white;
   display: flex;
 }
 .dataLeftPanel {
-  margin-top: $rbwmspace20;
   display: flex;
   flex-direction: column;
   width: 100%;
+  background-color: $white;
 }
 .leftPanelContainer {
-  padding: 0 $rbwmspace20;
+  padding: $rbwmspace44;
+  min-height: 100%;
 }
 .title {
   color: $main-purple;
@@ -49,11 +49,12 @@
 }
 
 .dataRightPanel {
-  width: 25rem;
+  width: 32rem;
   display: flex;
   flex-direction: column;
-  padding: $rbwmspace20 0 0 $rbwmspace24;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 3.125rem $rbwmspace32 $rbwmspace32 $rbwmspace32;
+  background-color: $white;
+  margin-left: $rbwmspace16;
 }
 .rightPanelContent {
   display: flex;
@@ -124,6 +125,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: $text-grey;
+  color: $main-purple;
   margin-bottom: $rbwmspace8;
 }

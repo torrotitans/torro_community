@@ -1,5 +1,6 @@
 /* third lib*/
 import React, { useEffect, useMemo, useState } from "react";
+import { FormattedMessage as Intl } from "react-intl";
 
 /* material-ui */
 import InsertBtn from "@material-ui/core/Button";
@@ -228,7 +229,7 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
             }}
             size="small"
           >
-            cancel
+            <Intl id="cancel" />
           </Button>
         </div>
         <div className={styles.finish}>
@@ -240,7 +241,7 @@ const Ueditor = ({ value, options, onChange, handleClose }) => {
             size="small"
             filled
           >
-            Done
+            <Intl id="done" />
           </Button>
         </div>
       </div>
