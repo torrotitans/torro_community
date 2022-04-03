@@ -77,7 +77,7 @@ const FormDataDisplay = ({
 
   const isCurrentApprover = useMemo(() => {
     return approverView && isApprover;
-  }, [approverView]);
+  }, [approverView, isApprover]);
 
   const buttonClickHandle = useCallback(() => {
     let apiCall;

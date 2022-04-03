@@ -151,3 +151,22 @@
   border-radius: 4px;
   box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
 }
+
+.linerProgress {
+  height: 2px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: $light-purple;
+}
+
+.activeProgess {
+  width: 0;
+  height: 100%;
+  background-color: $dark-purple;
+
+  &.active {
+    width: 100%;
+    transition: 3s width linear;
+  }
+}

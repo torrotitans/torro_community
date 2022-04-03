@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useRef,
 } from "react";
+import cn from "classnames";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { useNavigate } from "react-router-dom";
 import { FormattedMessage as Intl } from "react-intl";
@@ -87,6 +88,8 @@ const UserTag = ({ role }) => {
     </div>
   );
 };
+let progressTimer = null;
+let achorTimer = null;
 
 const UserSessionBar = () => {
   const {
@@ -103,8 +106,9 @@ const UserSessionBar = () => {
   const [notify, setNotify] = useState([]);
   const [openModel, setOpenModel] = useState(false);
   const [showNav, setShowNav] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [notifyHash, setNotifyHash] = useState();
+  const [triggerProgress, setTriggerProgress] = useState(0);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-Popper" : undefined;
@@ -117,19 +121,19 @@ const UserSessionBar = () => {
 
   const isLogin = useMemo(() => {
     return authContext.userId && authContext.userId !== "null";
-  }, [authContext]);
+  }, [authContext.userId]);
 
   const haveRole = useMemo(() => {
     return !!authContext.role && authContext.role !== "null";
-  }, [authContext]);
+  }, [authContext.role]);
 
   const isServiceAdmin = useMemo(() => {
     return authContext.role === ADMIN;
-  }, [authContext]);
+  }, [authContext.role]);
 
   const haveWs = useMemo(() => {
-    return authContext.wsList.length > 0 && authContext.wsId;
-  }, [authContext]);
+    return authContext.wsList.length > 0 && !!authContext.wsId;
+  }, [authContext.wsList, authContext.wsId]);
 
   const displayNav = useMemo(() => {
     return isLogin && (haveRole || isServiceAdmin) && haveWs;
@@ -266,6 +270,26 @@ const UserSessionBar = () => {
     [navigate, closeHandle, setUnRead]
   );
 
+  const openNotifyTips = useCallback(() => {
+    if (progressTimer || achorTimer) {
+      return;
+    }
+    setAnchorEl(bellRef.current);
+    setTriggerProgress(false);
+
+    progressTimer = setTimeout(() => {
+      setTriggerProgress(true);
+      clearTimeout(progressTimer);
+      progressTimer = null;
+    }, 0);
+
+    achorTimer = setTimeout(() => {
+      setAnchorEl(null);
+      clearTimeout(achorTimer);
+      achorTimer = null;
+    }, 3000);
+  }, [bellRef]);
+
   useEffect(() => {
     let loop;
     if (authContext.userId && authContext.role) {
@@ -303,7 +327,7 @@ const UserSessionBar = () => {
             setNotify(res.data);
             let unReadList = res.data.filter((item) => !item.is_read);
             if (unReadList.length > unRead.length && notifyHash) {
-              setAnchorEl(bellRef.current);
+              openNotifyTips();
             }
           }
         })
@@ -403,6 +427,13 @@ const UserSessionBar = () => {
                               <Intl id="gotNewRequest" />
                             </Text>
                           </Typography>
+                          <div className={styles.linerProgress}>
+                            <div
+                              className={cn(styles.activeProgess, {
+                                [styles["active"]]: triggerProgress,
+                              })}
+                            ></div>
+                          </div>
                         </Popper>
                       </div>
                     </div>
