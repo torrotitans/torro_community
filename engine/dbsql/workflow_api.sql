@@ -10,12 +10,12 @@ CREATE TABLE `workflowTable` (
   `stage_num` int DEFAULT NULL COMMENT 'form fields num',
   `creator_id` varchar(256) DEFAULT NULL COMMENT 'creator id',
   `last_modify_id` varchar(256) DEFAULT NULL COMMENT 'last modify id',
-  `stages` text COMMENT 'stages list',
+  `stages` longtext COMMENT 'stages list',
   `available` int DEFAULT '1' COMMENT 'available flag',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   `updated_time` datetime DEFAULT NULL COMMENT 'last_updated_time',
   `des` varchar(1024) DEFAULT NULL COMMENT 'description',
-  `field_id_list` text COMMENT 'field_id_list',
+  `field_id_list` longtext COMMENT 'field_id_list',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=351 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
@@ -40,7 +40,7 @@ CREATE TABLE `stageTable` (
   `stage_group` varchar(64) DEFAULT NULL COMMENT 'stage type',
   `flowType` varchar(64) DEFAULT NULL COMMENT 'flow type',
   `apiTaskName` varchar(64) DEFAULT NULL COMMENT 'the api task name',
-  `condition` text COMMENT 'value list',
+  `condition` longtext COMMENT 'value list',
   `des` varchar(1024) DEFAULT NULL COMMENT 'description',
   `create_time` datetime DEFAULT NULL COMMENT 'create_time',
   `updated_time` datetime DEFAULT NULL COMMENT 'last_updated_time',

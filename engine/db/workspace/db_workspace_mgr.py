@@ -49,7 +49,7 @@ class DbWorkspaceMgr(DbBase):
 
                 condition = "ID='%s'" % workspace_id
 
-                fields = ('WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGOINS',
+                fields = ('WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGIONS',
                           'CREATE_TIME',
                           'DES')
                 values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
@@ -151,7 +151,7 @@ class DbWorkspaceMgr(DbBase):
                         system_id_dict[field_info['id']] = 's' + str(field_info['id'])
             else:
                 fields = (
-                    'WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGOINS', 'CREATE_TIME',
+                    'WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGIONS', 'CREATE_TIME',
                     'DES')
                 values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
 
@@ -482,7 +482,7 @@ class DbWorkspaceMgr(DbBase):
             else:
                 condition = '1=1'
             db_name = configuration.get_database_name()
-            sql = self.create_select_sql(db_name, 'workspaceTable', 'ID,WORKSPACE_NAME,REGOINS, CREATE_TIME', condition)
+            sql = self.create_select_sql(db_name, 'workspaceTable', 'ID,WORKSPACE_NAME,REGIONS, CREATE_TIME', condition)
             logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspaceTable_sql:{}".format(sql))
             workspace_infos = self.execute_fetch_all(conn, sql)
             return_infos = []
@@ -490,7 +490,7 @@ class DbWorkspaceMgr(DbBase):
                 workspace_id = workspace_info['ID']
 
                 one_workspace = {'id': workspace_id, 'workspace_name': workspace_info['WORKSPACE_NAME'],
-                                 'regions': json.loads(workspace_info['REGOINS']),
+                                 'regions': json.loads(workspace_info['REGIONS']),
                                  'create_time': workspace_info['CREATE_TIME']}
                 # db_name = configuration.get_database_name()
                 condition = "WORKSPACE_ID='%s' " % (workspace_id)
@@ -684,7 +684,7 @@ class DbWorkspaceMgr(DbBase):
                 HEAD_APPROVAL = 'Need workspace Head approval'
                 approval_item.append(HEAD_APPROVAL)
             return_info['approval'] = ','.join(approval_item)
-            return_info['regions'] = json.loads(workspace_info['REGOINS'])
+            return_info['regions'] = json.loads(workspace_info['REGIONS'])
             # db_name = configuration.get_database_name()
             logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id return_info:{}".format(return_info))
             condition = "WORKSPACE_ID='%s' " % (workspace_id)

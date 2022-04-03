@@ -73,7 +73,7 @@ class GrantRoleForBQTable(baseTask):
                                                          table_id)
                 if not table_policy:
                     return 'Failed to grand access to table: {} for usercase: {}'.format(
-                        '.'.join([workspace_id, project_id, dataset_id, table_id]), usecase_name)
+                        '.'.join([workspace_id, str(project_id), str(dataset_id), str(table_id)]), usecase_name)
 
                 cond = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (
                     workspace_id, project_id, location, dataset_id, table_id)
@@ -84,7 +84,7 @@ class GrantRoleForBQTable(baseTask):
 
                 if not table_info:
                     return 'Table is not onboard: {}'.format(
-                        '.'.join([str(workspace_id), project_id, dataset_id, table_id]))
+                        '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
 
                 logger.debug("FN:GrantRoleForBQTable_execute table_info:{}".format(table_info))
                 # get data info
@@ -109,7 +109,7 @@ class GrantRoleForBQTable(baseTask):
                     return_count = self.updete_exec(conn, sql)
 
                     # return 'Already get the table access: {}'.format(
-                    #     '.'.join([str(workspace_id), project_id, dataset_id, table_id]))
+                    #     '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
                 else:
                     fields = (
                         'data_input_form_id', 'data_access_input_form_id', 'fields', 'create_time')
@@ -123,7 +123,7 @@ class GrantRoleForBQTable(baseTask):
                 # logger.debug('tagTemplatesTable insert sql:', sql)
 
                 return 'Get the table access successfully: {}'.format(
-                    '.'.join([str(workspace_id), project_id, dataset_id, table_id]))
+                    '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
 
         except HttpError as e:
             return (json.loads(e.content))
@@ -195,7 +195,7 @@ class GrantRoleForBQTable(baseTask):
                 table_policy['bindings'] = []
             elif 'bindings' not in table_policy:
                 return 'Get table policy failed for: {}'.format(
-                    '.'.join([project_id, dataset_id, table_id]))
+                    '.'.join([project_id, str(dataset_id), str(table_id)]))
             # job_user_flag = 0
             data_viewer_flag = 0
             for index, role_info in enumerate(table_policy['bindings']):
