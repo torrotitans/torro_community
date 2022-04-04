@@ -46,10 +46,10 @@ class DbBase(object):
                 return_value = conn.cur.lastrowid
             else:
                 return_value = conn.cur.rowcount
-            conn.commit()
+            conn.conn.commit()
             return return_value
         except Exception as ex:
-            conn.rollback()
+            conn.conn.rollback()
             raise ex
 
     def execute_sql_return_count(self, conn, sql, args=None):
