@@ -161,7 +161,7 @@ class DbGovernanceMgr(DbBase):
                         workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                         workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                         logger.debug("FN:change_status workflow_stages_id_list:{}".format(workflow_stages_id_list))
-                        input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
+                        input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
                         sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                                      input_stage_condition)
                         logger.debug("FN:change_status inputStageTable_list:{}".format(sql))
@@ -516,7 +516,7 @@ class DbGovernanceMgr(DbBase):
                 workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                 logger.debug("FN:system_approval_trigger workflow_stages_id_list:{}".format(workflow_stages_id_list))
-                input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
+                input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
                 sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                              input_stage_condition)
                 logger.debug("FN:system_approval_trigger inputStageTable_sql:{}".format(sql))

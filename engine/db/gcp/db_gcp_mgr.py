@@ -46,7 +46,7 @@ class DbGCPMgr(DbBase):
                 logger.debug("FN:DbGCPMgr_get_gpc_tasks workflow_stages_id_list:{}".format(workflow_stages_id_list))
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
 
-                input_stage_condition = "status!='%s' and id in ('%s')order by stage_index desc" % (1, "', '".join(workflow_stages_id_list))
+                input_stage_condition = "status!='%s' and id in ('%s')order by stage_index" % (1, "', '".join(workflow_stages_id_list))
                 sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                              input_stage_condition)
                 logger.debug("FN:DbGCPMgr_get_gpc_tasks inputStageTable_sql:{}".format(sql))
