@@ -198,6 +198,7 @@ class DbFormMgr(DbBase):
             if wp_id != 0:
                 condition = "ID=%s " % (wp_id)
                 sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
+                print('123456123456workspaceTable:',sql)
                 options = []
                 regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'])
                 # print('region_field_info:', region_field_info)
