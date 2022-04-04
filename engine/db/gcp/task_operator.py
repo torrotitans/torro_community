@@ -34,10 +34,10 @@ class taskOperator:
             return_msg_list = []
             for index, task_object in enumerate(task_object_list):
                 api_name = task_object.api_name
-                print('execute task:', index, api_name)
+                logger.debug('execute task:', index, api_name)
                 # task_object.verify_all_param()
                 return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
-                time.sleep(1)
+                # time.sleep(1)
                 # if api_name in taskOperator.db_operation:
                 #     # print('1234task {} will update db'.format(api_name))
                 #     return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
