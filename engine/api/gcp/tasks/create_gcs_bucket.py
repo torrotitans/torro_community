@@ -1,32 +1,21 @@
 from api.gcp.tasks.baseTask import baseTask
 from google.cloud import storage
+import traceback
+import logging
+
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
+
 class CreateGCSBucket(baseTask):
     api_type = 'gcp'
     api_name = 'CreateGCSBucket'
-    arguments = {"porject_id": {"type": str, "default": ''},
-                 "usecase_name": {"type": str, "default": ''},
-                 "bucket_location": {"type": str, "default": ''},
-                 "bucket_name": {"type": str, "default": ''},
-                 "bucket_class": {"type": str, "default": ''},
-                 "bucket_cmek": {"type": str, "default": ''},
-                 "bucket_labels": {"type": str, "default": ''}}
 
     def __init__(self, stage_dict):
         super(CreateGCSBucket, self).__init__(stage_dict)
         self.target_project = stage_dict['porject_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
-        missing_set = set()
-        for key in self.arguments:
-            if key == 'bucket_cmek' or key == 'bucket_class' or key == 'bucket_labels':
-                continue
-            check_key = self.stage_dict.get(key, 'NotFound')
-            if check_key == 'NotFound':
-                missing_set.add(key)
-            # # print('{}: {}'.format(key, self.stage_dict[key]))
-        if len(missing_set) != 0:
-            return 'Missing parameters: {}'.format(', '.join(missing_set))
-        else:
+
+        try:
             project_id = self.stage_dict['porject_id'].strip()
             bucket_name = self.stage_dict['bucket_name'].strip().replace(' ', '').replace('_', '-').lower()
             location = self.stage_dict['bucket_location'].strip()
@@ -39,22 +28,28 @@ class CreateGCSBucket(baseTask):
 
             bucket_class = self.stage_dict.get('bucket_class', None).strip()
             bucket_cmek = self.stage_dict.get('bucket_cmek', None).strip()
+            logger.debug("FN:CreateGCSBucket_execute bucket_class:{} bucket_cmek:{}".format(bucket_class, bucket_cmek))
+            logger.debug("FN:CreateGCSBucket_execute bucket_name:{} location:{}".format(bucket_name, location))
             storage_client = storage.Client(project_id)
-
             bucket = storage_client.create_bucket(bucket_name, location=location)
-            print('bucket_class:', bucket_class)
+
             if bucket_class:
                 bucket.storage_class = bucket_class
             if bucket_labels:
                 labels = bucket.labels
                 for label in bucket_labels:
-                    labels["label"] = bucket_labels[label]
+                    labels[label] = bucket_labels[label]
                 bucket.labels = labels
             if bucket_cmek:
                 bucket.default_kms_key_name = bucket_cmek
-            bucket.patch()
 
+            bucket.patch()
             usecase_name = self.stage_dict.get('usecase_name', None)
             self.records_resource(workspace_id, input_form_id, usecase_name, 'Storage', bucket_name)
 
             return "Bucket {} created.".format(bucket.name)
+
+        except Exception as e:
+            logger.error("FN:CreateGCSBucket_execute error:{}".format(traceback.format_exc()))
+
+            

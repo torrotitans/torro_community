@@ -1,5 +1,5 @@
 // third lib
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import ScrollBar from "react-perfect-scrollbar";
 import cn from "classnames";
@@ -7,8 +7,6 @@ import cn from "classnames";
 /* material-ui */
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
 import TodayIcon from "@material-ui/icons/Today";
 import LaunchIcon from "@material-ui/icons/Launch";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
@@ -17,7 +15,6 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import FormDataDisplay from "../FormDataDisplay";
 import styles from "./styles.module.scss";
 import Loading from "@assets/icons/Loading";
-import HeadLine from "@basics/HeadLine";
 import { getRequestDetail, getFormItem } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import Text from "@basics/Text";
@@ -48,6 +45,15 @@ const RequestDetail = ({ recordId, approvedView }) => {
     setDefaultData(changeData);
     setModalData({ ...modalData, open: false });
   };
+
+  const enableReOpen = useMemo(() => {
+    if (!formData) {
+      return;
+    }
+    let formId = Number(formData.id);
+
+    return defaultData.index === 0 && (formId > 350 || [1, 2].includes(formId));
+  }, [defaultData.index, formData]);
 
   const covertTime = useCallback(
     (date) => {
@@ -123,37 +129,22 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   approverView={approvedView}
                   isApprover={isApprover}
                   defaultData={defaultData.data}
-                  enableReOpen={defaultData.index === 0}
+                  enableReOpen={enableReOpen}
                   setEditView={setEditView}
                 />
-              </div>
-            </ScrollBar>
-          </div>
-
-          <div className={styles.history}>
-            <ScrollBar>
-              <div className={styles.historyContent}>
-                <HeadLine>
-                  <Intl id="historyRecord" />
-                </HeadLine>
-                <div className={styles.historyTable}>
-                  <List>
-                    {tableList.map((row, index) => (
-                      <ListItem
-                        key={index}
-                        className={cn({
-                          [styles["active"]]: defaultData.index === index,
-                        })}
-                      >
-                        <ListItemText>{row.history_id}</ListItemText>
-                        <ListItemText>
-                          <div className={styles.timeStamp}>
-                            <TodayIcon />
-                            {covertTime(row.create_time)}
-                          </div>
-                        </ListItemText>
-                        <ListItemSecondaryAction>
-                          <LaunchIcon
+                {tableList && tableList.length > 1 && (
+                  <div className={styles.history}>
+                    <Text type="title">
+                      <Intl id="historyRecord" />
+                    </Text>
+                    <div className={styles.historyTable}>
+                      <List>
+                        {tableList.map((row, index) => (
+                          <ListItem
+                            key={index}
+                            className={cn(styles.historyItem, {
+                              [styles["active"]]: defaultData.index === index,
+                            })}
                             onClick={() => {
                               if (editView) {
                                 setChangeData({
@@ -174,12 +165,20 @@ const RequestDetail = ({ recordId, approvedView }) => {
                                 });
                               }
                             }}
-                          />
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    ))}
-                  </List>
-                </div>
+                          >
+                            <div className={styles.historyItemBox}>
+                              <div className={styles.timeStamp}>
+                                <TodayIcon />
+                                {covertTime(row.create_time)}
+                              </div>
+                              <LaunchIcon className={styles.launchIcon} />
+                            </div>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </div>
+                  </div>
+                )}
               </div>
             </ScrollBar>
           </div>

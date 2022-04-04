@@ -45,7 +45,7 @@ export default {
   checkRequest: "See the request detail",
   confirmRaise: "Do you confirm this request?",
   confirmSetup: "Do you confirm the torro setting?",
-  confirmOnboard: "Do you confirm to onBoard this Project?",
+  confirmOnboard: "Do you confirm to onboard this data?",
   newRequestSubmit: "New request has been submitted!",
   selectedUc: "Assign to use case",
   checkTableTagInput: "Table tag have empty value, please check your input.",
@@ -70,6 +70,7 @@ export default {
   wsAdgroup: "Workspace AD Group",
   workflowV: "Workflow Value",
   copy: "Copy",
+  dataAccess: "Data access",
 
   // role
   it: "IT Admin",
@@ -169,6 +170,11 @@ export default {
   policyTag: "Policy Tags",
   description: "Description",
   resourceDetail: "Resource Detail",
+  projectName: "Project name",
+  dataSet: "Dataset",
+  tableName: "Table name",
+  fields: "Fields",
+  applyTime: "Apply time",
 
   // Data Discovery
   dataDiscovery: "Data Discovery",
@@ -223,7 +229,7 @@ export default {
   createWorkSpace: "Workspace Management",
   createUc: "Create Use Case",
   wsManagement: "Workspace",
-  raiseTicket: "Raise A Request",
+  raiseTicket: "Raise a Request",
   ticketAction: "Workspace Services",
   pickStart: "Pick a service to start",
   submit: "Submit",

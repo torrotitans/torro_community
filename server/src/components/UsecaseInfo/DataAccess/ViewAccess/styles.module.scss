@@ -1,0 +1,24 @@
+.viewAccess {
+  display: flex;
+  justify-content: center;
+  .specialStr {
+    margin-right: $rbwmspace8;
+    color: $main-purple;
+    text-decoration: underline;
+  }
+}
+.viewIcon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    svg {
+      color: $main-purple;
+    }
+  }
+}
+.modalContent {
+  margin-top: $rbwmspace20;
+}
