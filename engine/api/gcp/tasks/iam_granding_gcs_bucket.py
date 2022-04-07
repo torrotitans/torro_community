@@ -1,6 +1,10 @@
 from api.gcp.tasks.baseTask import baseTask
 import time
 from google.cloud import storage
+import traceback
+import logging
+
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
 class GrantRoleForGCSBucket(baseTask):
     api_type = 'gcp'
@@ -14,16 +18,9 @@ class GrantRoleForGCSBucket(baseTask):
         self.target_project = stage_dict['project_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
-        missing_set = set()
-        for key in self.arguments:
-            if key == 'bucket_cmek' or key == 'bucket_class' or key == 'bucket_labels':
-                continue
-            check_key = self.stage_dict.get(key, 'NotFound')
-            if check_key == 'NotFound':
-                missing_set.add(key)
-        if len(missing_set) != 0:
-            return 'Missing parameters: {}'.format(', '.join(missing_set))
-        else:
+        # Expected role input:
+        # "ad1@abc.com+storage+storage.objectViewer,ad2@abc.com+storage+storage.objectViewer"
+        try:
             successful_user = set()
             error_user = set()
             project_id = self.stage_dict['porject_id']
@@ -37,9 +34,11 @@ class GrantRoleForGCSBucket(baseTask):
                     roles_members[role] = set()
                 roles_members[role].add(user_name)
 
+            logger.debug("FN:GrantRoleForGCSBucket_execute project_id:{} bucket_name:{}".format(project_id,bucket_name))
             storage_client = storage.Client(project_id)
-
             bucket = storage_client.bucket(bucket_name)
+
+            logger.debug("FN:GrantRoleForGCSBucket_execute roles_members:{}".format(roles_members))
 
             for role in roles_members:
                 members = roles_members[role]
@@ -47,20 +46,24 @@ class GrantRoleForGCSBucket(baseTask):
                 for member in members:
                     try:
                         policy = bucket.get_iam_policy(requested_policy_version=3)
-
                         policy.bindings.append(
                             {
                                 "role": role,
                                 "members": [member],
                                 })
+
+                        logger.debug("FN:GrantRoleForGCSBucket_execute iam_binding_policy:{}".format(policy))
                         bucket.set_iam_policy(policy)
                         successful_user.add('{}+{}'.format(member, role))
                         time.sleep(1)
                     except Exception as e:
-                        e = str(e)
+                        logger.error("FN:GrantRoleForGCSBucket_execute error:{}".format(e))
                         error_user.add('{}+{}'.format(member, role))
-
+                        return_msg += '\nAdded member(s) failed:\n{}'.format(', '.join(error_user))
 
             return_msg = "Added member(s) successfully:\n{}".format(', '.join(successful_user))
-            return_msg += '\nAdded member(s) failed:\n{}'.format(', '.join(error_user))
+            
             return(return_msg)
+        
+        except:
+            logger.error("FN:GrantRoleForGCSBucket_execute error:{}".format(traceback.format_exc()))

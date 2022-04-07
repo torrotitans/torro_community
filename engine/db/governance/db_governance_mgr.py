@@ -135,7 +135,7 @@ class DbGovernanceMgr(DbBase):
                     data = response_code.UPDATE_DATA_FAIL
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
-                    data['msg'] = 'you do not in the approval ad group.'
+                    data['msg'] = 'You are not in the approval ad group.'
                     data['data']['history_id'] = history_id
                     return data
                 now_approval_num = int(approval_infos[0]['approval_num'])
@@ -161,7 +161,7 @@ class DbGovernanceMgr(DbBase):
                         workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                         workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                         logger.debug("FN:change_status workflow_stages_id_list:{}".format(workflow_stages_id_list))
-                        input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
+                        input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
                         sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                                      input_stage_condition)
                         logger.debug("FN:change_status inputStageTable_list:{}".format(sql))
@@ -419,9 +419,7 @@ class DbGovernanceMgr(DbBase):
             return data
 
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:change_status error:" + e)
-            logger.error("FN:change_status error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -440,9 +438,7 @@ class DbGovernanceMgr(DbBase):
             admin_info = self.execute_fetch_one(conn, sql)
             return admin_info
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:get_admin_user_info error:" + e)
-            logger.error("FN:get_admin_user_info error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return {}
         finally:
             conn.close()
@@ -520,7 +516,7 @@ class DbGovernanceMgr(DbBase):
                 workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                 logger.debug("FN:system_approval_trigger workflow_stages_id_list:{}".format(workflow_stages_id_list))
-                input_stage_condition = "id in ('%s') order by stage_index desc" % ("', '".join(workflow_stages_id_list))
+                input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
                 sql = self.create_select_sql(db_name, 'inputStageTable', 'id,apiTaskName,condition_value_dict',
                                              input_stage_condition)
                 logger.debug("FN:system_approval_trigger inputStageTable_sql:{}".format(sql))
@@ -622,9 +618,7 @@ class DbGovernanceMgr(DbBase):
             return data
 
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:system_approval_trigger error:" + e)
-            logger.error("FN:system_approval_trigger error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
@@ -688,9 +682,7 @@ class DbGovernanceMgr(DbBase):
             # data['data'] = {'history_id': history_id}
             return data
         except Exception as e:
-            error = traceback.format_exc()
-            logger.error("FN:updateTask error:" + e)
-            logger.error("FN:updateTask error:" + error)
+            logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
         finally:
             conn.close()
