@@ -71,6 +71,9 @@ export default {
   workflowV: "Workflow Value",
   copy: "Copy",
   dataAccess: "Data access",
+  loginExpired: "Login status expired",
+  logout: "Log out",
+  stay: "Stay on",
 
   // role
   it: "IT Admin",
