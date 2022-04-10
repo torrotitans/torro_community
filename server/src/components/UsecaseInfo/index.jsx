@@ -10,6 +10,7 @@ import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
@@ -90,7 +91,7 @@ const UseCaseRow = ({ user, userColumnKey }) => {
     </React.Fragment>
   );
 };
-const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
+const UsecaseInfo = ({ onBack, usecaseId, detailDisplay }) => {
   const [useCaseDetail, setUseCaseDetail] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -166,6 +167,14 @@ const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
 
   return (
     <div className={styles.workspaceCreation}>
+      {onBack && (
+        <div className={styles.onBack} onClick={onBack}>
+          <ArrowBackIcon />
+          <Text type="subTitle">
+            <Intl id="back" />
+          </Text>
+        </div>
+      )}
       <div className={styles.wsContainer}>
         <div className={styles.title}>
           <HeadLine>

@@ -30,9 +30,17 @@
 .detailLabel {
   margin-bottom: $rbwmspace4;
 }
-.detailValue {
+.onBack {
+  cursor: pointer;
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  color: $main-purple;
+  margin: $rbwmspace16 0 0 $rbwmspace12;
+  svg {
+    margin-right: $rbwmspace12;
+  }
 }
-
 .secondTitle {
   color: $main-purple;
   margin-bottom: $rbwmspace20;
