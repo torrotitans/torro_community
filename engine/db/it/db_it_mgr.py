@@ -25,8 +25,8 @@ class DbITMgr(DbBase):
         try:
             sql = stageBase.verify_sql(sql)
             run_sql = 'use {};'.format(db_name)+sql
-            print('111111:', run_sql)
-            return_info = self.execute_fetch_all(conn, run_sql)
+            print('111111:', sql)
+            return_info = self.execute_fetch_all(conn, sql)
             data = response_code.SUCCESS
             data['data'] = {'cmd': sql, 'result': return_info}
             return data
