@@ -6,7 +6,7 @@ from config import config
 from common.common_input_form_status import status as Status
 import traceback
 import logging
-
+import time
 logger = logging.getLogger("main." + __name__)
 config_name = os.getenv('FLASK_CONFIG') or 'default'
 Config = config[config_name]
@@ -32,10 +32,12 @@ class taskOperator:
     def execute_tasks(task_object_list, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         try:
             return_msg_list = []
-            for task_object in task_object_list:
-                # api_name = task_object.api_name
+            for index, task_object in enumerate(task_object_list):
+                api_name = task_object.api_name
+                logger.debug('execute task:', index, api_name)
                 # task_object.verify_all_param()
                 return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
+                # time.sleep(1)
                 # if api_name in taskOperator.db_operation:
                 #     # print('1234task {} will update db'.format(api_name))
                 #     return_msg = task_object.execute(workspace_id, form_id, input_form_id, user_id)
