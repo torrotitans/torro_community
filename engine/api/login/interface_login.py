@@ -84,8 +84,8 @@ class interfaceLogin(Resource):
                 resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(token))
             else:
                 resp.set_cookie("token", token, expires=60 * 60)
-                resp.set_cookie("SameSite", 'None', samesite=None, secure=None, expires=60 * 60)
-                resp.set_cookie("Secure", samesite=None, secure=None, expires=60 * 60)
+                resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                resp.set_cookie("Secure", samesite=None, secure=None)
                 
             return resp
         
@@ -130,8 +130,8 @@ class interfaceLogin(Resource):
                     resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
                 else:
                     resp.set_cookie("token", new_token, expires=60 * 60)
-                    resp.set_cookie("SameSite", 'None', samesite=None, secure=None, expires=60 * 60)
-                    resp.set_cookie("Secure", samesite=None, secure=None, expires=60 * 60)
+                    resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
+                    resp.set_cookie("Secure", samesite=None, secure=None)
                 return resp
 
             else:
