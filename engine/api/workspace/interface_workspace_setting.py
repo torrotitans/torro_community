@@ -106,7 +106,7 @@ class interfaceWorkspaceSetting(Resource):
                     if config_name == 'production':
                         resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
                     else:
-                        resp.set_cookie("token", new_token, expires=Config.PERMANENT_SESSION_LIFETIME)
+                        resp.set_cookie("token", new_token, max_age=Config.PERMANENT_SESSION_LIFETIME)
                         resp.set_cookie("SameSite", 'None', samesite=None, secure=None, max_age=Config.PERMANENT_SESSION_LIFETIME)
                         resp.set_cookie("Secure", samesite=None, secure=None, max_age=Config.PERMANENT_SESSION_LIFETIME)
                     return resp
