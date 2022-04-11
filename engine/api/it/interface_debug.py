@@ -82,7 +82,7 @@ class interfaceDebug(Resource):
             #     data['data'] = return_data
             # else:
             #     data = response_code.GET_DATA_FAIL
-            return data
+            return response_result_process(data, xml=xml)
         except Exception as e:
             logger.error("FN:interfaceDebug_put error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
