@@ -1,5 +1,6 @@
 import abc
 import re
+
 class stageBase(metaclass=abc.ABCMeta):
 
     base_para = {"id": {"type": int, "default": -1},
@@ -43,3 +44,11 @@ class stageBase(metaclass=abc.ABCMeta):
                     text = stageBase.recover_pattern(text, mapping_words)
                     new_stage_dict['condition'][index]['value'] = text
             return new_stage_dict
+
+    @staticmethod
+    def verify_sql(sql):
+        text = sql
+        for ignore_word in stageBase.sql_ignore_set:
+            # text = text.replace('\\', '-*backslash*-')
+            text = text.replace(ignore_word, '')
+        return text
