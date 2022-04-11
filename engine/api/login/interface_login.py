@@ -27,6 +27,49 @@ Config = config[config_name]
 class interfaceLogin(Resource):
 
     allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
+
+    @api_version
+    def get(self):
+
+        xml = request.args.get('format')
+        try:
+
+            new_token, role_name, role_list, workspace_id, workspace_list = Auth.refresh_token(request, None, None)
+            # print('user_token:', new_token)
+            # operation_log(description='login')
+            if new_token:
+                data = response_code.SUCCESS
+                data['data'] = {'role_list': role_list, 'role_name': role_name,
+                                'workspace_list': workspace_list, 'workspace_id': workspace_id}
+                resp = make_response(json.dumps(data, cls=DateEncoder))
+                # resp.headers['Access-Control-Allow-Origin'] = 'http://34.96.134.183:9000,http://localhost:8080'
+                # resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
+                origin = request.headers.get('Origin')
+                # print('request.headers:', request.headers.get('Origin'))
+                if origin in interfaceLogin.allow_origins:
+                    resp.headers['Access-Control-Allow-Origin'] = origin
+
+                resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+                resp.headers['Access-Control-Allow-Credentials'] = 'true'
+                resp.headers['Access-Control-Allow-Methods'] = "GET,POST,PUT,DELETE,OPTIONS"
+                if config_name == 'production':
+                    resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
+                else:
+                    resp.set_cookie("token", new_token, expires=Config.PERMANENT_SESSION_LIFETIME)
+                    resp.set_cookie("SameSite", 'None', samesite=None, secure=None,
+                                    max_age=Config.PERMANENT_SESSION_LIFETIME)
+                    resp.set_cookie("Secure", samesite=None, secure=None, max_age=Config.PERMANENT_SESSION_LIFETIME)
+                return resp
+            else:
+                data = response_code.UPDATE_DATA_FAIL
+                return response_result_process(data, xml=xml)
+
+        except Exception as e:
+            logger.error("FN:interfaceLogin_get error:{}".format(traceback.format_exc()))
+            # print(traceback.format_exc())
+            error_data = response_code.ADD_DATA_FAIL
+            return response_result_process(error_data, xml=xml)
+
     # @api_version
     def post(self):
         xml = request.args.get('format')
