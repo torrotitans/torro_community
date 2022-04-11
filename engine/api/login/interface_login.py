@@ -9,7 +9,7 @@ from common.common_model_enum import modelEnum
 from common.common_request_process import req
 from common.common_response_process import response_result_process, DateEncoder
 from db.user.db_user_parameter import userApiPara
-from utils.api_version_verify import api_version
+from common.common_login_helper import login_required
 from utils.auth_helper import Auth
 from utils.status_code import response_code
 import json
@@ -28,7 +28,7 @@ class interfaceLogin(Resource):
 
     allow_origins = [Config.FRONTEND_URL, 'http://localhost:8080']
 
-    @api_version
+    @login_required
     def get(self):
 
         xml = request.args.get('format')
