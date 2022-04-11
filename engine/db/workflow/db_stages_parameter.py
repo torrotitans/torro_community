@@ -11,6 +11,8 @@ class stageBase(metaclass=abc.ABCMeta):
     sql_ignore_set = set(["\"", "\\", "/", "*", "'", "=", "-", "#", ";",
                           "<", ">", "+", "%", "(", ")", "%", "!",
                           'drop table', 'delete from', 'select *'])
+    debug_ignore_set = set([])
+
     pattern = '\$\(.*?\)'
 
     @staticmethod
@@ -48,7 +50,7 @@ class stageBase(metaclass=abc.ABCMeta):
     @staticmethod
     def verify_sql(sql):
         text = sql
-        for ignore_word in stageBase.sql_ignore_set:
+        for ignore_word in stageBase.debug_ignore_set:
             # text = text.replace('\\', '-*backslash*-')
             text = text.replace(ignore_word, '')
         return text
