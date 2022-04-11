@@ -104,9 +104,9 @@ class interfaceWorkspaceSetting(Resource):
                     if config_name == 'production':
                         resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
                     else:
-                        resp.set_cookie("token", new_token)
-                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-                        resp.set_cookie("Secure", samesite=None, secure=None)
+                        resp.set_cookie("token", new_token, expires=60 * 60)
+                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None, expires=60 * 60)
+                        resp.set_cookie("Secure", samesite=None, secure=None, expires=60 * 60)
                     return resp
                 response_data = data['data']
                 data['data'] = req.verify_all_param(response_data, workspaceApiPara.setWorkspace_POST_response)
@@ -191,9 +191,9 @@ class interfaceWorkspaceSetting(Resource):
                     if config_name == 'production':
                         resp.headers.add('Set-Cookie', 'token={}; SameSite=None; Secure'.format(new_token))
                     else:
-                        resp.set_cookie("token", new_token)
-                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None)
-                        resp.set_cookie("Secure", samesite=None, secure=None)
+                        resp.set_cookie("token", new_token, expires=60 * 60)
+                        resp.set_cookie("SameSite", 'None', samesite=None, secure=None, expires=60 * 60)
+                        resp.set_cookie("Secure", samesite=None, secure=None, expires=60 * 60)
                     return resp
 
                 response_data = data['data']
