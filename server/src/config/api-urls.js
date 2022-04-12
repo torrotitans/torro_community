@@ -188,7 +188,7 @@ const config = {
 
   ConsoleGet: {
     url: `${BASE_API_URL}/api/debug`,
-    method: POST,
+    method: PUT,
   },
 
   lookupResource: {

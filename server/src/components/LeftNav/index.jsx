@@ -32,35 +32,38 @@ const wsItemList = [
     link: `${ROOT}/WorkspaceManage`,
   },
   {
-    id: "createUc",
-    title: <Intl id="createUc" />,
-    link: `${ROOT}/forms?id=2`,
-  },
-  {
     id: "policyMan",
     title: <Intl id="policyMan" />,
     link: `${ROOT}/policyCreation`,
-  },
-  {
-    id: "dataOnboarding",
-    title: <Intl id="dataOnboarding" />,
-    link: `${ROOT}/dataOnboarding`,
   },
   // {
   //   id: "dataDiscovery",
   //   title: <Intl id="dataDiscovery" />,
   //   link: `${ROOT}/dataDiscovery`,
   // },
-  {
-    id: "getDataAccess",
-    title: <Intl id="getDataAccess" />,
-    link: `${ROOT}/getDataAccess`,
-  },
   // {
   //   id: "visualisation",
   //   title: <Intl id="visualisation" />,
   //   link: `${ROOT}/visualisation`,
   // },
+];
+
+const raiseTicketExt = [
+  {
+    id: "createUc",
+    title: <Intl id="createUc" />,
+    link: `${ROOT}/forms?id=2`,
+  },
+  {
+    id: "dataOnboarding",
+    title: <Intl id="dataOnboarding" />,
+    link: `${ROOT}/dataOnboarding`,
+  },
+  {
+    id: "getDataAccess",
+    title: <Intl id="getDataAccess" />,
+    link: `${ROOT}/getDataAccess`,
+  },
 ];
 
 const LinkWrapper = ({ children, link, closeHandle }) => {
@@ -144,7 +147,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList || [],
+            list: formList ? raiseTicketExt.concat(formList) : [],
           },
           {
             link: `${ROOT}/workflowManagement`,
@@ -181,7 +184,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList || [],
+            list: formList ? raiseTicketExt.concat(formList) : [],
           },
           {
             link: `${ROOT}/workflowManagement`,
@@ -201,7 +204,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList || [],
+            list: formList ? raiseTicketExt.concat(formList) : [],
           },
         ];
     }
