@@ -17,9 +17,8 @@ class MysqlConn(object):
     DICT_SSDICTCURSOR_MODE = pymysql.cursors.SSDictCursor
 
     def __init__(self, database_name='DB', cur_type=pymysql.cursors.DictCursor):
-        self.conn = MysqlConn.get_connection(database_name)
+        self.conn, self.user, self.password = MysqlConn.get_connection(database_name)
         self.cur = self.conn.cursor(cursor=cur_type)
-
     @staticmethod
     def get_connection(database_name):
         """
@@ -35,7 +34,7 @@ class MysqlConn(object):
                                            blocking=True,
                                            host=host, port=port, user=user, passwd=password,
                                            charset='utf8')
-        return MysqlConn.__my_pool.connection()
+        return MysqlConn.__my_pool.connection(), user, password
 
     def close(self):
         """

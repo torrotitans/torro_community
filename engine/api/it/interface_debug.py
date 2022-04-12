@@ -54,35 +54,17 @@ class interfaceDebug(Resource):
             if not request_data:
                 data = response_code.REQUEST_PARAM_MISSED
                 return response_result_process(data, xml=xml)
-            cmd = request_data['command']
+            sql = request_data['command']
 
-            data = it_singleton.sql_execute(cmd)
-            # username = request_data['user']
-            # try:
-            #     user_key = g.user_key
-            # except:
-            #     user_key = -1
-            # # print('user id:', user_key)
-            # if cmd:
-            #     data = response_code.SUCCESS
-            #     x = os.popen("tmux ls | grep '{}:'".format(username))
-            #     user_flag = x.read()
-            #     # print('user flag', user_flag)
-            #     if user_flag != '':
-            #         c1 = "tmux a -t {}".format(username)
-            #         # print(c1)
-            #         os.system(c1)
-            #     else:
-            #         c2 = "tmux new -s {}".format(username)
-            #         # print(c2)
-            #         os.system(c2)
-            #     x = os.popen(cmd)
-            #     return_data = x.read()
-            #     os.system("tmux detach")
-            #     data['data'] = return_data
-            # else:
-            #     data = response_code.GET_DATA_FAIL
-            return response_result_process(data, xml=xml)
+            cmd = it_singleton.get_cmd_sql(sql)
+            if cmd:
+                data = response_code.SUCCESS
+                x = os.popen(cmd)
+                return_data = x.read()
+                data['data'] = return_data
+            else:
+                data = response_code.GET_DATA_FAIL
+            return data
         except Exception as e:
             logger.error("FN:interfaceDebug_put error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL
