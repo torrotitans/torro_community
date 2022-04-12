@@ -44,7 +44,7 @@ export default {
   dropwfItem: "Drop your workflow here.",
   checkRequest: "See the request detail",
   confirmRaise: "Please confirm this request?",
-  confirmSetup: "Please confirm the torro setting?",
+  confirmSetup: "Please confirm this torro setting?",
   confirmOnboard: "Plaese confirm you want to onboard this data?",
   newRequestSubmit: "New request has been submitted!",
   selectedUc: "Please select a use case",
