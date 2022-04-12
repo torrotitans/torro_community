@@ -71,6 +71,11 @@ export default {
   workflowV: "Workflow Value",
   copy: "Copy",
   dataAccess: "Data access",
+  loginExpired: "Login status expired",
+  logout: "Log out",
+  stay: "Stay on",
+  tableTags: "Table tags",
+  tableSchema: "Table schema",
 
   // role
   it: "IT Admin",
@@ -130,7 +135,8 @@ export default {
   tagTemplateName: "Tag Template Name",
   templateId: "Template ID",
   formId: "Form ID",
-  confirmDeleteTagTemplate: "Please confirm you want to delete this data tag template?",
+  confirmDeleteTagTemplate:
+    "Please confirm you want to delete this data tag template?",
   tagTemplateDeleted: "This tag template has been deleted?",
 
   // Use case
@@ -146,6 +152,11 @@ export default {
 
   confirmDeleteUc: "Please confirm you want to delete this use case?",
   ucDeleted: "Use case has been deleted.",
+
+  resourceName: "Resource name",
+  resourceLabel: "Resource label",
+  accessTime: "Access time",
+  gcpResources: "GCP resources",
 
   // Policy
   policyMan: "Data Access Policy Management",
@@ -201,6 +212,8 @@ export default {
   //requestDetail
   approveTips: "Please confirm your approve for this request?",
   rejectTips: "Please confirm your rejection of this request?",
+  approvedBy: "Approved by: ",
+  adGroup: "Ad group: ",
 
   // loginPage
   userName: "User Name",
@@ -314,7 +327,8 @@ export default {
   msg401:
     "If you believe you should have access to this application, please contact your IT admin ",
   goesWrong: "Something went wrong @_@;;",
-  checkInput: "Something is wrong with your input, please verify your input and try again",
+  checkInput:
+    "Something is wrong with your input, please verify your input and try again",
 
   loadNpatience: "This page is reloading, and appreciate your patience.",
 

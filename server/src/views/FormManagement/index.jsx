@@ -273,8 +273,6 @@ const FormManagement = ({ tagTemplate }) => {
     return tmp;
   }, [formData]);
 
-  console.log(formData);
-
   const renderFormItem = (items) => {
     let itemLen = items.length;
 

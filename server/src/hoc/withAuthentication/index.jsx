@@ -1,20 +1,65 @@
 /* third lib */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 /* local components & methods */
 import { useGlobalContext } from "src/context";
 import UserSessionBar from "src/layouts/UserSessionBar";
+import CallModal from "@basics/CallModal";
 
 const withAuthentication = (VerificationPage) => (props) => {
-  const { authContext } = useGlobalContext();
+  const { authContext, setAuth } = useGlobalContext();
   let firstInit = String(authContext.init) === "true";
   let isLoggedIn = authContext.userId && authContext.userId !== "null";
   let haveRole = !!authContext.role && authContext.role !== "null";
   let haveWs = authContext.wsList && authContext.wsList.length > 0;
   let isServiceAdmin = authContext.roleList.includes("admin");
 
+  const [modalData, setModalData] = useState({
+    open: false,
+    status: 0,
+    content: "",
+    cb: null,
+  });
+
   console.log(authContext);
+
+  useEffect(() => {
+    if (!!authContext.expTime) {
+      let loginTimer = setInterval(() => {
+        if (new Date().getTime() > authContext.expTime) {
+          setModalData({
+            open: true,
+            status: 4,
+            content: "time expired",
+            cb: () => {
+              setAuth(authContext);
+              setModalData({ open: false, status: 4, content: "time expired" });
+            },
+            successCb: () => {
+              setAuth({
+                userName: "",
+                userId: "",
+                accountId: "",
+                roleList: [],
+                role: "",
+                init: false,
+                wsList: [],
+                wsId: "",
+                ad_group_list: [],
+              });
+            },
+          });
+          clearInterval(loginTimer);
+          loginTimer = null;
+        }
+      }, 5000);
+      return () => {
+        clearInterval(loginTimer);
+        loginTimer = null;
+      };
+    }
+  }, [authContext, setAuth]);
 
   if (window.location.pathname.indexOf("/orgSetting") !== -1 && !firstInit) {
     return <Navigate to="/login" />;
@@ -70,6 +115,17 @@ const withAuthentication = (VerificationPage) => (props) => {
     <>
       <UserSessionBar />
       <VerificationPage {...props} />
+
+      <CallModal
+        open={modalData.open}
+        content={modalData.content}
+        status={modalData.status}
+        successCb={modalData.successCb}
+        buttonClickHandle={modalData.cb}
+        handleClose={() => {
+          setModalData({ ...modalData, open: false, cb: null });
+        }}
+      />
     </>
   );
 };

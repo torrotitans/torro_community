@@ -20,6 +20,12 @@ const statusMap = {
   1: { buttonText: "confirm", title: "almost", icon: Confirm },
   2: { buttonText: "continue", title: "allDone", icon: Success },
   3: { buttonText: "tryAgain", title: "ooops", icon: ErrorIcon },
+  4: {
+    buttonText: "stay",
+    title: "loginExpired",
+    icon: ErrorIcon,
+    button2Text: "logout",
+  },
 };
 const CallModal = ({
   status,
@@ -39,8 +45,12 @@ const CallModal = ({
     return currentModelData.icon;
   }, [currentModelData]);
 
+  const closeHandler = useMemo(() => {
+    return status === 4 ? null : handleClose;
+  }, [status, handleClose]);
+
   return (
-    <Model open={open} handleClose={handleClose}>
+    <Model open={open} handleClose={closeHandler}>
       <div className={cn(styles.confirmModel, styles["status" + status])}>
         <div className={styles.statusIcon}>
           <Icon />
@@ -76,7 +86,17 @@ const CallModal = ({
               className={styles.successCb}
             >
               <Text type="title">
-                <Intl id="checkRequest" />
+                {currentModelData.button2Text ? (
+                  currentModelData.button2Text
+                ) : (
+                  <Intl
+                    id={
+                      currentModelData.button2Text
+                        ? currentModelData.button2Text
+                        : "checkRequest"
+                    }
+                  />
+                )}
               </Text>
             </Button>
           )}

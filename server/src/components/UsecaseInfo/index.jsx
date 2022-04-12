@@ -10,6 +10,7 @@ import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
@@ -32,6 +33,8 @@ import {
 
 import { sendNotify } from "src/utils/systerm-error";
 import DataAccess from "./DataAccess";
+import UsecaseResournce from "./UsecaseResournce";
+
 const USE_CASE_FORM_ID = 2;
 
 const UseCaseRow = ({ user, userColumnKey }) => {
@@ -90,7 +93,7 @@ const UseCaseRow = ({ user, userColumnKey }) => {
     </React.Fragment>
   );
 };
-const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
+const UsecaseInfo = ({ onBack, usecaseId, detailDisplay }) => {
   const [useCaseDetail, setUseCaseDetail] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -147,6 +150,9 @@ const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
             },
             user_infos: ucData.user_infos,
             data_access: ucData.data_access ? ucData.data_access : [],
+            usecase_resource: ucData.usecase_resource
+              ? ucData.usecase_resource
+              : [],
           };
           let data = res3.data;
           let tempFieldList = data.fieldList.map((item) => {
@@ -166,6 +172,14 @@ const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
 
   return (
     <div className={styles.workspaceCreation}>
+      {onBack && (
+        <div className={styles.onBack} onClick={onBack}>
+          <ArrowBackIcon />
+          <Text type="subTitle">
+            <Intl id="back" />
+          </Text>
+        </div>
+      )}
       <div className={styles.wsContainer}>
         <div className={styles.title}>
           <HeadLine>
@@ -237,8 +251,11 @@ const UsecaseInfo = ({ usecaseId, detailDisplay }) => {
             </>
           )}
         </div>
-        {!detailDisplay && ucData && ucData.data_access && (
+        {ucData && ucData.data_access && (
           <DataAccess dataAccessList={ucData.data_access} />
+        )}
+        {ucData && ucData.usecase_resource && (
+          <UsecaseResournce resoureList={ucData.usecase_resource} />
         )}
       </div>
     </div>

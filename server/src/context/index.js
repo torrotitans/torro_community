@@ -17,6 +17,7 @@ const Identity = (() => {
     wsId: "",
     ad_group_list: [],
     userCN: "",
+    expTime: "",
   };
   try {
     if (!getCookie("TORRO_AUTH")) {
@@ -30,10 +31,13 @@ const Identity = (() => {
   return Idata;
 })();
 
+console.log(Identity);
+
 const GlobalContextProvider = (props) => {
   const [authContext, authContextDispatch] = useReducer(
     (state, actions) => {
       let newState = state;
+      let expTime = new Date().getTime() + 60 * 60 * 1000;
       newState = {
         ...state,
         init: actions.payload.init,
@@ -46,10 +50,11 @@ const GlobalContextProvider = (props) => {
         wsId: actions.payload.wsId,
         accountId: actions.payload.accountId,
         ad_group_list: actions.payload.ad_group_list,
+        expTime: expTime,
       };
       let sessionToken = JSON.stringify(newState);
       let encodeToken = Encrypt(sessionToken);
-      setCookie("TORRO_AUTH", encodeToken);
+      setCookie("TORRO_AUTH", encodeToken, expTime);
       return newState;
     },
     {
@@ -63,6 +68,7 @@ const GlobalContextProvider = (props) => {
       accountId: Identity.accountId,
       ad_group_list: Identity.ad_group_list,
       userCN: Identity.userCN,
+      expTime: Identity.expTime,
     }
   );
 
