@@ -9,7 +9,7 @@ from common.common_model_enum import modelEnum
 from common.common_request_process import req
 from common.common_response_process import response_result_process
 from utils.status_code import response_code
-from flask import g
+from core.it_singleton import it_singleton
 import traceback
 import logging
 
@@ -55,32 +55,34 @@ class interfaceDebug(Resource):
                 data = response_code.REQUEST_PARAM_MISSED
                 return response_result_process(data, xml=xml)
             cmd = request_data['command']
-            username = request_data['user']
-            try:
-                user_key = g.user_key
-            except:
-                user_key = -1
-            # print('user id:', user_key)
-            if cmd:
-                data = response_code.SUCCESS
-                x = os.popen("tmux ls | grep '{}:'".format(username))
-                user_flag = x.read()
-                # print('user flag', user_flag)
-                if user_flag != '':
-                    c1 = "tmux a -t {}".format(username)
-                    # print(c1)
-                    os.system(c1)
-                else:
-                    c2 = "tmux new -s {}".format(username)
-                    # print(c2)
-                    os.system(c2)
-                x = os.popen(cmd)
-                return_data = x.read()
-                os.system("tmux detach")
-                data['data'] = return_data
-            else:
-                data = response_code.GET_DATA_FAIL
-            return data
+
+            data = it_singleton.sql_execute(cmd)
+            # username = request_data['user']
+            # try:
+            #     user_key = g.user_key
+            # except:
+            #     user_key = -1
+            # # print('user id:', user_key)
+            # if cmd:
+            #     data = response_code.SUCCESS
+            #     x = os.popen("tmux ls | grep '{}:'".format(username))
+            #     user_flag = x.read()
+            #     # print('user flag', user_flag)
+            #     if user_flag != '':
+            #         c1 = "tmux a -t {}".format(username)
+            #         # print(c1)
+            #         os.system(c1)
+            #     else:
+            #         c2 = "tmux new -s {}".format(username)
+            #         # print(c2)
+            #         os.system(c2)
+            #     x = os.popen(cmd)
+            #     return_data = x.read()
+            #     os.system("tmux detach")
+            #     data['data'] = return_data
+            # else:
+            #     data = response_code.GET_DATA_FAIL
+            return response_result_process(data, xml=xml)
         except Exception as e:
             logger.error("FN:interfaceDebug_put error:{}".format(traceback.format_exc()))
             error_data = response_code.LOGIN_FAIL

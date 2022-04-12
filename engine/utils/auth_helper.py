@@ -16,8 +16,13 @@ from db.user.db_user_mgr import user_mgr
 from utils.status_code import response_code
 import traceback
 import logging
+from config import config
+import os
 
 logger = logging.getLogger("main." + __name__)
+config_name = os.getenv('FLASK_CONFIG') or 'default'
+Config = config[config_name]
+
 
 class Auth(object):
     """
@@ -68,7 +73,7 @@ class Auth(object):
             ##aud: 接收者
             ##iat: 发行时间
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60*60*1000),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=Config.PERMANENT_SESSION_LIFETIME),
                 'iat': datetime.datetime.utcnow(),
                 'iss': 'ken',
                 'data': {
@@ -99,11 +104,11 @@ class Auth(object):
         :return: integer|string
         """
         try:
-            ###30分钟无访问token过期
-            # payload = jwt.decode(auth_token, api.Config.SECRET_KEY, leeway=datetime.timedelta(seconds=60*60*1000))
+            ###expire time checking
+            payload = jwt.decode(auth_token, api.Config.SECRET_KEY, leeway=datetime.timedelta(seconds=Config.PERMANENT_SESSION_LIFETIME))
             # # print("payload:", payload)
-            # 取消过期时间验证
-            payload = jwt.decode(auth_token, api.Config.SECRET_KEY, options={'verify_exp': False})
+            # disable expire time checking
+            # payload = jwt.decode(auth_token, api.Config.SECRET_KEY, options={'verify_exp': False})
             if ('data' in payload and 'user_key' in payload['data'] and 'permissions' in payload['data']):
                 return payload
             else:

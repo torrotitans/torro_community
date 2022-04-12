@@ -100,10 +100,8 @@ class Config(object):
     ###flask-session
     SESSION_TYPE = 'null'
     SESSION_KEY_PREFIX = "session:"
-    ########如果设置为True的话，session的生命为 permanent_session_lifetime 秒（默认是31天）
-    ########如果设置为Flase的话，那么当用户关闭浏览器时，session便被删除了。permanent_session_lifetime也会生效
     SESSION_PERMANENT = False
-    PERMANENT_SESSION_LIFETIME = 60 * 60 * 24 * 31
+    PERMANENT_SESSION_LIFETIME = 60 * 60
 
     JOBS = [
         {

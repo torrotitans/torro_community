@@ -222,14 +222,18 @@ class DbInputFormMgr(DbBase):
                 is_approved = approval_info['is_approved']
 
                 if approver_label:
-                    status_label = 'Pending {} [{}] approval'.format(approver_group, approver_label)
+                    status_label = 'Pending {} approval'.format(approver_label)
                 else:
-                    status_label = 'Pending {} approval'.format(approver_group)
-                status_history = {'label': status_label, 'operator': '', 'comment': '', 'time': approver_time}
+                    status_label = 'Pending approval'
+                status_history = {'label': status_label, 'operator': '', 'adgroup': '', 'comment': '', 'time': approver_time}
 
                 if approver_id:
-                    status_history['label'] = '{} approved'.format(approver_group)
+                    if approver_label:
+                        status_history['label'] = '{} approved'.format(approver_label)
+                    else:
+                        status_history['label'] = 'Approved'
                     status_history['operator'] = approver_id
+                    status_history['adgroup'] = approver_group
                     approved_flag = '[|{}|]'.format(Status.approved)
                     reject_flag = '[|{}|]'.format(Status.rejected)
                     
@@ -286,7 +290,7 @@ class DbInputFormMgr(DbBase):
 
                     # pass
                 status_history_list.append(status_history)
-                old_status_history_list.append({'label': status_label, 'operator': '', 'comment': '', 'time': None})
+                old_status_history_list.append({'label': status_label, 'operator': '', 'adgroup': '', 'comment': '', 'time': None})
 
             # # if it is an approval page, user need to belong to the approval group
             # if approver_view and approval_flag:
