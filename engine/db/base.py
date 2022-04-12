@@ -12,7 +12,7 @@ class DbBase(object):
 
         sql_template = '''
         mysql -u{user} -p{pwd} {db}<<EOF
-        {sql}
+        {sql};
         EOF
         '''
         return sql_template.format(user=conn.user, pwd=conn.password, db=db_name, sql=sql)
