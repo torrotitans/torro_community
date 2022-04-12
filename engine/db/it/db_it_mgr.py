@@ -18,21 +18,16 @@ class DbITMgr(DbBase):
     status = Status.code
     status_history_mapping = Status.status_history_mapping
 
-    def sql_execute(self, sql):
+    def get_cmd_sql(self, sql):
 
         conn = MysqlConn()
         db_name = configuration.get_database_name()
         try:
-            sql = stageBase.verify_sql(sql)
-            run_sql = 'use {};'.format(db_name)+sql
-            print('111111:', sql)
-            return_info = self.execute_fetch_all(conn, sql)
-            data = response_code.SUCCESS
-            data['data'] = {'cmd': sql, 'result': return_info}
-            return data
+            cmd = self.create_cmd_sql(conn, db_name, sql)
+            return cmd
         except Exception as e:
             logger.error("FN:sql_execute error:{}".format(traceback.format_exc()))
-            return response_code.GET_DATA_FAIL
+            return ''
         finally:
             conn.close()
 

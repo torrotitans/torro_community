@@ -3,9 +3,20 @@
 
 import math
 import json
-
+from config import configuration
 
 class DbBase(object):
+
+
+    def create_cmd_sql(self, conn, db_name, sql):
+
+        sql_template = '''
+        mysql -u{user} -p{pwd} {db}<<EOF
+        {sql};
+        EOF
+        '''
+        return sql_template.format(user=conn.user, pwd=conn.password, db=db_name, sql=sql)
+
 
     def select_exec(self, conn, sql):
         """

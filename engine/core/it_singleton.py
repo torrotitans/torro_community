@@ -9,8 +9,8 @@ __all__ = {"itSingleton"}
 
 class itSingleton():
 
-    def sql_execute(self, text):
+    def get_cmd_sql(self, sql):
 
-        return it_mgr.sql_execute(text)
+        return it_mgr.get_cmd_sql(sql)
 
 it_singleton = itSingleton()
