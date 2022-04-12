@@ -74,6 +74,8 @@ export default {
   loginExpired: "Login status expired",
   logout: "Log out",
   stay: "Stay on",
+  tableTags: "Table tags",
+  tableSchema: "Table schema",
 
   // role
   it: "IT Admin",
@@ -150,6 +152,11 @@ export default {
   confirmDeleteUc: "Do you confirm to delete this Use case?",
   ucDeleted: "Use case has been deleted.",
 
+  resourceName: "Resource name",
+  resourceLabel: "Resource label",
+  accessTime: "Access time",
+  gcpResources: "GCP resources",
+
   // Policy
   policyMan: "Data Access Policy Management",
   setupPolicy: "Setup Workspace Data Policy",
@@ -204,6 +211,8 @@ export default {
   //requestDetail
   approveTips: "Do you confirm to approve this request?",
   rejectTips: "Do you confirm to reject this request?",
+  approvedBy: "Approved by: ",
+  adGroup: "Ad group: ",
 
   // loginPage
   userName: "User Name",

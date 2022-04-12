@@ -17,9 +17,8 @@ import {
   TableCell,
 } from "@basics/Table";
 import Text from "@basics/Text";
-import ViewAccess from "./ViewAccess";
 
-const DataAccess = ({ dataAccessList }) => {
+const UsecaseResournce = ({ resoureList }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -33,14 +32,14 @@ const DataAccess = ({ dataAccessList }) => {
   }, []);
 
   return (
-    <div className={styles.dataAccess}>
+    <div className={styles.usecaseResournce}>
       <div className={styles.detailBox}>
         <div className={styles.secondTitle}>
           <Text type="title">
-            <Intl id="dataAccess" />
+            <Intl id="gcpResources" />
           </Text>
         </div>
-        {dataAccessList && dataAccessList.length > 0 && (
+        {resoureList && resoureList.length > 0 && (
           <>
             <TableContainer component={Paper}>
               <Table>
@@ -48,66 +47,32 @@ const DataAccess = ({ dataAccessList }) => {
                   <TableRow>
                     <TableCell align="center">
                       <Text type="subTitle">
-                        <Intl id="projectName"></Intl>
+                        <Intl id="resourceName"></Intl>
                       </Text>
                     </TableCell>
                     <TableCell align="center">
                       <Text type="subTitle">
-                        <Intl id="dataSet" />
+                        <Intl id="resourceLabel" />
                       </Text>
                     </TableCell>
                     <TableCell align="center">
                       <Text type="subTitle">
-                        <Intl id="tableName" />
-                      </Text>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Text type="subTitle">
-                        <Intl id="location" />
-                      </Text>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Text type="subTitle">
-                        <Intl id="applyTime" />
-                      </Text>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Text type="subTitle">
-                        <Intl id="fields" />
+                        <Intl id="accessTime" />
                       </Text>
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataAccessList.map((data, accessIndex) => (
+                  {resoureList.map((data, accessIndex) => (
                     <TableRow key={accessIndex}>
                       <TableCell align="center">
-                        <Text>{data.project_id}</Text>
+                        <Text>{data.resource_name}</Text>
                       </TableCell>
                       <TableCell align="center">
-                        <Text>{data.dataset_id}</Text>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Text>{data.table_id}</Text>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Text>{data.location}</Text>
+                        <Text>{data.resource_label}</Text>
                       </TableCell>
                       <TableCell align="center">
                         <Text>{data.create_time}</Text>
-                      </TableCell>
-                      <TableCell align="center">
-                        <div className={styles.operation}>
-                          {/* <VisibilityIcon
-                            onClick={() => {
-                              handleViewClick(data.fields);
-                            }}
-                          /> */}
-                          <ViewAccess
-                            data={data.fields}
-                            resourceDetail={data}
-                          />
-                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -130,4 +95,4 @@ const DataAccess = ({ dataAccessList }) => {
   );
 };
 
-export default DataAccess;
+export default UsecaseResournce;

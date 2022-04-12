@@ -33,6 +33,8 @@ import {
 
 import { sendNotify } from "src/utils/systerm-error";
 import DataAccess from "./DataAccess";
+import UsecaseResournce from "./UsecaseResournce";
+
 const USE_CASE_FORM_ID = 2;
 
 const UseCaseRow = ({ user, userColumnKey }) => {
@@ -148,6 +150,9 @@ const UsecaseInfo = ({ onBack, usecaseId, detailDisplay }) => {
             },
             user_infos: ucData.user_infos,
             data_access: ucData.data_access ? ucData.data_access : [],
+            usecase_resource: ucData.usecase_resource
+              ? ucData.usecase_resource
+              : [],
           };
           let data = res3.data;
           let tempFieldList = data.fieldList.map((item) => {
@@ -246,8 +251,11 @@ const UsecaseInfo = ({ onBack, usecaseId, detailDisplay }) => {
             </>
           )}
         </div>
-        {!detailDisplay && ucData && ucData.data_access && (
+        {ucData && ucData.data_access && (
           <DataAccess dataAccessList={ucData.data_access} />
+        )}
+        {ucData && ucData.usecase_resource && (
+          <UsecaseResournce resoureList={ucData.usecase_resource} />
         )}
       </div>
     </div>
