@@ -54,8 +54,16 @@ class interfaceDebug(Resource):
             if not request_data:
                 data = response_code.REQUEST_PARAM_MISSED
                 return response_result_process(data, xml=xml)
+            try:
+                user_key = req.get_user_key()
+                account_id = req.get_user_account_id()
+                # print('user id:', user_key)
+            except:
+                data = response_code.LOGIN_FAIL
+                return data
             sql = request_data['command']
-
+            ## to do
+            logger.info('')
             cmd = it_singleton.get_cmd_sql(sql)
             if cmd:
                 data = response_code.SUCCESS
