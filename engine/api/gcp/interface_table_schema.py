@@ -119,6 +119,7 @@ class interfaceTableSchema(Resource):
             data = gcpSingleton_singleton.get_table_schema(request_data, user_key, workspace_id)
             return data
         except Exception as e:
+            logger.error("FN:interfaceTableSchema_post error:{}".format(e))
             logger.error("FN:interfaceTableSchema_post error:{}".format(traceback.format_exc()))
             error_data = response_code.GET_DATA_FAIL
             return error_data
