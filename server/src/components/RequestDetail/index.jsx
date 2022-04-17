@@ -46,14 +46,18 @@ const RequestDetail = ({ recordId, approvedView }) => {
     setModalData({ ...modalData, open: false });
   };
 
+  const isLatestRecord = useMemo(() => {
+    return defaultData.index === 0;
+  }, [defaultData.index]);
+
   const enableReOpen = useMemo(() => {
     if (!formData) {
       return;
     }
     let formId = Number(formData.id);
 
-    return defaultData.index === 0 && (formId > 350 || [1, 2].includes(formId));
-  }, [defaultData.index, formData]);
+    return isLatestRecord && (formId > 350 || [1, 2].includes(formId));
+  }, [isLatestRecord, formData]);
 
   const covertTime = useCallback(
     (date) => {
@@ -129,6 +133,7 @@ const RequestDetail = ({ recordId, approvedView }) => {
                   approverView={approvedView}
                   isApprover={isApprover}
                   defaultData={defaultData.data}
+                  isLatestRecord={isLatestRecord}
                   enableReOpen={enableReOpen}
                   setEditView={setEditView}
                 />

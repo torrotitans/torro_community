@@ -49,6 +49,7 @@ const FormDataDisplay = ({
   setEditView,
   approverView,
   isApprover,
+  isLatestRecord,
 }) => {
   const { handleSubmit, control, register } = useForm(); // initialise the hook
   const { timeContext } = useGlobalContext();
@@ -306,10 +307,10 @@ const FormDataDisplay = ({
           {!edit && (
             <div
               className={cn(styles.status, {
-                [styles["expired"]]: !enableReOpen,
+                [styles["expired"]]: !isLatestRecord,
               })}
             >
-              {enableReOpen ? STATUS_MAP[status] : "expired"}
+              {isLatestRecord ? STATUS_MAP[status] : "expired"}
             </div>
           )}
           <HeadLine>{formData.title}</HeadLine>

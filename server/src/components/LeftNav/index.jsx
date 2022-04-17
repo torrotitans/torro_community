@@ -115,7 +115,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList || [],
+            list: formList ? raiseTicketExt.concat(formList) : raiseTicketExt,
           },
           {
             link: `${ROOT}/workflowManagement`,
@@ -147,7 +147,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList ? raiseTicketExt.concat(formList) : [],
+            list: formList ? raiseTicketExt.concat(formList) : raiseTicketExt,
           },
           {
             link: `${ROOT}/workflowManagement`,
@@ -184,7 +184,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList ? raiseTicketExt.concat(formList) : [],
+            list: formList ? raiseTicketExt.concat(formList) : raiseTicketExt,
           },
           {
             link: `${ROOT}/workflowManagement`,
@@ -204,7 +204,7 @@ const LeftNav = ({ open, closeHandle }) => {
             id: "raiseTicket",
             leftPanel: true,
             icon: RaiseTicket,
-            list: formList ? raiseTicketExt.concat(formList) : [],
+            list: formList ? raiseTicketExt.concat(formList) : raiseTicketExt,
           },
         ];
     }
