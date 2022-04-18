@@ -71,6 +71,7 @@ export default {
   workflowV: "Workflow Value",
   copy: "Copy",
   dataAccess: "Data access",
+  loginPendingExpired: "Login status pending expired",
   loginExpired: "Login status expired",
   logout: "Log out",
   stay: "Stay on",

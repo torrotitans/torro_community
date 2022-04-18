@@ -24,13 +24,16 @@ const RoleSelection = () => {
     updateLogin({ role_name: role })
       .then((res) => {
         if (res.data) {
-          setAuth({
-            ...authContext,
-            role: res.data.role_name,
-            roleList: res.data.role_list,
-            wsId: Number(res.data.workspace_id),
-            wsList: res.data.workspace_list,
-          });
+          setAuth(
+            {
+              ...authContext,
+              role: res.data.role_name,
+              roleList: res.data.role_list,
+              wsId: Number(res.data.workspace_id),
+              wsList: res.data.workspace_list,
+            },
+            "refreshToken"
+          );
           navigate("/app/dashboard");
         }
       })
