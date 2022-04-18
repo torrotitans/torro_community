@@ -13,6 +13,8 @@
   width: auto;
   display: inline-block;
   outline: 0;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
   .close {
     z-index: 999;
     width: 2rem;
@@ -26,4 +28,8 @@
   &:focus-visible {
     outline: 0;
   }
+}
+
+.modalScrollbar {
+  max-height: calc(100vh - 5rem);
 }
