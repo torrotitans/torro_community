@@ -1,14 +1,16 @@
 # Import required modules.
 from google.cloud import datacatalog_v1
 from api.gcp.tasks.baseTask import baseTask
-import json
 from db.connection_pool import MysqlConn
 from config import configuration
 import datetime
 from common.common_input_form_status import status
-import traceback
-import logging
 
+import logging
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import traceback
+import json
 logger = logging.getLogger("main." + __name__)
 
 class ModifyTableTags(baseTask):
@@ -65,7 +67,9 @@ class ModifyTableTags(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 datacatalog_client = datacatalog_v1.DataCatalogClient()
                 dataset_id = self.stage_dict['dataset_id']
@@ -137,12 +141,20 @@ class ModifyTableTags(baseTask):
                     sql = self.create_insert_sql(db_name, 'dataOnboardTable', '({})'.format(', '.join(column_fields)), values)
                     logger.debug("FN:ModifyTableTags_execute insert_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.insert_exec(conn, sql)
-
-            return 'update successfully'
-
+            data = response_code.SUCCESS
+            data['data'] = 'update successfully'
+            return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:ModifyTableTags_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:ModifyTableTags_execute error:{}".format(traceback.format_exc()))
-
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
         finally:
             conn.close()
     def __clear_tags(self, datacatalog_client, table_entry):

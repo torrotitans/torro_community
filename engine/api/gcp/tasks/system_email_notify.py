@@ -6,7 +6,12 @@ from config import configuration
 import traceback
 import logging
 
-logger = logging.getLogger("main." + __name__)
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import traceback
+import json
+
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
 class system_email_notify(baseTask):
     api_type = 'system'
@@ -28,8 +33,9 @@ class system_email_notify(baseTask):
                 missing_set.add(key)
             # # print('{}: {}'.format(key, self.stage_dict[key]))
         if len(missing_set) != 0:
-            return 'Missing parameters: {}'.format(', '.join(missing_set))
-
+            data = response_code.BAD_REQUEST
+            data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+            return data
         else:
             conn = MysqlConn()
             try:
@@ -68,12 +74,17 @@ class system_email_notify(baseTask):
 
                 data = notify_approvers(history_id, emails, text=email_msg)
 
-                if data['code'] == 200:
-                    return 'create successfully.'
-                else:
-                    return data['msg']
+                return data
+            except HttpError as e:
+                error_json = json.loads(e.content)
+                data = error_json['error']
+                data["msg"] = data.pop("message")
+                logger.error("FN:system_email_notify_execute error:{}".format(traceback.format_exc()))
+                return data
             except Exception as e:
                 logger.error("FN:system_email_notify_execute error:{}".format(traceback.format_exc()))
-
+                data = response_code.BAD_REQUEST
+                data['msg'] = str(e)
+                return data
             finally:
                 conn.close()

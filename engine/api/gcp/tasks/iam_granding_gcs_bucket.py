@@ -3,7 +3,9 @@ import time
 from google.cloud import storage
 import traceback
 import logging
-
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import json
 logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
 class GrantRoleForGCSBucket(baseTask):
@@ -22,7 +24,6 @@ class GrantRoleForGCSBucket(baseTask):
         # "ad1@abc.com+storage+storage.objectViewer,ad2@abc.com+storage+storage.objectViewer"
         try:
             successful_user = set()
-            error_user = set()
             project_id = self.stage_dict['porject_id']
             bucket_name = self.stage_dict['bucket_name']
             member_roles_str = self.stage_dict['member_roles']
@@ -44,7 +45,7 @@ class GrantRoleForGCSBucket(baseTask):
                 members = roles_members[role]
                 role = 'roles/' + role
                 for member in members:
-                    try:
+
                         policy = bucket.get_iam_policy(requested_policy_version=3)
                         policy.bindings.append(
                             {
@@ -56,14 +57,19 @@ class GrantRoleForGCSBucket(baseTask):
                         bucket.set_iam_policy(policy)
                         successful_user.add('{}+{}'.format(member, role))
                         time.sleep(1)
-                    except Exception as e:
-                        logger.error("FN:GrantRoleForGCSBucket_execute error:{}".format(e))
-                        error_user.add('{}+{}'.format(member, role))
-                        return_msg += '\nAdded member(s) failed:\n{}'.format(', '.join(error_user))
 
             return_msg = "Added member(s) successfully:\n{}".format(', '.join(successful_user))
-            
-            return(return_msg)
-        
-        except:
+            data = response_code.SUCCESS
+            data['data'] = return_msg
+            return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForGCSBucket_execute error:{}".format(traceback.format_exc()))
+            return data
+        except Exception as e:
+            logger.error("FN:GrantRoleForGCSBucket_execute error:{}".format(traceback.format_exc()))
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data

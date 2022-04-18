@@ -5,7 +5,9 @@ from config import configuration
 import datetime
 import traceback
 import logging
-
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import json
 logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
 class system_notify(baseTask):
@@ -28,7 +30,9 @@ class system_notify(baseTask):
             # logger.debug('FN:system_notify.execute key:{} stage_dict:{}'.format(key, self.stage_dict[key]))
             
         if len(missing_set) != 0:
-            return 'Missing parameters: {}'.format(', '.join(missing_set))
+            data = response_code.BAD_REQUEST
+            data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+            return data
         else:
             conn = MysqlConn()
             try:
@@ -71,11 +75,19 @@ class system_notify(baseTask):
                     notify_id = self.insert_exec(conn, sql, return_insert_id=True)
                     notify_id_list.append(str(notify_id))
                 # logger.debug('FN:system_notify.execute notify_id_list:{}'.format(notify_id_list))
-                return 'create notify successfully: length{}'.format(str(len(notify_id_list)))
-            
-            except Exception as e:
-                
+                data = response_code.SUCCESS
+                data['data'] = 'create notify successfully: length{}'.format(str(len(notify_id_list)))
+                return data
+            except HttpError as e:
+                error_json = json.loads(e.content)
+                data = error_json['error']
+                data["msg"] = data.pop("message")
                 logger.error("FN:system_notify_execute error:{}".format(traceback.format_exc()))
-                
+                return data
+            except Exception as e:
+                logger.error("FN:system_notify_execute error:{}".format(traceback.format_exc()))
+                data = response_code.BAD_REQUEST
+                data['msg'] = str(e)
+                return data
             finally:
                 conn.close()

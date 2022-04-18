@@ -2,6 +2,9 @@ from api.gcp.tasks.baseTask import baseTask
 from google.cloud import datacatalog_v1beta1
 import traceback
 import logging
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import json
 
 logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
@@ -34,7 +37,9 @@ class AddTagTemplateToTable(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 source_project_id = self.stage_dict['source_project_id']
                 table_project_id = self.stage_dict['table_project_id']
@@ -108,12 +113,20 @@ class AddTagTemplateToTable(baseTask):
 
                 logger.debug("FN:AddTagTemplateToTable_execute tag:{}".format(tag))
                 tag = datacatalog_client.create_tag(parent=table_entry.name, tag=tag)
-
-                return tag
-
+                data = response_code.SUCCESS
+                data['data'] = 'Create successfully'
+                return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:AddTagTemplateToTable error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:AddTagTemplateToTable error:{}".format(traceback.format_exc()))
-            
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
 
 
         

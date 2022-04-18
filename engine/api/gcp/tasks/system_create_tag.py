@@ -8,7 +8,8 @@ from utils.status_code import response_code
 from config import configuration
 import traceback
 import logging
-
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
 logger = logging.getLogger("main." + __name__)
 
 class system_create_tag(baseTask):
@@ -31,7 +32,9 @@ class system_create_tag(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 # get tag template id
                 sql = self.create_select_sql(db_name, 'tagTemplatesTable', 'id,tag_template_form_id', condition="tag_template_form_id='%s' order by id desc" % form_id)
@@ -66,9 +69,12 @@ class system_create_tag(baseTask):
                     sql = self.create_insert_sql(db_name, 'tagTemplatesValueTable', '({})'.format(', '.join(fields)), values)
                     logger.debug("FN:system_create_tag_execute insert_tagTemplatesValueTable_sql:{}".format(sql))
                     _ = self.insert_exec(conn, sql)
-                    return 'create successfully.'
+                    data = response_code.SUCCESS
+                    data['data'] = 'create successfully.'
+                    return data
                 else:
-                    return 'get form failed, input_form_data_code:{}, input_form_id:{}, user_id:{};  ' \
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'get form failed, input_form_data_code:{}, input_form_id:{}, user_id:{};  ' \
                            'form_data_code:{}, form_id:{}, workspace_id:{}'.format(
                         str(input_form_data['code']),
                         str(input_form_id),
@@ -77,9 +83,18 @@ class system_create_tag(baseTask):
                         str(form_id),
                         str(workspace_id))
 
+                    return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:system_create_tag_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:system_create_tag_execute error:{}".format(traceback.format_exc()))
-            return response_code.ADD_DATA_FAIL
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
 
         finally:
             conn.close()
