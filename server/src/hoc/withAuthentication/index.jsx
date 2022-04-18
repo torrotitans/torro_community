@@ -54,7 +54,7 @@ const withAuthentication = (VerificationPage) => (props) => {
           });
           clearInterval(loginTimer);
           loginTimer = null;
-        } else if (currTime > authContext.expTime - 55 * 60 * 1000) {
+        } else if (currTime > authContext.expTime - 5 * 60 * 1000) {
           let time = Math.floor(authContext.expTime - currTime);
           let minute = Math.floor((time / 1000 / 60) % 60);
           let second = Math.floor((time / 1000) % 60);
