@@ -36,6 +36,11 @@ const wsItemList = [
     title: <Intl id="policyMan" />,
     link: `${ROOT}/policyCreation`,
   },
+  {
+    id: "dataOnboarding",
+    title: <Intl id="dataOnboarding" />,
+    link: `${ROOT}/dataOnboarding`,
+  },
   // {
   //   id: "dataDiscovery",
   //   title: <Intl id="dataDiscovery" />,
@@ -53,11 +58,6 @@ const raiseTicketExt = [
     id: "createUc",
     title: <Intl id="createUc" />,
     link: `${ROOT}/forms?id=2`,
-  },
-  {
-    id: "dataOnboarding",
-    title: <Intl id="dataOnboarding" />,
-    link: `${ROOT}/dataOnboarding`,
   },
   {
     id: "getDataAccess",
