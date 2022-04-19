@@ -34,7 +34,7 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
         data = response_code.SUCCESS
         comment = data['msg']
         if isinstance(log, dict):
-            if 'data' in log and isinstance(data['data'], str):
+            if 'data' in log and isinstance(log['data'], str):
                 comment = log['data']
             else:
                 comment = log['msg']
