@@ -32,13 +32,15 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
     # @abc.abstractmethod
     def message_tranfer(self, log):
         data = response_code.SUCCESS
+        comment = data['msg']
         if isinstance(log, dict):
-            data['data'] = json.dumps(log)
-        elif isinstance(log, list):
-            data['data'] = json.dumps(log)
-        else:
-            data['data'] = str(log).replace('\'', '"')
-        return data
+            if 'data' in log and isinstance(data['data'], str):
+                comment = log['data']
+            else:
+                comment = log['msg']
+        elif isinstance(log, str):
+            comment = log
+        return comment
 
     def records_resource(self, workspace_id, input_form_id, usecase_name, resource_label, resource_name):
         conn = MysqlConn()

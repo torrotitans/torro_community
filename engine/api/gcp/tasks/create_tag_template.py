@@ -57,7 +57,10 @@ class CreateTagTemplate(baseTask, DbBase):
                 # slogger.debug('FN:CreateTagTemplate_execute stage_dict_key:{}'.format(self.stage_dict[key]))
 
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
+
             else:
                 credentials, project = google.auth.default()
                 location = Config.DEFAULT_REGION
@@ -130,14 +133,22 @@ class CreateTagTemplate(baseTask, DbBase):
                 logger.debug('FN:CreateTagTemplate_execute insert_tagTemplatesTable_sql:{}'.format(sql))
                 tag_template_id = self.insert_exec(conn, sql, return_insert_id=True)
 
-                return 'create successfully.: {}'.format(str(tag_template_id))
-
+                data = response_code.SUCCESS
+                data['data'] = 'create successfully.: {}'.format(str(tag_template_id))
+                return data
         except HttpError as e:
             return (json.loads(e.content))
-
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
-            return response_code.ADD_DATA_FAIL
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
         finally:
             conn.close()
 

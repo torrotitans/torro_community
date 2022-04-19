@@ -2,6 +2,13 @@ from api.gcp.tasks.baseTask import baseTask
 from db.connection_pool import MysqlConn
 from config import configuration
 import datetime
+import logging
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import traceback
+import json
+
+logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
 class system_define_field(baseTask):
     api_type = 'system'
@@ -23,7 +30,9 @@ class system_define_field(baseTask):
                 missing_set.add(key)
             # # print('{}: {}'.format(key, self.stage_dict[key]))
         if len(missing_set) != 0:
-            return 'Missing parameters: {}'.format(', '.join(missing_set))
+            data = response_code.BAD_REQUEST
+            data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+            return data
         else:
             field_name = self.stage_dict['FieldLabel']
             option_label = self.stage_dict['optionLabel']
@@ -60,8 +69,19 @@ class system_define_field(baseTask):
                                              values)
                 # print('dynamicFieldValueTable2 sql:', sql)
                 self.insert_exec(conn, sql, return_insert_id=True)
+                data = response_code.SUCCESS
+                data['data'] = "Successful."
+                return data
+            except HttpError as e:
+                error_json = json.loads(e.content)
+                data = error_json['error']
+                data["msg"] = data.pop("message")
+                logger.error("FN:system_define_field error:{}".format(traceback.format_exc()))
+                return data
             except Exception as e:
-                return "Created field: {}".format(field_name)
+                logger.error("FN:system_define_field error:{}".format(traceback.format_exc()))
+                data = response_code.BAD_REQUEST
+                data['msg'] = str(e)
+                return data
             finally:
                 conn.close()
-            return "Created field: {}".format(field_name)

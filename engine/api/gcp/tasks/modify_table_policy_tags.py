@@ -8,7 +8,9 @@ import json
 import datetime
 import traceback
 import logging
-
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import traceback
 logger = logging.getLogger("main." + __name__)
 
 class ModifyTablePolicyTags(baseTask):
@@ -65,7 +67,9 @@ class ModifyTablePolicyTags(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 client = bigquery.Client(self.stage_dict['project_id'])
                 dataset_id = self.stage_dict['dataset_id']
@@ -131,11 +135,20 @@ class ModifyTablePolicyTags(baseTask):
                 #     logger.debug("FN:ModifyTablePolicyTags_execute insert_dataOnboardTable_sql:{}".format(sql))
                 #     return_count = self.insert_exec(conn, sql)
 
-            return 'update successfully'
-
+            data = response_code.SUCCESS
+            data['data'] = 'update successfully'
+            return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:ModifyTablePolicyTags_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:ModifyTablePolicyTags_execute error:{}".format(traceback.format_exc()))
-
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
         finally:
             conn.close()
 
