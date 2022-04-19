@@ -19,6 +19,7 @@
   padding: 0 $rbwmspace32;
 }
 .mask {
+  z-index: 9999;
   position: fixed;
   top: 0;
   left: 0;

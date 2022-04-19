@@ -218,10 +218,41 @@ const FormDataDisplay = ({
           special = item;
         }
       });
-      if (special) {
-        return (
-          <SpecialField formId={formId} special={special} data={defaultValue} />
-        );
+      if (special || (formId === 108 && label === "Table ID")) {
+        if (special) {
+          return (
+            <SpecialField
+              formId={formId}
+              special={special}
+              data={defaultValue}
+            />
+          );
+        } else {
+          // tmp logic let Data Consumption Request display tableTag
+          let tableTagProp = {};
+          formData.fieldList.forEach((item) => {
+            if (item.label === "Project ID") {
+              tableTagProp.project_id = item.default;
+            }
+            if (item.label === "Data Set ID") {
+              tableTagProp.dataset_id = item.default;
+            }
+            if (item.label === "Table ID") {
+              tableTagProp.table_id = item.default;
+            }
+          });
+          return (
+            <SpecialField
+              formId={formId}
+              specialProp={tableTagProp}
+              data={defaultValue}
+              special={{
+                showValue: true,
+                comp: "TableTagsAutoGen",
+              }}
+            />
+          );
+        }
       }
 
       if (defaultValue instanceof Array || defaultValue instanceof Object) {
@@ -253,7 +284,7 @@ const FormDataDisplay = ({
         return defaultValue;
       }
     },
-    [formId, specialList, covertTime]
+    [formId, specialList, covertTime, formData]
   );
 
   useEffect(() => {

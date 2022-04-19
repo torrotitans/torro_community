@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { FormattedMessage as Intl } from "react-intl";
-import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
@@ -15,7 +14,7 @@ import OnboardDataDisplay from "@comp/OnboardDataDisplay";
 import styles from "./styles.module.scss";
 import Model from "@basics/Modal";
 import UsecaseInfo from "@comp/UsecaseInfo";
-import { getUseCaseList } from "@lib/api";
+import { getUseCaseList, getTableSchema } from "@lib/api";
 import { sendNotify } from "src/utils/systerm-error";
 import Loading from "@assets/icons/Loading";
 
@@ -43,6 +42,43 @@ const Form = ({ formId, data }) => {
         <div className={styles.formOptions}>{renderFormItem(data)}</div>
       </form>
     </>
+  );
+};
+
+const TableTagsAutoGen = ({ data, specialProp }) => {
+  const [tableTag, setTableTag] = useState();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    getTableSchema({
+      projectId: specialProp.project_id,
+      datasetName: specialProp.dataset_id,
+      tableName: specialProp.table_id,
+    })
+      .then((res) => {
+        if (res.data) {
+          setTableTag(res.data.tags);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        sendNotify({ msg: e.message, status: 3, show: true });
+      });
+  }, [specialProp]);
+
+  if (!tableTag || loading) {
+    return (
+      <div className={styles.loading}>
+        <Loading />
+      </div>
+    );
+  }
+  return (
+    <div>
+      {tableTag.map((tag, index) => {
+        return <TableTagDisplay key={index} tagData={tag} />;
+      })}
+    </div>
   );
 };
 
@@ -111,7 +147,7 @@ const UseCase = ({ data }) => {
   );
 };
 
-const SpecialField = ({ formId, data, special }) => {
+const SpecialField = ({ formId, data, special, specialProp }) => {
   const [open, setOpen] = useState(false);
 
   const FieldDisplay = useMemo(() => {
@@ -124,6 +160,8 @@ const SpecialField = ({ formId, data, special }) => {
         return PolicyTree;
       case "TableTags":
         return TableTags;
+      case "TableTagsAutoGen":
+        return TableTagsAutoGen;
       case "TableDisplay":
         return TableDisplay;
 
@@ -150,9 +188,7 @@ const SpecialField = ({ formId, data, special }) => {
         }}
       >
         <div className={styles.modalContent}>
-          <ScrollBar>
-            <FieldDisplay formId={formId} data={data} />
-          </ScrollBar>
+          <FieldDisplay formId={formId} data={data} specialProp={specialProp} />
         </div>
       </Model>
     </div>
