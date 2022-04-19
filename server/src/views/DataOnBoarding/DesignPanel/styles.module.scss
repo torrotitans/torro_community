@@ -9,12 +9,14 @@
   border-radius: 4px;
   top: 0;
   right: 0;
-  padding: 0 $rbwmspace32;
-
+  padding: $rbwmspace32 0;
   &.open {
     transition: 0.3s all;
     width: 48rem;
   }
+}
+.innerContent {
+  padding: 0 $rbwmspace32;
 }
 .mask {
   position: fixed;
