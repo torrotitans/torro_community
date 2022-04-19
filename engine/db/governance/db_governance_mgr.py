@@ -672,13 +672,12 @@ class DbGovernanceMgr(DbBase):
                 return_count = self.updete_exec(conn, sql)
 
             # update form
-            inputData = {'id': input_form_id, 'form_status': form_status_code, 'comment': ''}
-
-            data = self.change_status(user_key, account_id, workspace_id, inputData)
-            # fields = ('form_status', 'updated_time')
-            # values = (form_status_code, now)
-            # update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
-            # sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
+            # inputData = {'id': input_form_id, 'form_status': form_status_code, 'comment': ''}
+            # data = self.change_status(user_key, account_id, workspace_id, inputData)
+            fields = ('form_status', 'updated_time')
+            values = (form_status_code, now)
+            update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
+            sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
 
 
             # data = response_code.SUCCESS
