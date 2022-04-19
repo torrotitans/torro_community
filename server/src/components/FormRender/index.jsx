@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { FormattedMessage as Intl } from "react-intl";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* local components & methods */
 import FormItem from "@comp/FormItem";
@@ -226,53 +227,60 @@ const FormRender = ({ formId, onBack, defaultData }) => {
   }, [formId, defaultData, initUcDef, ucForm]);
 
   return (
-    <div className={styles.formControl}>
-      {formLoading && <Loading />}
-      {!formLoading && formData && (
-        <>
-          <div className={styles.formTitle}>
-            <HeadLine>{formData.title}</HeadLine>
-          </div>
-          <div className={styles.formDes}>
-            <Text>{formData.des}</Text>
-          </div>
-          <form className={styles.form} onSubmit={handleSubmit(submitHandle)}>
-            <div className={styles.formOptions}>
-              {renderFormItem(formData.fieldList)}
-            </div>
-            <div className={styles.buttonWrapper}>
-              {onBack && (
-                <Button
-                  onClick={() => {
-                    onBack();
-                  }}
-                  className={styles.button}
-                  variant="contained"
-                >
-                  <Intl id="cancel" />
-                </Button>
-              )}
-              <Button
-                className={styles.button}
-                type="submit"
-                variant="contained"
+    <div className={styles.formRender}>
+      <ScrollBar>
+        <div className={styles.formControl}>
+          {formLoading && <Loading />}
+          {!formLoading && formData && (
+            <>
+              <div className={styles.formTitle}>
+                <HeadLine>{formData.title}</HeadLine>
+              </div>
+              <div className={styles.formDes}>
+                <Text>{formData.des}</Text>
+              </div>
+              <form
+                className={styles.form}
+                onSubmit={handleSubmit(submitHandle)}
               >
-                <Intl id="submit" />
-              </Button>
-            </div>
-          </form>
-        </>
-      )}
-      <CallModal
-        open={modalData.open}
-        content={modalData.content}
-        status={modalData.status}
-        successCb={modalData.successCb}
-        buttonClickHandle={buttonClickHandle}
-        handleClose={() => {
-          setModalData({ ...modalData, open: false });
-        }}
-      />
+                <div className={styles.formOptions}>
+                  {renderFormItem(formData.fieldList)}
+                </div>
+                <div className={styles.buttonWrapper}>
+                  {onBack && (
+                    <Button
+                      onClick={() => {
+                        onBack();
+                      }}
+                      className={styles.button}
+                      variant="contained"
+                    >
+                      <Intl id="cancel" />
+                    </Button>
+                  )}
+                  <Button
+                    className={styles.button}
+                    type="submit"
+                    variant="contained"
+                  >
+                    <Intl id="submit" />
+                  </Button>
+                </div>
+              </form>
+            </>
+          )}
+          <CallModal
+            open={modalData.open}
+            content={modalData.content}
+            status={modalData.status}
+            successCb={modalData.successCb}
+            buttonClickHandle={buttonClickHandle}
+            handleClose={() => {
+              setModalData({ ...modalData, open: false });
+            }}
+          />
+        </div>
+      </ScrollBar>
     </div>
   );
 };
