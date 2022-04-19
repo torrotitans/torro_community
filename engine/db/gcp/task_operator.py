@@ -45,6 +45,9 @@ class taskOperator:
                 #     return_msg = task_object.execute()
                 comment = task_object.message_tranfer(return_msg)
                 return_msg_list.append((return_msg, comment))
+                if return_msg['code'] != 200:
+                    break
+
             return return_msg_list
 
         except:

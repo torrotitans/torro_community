@@ -136,8 +136,7 @@ class CreateTagTemplate(baseTask, DbBase):
                 data = response_code.SUCCESS
                 data['data'] = 'create successfully.: {}'.format(str(tag_template_id))
                 return data
-        except HttpError as e:
-            return (json.loads(e.content))
+
         except HttpError as e:
             error_json = json.loads(e.content)
             data = error_json['error']
