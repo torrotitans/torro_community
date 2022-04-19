@@ -74,8 +74,8 @@ class CreateTagTemplate(baseTask, DbBase):
                 response = self.__get_tag_templates(tag_template_id, location, project, service)
                 logger.debug('FN:CreateTagTemplate_execute get_tag_template_res:{}'.format(response))
 
-                if 'error' not in response and 'code' not in response['error']:
-                    return 'data catalog exist.'
+                if 'error' not in response or 'code' not in response['error']:
+                    raise Exception('data catalog exist.')
 
                 tag_template_body = {'displayName': tag_template_name, 'fields': {}}
                 fields = {}
