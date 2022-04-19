@@ -40,6 +40,7 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
                 comment = log['msg']
         elif isinstance(log, str):
             comment = log
+        comment = comment.replace('\'', '\"')
         return comment
 
     def records_resource(self, workspace_id, input_form_id, usecase_name, resource_label, resource_name):

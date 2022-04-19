@@ -87,7 +87,7 @@ class CreateTagTemplate(baseTask, DbBase):
                     label = field_info['label']
                     label = label.replace(' ', '_').replace('/', 'or').replace('&', 'and').replace('&', 'and').replace('!', '').replace(',', '').replace('@', '').replace('$', '').replace('#', '').replace('^', '')
                     field_id = label.lower().strip()
-                    des = field_info['des']
+                    des = field_info.get('des', '')
 
                     field = copy.deepcopy(field_tamplate)
                     field['displayName'] = label
