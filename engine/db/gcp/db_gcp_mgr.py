@@ -120,7 +120,7 @@ class DbGCPMgr(DbBase):
         else:
             field['column_name'] = field['name']
         if field['type'] != 'RECORD':
-            column_name = field['column_name']
+            column_name = field['column_name'].lower() 
             if column_name in column_tags:
                 if 'tags' not in field:
                     field['tags'] = []
@@ -203,12 +203,14 @@ class DbGCPMgr(DbBase):
                     if field_id not in field_mapping:
                         field_mapping[field_id] = {'id': id, 'style': style}
 
+                logger.debug("FN:DbGCPMgr_get_table_schema field_list:{}".format(field_mapping))
+
                 return_data = {}
 
                 # print('field_mapping:', field_mapping)
                 # print('field_dict:', field_dict)
                 for key in field_dict:
-                    logger.debug("FN:DbGCPMgr_get_table_schema key:{} return_data:{}".format(key, return_data))
+                    
                     if key in field_mapping:
                         id = field_mapping[key]['id']
                         style = int(field_mapping[key]['style'])
@@ -220,6 +222,8 @@ class DbGCPMgr(DbBase):
                             return_data[key] = field_dict[key].string_value
                         elif style == 6:
                             return_data[key] = field_dict[key].timestamp_value
+                    
+                        logger.debug("FN:DbGCPMgr_get_table_schema key:{} return_data:{}".format(key, return_data))
 
                     else:
                         continue
@@ -228,16 +232,23 @@ class DbGCPMgr(DbBase):
                 for field_id in return_data:
                     form_return_data[field_mapping[field_id]['id']] = return_data[field_id]
                 return_tag = { "tag_template_form_id": tag_template_form_id, "data": form_return_data}
+
+                logger.debug("FN:DbGCPMgr_get_table_schema return_tag:{} ".format(return_tag))
+
                 tag_column_name = tag.column
                 if tag_column_name == '':
                     table_tags.append(return_tag)
                 else:
                     if tag_column_name not in column_tags:
                         column_tags[tag_column_name] = return_tag
+
+                logger.debug("FN:DbGCPMgr_get_table_schema table_tags:{} ".format(table_tags))
+                
             if not table_tags:
                 table_schema['tags'] = []
             else:
                 table_schema['tags'] = table_tags
+
             for index in range(len(table_schema['schema']['fields'])):
                 # fill column tags
                 # get record column name
