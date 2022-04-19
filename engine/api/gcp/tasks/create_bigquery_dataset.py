@@ -2,6 +2,9 @@ from api.gcp.tasks.baseTask import baseTask
 from google.cloud import bigquery
 import traceback
 import logging
+from googleapiclient.errors import HttpError
+from utils.status_code import response_code
+import json
 
 logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 
@@ -50,11 +53,20 @@ class CreateBQDataset(baseTask):
             self.records_resource(workspace_id, input_form_id, usecase_name, 'BigQuery Dataset', dataset_name)
 
             logger.debug("FN:CreateBQDataset_execute created_dateset_project:{} dataset_id:{}".format(bq_client.project, dataset.dataset_id))
-
-            return "Created dataset {}.{}".format(bq_client.project, dataset.dataset_id)
-
+            data = response_code.SUCCESS
+            data['data'] = "Created dataset {}.{}".format(bq_client.project, dataset.dataset_id)
+            return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:CreateBQDataset_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:CreateBQDataset_execute error:{}".format(traceback.format_exc()))
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
 
 
         

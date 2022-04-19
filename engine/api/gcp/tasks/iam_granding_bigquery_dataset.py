@@ -50,7 +50,9 @@ class GrantRoleForBQDataset(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 usecase_name = self.stage_dict['usecase_name']
                 project_id = self.stage_dict['project_id']
@@ -143,10 +145,21 @@ class GrantRoleForBQDataset(baseTask):
 
 
             logger.debug("FN:GrantRoleForBQDataset__grand_access_roles dataset_id_with_modified_permission:{}".format(dataset_id))
-
-        except:
+            data = response_code.SUCCESS
+            data['data'] = "Successful."
+            return data
+        except HttpError as e:
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForBQDataset__grand_access_roles error:{}".format(traceback.format_exc()))
-            return None
+            return data
+        except Exception as e:
+            logger.error("FN:GrantRoleForBQDataset__grand_access_roles error:{}".format(traceback.format_exc()))
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
+
 
 
 if __name__ == '__main__':

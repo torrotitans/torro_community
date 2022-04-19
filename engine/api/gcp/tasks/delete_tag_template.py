@@ -13,7 +13,6 @@ import os
 import copy
 from config import config
 from core.form_singleton import formSingleton_singleton
-from core.workflow_singleton import workflowSingleton_singleton
 import traceback
 import logging
 
@@ -53,7 +52,9 @@ class DeleteTagTemplate(baseTask):
                     missing_set.add(key)
 
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 credentials, project = google.auth.default()
                 location = Config.DEFAULT_REGION
@@ -77,16 +78,20 @@ class DeleteTagTemplate(baseTask):
                 tag_template_id = self.delete_exec(conn, sql)
 
                 _ = self.__delete_tag_template_form()
-
-                return 'delete successfully.: {}'.format(str(tag_template_id))
-
+                data = response_code.SUCCESS
+                data['data'] = 'delete successfully.: {}'.format(str(tag_template_id))
+                return data
         except HttpError as e:
-            return (json.loads(e.content))
-
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:DeleteTagTemplate_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:DeleteTagTemplate_execute error:{}".format(traceback.format_exc()))
-            return response_code.ADD_DATA_FAIL
-
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
         finally:
             conn.close()
 

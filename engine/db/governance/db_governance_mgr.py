@@ -653,14 +653,17 @@ class DbGovernanceMgr(DbBase):
             # return_count = self.updete_exec(conn, sql)
             for i in range(len(tasks)):
                 input_stage_id = tasks[i]['id']
+                logs_item = return_msg_list[i][0]
                 comment = return_msg_list[i][1]
-                if comment['code'] == 200:
+                if logs_item['code'] == 200:
                     status = 1
                 else:
                     status = -1
                     form_status_code = Status.failed
-                logs = str(return_msg_list[i][0]).replace('\'', '"')
-                comment = str(comment['data']).replace('\'', '"')
+                if isinstance(logs_item, dict):
+                    logs = json.dumps(logs_item)
+                else:
+                    logs = str(logs_item)
                 fields = ('status', 'logs', 'comment', 'updated_time')
                 values = (status, logs, comment, now)
                 stage_condition = 'id="%s"' % (input_stage_id)

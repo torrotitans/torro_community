@@ -53,7 +53,9 @@ class GrantRoleForBQTable(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 usecase_name = self.stage_dict['usecase_name']
                 project_id = self.stage_dict['project_id']
@@ -121,17 +123,21 @@ class GrantRoleForBQTable(baseTask):
                     logger.debug("FN:GrantRoleForBQTable_execute insert_dataAccessTable_sql:{}".format(sql))
                     _ = self.insert_exec(conn, sql, return_insert_id=True)
                 # logger.debug('tagTemplatesTable insert sql:', sql)
-
-                return 'Get the table access successfully: {}'.format(
+                data = response_code.SUCCESS
+                data['data'] = 'Get the table access successfully: {}'.format(
                     '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
-
+                return data
         except HttpError as e:
-            return (json.loads(e.content))
-
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:GrantRoleForBQTable_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:GrantRoleForBQTable_execute error:{}".format(traceback.format_exc()))
-            return response_code.ADD_DATA_FAIL
-
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
         finally:
             conn.close()
             # pass

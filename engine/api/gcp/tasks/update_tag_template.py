@@ -55,7 +55,9 @@ class UpdateTagTemplate(baseTask):
                     missing_set.add(key)
                 # # print('{}: {}'.format(key, self.stage_dict[key]))
             if len(missing_set) != 0:
-                return 'Missing parameters: {}'.format(', '.join(missing_set))
+                data = response_code.BAD_REQUEST
+                data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
+                return data
             else:
                 credentials, project = google.auth.default()
                 location = Config.DEFAULT_REGION
@@ -137,16 +139,21 @@ class UpdateTagTemplate(baseTask):
                 tag_template_id = self.updete_exec(conn, sql)
                 # print('tagTemplatesTable insert sql:', sql)
 
-                return 'update successfully.: {}'.format(str(tag_template_id))
-
+                data = response_code.SUCCESS
+                data['data'] = 'update successfully.: {}'.format(str(tag_template_id))
+                return data
             # self.
-
         except HttpError as e:
-            return (json.loads(e.content))
-
+            error_json = json.loads(e.content)
+            data = error_json['error']
+            data["msg"] = data.pop("message")
+            logger.error("FN:UpdateTagTemplate_execute error:{}".format(traceback.format_exc()))
+            return data
         except Exception as e:
             logger.error("FN:UpdateTagTemplate_execute error:{}".format(traceback.format_exc()))
-            return response_code.ADD_DATA_FAIL
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
 
         finally:
             conn.close()
