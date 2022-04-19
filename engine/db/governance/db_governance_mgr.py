@@ -678,11 +678,11 @@ class DbGovernanceMgr(DbBase):
             values = (form_status_code, now)
             update_condition = 'id="%s" and history_id="%s" ' % (input_form_id, history_id)
             sql = self.create_update_sql(db_name, 'inputFormTable', fields, values, update_condition)
-
+            _ = self.updete_exec(conn, sql)
 
             # data = response_code.SUCCESS
             # data['data'] = {'history_id': history_id}
-            return data
+            return response_code.SUCCESS
         except Exception as e:
             logger.error("FN:change_status error:{}".format(traceback.format_exc()))
             return response_code.GET_DATA_FAIL
