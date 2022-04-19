@@ -37,7 +37,14 @@ const GlobalContextProvider = (props) => {
   const [authContext, authContextDispatch] = useReducer(
     (state, actions) => {
       let newState = state;
-      let expTime = new Date().getTime() + 60 * 60 * 1000;
+      let expTime;
+
+      if (actions.type === "logout") {
+        expTime = 0;
+      } else if (actions.type === "refreshToken") {
+        expTime = new Date().getTime() + 60 * 60 * 1000;
+      }
+
       newState = {
         ...state,
         init: actions.payload.init,
@@ -50,7 +57,7 @@ const GlobalContextProvider = (props) => {
         wsId: actions.payload.wsId,
         accountId: actions.payload.accountId,
         ad_group_list: actions.payload.ad_group_list,
-        expTime: expTime,
+        expTime: expTime === undefined ? state.expTime : expTime,
       };
       let sessionToken = JSON.stringify(newState);
       let encodeToken = Encrypt(sessionToken);
@@ -166,9 +173,9 @@ const GlobalContextProvider = (props) => {
     }
   );
 
-  const setAuth = (role) => {
+  const setAuth = (role, action) => {
     authContextDispatch({
-      type: "",
+      type: action,
       payload: role,
     });
   };

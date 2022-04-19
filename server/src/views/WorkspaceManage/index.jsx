@@ -127,13 +127,16 @@ const WorkspaceManage = () => {
                 status: 2,
                 content: <Intl id="wsDeleted" />,
                 cb: () => {
-                  setAuth({
-                    ...authContext,
-                    role: res.data.role_name,
-                    roleList: res.data.role_list,
-                    wsId: Number(res.data.workspace_id),
-                    wsList: res.data.workspace_list,
-                  });
+                  setAuth(
+                    {
+                      ...authContext,
+                      role: res.data.role_name,
+                      roleList: res.data.role_list,
+                      wsId: Number(res.data.workspace_id),
+                      wsList: res.data.workspace_list,
+                    },
+                    "refreshToken"
+                  );
                   window.location.reload();
                 },
               });

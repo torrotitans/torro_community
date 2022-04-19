@@ -110,6 +110,14 @@ export const LoginCall = async (param) => {
   return await handleResponse(await callApi(method, url, param));
 };
 
+export const refreshToken = async (param) => {
+  let {
+    loginGet: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
 export const getNotify = async (param) => {
   let {
     systemNotify: { url, method },

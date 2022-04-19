@@ -22,9 +22,14 @@ const statusMap = {
   3: { buttonText: "tryAgain", title: "ooops", icon: ErrorIcon },
   4: {
     buttonText: "stay",
-    title: "loginExpired",
+    title: "loginPendingExpired",
     icon: ErrorIcon,
     button2Text: "logout",
+  },
+  5: {
+    buttonText: "logout",
+    title: "loginExpired",
+    icon: ErrorIcon,
   },
 };
 const CallModal = ({
@@ -86,17 +91,13 @@ const CallModal = ({
               className={styles.successCb}
             >
               <Text type="title">
-                {currentModelData.button2Text ? (
-                  currentModelData.button2Text
-                ) : (
-                  <Intl
-                    id={
-                      currentModelData.button2Text
-                        ? currentModelData.button2Text
-                        : "checkRequest"
-                    }
-                  />
-                )}
+                <Intl
+                  id={
+                    currentModelData.button2Text
+                      ? currentModelData.button2Text
+                      : "checkRequest"
+                  }
+                />
               </Text>
             </Button>
           )}

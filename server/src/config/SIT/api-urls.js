@@ -13,6 +13,10 @@ const config = {
     url: `${BASE_API_URL}/api/login`,
     method: PUT,
   },
+  loginGet: {
+    url: `${BASE_API_URL}/api/login`,
+    method: GET,
+  },
   systemNotify: {
     // url: `${BASE_API_URL}/api/systemNotify`,
     url: `/stub/systemNotify.json`,

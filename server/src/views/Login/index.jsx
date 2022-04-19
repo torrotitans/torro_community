@@ -41,7 +41,7 @@ const LoginPage = () => {
               ...authContext,
               init: true,
             };
-            setAuth(tmpAuth);
+            setAuth(tmpAuth, "refreshToken");
             navigate("/orgSetting", {
               replace: true,
             });
@@ -59,7 +59,7 @@ const LoginPage = () => {
               ad_group_list: data.ad_group_list,
               userCN: data.ACCOUNT_CN,
             };
-            setAuth(tmpAuth);
+            setAuth(tmpAuth, "refreshToken");
           }
         })
         .catch((e) => {

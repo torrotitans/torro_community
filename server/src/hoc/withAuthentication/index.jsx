@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import { useGlobalContext } from "src/context";
 import UserSessionBar from "src/layouts/UserSessionBar";
 import CallModal from "@basics/CallModal";
+import { refreshToken } from "@lib/api";
 
 const withAuthentication = (VerificationPage) => (props) => {
   const { authContext, setAuth } = useGlobalContext();
@@ -27,33 +28,79 @@ const withAuthentication = (VerificationPage) => (props) => {
   useEffect(() => {
     if (!!authContext.expTime) {
       let loginTimer = setInterval(() => {
-        if (new Date().getTime() > authContext.expTime) {
+        let currTime = new Date().getTime();
+        if (currTime > authContext.expTime) {
           setModalData({
             open: true,
-            status: 4,
+            status: 5,
             content: "time expired",
             cb: () => {
-              setAuth(authContext);
-              setModalData({ open: false, status: 4, content: "time expired" });
-            },
-            successCb: () => {
-              setAuth({
-                userName: "",
-                userId: "",
-                accountId: "",
-                roleList: [],
-                role: "",
-                init: false,
-                wsList: [],
-                wsId: "",
-                ad_group_list: [],
-              });
+              setAuth(
+                {
+                  userName: "",
+                  userId: "",
+                  accountId: "",
+                  roleList: [],
+                  role: "",
+                  init: false,
+                  wsList: [],
+                  wsId: "",
+                  ad_group_list: [],
+                  expTime: 0,
+                },
+                "logout"
+              );
             },
           });
           clearInterval(loginTimer);
           loginTimer = null;
+        } else if (currTime > authContext.expTime - 5 * 60 * 1000) {
+          let time = Math.floor(authContext.expTime - currTime);
+          let minute = Math.floor((time / 1000 / 60) % 60);
+          let second = Math.floor((time / 1000) % 60);
+          setModalData({
+            open: true,
+            status: 4,
+            content: `You can keep the login status within ${minute}:${second}`,
+            cb: () => {
+              refreshToken()
+                .then(() => {
+                  setAuth(authContext, "refreshToken");
+                  setModalData({
+                    open: false,
+                    status: 4,
+                    content: `You can keep the login status within ${minute}:${second}`,
+                  });
+                  clearInterval(loginTimer);
+                  loginTimer = null;
+                })
+                .catch((e) => {
+                  clearInterval(loginTimer);
+                  loginTimer = null;
+                });
+            },
+            successCb: () => {
+              setAuth(
+                {
+                  userName: "",
+                  userId: "",
+                  accountId: "",
+                  roleList: [],
+                  role: "",
+                  init: false,
+                  wsList: [],
+                  wsId: "",
+                  ad_group_list: [],
+                  expTime: 0,
+                },
+                "logout"
+              );
+              clearInterval(loginTimer);
+              loginTimer = null;
+            },
+          });
         }
-      }, 5000);
+      }, 1000);
       return () => {
         clearInterval(loginTimer);
         loginTimer = null;
@@ -125,7 +172,7 @@ const withAuthentication = (VerificationPage) => (props) => {
         handleClose={() => {
           setModalData({ ...modalData, open: false, cb: null });
         }}
-      />
+      ></CallModal>
     </>
   );
 };

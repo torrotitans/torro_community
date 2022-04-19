@@ -40,11 +40,25 @@
     margin-left: $rbwmspace20;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-block;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    display: flex;
+    flex-direction: column;
   }
+}
+
+.mainContent {
+  font-size: $fontSize3;
+}
+.subContent {
+  color: $text-grey;
+}
+
+.mainContent,
+.subContent {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
 .progressLine {

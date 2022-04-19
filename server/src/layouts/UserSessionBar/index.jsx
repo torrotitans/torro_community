@@ -166,13 +166,16 @@ const UserSessionBar = () => {
       updateLogin(postData)
         .then((res) => {
           if (res.data) {
-            setAuth({
-              ...authContext,
-              role: res.data.role_name,
-              roleList: res.data.role_list,
-              wsId: Number(res.data.workspace_id),
-              wsList: res.data.workspace_list,
-            });
+            setAuth(
+              {
+                ...authContext,
+                role: res.data.role_name,
+                roleList: res.data.role_list,
+                wsId: Number(res.data.workspace_id),
+                wsList: res.data.workspace_list,
+              },
+              "refreshToken"
+            );
             setTimeout(() => {
               window.location.reload();
             }, 0);
@@ -191,17 +194,20 @@ const UserSessionBar = () => {
 
   // signOut
   const signOut = useCallback(() => {
-    setAuth({
-      userName: "",
-      userId: "",
-      accountId: "",
-      roleList: [],
-      role: "",
-      init: false,
-      wsList: [],
-      wsId: "",
-      ad_group_list: [],
-    });
+    setAuth(
+      {
+        userName: "",
+        userId: "",
+        accountId: "",
+        roleList: [],
+        role: "",
+        init: false,
+        wsList: [],
+        wsId: "",
+        ad_group_list: [],
+      },
+      "logout"
+    );
   }, [setAuth]);
 
   const exitHandle = useCallback(() => {
