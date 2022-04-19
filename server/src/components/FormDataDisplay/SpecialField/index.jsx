@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { FormattedMessage as Intl } from "react-intl";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* material-ui */
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
@@ -149,7 +150,9 @@ const SpecialField = ({ formId, data, special }) => {
         }}
       >
         <div className={styles.modalContent}>
-          <FieldDisplay formId={formId} data={data} />
+          <ScrollBar>
+            <FieldDisplay formId={formId} data={data} />
+          </ScrollBar>
         </div>
       </Model>
     </div>

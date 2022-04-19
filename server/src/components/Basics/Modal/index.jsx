@@ -5,6 +5,7 @@ import React from "react";
 import Fade from "@material-ui/core/Fade";
 import Modal from "@material-ui/core/Modal";
 import CloseIcon from "@material-ui/icons/Close";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
@@ -22,8 +23,7 @@ const CustomModel = ({ children, name, open, handleClose }) => {
           {handleClose && (
             <CloseIcon className={styles.close} onClick={handleClose} />
           )}
-
-          {children}
+          <ScrollBar className={styles.modalScrollbar}>{children}</ScrollBar>
         </div>
       </Fade>
     </Modal>

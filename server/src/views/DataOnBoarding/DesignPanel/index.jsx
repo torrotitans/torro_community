@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import ScrollBar from "react-perfect-scrollbar";
 
 /* local components & methods */
 import styles from "./styles.module.scss";
@@ -41,15 +42,19 @@ const DesignPanel = ({
             [styles["open"]]: openState,
           })}
         >
-          {type === 0 && <PolicyTagTree handleApply={handleApply} />}
-          {(type === 1 || type === 2) && (
-            <AddTag
-              handleApply={handleApply}
-              type={type}
-              tagTemplateList={tagTemplateList}
-              checkedTagList={checkedTagList}
-            />
-          )}
+          <ScrollBar>
+            <div className={styles.innerContent}>
+              {type === 0 && <PolicyTagTree handleApply={handleApply} />}
+              {(type === 1 || type === 2) && (
+                <AddTag
+                  handleApply={handleApply}
+                  type={type}
+                  tagTemplateList={tagTemplateList}
+                  checkedTagList={checkedTagList}
+                />
+              )}
+            </div>
+          </ScrollBar>
         </div>
       </ClickAwayListener>
     </div>

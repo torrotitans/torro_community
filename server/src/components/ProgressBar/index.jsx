@@ -1,6 +1,7 @@
 /* third lib*/
 import React, { useMemo } from "react";
 import styles from "./styles.module.scss";
+import { FormattedMessage as Intl } from "react-intl";
 
 const ProgressBar = ({ progress }) => {
   const progressPercent = useMemo(() => {
@@ -32,7 +33,19 @@ const ProgressBar = ({ progress }) => {
               <div className={styles.dot}>
                 <div className={styles.progressItem}>
                   <div title={item.label} className={styles.progressName}>
-                    {item.label}
+                    <div className={styles.mainContent}>{item.label}</div>
+                    {item.adgroup && (
+                      <div className={styles.subContent}>
+                        <Intl id="adGroup" />
+                        {item.adgroup}
+                      </div>
+                    )}
+                    {item.operator && (
+                      <div className={styles.subContent}>
+                        <Intl id="approvedBy" />
+                        {item.operator}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
