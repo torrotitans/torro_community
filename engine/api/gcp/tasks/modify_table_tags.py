@@ -5,7 +5,7 @@ from db.connection_pool import MysqlConn
 from config import configuration
 import datetime
 from common.common_input_form_status import status
-
+import datetime
 import logging
 from googleapiclient.errors import HttpError
 from utils.status_code import response_code
@@ -218,13 +218,17 @@ class ModifyTableTags(baseTask):
                 elif style == 1 or style == 3:
                     tag.fields[field_id].string_value = value
                 elif style == 6:
-                    tag.fields[field_id].timestamp_value = value
+                    tag.fields[field_id].timestamp_value = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
                 else:
                     continue
 
             return tag
-
-
-        except:
+            
+        except Exception as e:
             logger.error("FN:ModifyTableTags__get_tags error:{}".format(traceback.format_exc()))
+            data = response_code.BAD_REQUEST
+            data['msg'] = str(e)
+            return data
+
+            
         
