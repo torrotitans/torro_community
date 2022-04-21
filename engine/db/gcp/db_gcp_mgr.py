@@ -221,7 +221,7 @@ class DbGCPMgr(DbBase):
                         elif style == 1 or style == 3:
                             return_data[key] = field_dict[key].string_value
                         elif style == 6:
-                            return_data[key] = field_dict[key].timestamp_value
+                            return_data[key] = str(field_dict[key].timestamp_value)
                     
                         logger.debug("FN:DbGCPMgr_get_table_schema key:{} return_data:{}".format(key, return_data))
 
