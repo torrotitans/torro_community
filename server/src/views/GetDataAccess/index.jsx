@@ -24,6 +24,7 @@ import {
   getUseCaseList,
   getOnBoardDataForm,
   getTableSchema,
+  getHiveResource,
   getPolicys,
   getTags,
   raiseFormRequestList,
@@ -284,8 +285,9 @@ const GetDataAccess = () => {
   useEffect(() => {
     if (searchQuery) {
       let postData = { ...searchQuery };
+      let apiCall = resourceType === "GCP" ? getTableSchema : getHiveResource;
       setFormLoading(true);
-      getTableSchema(postData)
+      apiCall(postData)
         .then((res) => {
           setTableData(res.data);
           setFormLoading(false);
@@ -295,7 +297,7 @@ const GetDataAccess = () => {
           sendNotify({ msg: e.message, status: 3, show: true });
         });
     }
-  }, [searchQuery]);
+  }, [searchQuery, resourceType]);
 
   useEffect(() => {
     getPolicys()

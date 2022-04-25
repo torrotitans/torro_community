@@ -206,6 +206,12 @@ const config = {
     method: POST,
   },
 
+  hiveResoruceaGet: {
+    // url: `${BASE_API_URL}/api/tableSchema`,
+    url: `/stub/hiveResource.json`,
+    method: GET,
+  },
+
   policyTagGet: {
     url: `/stub/policy_tags.json`,
     method: GET,

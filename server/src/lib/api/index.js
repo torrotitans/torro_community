@@ -446,6 +446,14 @@ export const getTableSchema = async (param) => {
   return await handleResponse(await callApi(method, url, param));
 };
 
+export const getHiveResource = async (param) => {
+  let {
+    hiveResoruceaGet: { url, method },
+  } = API_CONFIG;
+
+  return await handleResponse(await callApi(method, url, param));
+};
+
 export const getPolicayTag = async (param) => {
   let {
     policyTagGet: { url, method },

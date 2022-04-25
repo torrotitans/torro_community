@@ -20,6 +20,7 @@ import {
   getOnBoardDataForm,
   getRequiredTableTag,
   getTableSchema,
+  getHiveResource,
   getTags,
   getPolicys,
   raiseFormRequest,
@@ -182,7 +183,8 @@ const DataOnBoarding = () => {
   useEffect(() => {
     if (searchQuery) {
       setFormLoading(true);
-      getTableSchema(searchQuery)
+      let apiCall = resourceType === "GCP" ? getTableSchema : getHiveResource;
+      apiCall(searchQuery)
         .then((res) => {
           if (res.data) {
             let tmpData = res.data;
@@ -219,7 +221,7 @@ const DataOnBoarding = () => {
           sendNotify({ msg: e.message, status: 3, show: true });
         });
     }
-  }, [searchQuery, requiredTableTag]);
+  }, [searchQuery, requiredTableTag, resourceType]);
 
   useEffect(() => {
     getPolicys()
