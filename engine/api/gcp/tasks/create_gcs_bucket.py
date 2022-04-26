@@ -53,7 +53,7 @@ class CreateGCSBucket(baseTask):
             data['data'] = "Bucket {} created.".format(bucket.name)
             return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:CreateGCSBucket_execute error:{}".format(traceback.format_exc()))

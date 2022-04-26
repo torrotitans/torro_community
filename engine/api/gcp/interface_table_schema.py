@@ -116,7 +116,12 @@ class interfaceTableSchema(Resource):
                 return response_result_process(request_data, xml=xml)
 
             # request_data = req.verify_all_param(request_data, gcpApiPara.execute_gcp_tasks_POST_request)
-            data = gcpSingleton_singleton.get_table_schema(request_data, user_key, workspace_id)
+            resource_type = request_data.get('resourceType', '').upper().strip()
+            if resource_type == 'GCP':
+                data = gcpSingleton_singleton.get_table_schema(request_data, user_key, workspace_id)
+            else:
+                data = response_code.GET_DATA_FAIL
+                data['msg'] = 'The resourceType does not supported.'
             return data
         except Exception as e:
             logger.error("FN:interfaceTableSchema_post error:{}".format(e))

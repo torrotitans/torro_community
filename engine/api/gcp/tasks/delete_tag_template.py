@@ -82,7 +82,7 @@ class DeleteTagTemplate(baseTask):
                 data['data'] = 'delete successfully.: {}'.format(str(tag_template_id))
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:DeleteTagTemplate_execute error:{}".format(traceback.format_exc()))

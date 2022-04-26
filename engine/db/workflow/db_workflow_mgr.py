@@ -370,8 +370,8 @@ class DbWorkflowMgr(DbBase):
             logger.debug("FN:DbWorkflowMgr_get_all_details_workflow_by_form_id workflowTable_sql:{}".format(sql))
             workflows_info = self.execute_fetch_all(conn, sql)
             for index in range(len(workflows_info)):
-                workflows_info[index]['stages'] = json.loads(workflows_info[index]['stages'])
-                workflows_info[index]['field_id_list'] = json.loads(workflows_info[index]['field_id_list'])
+                workflows_info[index]['stages'] = json.loads(workflows_info[index]['stages'], strict=False)
+                workflows_info[index]['field_id_list'] = json.loads(workflows_info[index]['field_id_list'], strict=False)
             data = response_code.SUCCESS
             data['data'] = workflows_info
             return data
@@ -397,8 +397,8 @@ class DbWorkflowMgr(DbBase):
             logger.debug("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id workflowTable_sql:{}".format(sql))
             workflow_info = self.execute_fetch_one(conn, sql)
             logger.debug("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id workflow_info:{}".format(workflow_info))
-            workflow_info['stages'] = json.loads(workflow_info['stages'])
-            workflow_info['field_id_list'] = json.loads(workflow_info['field_id_list'])
+            workflow_info['stages'] = json.loads(workflow_info['stages'], strict=False)
+            workflow_info['field_id_list'] = json.loads(workflow_info['field_id_list'], strict=False)
             data = response_code.SUCCESS
             data['data'] = workflow_info
             return data
@@ -425,7 +425,7 @@ class DbWorkflowMgr(DbBase):
             logger.debug("FN:DbWorkflowMgr_get_stages_with_condition stageTable_sql:{}".format(sql))
             stage_info = self.execute_fetch_all(conn, sql)
             for index in range(len(stage_info)):
-                stage_info[index]['arguments'] = json.loads(stage_info[index]['arguments'])
+                stage_info[index]['arguments'] = json.loads(stage_info[index]['arguments'], strict=False)
             # get fields info
             data = response_code.SUCCESS
             data['data'] = stage_info
@@ -445,7 +445,7 @@ class DbWorkflowMgr(DbBase):
             sql = self.create_select_sql(db_name, 'stageTable', '*', condition=condition)
             logger.debug("FN:DbWorkflowMgr_get_all_stages stageTable_sql:{}".format(sql))
             stage_info = self.execute_fetch_one(conn, sql)
-            stage_info['arguments'] = json.loads(stage_info['arguments'])
+            stage_info['arguments'] = json.loads(stage_info['arguments'], strict=False)
             data = response_code.SUCCESS
             data['data'] = stage_info
             return data
@@ -471,7 +471,7 @@ class DbWorkflowMgr(DbBase):
             result = copy.deepcopy(self.defalut_stages)
             itemList = self.execute_fetch_all(db_conn, sql)
             for index in range(len(itemList)):
-                itemList[index]['condition'] = json.loads(itemList[index]['condition'])
+                itemList[index]['condition'] = json.loads(itemList[index]['condition'], strict=False)
             result[1]["itemList"] = itemList
             data = response_code.SUCCESS
             data['data'] = result
@@ -496,7 +496,7 @@ class DbWorkflowMgr(DbBase):
             result = copy.deepcopy(self.defalut_stages)
             itemList = self.execute_fetch_all(db_conn, sql)
             for index in range(len(itemList)):
-                itemList[index]['condition'] = json.loads(itemList[index]['condition'])
+                itemList[index]['condition'] = json.loads(itemList[index]['condition'], strict=False)
             result[1]["itemList"] = itemList
 
 
@@ -510,7 +510,7 @@ class DbWorkflowMgr(DbBase):
             print('sql:', sql)
             # sql = self.create_select_sql(db_name, 'formTable', '*', condition=conditon)
             form_info = self.execute_fetch_one(db_conn, sql)
-            fields_list = json.loads(form_info['fields_list'])
+            fields_list = json.loads(form_info['fields_list'], strict=False)
             # deduplication list
             field_id_list = []
             for field in fields_list:

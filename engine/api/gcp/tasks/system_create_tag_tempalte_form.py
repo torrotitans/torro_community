@@ -61,7 +61,7 @@ class system_create_tag_template_form(baseTask):
                     return data
 
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("system_create_tag_template_form_execute error:{}".format(traceback.format_exc()))

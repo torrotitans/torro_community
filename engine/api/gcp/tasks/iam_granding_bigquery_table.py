@@ -91,7 +91,7 @@ class GrantRoleForBQTable(baseTask):
                 logger.debug("FN:GrantRoleForBQTable_execute table_info:{}".format(table_info))
                 # get data info
                 data_input_form_id = table_info['input_form_id']
-                data_fields = json.loads(table_info['fields'])
+                data_fields = json.loads(table_info['fields'], strict=False)
                 access_fields = []
                 for data_field in data_fields:
                     if 'policyTags' not in data_field or 'names' not in data_field['policyTags'] or len(
@@ -102,10 +102,19 @@ class GrantRoleForBQTable(baseTask):
                 logger.debug("FN:GrantRoleForBQTable_execute dataAccessTable_sql:{}".format(sql))
                 table_access_info = self.execute_fetch_one(conn, sql)
 
+                # check if usecase exist
+                condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
+                sql = self.create_select_sql(db_name, 'usecaseTable', 'ID,CREATE_TIME', condition)
+                # print('usecaseTable: ', sql)
+                usecase_info = self.execute_fetch_one(conn, sql)
+                if not usecase_info:
+                    return 'Cannot find usecase: {} in workspace: {}'.format(usecase_name, str(workspace_id))
+                usecase_id = usecase_info['ID']
+
                 if table_access_info:
                     now = str(datetime.datetime.today())
-                    column_fields = ('data_access_input_form_id', 'fields', 'create_time')
-                    values = (input_form_id, json.dumps(access_fields), now)
+                    column_fields = ('data_access_input_form_id','usecase_id', 'fields', 'create_time')
+                    values = (input_form_id, usecase_id, json.dumps(access_fields), now)
                     sql = self.create_update_sql(db_name, 'dataAccessTable', column_fields, values, cond)
                     logger.debug("FN:GrantRoleForBQTable_execute update_dataAccessTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
@@ -114,10 +123,10 @@ class GrantRoleForBQTable(baseTask):
                     #     '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
                 else:
                     fields = (
-                        'data_input_form_id', 'data_access_input_form_id', 'fields', 'create_time')
+                        'data_input_form_id', 'data_access_input_form_id','usecase_id', 'fields', 'create_time')
                     now = str(datetime.datetime.today())
                     values = (
-                        data_input_form_id, input_form_id, json.dumps(access_fields),now)
+                        data_input_form_id, input_form_id, usecase_id, json.dumps(access_fields),now)
                     sql = self.create_insert_sql(db_name, 'dataAccessTable',
                                                  '({})'.format(', '.join(fields)), values)
                     logger.debug("FN:GrantRoleForBQTable_execute insert_dataAccessTable_sql:{}".format(sql))
@@ -128,7 +137,7 @@ class GrantRoleForBQTable(baseTask):
                     '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForBQTable_execute error:{}".format(traceback.format_exc()))

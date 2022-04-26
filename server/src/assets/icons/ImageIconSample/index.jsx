@@ -2,10 +2,10 @@
 import React from "react";
 
 /* material-ui */
-import hsbc from "./red.png";
+import sample from "./red.png";
 
 function ImageIconSample(props) {
-  return <img src={hsbc} width="18px" />;
+  return <img src={sample} width="18px" />;
 }
 
 /** when you want to use image in project try **

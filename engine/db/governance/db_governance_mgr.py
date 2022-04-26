@@ -158,7 +158,7 @@ class DbGovernanceMgr(DbBase):
                     # if it is the last approval, check the service account have enough right to execute the tasks
                     gcp_tasks = []
                     if all_approval_flag == 1:
-                        workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
+                        workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'], strict=False)
                         workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                         logger.debug("FN:change_status workflow_stages_id_list:{}".format(workflow_stages_id_list))
                         input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
@@ -169,7 +169,7 @@ class DbGovernanceMgr(DbBase):
                         tasks = []
                         for stage_info in stage_infos:
                             tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
-                                          "stages": json.loads(stage_info['condition_value_dict'])})
+                                          "stages": json.loads(stage_info['condition_value_dict'], strict=False)})
                         logger.debug("FN:change_status project_id:{} service_account:{}".format(taskFetcher.project_id, taskFetcher.service_account))
                         torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
                                                                             taskFetcher.service_account)
@@ -453,7 +453,7 @@ class DbGovernanceMgr(DbBase):
             miss_role_list = []
             token = inputData.get('token', '')
             logger.debug("FN:system_approval_trigger inputData_token:{}".format(token))
-            token_json = json.loads(prpcrypt.decrypt(token))
+            token_json = json.loads(prpcrypt.decrypt(token), strict=False)
             token = token_json.get('token', '||ERROR_TOKEN||')
             # do the form exists
             input_form_id = inputData.get('input_form_id', '-1')
@@ -513,7 +513,7 @@ class DbGovernanceMgr(DbBase):
             # if it is the last approval, check the service account have enough right to execute the tasks
             gcp_tasks = []
             if all_approval_flag == 1:
-                workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
+                workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'], strict=False)
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
                 logger.debug("FN:system_approval_trigger workflow_stages_id_list:{}".format(workflow_stages_id_list))
                 input_stage_condition = "id in ('%s') order by stage_index" % ("', '".join(workflow_stages_id_list))
@@ -524,7 +524,7 @@ class DbGovernanceMgr(DbBase):
                 tasks = []
                 for stage_info in stage_infos:
                     tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
-                                  "stages": json.loads(stage_info['condition_value_dict'])})
+                                  "stages": json.loads(stage_info['condition_value_dict'], strict=False)})
                 logger.debug("FN:system_approval_trigger project_id:{} service_account:{}".format(taskFetcher.project_id, taskFetcher.service_account))
                 torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
                                                                     taskFetcher.service_account)

@@ -79,7 +79,7 @@ class system_notify(baseTask):
                 data['data'] = 'create notify successfully: length{}'.format(str(len(notify_id_list)))
                 return data
             except HttpError as e:
-                error_json = json.loads(e.content)
+                error_json = json.loads(e.content, strict=False)
                 data = error_json['error']
                 data["msg"] = data.pop("message")
                 logger.error("FN:system_notify_execute error:{}".format(traceback.format_exc()))

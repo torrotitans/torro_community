@@ -152,7 +152,7 @@ class CreatePolicyTagsV1(baseTask):
                 data['data'] = 'create successfully.'
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:CreatePolicyTagsV1_execute error:{}".format(traceback.format_exc()))

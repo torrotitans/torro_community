@@ -410,7 +410,7 @@ class DbBase(object):
         :return: combined conditions
             e.g.: cmd_name like '%2%' and cmd_no like '%2%'
         """
-        search_data_dict = json.loads(search_data)
+        search_data_dict = json.loads(search_data, strict=False)
         index = 0
         condition = ' '
         if len(search_data_dict) == 0:
