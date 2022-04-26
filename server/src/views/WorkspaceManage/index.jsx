@@ -499,7 +499,7 @@ const WorkspaceManage = () => {
                                   <Text>{uc.id}</Text>
                                 </TableCell>
                                 <TableCell align="center">
-                                  <Text>{uc.uc_owner_group}</Text>
+                                  <Text>{uc.usecase_name}</Text>
                                 </TableCell>
                                 <TableCell align="center">
                                   <Text>{uc.uc_owner_group}</Text>
