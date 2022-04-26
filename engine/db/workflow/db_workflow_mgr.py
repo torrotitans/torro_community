@@ -397,8 +397,8 @@ class DbWorkflowMgr(DbBase):
             logger.debug("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id workflowTable_sql:{}".format(sql))
             workflow_info = self.execute_fetch_one(conn, sql)
             logger.debug("FN:DbWorkflowMgr_get_detail_workflow_by_workflow_id workflow_info:{}".format(workflow_info))
-            workflow_info['stages'] = json.loads(workflow_info['stages'])
-            workflow_info['field_id_list'] = json.loads(workflow_info['field_id_list'])
+            workflow_info['stages'] = json.loads(workflow_info['stages'], strict=False)
+            workflow_info['field_id_list'] = json.loads(workflow_info['field_id_list'], strict=False)
             data = response_code.SUCCESS
             data['data'] = workflow_info
             return data
