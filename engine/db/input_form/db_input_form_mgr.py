@@ -43,7 +43,7 @@ class DbInputFormMgr(DbBase):
             logger.debug("FN:DbInputFormMgr__get_workspace_owner_group workspace_to_adgroupTable_sql:{}".format(sql))
             label_list_infos = self.execute_fetch_all(conn, sql)
             for label_list_info in label_list_infos:
-                label_list = json.loads(label_list_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
+                label_list = json.loads(label_list_info['LABEL_LIST'], strict=False)
                 if approval_label in label_list:
                     ad_group_id_set.add(str(label_list_info['AD_GROUP_ID']))
 
@@ -75,7 +75,7 @@ class DbInputFormMgr(DbBase):
             workspace_info = self.execute_fetch_one(conn, sql)
             logger.debug("FN:DbInputFormMgr__get_workspace_region_group workspace_info:{}".format(workspace_info))
             if workspace_info:
-                regions = json.loads(workspace_info['REGIONS'].replace('\\', '\\\\'), strict=False)
+                regions = json.loads(workspace_info['REGIONS'], strict=False)
                 # # print(regions)
                 for region_info in regions:
                     if adgroup is not None:
@@ -172,7 +172,7 @@ class DbInputFormMgr(DbBase):
             logger.debug("FN:DbInputFormMgr_get_input_form_data {}_sql:{}".format(table_name,sql))
             input_form_infos = self.execute_fetch_all(db_conn, sql)
             form_status = int(input_form_infos[0]['form_status'])
-            form_field_values_dict = json.loads(input_form_infos[0]['form_field_values_dict'].replace('\\', '\\\\'), strict=False)
+            form_field_values_dict = json.loads(input_form_infos[0]['form_field_values_dict'], strict=False)
             # history_id = int(input_form_infos[0]['history_id'])
             # get status history
             status_history_list = []
@@ -303,7 +303,7 @@ class DbInputFormMgr(DbBase):
 
             for input_form_info in input_form_infos:
                 history_id = int(input_form_info['history_id'])
-                form_field_values_dict = json.loads(input_form_info['form_field_values_dict'].replace('\\', '\\\\'), strict=False)
+                form_field_values_dict = json.loads(input_form_info['form_field_values_dict'], strict=False)
                 input_form_info['form_field_values_dict'] = {}
                 for field_id in form_field_values_dict:
                     if form_field_values_dict[field_id]['style'] == 4:
@@ -319,7 +319,7 @@ class DbInputFormMgr(DbBase):
                             input_form_info['form_field_values_dict'][field_id].append(bucket_url_obj)
                     else:
                         input_form_info['form_field_values_dict'][field_id] = form_field_values_dict[field_id]['value']
-                input_form_info['workflow_stages_id_list'] = json.loads(input_form_info['workflow_stages_id_list'].replace('\\', '\\\\'), strict=False)
+                input_form_info['workflow_stages_id_list'] = json.loads(input_form_info['workflow_stages_id_list'], strict=False)
                 input_form_info['workflow_stages_list'] = []
                 
                 for index, input_stage_id in enumerate(input_form_info['workflow_stages_id_list']):
@@ -328,7 +328,7 @@ class DbInputFormMgr(DbBase):
                     sql = self.create_select_sql(db_name, 'inputStageTable', '*', condition=condition)
                     logger.debug("FN:DbInputFormMgr_get_input_form_data inputStageTable_sql:{}".format(sql))
                     stage_info = self.execute_fetch_one(db_conn, sql)
-                    stage_info['condition_value_dict'] = json.loads(stage_info['condition_value_dict'].replace('\\', '\\\\'), strict=False)
+                    stage_info['condition_value_dict'] = json.loads(stage_info['condition_value_dict'], strict=False)
                     logger.debug("FN:DbInputFormMgr_get_input_form_data stage_info:{}".format(stage_info))
                     input_form_info['workflow_stages_list'].append(stage_info)
 
@@ -470,7 +470,7 @@ class DbInputFormMgr(DbBase):
             fields_num = len(form_field_values_dict)
             workflow_id = trigger_workflow['id']
             workflow_name = trigger_workflow['workflow_name']
-            workflow_stages_list = json.loads(trigger_workflow['stages'].replace('\\', '\\\\'), strict=False)[1:]
+            workflow_stages_list = json.loads(trigger_workflow['stages'], strict=False)[1:]
             stages_num = len(workflow_stages_list)
 
             # get input form data and form's workflow stages list and approver stage
@@ -480,7 +480,6 @@ class DbInputFormMgr(DbBase):
                 form_id, workspace_id, db_name, conn)
             # # print('approver_info:', approver_info)
             # # print('workflow_stages_id_list:', workflow_stages_id_list)
-
             # add approval
             # create approval list
             approvers = self.__get_approvers(approver_info, input_form_id, form_id, workspace_id,
@@ -591,7 +590,7 @@ class DbInputFormMgr(DbBase):
             fields_num = len(form_field_values_dict)
             workflow_id = trigger_workflow['id']
             workflow_name = trigger_workflow['workflow_name']
-            workflow_stages_list = json.loads(trigger_workflow['stages'].replace('\\', '\\\\'), strict=False)[1:]
+            workflow_stages_list = json.loads(trigger_workflow['stages'], strict=False)[1:]
             stages_num = len(workflow_stages_list)
 
             input_form, workflow_stages_id_list, approver_info = self.__get_workflow_stages(
@@ -650,7 +649,7 @@ class DbInputFormMgr(DbBase):
 
         for workflow_info in workflow_infos:
 
-            trigger_stage = json.loads(workflow_info['stages'].replace('\\', '\\\\'), strict=False)[0]
+            trigger_stage = json.loads(workflow_info['stages'], strict=False)[0]
             workflow_conds = trigger_stage['condition']
             cond_length = len(workflow_conds)
             match_length = 0
@@ -726,7 +725,7 @@ class DbInputFormMgr(DbBase):
             field_style = field_ids[field_id]
             value = form_field_values_dict[field_id]
             try:
-                value = json.loads(value.replace('\\', '\\\\'), strict=False)
+                value = json.loads(value, strict=False)
                 form_field_values_dict[field_id] = value
             except:
                 pass

@@ -144,7 +144,7 @@ class UpdateTagTemplate(baseTask):
                 return data
             # self.
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:UpdateTagTemplate_execute error:{}".format(traceback.format_exc()))
@@ -199,7 +199,7 @@ class UpdateTagTemplate(baseTask):
             return tag_template
 
         except HttpError as e:
-            return (json.loads(e.content.replace('\\', '\\\\'), strict=False))
+            return (json.loads(e.content, strict=False))
 
         except Exception as e:
             logger.error("FN:UpdateTagTemplate__get_tag_templates error:{}".format(traceback.format_exc()))

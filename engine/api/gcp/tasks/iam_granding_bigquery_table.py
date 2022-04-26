@@ -91,7 +91,7 @@ class GrantRoleForBQTable(baseTask):
                 logger.debug("FN:GrantRoleForBQTable_execute table_info:{}".format(table_info))
                 # get data info
                 data_input_form_id = table_info['input_form_id']
-                data_fields = json.loads(table_info['fields'].replace('\\', '\\\\'), strict=False)
+                data_fields = json.loads(table_info['fields'], strict=False)
                 access_fields = []
                 for data_field in data_fields:
                     if 'policyTags' not in data_field or 'names' not in data_field['policyTags'] or len(
@@ -137,7 +137,7 @@ class GrantRoleForBQTable(baseTask):
                     '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForBQTable_execute error:{}".format(traceback.format_exc()))

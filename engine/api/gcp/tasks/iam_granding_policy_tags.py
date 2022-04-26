@@ -113,7 +113,7 @@ class GrantRoleForPolicyTags(baseTask):
                     logger.debug("FN:GrantRoleForPolicyTags__get_adgroup_service_accout insert_dataAccessTable_sql:{}".format(sql))
                     _ = self.insert_exec(conn, sql, return_insert_id=True)
                 else:
-                    new_fields = json.loads(table_access_info['fields'].replace('\\', '\\\\'), strict=False)
+                    new_fields = json.loads(table_access_info['fields'], strict=False)
                     name_list = []
                     for field in new_fields:
                         field_name = field['name']
@@ -135,7 +135,7 @@ class GrantRoleForPolicyTags(baseTask):
                     ', '.join(success_tag_policy_list))
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForPolicyTags_execute error:{}".format(traceback.format_exc()))

@@ -59,7 +59,7 @@ class system_add_new_usecase(baseTask):
                 else:
                     return data
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:system_add_new_usecase_execute error:{}".format(traceback.format_exc()))

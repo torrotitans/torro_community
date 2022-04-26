@@ -119,7 +119,7 @@ class DbFormMgr(DbBase):
                 return data
 
             logger.debug("FN:DbFormMgr_get_details_form_by_id form_info:{}".format(form_info))
-            form_info['fieldList'] = json.loads(form_info['fields_list'].replace('\\', '\\\\'), strict=False)
+            form_info['fieldList'] = json.loads(form_info['fields_list'], strict=False)
             del form_info['fields_list']
             region_field_info = {}
             for index, field_item in enumerate(form_info['fieldList']):
@@ -134,13 +134,13 @@ class DbFormMgr(DbBase):
                         region_field_info = field_info
                         bool_mapping = {'1': True, '0': False}
                         region_field_info['required'] = bool_mapping[str(region_field_info['required'])]
-                        region_field_info['options'] = json.loads(region_field_info['value_list'].replace('\\', '\\\\'), strict=False)
+                        region_field_info['options'] = json.loads(region_field_info['value_list'], strict=False)
                         region_field_info['default'] = region_field_info['default_value']
                         del region_field_info['value_list'], region_field_info['default_value']
                         region_field_info['id'] = 's' + str(region_field_info['id'])
                         # continue
                     else:
-                        field_info['options'] = json.loads(field_info['value_list'].replace('\\', '\\\\'), strict=False)
+                        field_info['options'] = json.loads(field_info['value_list'], strict=False)
                         field_info['default'] = field_info['default_value']
                         del field_info['value_list'], field_info['default_value']
                         field_info['id'] = 's' + str(field_info['id'])
@@ -200,7 +200,7 @@ class DbFormMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
                 print('123456123456workspaceTable:',sql)
                 options = []
-                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'].replace('\\', '\\\\'), strict=False)
+                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'], strict=False)
                 # print('region_field_info:', region_field_info)
                 # print('regions:', regions)
  
@@ -257,14 +257,14 @@ class DbFormMgr(DbBase):
                     region_field_info = field_info
                     bool_mapping = {'1': True, '0': False}
                     region_field_info['required'] = bool_mapping[str(region_field_info['required'])]
-                    region_field_info['options'] = json.loads(region_field_info['value_list'].replace('\\', '\\\\'), strict=False)
+                    region_field_info['options'] = json.loads(region_field_info['value_list'], strict=False)
                     region_field_info['default'] = region_field_info['default_value']
                     del region_field_info['value_list'], region_field_info['default_value']
                     region_field_info['id'] = 's' + str(region_field_info['id'])
                     continue
                 new_field_info = field_info
                 # # print(new_field_info)
-                new_field_info['options'] = json.loads(new_field_info['value_list'].replace('\\', '\\\\'), strict=False)
+                new_field_info['options'] = json.loads(new_field_info['value_list'], strict=False)
                 new_field_info['default'] = new_field_info['default_value']
                 del new_field_info['value_list'], new_field_info['default_value']
                 # # print(new_field_info)
@@ -316,7 +316,7 @@ class DbFormMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
                 logger.debug("FN:DbFormMgr_get_field_template workspaceTable_sql:{}".format(sql))
                 options = []
-                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'].replace('\\', '\\\\'), strict=False)
+                regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'], strict=False)
                 # print('region_field_info:', region_field_info)
                 # print('regions:', regions)
 
@@ -830,7 +830,7 @@ class DbFormMgr(DbBase):
                         sql = self.create_select_sql(db_name, 'workspaceTable', 'REGIONS', condition)
                         logger.debug("FN:__get_dynamic_field_values workspaceTable REGIONS sql:{}".format(sql))
                         options = []
-                        regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'].replace('\\', '\\\\'), strict=False)
+                        regions = json.loads(self.execute_fetch_one(conn, sql)['REGIONS'], strict=False)
                         # print('region_field_info:', region_field_info)
                         # print('regions:', regions)
 

@@ -85,7 +85,7 @@ class system_create_tag(baseTask):
 
                     return data
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:system_create_tag_execute error:{}".format(traceback.format_exc()))

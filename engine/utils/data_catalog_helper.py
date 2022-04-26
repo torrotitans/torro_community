@@ -151,6 +151,6 @@ def get_tag_templates(location, tagtemplate_name):
         return tag_template
 
     except HttpError as e:
-        return (json.loads(e.content.replace('\\', '\\\\'), strict=False))
+        return (json.loads(e.content, strict=False))
     except Exception as e:
         return {'error': {'code': 500, 'message': str(e), 'status': 'ERROR'}}

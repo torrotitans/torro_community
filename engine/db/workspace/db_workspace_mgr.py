@@ -490,7 +490,7 @@ class DbWorkspaceMgr(DbBase):
                 workspace_id = workspace_info['ID']
 
                 one_workspace = {'id': workspace_id, 'workspace_name': workspace_info['WORKSPACE_NAME'],
-                                 'regions': json.loads(workspace_info['REGIONS'].replace('\\', '\\\\'), strict=False),
+                                 'regions': json.loads(workspace_info['REGIONS'], strict=False),
                                  'create_time': workspace_info['CREATE_TIME']}
                 # db_name = configuration.get_database_name()
                 condition = "WORKSPACE_ID='%s' " % (workspace_id)
@@ -500,7 +500,7 @@ class DbWorkspaceMgr(DbBase):
                 logger.debug("FN:DbWorkspaceMgr_get_workspace_info_by_ad_group workspace_to_adgroupTable_sql:{}".format(sql))
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group_info in ad_group_infos:
-                    label_list = json.loads(ad_group_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
+                    label_list = json.loads(ad_group_info['LABEL_LIST'], strict=False)
                     for label in label_list:
                         one_workspace[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_workspace)
@@ -684,7 +684,7 @@ class DbWorkspaceMgr(DbBase):
                 HEAD_APPROVAL = 'Need workspace Head approval'
                 approval_item.append(HEAD_APPROVAL)
             return_info['approval'] = ','.join(approval_item)
-            return_info['regions'] = json.loads(workspace_info['REGIONS'].replace('\\', '\\\\'), strict=False)
+            return_info['regions'] = json.loads(workspace_info['REGIONS'], strict=False)
             # db_name = configuration.get_database_name()
             logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id return_info:{}".format(return_info))
             condition = "WORKSPACE_ID='%s' " % (workspace_id)
@@ -694,7 +694,7 @@ class DbWorkspaceMgr(DbBase):
             logger.debug("FN:DbWorkspaceMgr_get_workspace_details_info_by_id workspace_to_adgroupTable_sql:{}".format(sql))
             ad_group_infos = self.execute_fetch_all(conn, sql)
             for ad_group_info in ad_group_infos:
-                label_list = json.loads(ad_group_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
+                label_list = json.loads(ad_group_info['LABEL_LIST'], strict=False)
                 for label in label_list:
                     return_info[label] = ad_group_info['GROUP_MAIL']
 

@@ -75,7 +75,7 @@ class GrantRoleForBQDataset(baseTask):
                     '.'.join([str(workspace_id), project_id, ','.join(dataset_id_list)]))
 
         except HttpError as e:
-            return (json.loads(e.content.replace('\\', '\\\\'), strict=False))
+            return (json.loads(e.content, strict=False))
         except Exception as e:
             logger.error("FN:GrantRoleForBQDataset_execute error:{}".format(traceback.format_exc()))
             return response_code.ADD_DATA_FAIL
@@ -149,7 +149,7 @@ class GrantRoleForBQDataset(baseTask):
             data['data'] = "Successful."
             return data
         except HttpError as e:
-            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
+            error_json = json.loads(e.content, strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:GrantRoleForBQDataset__grand_access_roles error:{}".format(traceback.format_exc()))
