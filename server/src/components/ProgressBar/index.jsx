@@ -1,11 +1,15 @@
 /* third lib*/
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./styles.module.scss";
 import { FormattedMessage as Intl } from "react-intl";
+import Model from "@basics/Modal";
 
-const ProgressBar = ({ progress }) => {
-  const progressPercent = useMemo(() => {
-    let unit = 100 / progress.length;
+import Text from "@basics/Text";
+
+const ProgressBar = ({ progress, stagesLog }) => {
+  const [open, setOpen] = useState(false);
+
+  const currentStepCount = useMemo(() => {
     let count = 1;
     let countIndex = 0;
     progress.forEach((item, index) => {
@@ -21,8 +25,14 @@ const ProgressBar = ({ progress }) => {
         }
       }
     });
-    return unit * (count + countIndex);
+    return count + countIndex;
   }, [progress]);
+
+  const progressPercent = useMemo(() => {
+    let unit = 100 / progress.length;
+
+    return unit * currentStepCount;
+  }, [progress.length, currentStepCount]);
 
   return (
     <div className={styles.progressBar}>
@@ -33,7 +43,19 @@ const ProgressBar = ({ progress }) => {
               <div className={styles.dot}>
                 <div className={styles.progressItem}>
                   <div title={item.label} className={styles.progressName}>
-                    <div className={styles.mainContent}>{item.label}</div>
+                    <div className={styles.mainContent}>
+                      {item.label}
+                      {currentStepCount - 1 === index && (
+                        <span
+                          className={styles.viewLog}
+                          onClick={() => {
+                            setOpen(true);
+                          }}
+                        >
+                          <Intl id="viewLog" />
+                        </span>
+                      )}
+                    </div>
                     {item.adgroup && (
                       <div className={styles.subContent}>
                         <Intl id="adGroup" />
@@ -61,6 +83,36 @@ const ProgressBar = ({ progress }) => {
           ></div>
         </div>
       </div>
+      <Model
+        open={open}
+        handleClose={() => {
+          setOpen(false);
+        }}
+      >
+        <div className={styles.modalContent}>
+          {stagesLog && (
+            <div className={styles.logContent}>
+              {stagesLog.map((item, index) => {
+                return (
+                  <div key={index} className={styles.stageLog}>
+                    <div className={styles.stageTitile}>
+                      <Text type="subTitle">{item.apiTaskName}</Text>
+                    </div>
+                    {item.logs && (
+                      <div className={styles.stageLog}>{item.logs}</div>
+                    )}
+                    {!item.logs && (
+                      <div className={styles.stageLog}>
+                        <Intl id="noLogs" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </Model>
     </div>
   );
 };

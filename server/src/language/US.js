@@ -77,6 +77,8 @@ export default {
   stay: "Stay on",
   tableTags: "Table tags",
   tableSchema: "Table schema",
+  viewLog: "view logs",
+  noLogs: "No logs",
 
   // role
   it: "IT Admin",

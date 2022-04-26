@@ -85,3 +85,24 @@
   transform-origin: left;
   background-color: $main-purple;
 }
+.viewLog {
+  display: inline-block;
+  color: $text-grey;
+  text-decoration: underline;
+  margin-left: $rbwmspace8;
+  font-size: $fontSize4;
+  cursor: pointer;
+}
+
+.logContent {
+  width: 70rem;
+}
+.stageTitile {
+  margin-bottom: $rbwmspace20;
+  color: $main-purple;
+}
+
+.stageLog {
+  color: $text-grey;
+  margin-bottom: $rbwmspace20;
+}

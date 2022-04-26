@@ -394,7 +394,10 @@ const FormDataDisplay = ({
                       </Text>
                     </div>
                     <div className={styles.progress}>
-                      <ProgressBar progress={defaultData.status_history} />
+                      <ProgressBar
+                        progress={defaultData.status_history}
+                        stagesLog={defaultData.workflow_stages_list}
+                      />
                     </div>
                   </div>
                 </div>
