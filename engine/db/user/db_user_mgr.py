@@ -161,7 +161,7 @@ class DbUserMgr(DbBase):
         if utils_info:
             utils_permissions = {}
             utils_id = str(utils_info[table_id_field_name])
-            role_list = json.loads(utils_info['ROLE_LIST'])
+            role_list = json.loads(utils_info['ROLE_LIST'].replace('\\', '\\\\'), strict=False)
             utils_permissions[utils_id] = {}
             for role_name in role_list:
                 condition = 'NAME="%s"' % role_name
@@ -169,7 +169,7 @@ class DbUserMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
                 logger.debug('FN:__get_util_permission roleTable_sql:{}'.format(sql))
                 role_info = self.execute_fetch_one(conn, sql)
-                utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'])
+                utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'].replace('\\', '\\\\'), strict=False)
             return set(role_list), utils_permissions
         else:
             return set(), {}
@@ -489,7 +489,7 @@ class DbUserMgr(DbBase):
             user_info = self.execute_fetch_one(conn, sql)
             if not user_info:
                 return None, (None, None)
-            ad_group_list = json.loads(user_info.get('GROUP_LIST', '[]'))
+            ad_group_list = json.loads(user_info.get('GROUP_LIST', '[]').replace('\\', '\\\\'), strict=False)
             ldap_username = user_info.get('ACCOUNT_NAME', None)
             user_mail = user_info.get('ACCOUNT_ID', None)
 

@@ -44,7 +44,7 @@ class CreateBQTable(baseTask):
                 table_name = self.stage_dict['table_name'].strip()
                 table_id = '{}.{}.{}'.format(project_id, dataset_name, table_name)
                 try:
-                    table_schema_csv_path = json.loads(self.stage_dict['table_schema_csv'])
+                    table_schema_csv_path = json.loads(self.stage_dict['table_schema_csv'].replace('\\', '\\\\'), strict=False)
                 except:
                     table_schema_csv_path = self.stage_dict['table_schema_csv']
                 if isinstance(table_schema_csv_path, list):
@@ -96,7 +96,7 @@ class CreateBQTable(baseTask):
                 data['data'] = "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:CreateBQTable_execute error:{}".format(traceback.format_exc()))

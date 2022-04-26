@@ -32,7 +32,7 @@ class DbLogMgr(DbBase):
 
             condition = ''
             # 给定了查询字段
-            if len(json.loads(search_data)) > 0:
+            if len(json.loads(search_data.replace('\\', '\\\\'), strict=False)) > 0:
                 condition = self.create_vague_condition_sql(search_data)
             # 给定了查询时间类型
             if time_scope:
@@ -101,7 +101,7 @@ class DbLogMgr(DbBase):
                      'opinion,opinion_user,opinion_time,time_create,description'
             condition = ''
             # Check if search keyword exists
-            if len(json.loads(search_data)) > 0:
+            if len(json.loads(search_data.replace('\\', '\\\\'), strict=False)) > 0:
                 condition = self.create_vague_condition_sql(search_data)
             # Search specific time period
             if time_scope:

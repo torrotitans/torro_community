@@ -35,7 +35,7 @@ class system_delete_form(baseTask):
                 data = formSingleton_singleton.delete_form(form)
                 return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:system_delete_form error:{}".format(traceback.format_exc()))

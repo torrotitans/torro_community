@@ -42,7 +42,7 @@ class DbGCPMgr(DbBase):
                 if not form_infos:
                     continue
 
-                workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'])
+                workflow_stages_id_list = json.loads(form_infos[0]['workflow_stages_id_list'].replace('\\', '\\\\'), strict=False)
                 logger.debug("FN:DbGCPMgr_get_gpc_tasks workflow_stages_id_list:{}".format(workflow_stages_id_list))
                 workflow_stages_id_list = (str(id) for id in workflow_stages_id_list)
 
@@ -56,7 +56,7 @@ class DbGCPMgr(DbBase):
 
                 for stage_info in stage_infos:
                     tasks.append({'id': stage_info['id'], 'name': stage_info['apiTaskName'],
-                                  "stages": json.loads(stage_info['condition_value_dict'])})
+                                  "stages": json.loads(stage_info['condition_value_dict'].replace('\\', '\\\\'), strict=False)})
 
                 logger.debug("FN:DbGCPMgr_get_gpc_tasks tasks:{}".format(tasks))
                 torro_roles = taskFetcher.get_service_account_roles(taskFetcher.project_id,
@@ -192,7 +192,7 @@ class DbGCPMgr(DbBase):
                 if not data:
                     continue
                 tag_template_form_id = data['tag_template_form_id']
-                field_list = json.loads(data['fields_list'])
+                field_list = json.loads(data['fields_list'].replace('\\', '\\\\'), strict=False)
                 field_dict = dict(tag.fields)
                 field_mapping = {}
                 for field in field_list:

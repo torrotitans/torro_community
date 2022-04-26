@@ -247,7 +247,7 @@ class DbUseCaseMgr(DbBase):
                                'validity_date': usecase_info['VALIDITY_TILL'],
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
-                resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
+                resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'].replace('\\', '\\\\'), strict=False)
                 # for item in self.resource_list:
                 #     if item in resource_access_items:
                 #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
@@ -262,7 +262,7 @@ class DbUseCaseMgr(DbBase):
                 sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group_info in ad_group_infos:
-                    label_list = json.loads(ad_group_info['LABEL_LIST'])
+                    label_list = json.loads(ad_group_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
                     for label in label_list:
                         one_usecase[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_usecase)
@@ -298,7 +298,7 @@ class DbUseCaseMgr(DbBase):
                                'validity_date': usecase_info['VALIDITY_TILL'],
                                'create_time': usecase_info['CREATE_TIME']}
                 one_usecase['resources_access_list'] = []
-                resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
+                resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'].replace('\\', '\\\\'), strict=False)
                 # for item in self.resource_list:
                 #     if item in resource_access_items:
                 #         one_usecase['resources_access_list'].append(resource_access_items[item].strip())
@@ -313,7 +313,7 @@ class DbUseCaseMgr(DbBase):
                 sql = self.create_get_relation_sql(db_name, 'usecase_to_adgroupTable', '*', relations, condition)
                 ad_group_infos = self.execute_fetch_all(conn, sql)
                 for ad_group_info in ad_group_infos:
-                    label_list = json.loads(ad_group_info['LABEL_LIST'])
+                    label_list = json.loads(ad_group_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
                     for label in label_list:
                         one_usecase[label] = ad_group_info['GROUP_MAIL']
                 return_infos.append(one_usecase)
@@ -471,7 +471,7 @@ class DbUseCaseMgr(DbBase):
             sql = self.create_select_sql(db_name, 'formTable', 'id, fields_list', condition=user_form_comd)
             # get label - field id mapping
             field_name_id_mapping = {}
-            user_form_fields = json.loads(self.execute_fetch_one(conn, sql)['fields_list'])
+            user_form_fields = json.loads(self.execute_fetch_one(conn, sql)['fields_list'].replace('\\', '\\\\'), strict=False)
             for field_info in user_form_fields:
                 id = field_info['id']
                 label = field_info['label']
@@ -481,7 +481,7 @@ class DbUseCaseMgr(DbBase):
                 user_info = {}
                 user_input_form_comd = "id=%s" % input_form_id
                 sql = self.create_select_sql(db_name, 'inputFormTable', 'id, form_field_values_dict', condition=user_input_form_comd)
-                user_input_form_fields = json.loads(self.execute_fetch_one(conn, sql)['form_field_values_dict'])
+                user_input_form_fields = json.loads(self.execute_fetch_one(conn, sql)['form_field_values_dict'].replace('\\', '\\\\'), strict=False)
                 for field_id in user_input_form_fields:
                     if field_id in field_name_id_mapping:
                         user_info[field_name_id_mapping[field_id]] = user_input_form_fields[field_id]['value']
@@ -511,7 +511,7 @@ class DbUseCaseMgr(DbBase):
             return_info['uc_des'] = usecase_info['DES']
             return_info['create_time'] = usecase_info['CREATE_TIME']
             return_info['resources_access_list'] = []
-            resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'])
+            resource_access_items = json.loads(usecase_info['RESOURCES_ACCESS_LIST'].replace('\\', '\\\\'), strict=False)
             # for item in self.resource_list:
             #     return_info['resources_access_list'].append(resource_access_items[item].strip())
             
@@ -528,7 +528,7 @@ class DbUseCaseMgr(DbBase):
             logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id usecase_to_adgroupTable_sql:{}".format(sql))
             ad_group_infos = self.execute_fetch_all(conn, sql)
             for ad_group_info in ad_group_infos:
-                label_list = json.loads(ad_group_info['LABEL_LIST'])
+                label_list = json.loads(ad_group_info['LABEL_LIST'].replace('\\', '\\\\'), strict=False)
                 for label in label_list:
                     return_info[label] = ad_group_info['GROUP_MAIL']
             # get usecase data info
@@ -539,7 +539,7 @@ class DbUseCaseMgr(DbBase):
             logger.debug("FN:DbUseCaseMgr_get_usecase_details_info_by_id dataAccessTable_sql:{}".format(sql))
             data_access_infos = self.execute_fetch_all(conn, sql)
             for index in range(len(data_access_infos)):
-                data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'])
+                data_access_infos[index]['fields'] = json.loads(data_access_infos[index]['fields'].replace('\\', '\\\\'), strict=False)
             return_info['data_access'] = data_access_infos
 
             # get gcp resource

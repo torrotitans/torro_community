@@ -138,7 +138,7 @@ class CreateTagTemplate(baseTask, DbBase):
                 return data
 
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
@@ -191,7 +191,7 @@ class CreateTagTemplate(baseTask, DbBase):
             return tag_template
 
         except HttpError as e:
-            return (json.loads(e.content))
+            return (json.loads(e.content.replace('\\', '\\\\'), strict=False))
         except Exception as e:
             logger.error("FN:CreateTagTemplate_execute error:{}".format(traceback.format_exc()))
             return {'error': {'code': 500, 'message': str(e), 'status': 'ERROR'}}

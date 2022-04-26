@@ -164,7 +164,7 @@ class DbDashboardMgr(DbBase):
                     user_info = self.execute_fetch_one(db_conn, sql)
                     raw_result['creator_id'] = user_info['ACCOUNT_ID']
                     # get uasecase field value
-                    form_field_values_dict = json.loads(raw_result['form_field_values_dict'])
+                    form_field_values_dict = json.loads(raw_result['form_field_values_dict'].replace('\\', '\\\\'), strict=False)
                     raw_result[dy_field_label] = ''
                     # logger.debug("FN:get_data form_field_values_dict:{} dy_field_id:{}".format(form_field_values_dict, dy_field_id))
                     if dy_field_id in form_field_values_dict:

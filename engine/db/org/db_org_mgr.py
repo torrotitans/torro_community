@@ -573,7 +573,7 @@ class DbOrgMgr(DbBase):
             sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
             logger.debug('FN:offline_ad_group userTable_sql:{}'.format(sql))
             user_info = self.execute_fetch_one(conn, sql)
-            ad_group_list = json.loads(user_info.get('GROUP_LIST', []))
+            ad_group_list = json.loads(user_info.get('GROUP_LIST', "[]").replace('\\', '\\\\'), strict=False)
             logger.debug('FN:offline_ad_group ad_group_list:{}'.format(ad_group_list))
             return ad_group_list
         

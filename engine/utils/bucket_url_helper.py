@@ -21,7 +21,7 @@ def create_key(service_account_email):
         key_name = key['name']
         private_key_data = key['privateKeyData']
         private_key_decode = base64.b64decode(private_key_data).decode("utf-8")
-        private_key_json = json.loads(private_key_decode)
+        private_key_json = json.loads(private_key_decode.replace('\\', '\\\\'), strict=False)
         # # print('Created key: ',  key)
     except:
         key_name = None

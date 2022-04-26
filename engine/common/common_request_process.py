@@ -59,7 +59,7 @@ class requestProcess(object):
             except Exception as e:
                 return response_code.REQUEST_PARAM_FORMAT_ERROR
             
-            param = json.loads(param_temp)
+            param = json.loads(param_temp.replace('\\', '\\\\'), strict=False)
 
             root = model_json.get('root')
             body = model_json.get('body')
@@ -99,13 +99,13 @@ class requestProcess(object):
                 
                 for key in form_data:
                     try:
-                        data[key] = json.loads(form_data[key])
+                        data[key] = json.loads(form_data[key].replace('\\', '\\\\'), strict=False)
                     except:
                         data[key] = form_data[key]
                         
                 return data
             
-            data = json.loads(req_str)
+            data = json.loads(req_str.replace('\\', '\\\\'), strict=False)
             
             if isinstance(data, list):
                 return False

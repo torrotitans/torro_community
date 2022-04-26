@@ -145,7 +145,7 @@ class ModifyTableTags(baseTask):
             data['data'] = 'update successfully'
             return data
         except HttpError as e:
-            error_json = json.loads(e.content)
+            error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
             data = error_json['error']
             data["msg"] = data.pop("message")
             logger.error("FN:ModifyTableTags_execute error:{}".format(traceback.format_exc()))
@@ -177,7 +177,7 @@ class ModifyTableTags(baseTask):
             tag_template_name = 'projects/{}/locations/{}/tagTemplates/{}'.format(tag_template_info['project_id'],
                                                                                 tag_template_info['location'],
                                                                                 tag_template_info['tag_template_id'])
-            tag_template_field_list = json.loads(tag_template_info['field_list'])
+            tag_template_field_list = json.loads(tag_template_info['field_list'].replace('\\', '\\\\'), strict=False)
             display_name = tag_template_info['display_name']
 
             # get form info
@@ -190,7 +190,7 @@ class ModifyTableTags(baseTask):
             if not form_info:
                 return None
 
-            form_field_list = json.loads(form_info['fields_list'])
+            form_field_list = json.loads(form_info['fields_list'].replace('\\', '\\\\'), strict=False)
             # Attach a Tag to the table.
             tag = datacatalog_v1.types.Tag()
 

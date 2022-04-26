@@ -76,7 +76,7 @@ class system_email_notify(baseTask):
 
                 return data
             except HttpError as e:
-                error_json = json.loads(e.content)
+                error_json = json.loads(e.content.replace('\\', '\\\\'), strict=False)
                 data = error_json['error']
                 data["msg"] = data.pop("message")
                 logger.error("FN:system_email_notify_execute error:{}".format(traceback.format_exc()))
