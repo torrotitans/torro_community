@@ -128,7 +128,7 @@ class CreateTagTemplate(baseTask, DbBase):
                 values = (
                     workspace_id, input_form_id, user_id, project, location, tag_template_name, tag_tempalte_form_id,
                     tag_template_id,
-                    json.dumps(tag_template_body), description, create_time)
+                    json.dumps(tag_template_body).replace('\\', '\\\\'), description, create_time)
                 sql = self.create_insert_sql(db_name, 'tagTemplatesTable', '({})'.format(', '.join(tag_template_fields)), values)
                 logger.debug('FN:CreateTagTemplate_execute insert_tagTemplatesTable_sql:{}'.format(sql))
                 tag_template_id = self.insert_exec(conn, sql, return_insert_id=True)

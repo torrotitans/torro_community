@@ -668,7 +668,7 @@ class DbGovernanceMgr(DbBase):
                     status = -1
                     form_status_code = Status.failed
                 if isinstance(logs_item, dict):
-                    logs = json.dumps(logs_item)
+                    logs = json.dumps(logs_item).replace('\\', '\\\\')
                 else:
                     logs = str(logs_item)
                 fields = ('status', 'logs', 'comment', 'updated_time')

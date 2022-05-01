@@ -65,7 +65,7 @@ class system_create_tag(baseTask):
                         tag_fields_dict[id] = field
                     create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     fields = ('form_id', 'input_form_id', 'creator_id', 'tag_template_local_id', 'field_list', 'create_time')
-                    values = (form_id, input_form_id, user_id, tag_tempalte_local_id, json.dumps(tag_fields_dict), create_time)
+                    values = (form_id, input_form_id, user_id, tag_tempalte_local_id, json.dumps(tag_fields_dict).replace('\\', '\\\\'), create_time)
                     sql = self.create_insert_sql(db_name, 'tagTemplatesValueTable', '({})'.format(', '.join(fields)), values)
                     logger.debug("FN:system_create_tag_execute insert_tagTemplatesValueTable_sql:{}".format(sql))
                     _ = self.insert_exec(conn, sql)

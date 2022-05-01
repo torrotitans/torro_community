@@ -120,7 +120,7 @@ class GrantRoleForBQTable(baseTask):
                 if table_access_info:
                     now = str(datetime.datetime.today())
                     column_fields = ('data_access_input_form_id','usecase_id', 'fields', 'create_time')
-                    values = (input_form_id, usecase_id, json.dumps(access_fields), now)
+                    values = (input_form_id, usecase_id, json.dumps(access_fields).replace('\\', '\\\\'), now)
                     sql = self.create_update_sql(db_name, 'dataAccessTable', column_fields, values, cond)
                     logger.debug("FN:GrantRoleForBQTable_execute update_dataAccessTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
@@ -132,7 +132,7 @@ class GrantRoleForBQTable(baseTask):
                         'data_input_form_id', 'data_access_input_form_id','usecase_id', 'fields', 'create_time')
                     now = str(datetime.datetime.today())
                     values = (
-                        data_input_form_id, input_form_id, usecase_id, json.dumps(access_fields),now)
+                        data_input_form_id, input_form_id, usecase_id, json.dumps(access_fields).replace('\\', '\\\\'),now)
                     sql = self.create_insert_sql(db_name, 'dataAccessTable',
                                                  '({})'.format(', '.join(fields)), values)
                     logger.debug("FN:GrantRoleForBQTable_execute insert_dataAccessTable_sql:{}".format(sql))

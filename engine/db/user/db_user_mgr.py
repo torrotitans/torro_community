@@ -80,7 +80,7 @@ class DbUserMgr(DbBase):
             if user_info and ad_group_list:
                 user_id = user_info['ID']
                 fields = ('GROUP_LIST',)
-                values = (json.dumps(ad_group_list),)
+                values = (json.dumps(ad_group_list).replace('\\', '\\\\'),)
                 # update recount
                 sql = self.create_update_sql(db_name, 'userTable', fields, values, condition)
                 logger.debug("FN:get_user_by_name update_sql:".format(sql))

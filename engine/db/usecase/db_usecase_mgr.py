@@ -52,7 +52,7 @@ class DbUseCaseMgr(DbBase):
                           'REGION_COUNTRY', 'RESOURCES_ACCESS_LIST', 'SERVICE_ACCOUNT', 'USECASE_LABEL',
                           'CROSS_REGION', 'CREATE_TIME', 'DES')
             values = (usecase_id, workspace_id, creator_id, usecase_name, validity_date, budget, input_form, region_country,
-                          json.dumps(resources), admin_sa, uc_label, allow_cross_region, create_time, des)
+                          json.dumps(resources).replace('\\', '\\\\'), admin_sa, uc_label, allow_cross_region, create_time, des)
             
             if usecase_id is None:
                 fields = fields[1:]
@@ -81,7 +81,7 @@ class DbUseCaseMgr(DbBase):
                     group_id = self.insert_exec(conn, sql, return_insert_id=True)
                 # insert workspace_to_adgroupTable
                 w2a_fields = ('USECASE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
-                values = (usecase_id, json.dumps(label_list), group_id, json.dumps(role_list))
+                values = (usecase_id, json.dumps(label_list).replace('\\', '\\\\'), group_id, json.dumps(role_list).replace('\\', '\\\\'))
                 sql = self.create_insert_sql(db_name, 'usecase_to_adgroupTable', '({})'.format(', '.join(w2a_fields)),
                                              values)
                 logger.debug("FN:DbUseCaseMgr__set_usecase insert_usecase_to_adgroupTable_sql:{}".format(sql))

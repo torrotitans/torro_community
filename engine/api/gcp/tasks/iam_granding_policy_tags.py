@@ -112,7 +112,7 @@ class GrantRoleForPolicyTags(baseTask):
                         'data_input_form_id', 'data_access_input_form_id', 'usecase_id', 'fields', 'create_time')
                     now = str(datetime.datetime.today())
                     values = (
-                        data_input_form_id, input_form_id, usecase_id, json.dumps(fields), now)
+                        data_input_form_id, input_form_id, usecase_id, json.dumps(fields).replace('\\', '\\\\'), now)
                     sql = self.create_insert_sql(db_name, 'dataAccessTable',
                                                  '({})'.format(', '.join(column_fields)), values)
                     logger.debug("FN:GrantRoleForPolicyTags__get_adgroup_service_accout insert_dataAccessTable_sql:{}".format(sql))
@@ -130,7 +130,7 @@ class GrantRoleForPolicyTags(baseTask):
                             new_fields.append(field)
                     column_fields = ('data_access_input_form_id', 'fields', 'create_time')
                     now = str(datetime.datetime.today())
-                    values = (input_form_id, json.dumps(new_fields), now)
+                    values = (input_form_id, json.dumps(new_fields).replace('\\', '\\\\'), now)
                     sql = self.create_update_sql(db_name, 'dataAccessTable', column_fields, values, cond)
                     logger.debug("FN:GrantRoleForPolicyTags__get_adgroup_service_accout update_dataAccessTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)

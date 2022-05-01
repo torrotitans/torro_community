@@ -570,10 +570,9 @@ class DbWorkflowMgr(DbBase):
             stage_num = len(workflow['stages'])
             creator_id = workflow.get('creator_id', '')
             last_modify_id = workflow.get('creator_id', '')
-            stages = json.dumps(workflow['stages'])
-            stages = stages.replace('\\', '\\\\')
+            stages = json.dumps(workflow['stages']).replace('\\', '\\\\')
 
-            field_id_list = json.dumps(workflow['field_id_list'])
+            field_id_list = json.dumps(workflow['field_id_list']).replace('\\', '\\\\')
             des = workflow.get('des', '')
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             update_time = create_time
@@ -637,11 +636,10 @@ class DbWorkflowMgr(DbBase):
                 creator_id = workflow.get('creator_id', '')
                 last_modify_id = workflow.get('creator_id', '')
                 # print('json stages:', workflow['stages'])
-                stages = json.dumps(workflow['stages'], default=str)
-                stages = stages.replace('\\', '\\\\')
+                stages = json.dumps(workflow['stages'], default=str).replace('\\', '\\\\')
                 # print('json stages text:', stages)
 
-                field_id_list = json.dumps(workflow['field_id_list'])
+                field_id_list = json.dumps(workflow['field_id_list']).replace('\\', '\\\\')
                 des = workflow.get('des', '')
                 create_time = workflow.get('create_time', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 update_time = create_time

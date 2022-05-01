@@ -16,9 +16,9 @@ def system_approval(random_token, input_form_id, form_id, workspace_id, approval
         token_json = {'input_form_id': input_form_id, 'form_id': form_id, 'approval_order': approval_order,
                       'workspace_id': workspace_id, 'token': random_token}
 
-        token = prpcrypt.encrypt(json.dumps(token_json))
+        token = prpcrypt.encrypt(json.dumps(token_json).replace('\\', '\\\\'))
         payload = {"conf":{'token': token, 'input_form_id': input_form_id, 'form_id': form_id, 'workspace_id': workspace_id}}
-        payload = json.dumps(payload)
+        payload = json.dumps(payload).replace('\\', '\\\\')
 
         # return True
         retry = 0
