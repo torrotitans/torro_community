@@ -36,7 +36,7 @@ class interfaceDashboard(Resource):
                 workspace_id = req.get_workspace_id()
                 # logger.debug('FN:interfaceDashboard_postuser id:{}'.format(user_key))
                 data = dashboard_singleton.get_data(user_key, request_data, workspace_id)
-                # logger.debug('FN:interfaceDashboard_post data:{}'.format(data))
+                logger.debug('FN:interfaceDashboard_post data:{}'.format(data))
 
                 if data['code'] == 200:
                     response_data = data['data']

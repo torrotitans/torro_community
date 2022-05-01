@@ -60,10 +60,12 @@ class DbDashboardMgr(DbBase):
             max_history_sql = self.create_select_sql(db_name, table_name, fields, max_history_condiction).replace(
                 'where ', '')
             # logger.debug("FN:get_data max_history_sql:{}".format(max_history_sql))
-            role_relations = [{"table_name": "inputFormIndexTable",
-                               "join_condition": "inputFormIndexTable.id=approvalTable.input_form_id"},
-                              {"table_name": "inputFormTable",
-                               "join_condition": "inputFormTable.id=approvalTable.input_form_id"}]
+            role_relations = [
+                {"table_name": "inputFormIndexTable",
+                 "join_condition": "inputFormTable.id=inputFormIndexTable.id"},
+                {"table_name": "approvalTable",
+                 "join_condition": "inputFormTable.id=approvalTable.input_form_id"}
+            ]
             condition_list = []
             if 'approverView' in condition_dict:
                 condition = "ad_group in ('%s') and (inputFormTable.id, history_id) in (%s) " % (
@@ -124,7 +126,7 @@ class DbDashboardMgr(DbBase):
             fields = 'inputFormTable.id,history_id,form_id,workflow_id,creator_id,account_id as approver_id,' \
                      'workflow_name,fields_num,stages_num,form_status,ad_group,inputFormTable.create_time,' \
                      'inputFormTable.updated_time,inputFormTable.form_field_values_dict'
-            role_name_query_sql = self.create_get_relation_sql(db_name, "approvalTable", fields, role_relations,
+            role_name_query_sql = self.create_get_relation_sql(db_name, "inputFormTable", fields, role_relations,
                                                                condition=condition)
             logger.debug("FN:get_data role_name_query_sql:{}".format(role_name_query_sql))
             # exit(0)
@@ -172,7 +174,7 @@ class DbDashboardMgr(DbBase):
                     condition = 'ID="%s"' % user_id
                     user_fields = 'ACCOUNT_ID'
                     sql = self.create_select_sql(db_name, 'userTable', user_fields, condition=condition)
-                    logger.debug("FN:get_data userTable_sql:{}".format(sql))
+                    # logger.debug("FN:get_data userTable_sql:{}".format(sql))
                     user_info = self.execute_fetch_one(db_conn, sql)
                     raw_result['creator_id'] = user_info['ACCOUNT_ID']
                     # get uasecase field value
