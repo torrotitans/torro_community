@@ -43,7 +43,7 @@ class DbGovernanceMgr(DbBase):
         return []
     
     # change inputform status
-    def change_status(self, user_key, account_id, workspace_id, inputData, system_approval_flag=False):
+    def change_status(self, user_key, account_id, workspace_id, inputData, system_approval_flag=False, no_approval=False):
         conn = MysqlConn()
         db_name = configuration.get_database_name()
 
@@ -131,15 +131,21 @@ class DbGovernanceMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'approvalTable', '*', approval_condition)
                 logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                 approval_infos = self.execute_fetch_all(conn, sql)
-                if not approval_infos:
+
+                # if the workflow have approval flow but user not in approval list
+                if (not approval_infos and not no_approval):
                     data = response_code.UPDATE_DATA_FAIL
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
                     data['msg'] = 'You are not in the approval ad group.'
                     data['data']['history_id'] = history_id
                     return data
-                now_approval_num = int(approval_infos[0]['approval_num'])
-                next_approval_num = now_approval_num + 1
+                elif approval_infos:
+                    now_approval_num = int(approval_infos[0]['approval_num'])
+                    next_approval_num = now_approval_num + 1
+                else:
+                    now_approval_num = 0
+                    next_approval_num = now_approval_num + 1
 
                 if form_status_code == Status.approved:
                     # 3.change approval process
@@ -192,7 +198,7 @@ class DbGovernanceMgr(DbBase):
                         if len(miss_role_list) != 0:
                             miss_role_flag = 1
                     # have all the gcp permission or it is not the last approval, approved successful
-                    if miss_role_flag == 0 or all_approval_flag == 0:
+                    if miss_role_flag == 0:
                         # change approval status
                         fields = ('now_approval', 'is_approved', 'account_id', 'comment', 'updated_time')
                         values = (0, 1, account_id, comment, now)
@@ -204,7 +210,7 @@ class DbGovernanceMgr(DbBase):
                         sql = self.create_update_sql(db_name, 'approvalTable', fields, values, approval_condition)
                         logger.debug("FN:change_status approvalTable_sql:{}".format(sql))
                         return_count = self.updete_exec(conn, sql)
-                        if return_count == 0:
+                        if (return_count == 0 and not no_approval):
                             data = response_code.SUCCESS
                             data['data'] = {}
                             data['data']['notice_ids'] = notice_ids
@@ -279,7 +285,7 @@ class DbGovernanceMgr(DbBase):
                             if member_list:
                                 notice_ids.extend(member_list)
                         logger.debug("FN:change_status next_notice_ids:{}".format(notice_ids))
-                        if return_count != 0:
+                        if (return_count != 0 and not no_approval):
                             all_approval_flag = 0
 
                         # 4.change status
