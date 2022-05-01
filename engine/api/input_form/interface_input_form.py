@@ -98,7 +98,7 @@ class interfaceInputForm(Resource):
                     approval_data = {'form_status': Status.approved,
                                      'id': input_form_id,
                                      'comment': ''}
-                    data = governance_singleton.change_status(user_key, account_id, workspace_id, approval_data)
+                    data = governance_singleton.change_status(user_key, account_id, workspace_id, approval_data, no_approval=True)
                     # print('change status data: ', data)
                     logger.info("FN:interfaceGovernance_post change_status_data:{}".format(data))
                     # if begin to execute task
