@@ -65,7 +65,7 @@ class GrantRoleForBQTable(baseTask):
                 # get usecase service account & ad group
                 data = self.__get_adgroup_service_accout(workspace_id, usecase_name, db_name, conn)
                 if data['code'] != 200:
-                    return data['msg']
+                    return data
                 service_account = data['data'].get('sa', None)
                 ad_group_list = data['data'].get('ad_group_list', [])
                 logger.debug("FN:GrantRoleForBQTable_execute data:{}".format(data))
@@ -74,8 +74,10 @@ class GrantRoleForBQTable(baseTask):
                 table_policy = self.__grand_access_roles(service_account, ad_group_list, project_id, dataset_id,
                                                          table_id)
                 if not table_policy:
-                    return 'Failed to grand access to table: {} for usercase: {}'.format(
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Failed to grand access to table: {} for usercase: {}'.format(
                         '.'.join([workspace_id, str(project_id), str(dataset_id), str(table_id)]), usecase_name)
+                    return data
 
                 cond = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (
                     workspace_id, project_id, location, dataset_id, table_id)
@@ -85,8 +87,10 @@ class GrantRoleForBQTable(baseTask):
                 table_info = self.execute_fetch_one(conn, sql)
 
                 if not table_info:
-                    return 'Table is not onboard: {}'.format(
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Table is not onboard: {}'.format(
                         '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
+                    return data
 
                 logger.debug("FN:GrantRoleForBQTable_execute table_info:{}".format(table_info))
                 # get data info
@@ -108,7 +112,9 @@ class GrantRoleForBQTable(baseTask):
                 # print('usecaseTable: ', sql)
                 usecase_info = self.execute_fetch_one(conn, sql)
                 if not usecase_info:
-                    return 'Cannot find usecase: {} in workspace: {}'.format(usecase_name, str(workspace_id))
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Cannot find usecase: {} in workspace: {}'.format(usecase_name, str(workspace_id))
+                    return data
                 usecase_id = usecase_info['ID']
 
                 if table_access_info:

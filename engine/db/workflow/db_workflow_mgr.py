@@ -641,12 +641,10 @@ class DbWorkflowMgr(DbBase):
                 update_time = create_time
                 fields = (
                     'form_id', 'workflow_name', 'stage_hash', 'stage_num', 'creator_id', 'last_modify_id', 'stages',
-                    'field_id_list',
-                    'create_time', 'updated_time', 'des')
+                    'field_id_list', 'available', 'create_time', 'updated_time', 'des')
                 values = (
-                    form_id, workflow_name, stage_hash, stage_num, creator_id, last_modify_id, stages, field_id_list,
-                    create_time,
-                    update_time, des)
+                    form_id, workflow_name, stage_hash, stage_num, creator_id, last_modify_id, stages,
+                    field_id_list, '1', create_time, update_time, des)
                 # update workflow
                 sql = self.create_update_sql(db_name, 'workflowTable', fields, values, workflow_condition)
                 logger.debug("FN:DbWorkflowMgr_update_workflow update_workflowTable_sql:{}".format(sql))

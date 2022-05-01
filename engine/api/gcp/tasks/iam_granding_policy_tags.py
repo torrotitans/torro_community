@@ -68,7 +68,7 @@ class GrantRoleForPolicyTags(baseTask):
                 # get usecase service account & ad group
                 data = self.__get_adgroup_service_accout(workspace_id, usecase_name, db_name, conn)
                 if data['code'] != 200:
-                    return data['msg']
+                    return data
                 service_account = data['data']['sa']
                 ad_group_list = data['data']['ad_group_list']
                 logger.debug("FN:GrantRoleForPolicyTags__get_adgroup_service_accout data:{}".format(data))
@@ -76,17 +76,20 @@ class GrantRoleForPolicyTags(baseTask):
                 # check if already get the table access
                 success_tag_policy_list, failed_policy_list = self.__grand_access_roles(service_account, ad_group_list, project_id, dataset_id, table_id, fields, db_name, conn)
                 if failed_policy_list:
-                    return 'Failed to grand access to policy tag: {} for usercase: {}'.format(
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Failed to grand access to policy tag: {} for usercase: {}'.format(
                         ', '.join(failed_policy_list), usecase_name)
-
+                    return data
                 cond = "workspace_id='%s' and project_id='%s' and location='%s' and dataset_id='%s' and table_id='%s'" % (
                     workspace_id, project_id, location, dataset_id, table_id)
                 # check table is onaboarded or not
                 sql = self.create_select_sql(db_name, 'dataOnboardTable', 'input_form_id, fields', cond)
                 table_info = self.execute_fetch_one(conn, sql)
                 if not table_info:
-                    return 'Table is not onboard: {}'.format(
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Table is not onboard: {}'.format(
                         '.'.join([str(workspace_id), str(project_id), str(dataset_id), str(table_id)]))
+                    return data
                 data_input_form_id = table_info['input_form_id']
                 # check if usecase exist
                 condition = 'USECASE_NAME="%s" and WORKSPACE_ID="%s"' % (usecase_name, workspace_id)
@@ -94,7 +97,9 @@ class GrantRoleForPolicyTags(baseTask):
                 # print('usecaseTable: ', sql)
                 usecase_info = self.execute_fetch_one(conn, sql)
                 if not usecase_info:
-                    return 'Cannot find usecase: {} in workspace: {}'.format(usecase_name, str(workspace_id))
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Cannot find usecase: {} in workspace: {}'.format(usecase_name, str(workspace_id))
+                    return data
                 usecase_id = usecase_info['ID']
                 # get data info
                 data_input_form_id = table_info['input_form_id']

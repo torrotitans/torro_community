@@ -62,7 +62,7 @@ class GrantRoleForBQDataset(baseTask):
                 # get usecase service account & ad group
                 data = self.__get_adgroup_service_accout(workspace_id, usecase_name, db_name, conn)
                 if data['code'] != 200:
-                    return data['msg']
+                    return data
                 service_account = data['data']['sa']
                 ad_group_list = data['data'].get('ad_group_list', [])
                 logger.debug("FN:GrantRoleForBQDataset_execute data:{}".format(data))
@@ -70,9 +70,10 @@ class GrantRoleForBQDataset(baseTask):
                 # check if already get the table access
                 for dataset_id in dataset_id_list:
                     _ = self.__grand_access_roles(service_account, ad_group_list, project_id, dataset_id)
-
-                return 'Get the table access successfully: {}'.format(
+                data = response_code.SUCCESS
+                data['data'] = 'Get the table access successfully: {}'.format(
                     '.'.join([str(workspace_id), project_id, ','.join(dataset_id_list)]))
+                return data
 
         except HttpError as e:
             return (json.loads(e.content, strict=False))

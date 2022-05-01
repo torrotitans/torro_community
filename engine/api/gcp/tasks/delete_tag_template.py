@@ -66,7 +66,10 @@ class DeleteTagTemplate(baseTask):
                 print('tagTemplatesTable sql:', sql)
                 tag_template_info = self.execute_fetch_one(conn, sql)
                 if not tag_template_info:
-                    return 'Update failed, cannot found the tag template: %s in workspace: %id' % (tag_template_form_id, workspace_id)
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'Update failed, cannot found the tag template: %s in workspace: %id' % (tag_template_form_id, workspace_id)
+                    return data
+
                 tag_template_id = tag_template_info['tag_template_id']
                 # print('tag_template_body:', tag_template_body)
                 # tag_template = service.projects().locations().tagTemplates().delete(

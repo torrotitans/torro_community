@@ -79,7 +79,9 @@ class UpdateTagTemplate(baseTask):
                     else:
                         break
                 if 'error' not in response and 'code' not in response['error']:
-                    return 'data catalog exist.'
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'data catalog exist.'
+                    return data
                 
                 tag_template_body = {'displayName': tag_template_name, 'fields': {}}
                 fields = {}
