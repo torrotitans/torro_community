@@ -134,6 +134,7 @@ class DbGovernanceMgr(DbBase):
 
                 # if the workflow have approval flow but user not in approval list
                 if (not approval_infos and not no_approval):
+                    print('no approval flag:', no_approval, (not approval_infos and not no_approval), approval_infos)
                     data = response_code.UPDATE_DATA_FAIL
                     data['data'] = {}
                     data['data']['notice_ids'] = notice_ids
