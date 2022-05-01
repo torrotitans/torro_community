@@ -99,7 +99,7 @@ class interfaceEditWorkflow(Resource):
                 logger.debug("FN:interfaceEditWorkflow_put request_data_each_stage:{}".format(stage))
                 request_data['stages'][index] = stageBase.verify_all_param(req.verify_all_param, stage)
             
-            logger.debug("FN:interfaceEditWorkflow_put request_data_all_stage:{}".format(stage))
+            # logger.debug("FN:interfaceEditWorkflow_put request_data_all_stage:{}".format(stage))
             # request_data = stageBase.verify_all_param(req.verify_all_param, request_data)
             workflow = request_data
             data = workflowSingleton_singleton.update_workflow(workflow)

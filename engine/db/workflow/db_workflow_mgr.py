@@ -634,7 +634,7 @@ class DbWorkflowMgr(DbBase):
                 stage_num = len(workflow['stages'])
                 creator_id = workflow.get('creator_id', '')
                 last_modify_id = workflow.get('creator_id', '')
-                stages = json.dumps(workflow['stages'])
+                stages = json.dumps(workflow['stages'], default=str)
                 field_id_list = json.dumps(workflow['field_id_list'])
                 des = workflow.get('des', '')
                 create_time = workflow.get('create_time', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
