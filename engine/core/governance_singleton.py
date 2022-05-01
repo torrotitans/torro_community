@@ -11,7 +11,7 @@ class governanceSingleton():
 
     def change_status(self, user_key, account_id, workspace_id, inputData, no_approval=False):
 
-        return governance_mgr.change_status(user_key, account_id, workspace_id, inputData, no_approval=False)
+        return governance_mgr.change_status(user_key, account_id, workspace_id, inputData, no_approval)
 
     def system_approval_trigger(self, user_key, account_id,  inputData):
 
