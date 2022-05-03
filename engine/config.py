@@ -147,10 +147,10 @@ class ProductionConfig(Config):
     DEBUG = False
 
     FRONTEND_URL = 'http://34.79.84.83'
-    DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod'
-    DEFAULT_PROJECT = 'geometric-ocean-333410'
+    DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod_intricate_idiom_349112'
+    DEFAULT_PROJECT = 'intricate-idiom-349112'
     DEFAULT_REGION = 'asia-east2'
-    DEFAULT_SA = '580079130038-compute@developer.gserviceaccount.com'
+    DEFAULT_SA = '322583829359-compute@developer.gserviceaccount.com'
     BUCEKT_CMKE = None
     pass
 

@@ -49,7 +49,7 @@ echo "<<==================== Initiating the MySQL db for the first time ========
 echo ""
 echo ""
 echo ""
-cd /home/torro_admin/torro_backend
+cd /root/torro_community/engine
 mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/form_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/org_api.sql
