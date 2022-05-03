@@ -1,7 +1,7 @@
 import { DELETE, GET, POST, PUT } from "@lib/data/api-types";
 
 /* eslint-disable no-undef */
-const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://34.79.84.83";
+const BASE_API_URL = process?.env?.REACT_APP_API_URL || "http://34.92.25.44";
 /* eslint-disable no-new */
 
 const config = {
