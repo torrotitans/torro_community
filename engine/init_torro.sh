@@ -72,6 +72,36 @@ echo ""
 echo ""
 echo ""
 
+echo "<<==================== Installing Nginx ====================>>"
+echo ""
+echo ""
+echo ""
+cd /root
+wget http://nginx.org/download/nginx-1.19.9.tar.gz
+tar -zxvf nginx-1.19.9.tar.gz nginx-1.19.9/
+cd nginx-1.19.9
+./configure --prefix=/root/nginx --with-http_ssl_module
+make
+make install
+echo ""
+echo ""
+echo ""
+
+echo "<<==================== Configuring Nginx ====================>>"
+echo ""
+echo ""
+echo ""
+openssl genrsa -out /root/torro_community/engine/server.key &>/dev/null
+openssl req -new -x509 -key /root/torro_community/engine/server.key -subj "/CN=commmon" -out /root/torro_community/engine/server.crt &>/dev/null
+mkdir /var/log/nginx/
+echo ''> /var/log/nginx/error.log
+mv /root/nginx/conf/nginx.conf /root/nginx/conf/nginx.conf.bak
+cp -f /root/torro_community/engine/nginx.conf /root/nginx/conf/
+/root/nginx/sbin/nginx
+echo ""
+echo ""
+echo ""
+
 echo "<<==================== Configuring Python Backend ====================>>"
 echo ""
 echo ""
