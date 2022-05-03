@@ -45,16 +45,17 @@ const ProgressBar = ({ progress, stagesLog }) => {
                   <div title={item.label} className={styles.progressName}>
                     <div className={styles.mainContent}>
                       {item.label}
-                      {currentStepCount - 1 === index && (
-                        <span
-                          className={styles.viewLog}
-                          onClick={() => {
-                            setOpen(true);
-                          }}
-                        >
-                          <Intl id="viewLog" />
-                        </span>
-                      )}
+                      {currentStepCount - 1 === index &&
+                        item.label === "Failed" && (
+                          <span
+                            className={styles.viewLog}
+                            onClick={() => {
+                              setOpen(true);
+                            }}
+                          >
+                            <Intl id="viewLog" />
+                          </span>
+                        )}
                     </div>
                     {item.adgroup && (
                       <div className={styles.subContent}>

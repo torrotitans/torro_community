@@ -30,7 +30,7 @@ import { sendNotify } from "src/utils/systerm-error";
 import Text from "@basics/Text";
 import CallModal from "@basics/CallModal";
 
-const RequestDetailList = ({ recordList, approvedView }) => {
+const RequestDetailList = ({ idListStr, approvedView }) => {
   const [formLoading, setFormLoading] = useState(true);
   const [requestList, setRequestList] = useState([]);
   const [currentData, setCurrentData] = useState();
@@ -41,6 +41,15 @@ const RequestDetailList = ({ recordList, approvedView }) => {
     content: "",
   });
   const [submitData, setSubmitData] = useState();
+
+  const disableBtn = useMemo(() => {
+    return selectedList.length === 0;
+  }, [selectedList]);
+
+  const recordList = useMemo(() => {
+    let idList = idListStr.split("|");
+    return idList;
+  }, [idListStr]);
 
   const isSelected = useCallback(
     (index) => {
@@ -134,10 +143,6 @@ const RequestDetailList = ({ recordList, approvedView }) => {
     [requestList, selectedList]
   );
 
-  const disableBtn = useMemo(() => {
-    return selectedList.length === 0;
-  }, [selectedList]);
-
   useEffect(() => {
     getRequestDetailList({ idList: recordList })
       .then((recordData) => {
@@ -203,7 +208,8 @@ const RequestDetailList = ({ recordList, approvedView }) => {
                     recordId={currentData.record.id}
                     approvedView={approvedView}
                     defaultData={currentData.record}
-                    enableReOpen={true}
+                    enableReOpen={false}
+                    isLatestRecord={true}
                   />
                 )}
               </div>

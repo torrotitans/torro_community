@@ -79,6 +79,7 @@ const GetDataAccess = () => {
   };
 
   const buttonClickHandle = useCallback(() => {
+    debugger;
     switch (modalData.status) {
       case 1:
       case 3:
@@ -90,19 +91,15 @@ const GetDataAccess = () => {
 
         raiseFormRequestList(submitData)
           .then((res) => {
+            let tempIdList = res.data.map((item) => {
+              return item.data.id;
+            });
             setModalData({
               open: true,
               status: 2,
               content: <Intl id="newRequestSubmit" />,
               successCb: () => {
-                setModalData({
-                  open: true,
-                  status: 2,
-                  content: <Intl id="newRequestSubmit" />,
-                  successCb: () => {
-                    navigate(`/app/dashboard?requestor=true`);
-                  },
-                });
+                navigate(`/app/requestDetail?idList=${tempIdList.join("|")}`);
               },
             });
           })
