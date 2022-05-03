@@ -28,6 +28,7 @@ class Auth(object):
     """
     Authorization and token support
     """
+
     # host = "23.101.10.96"
     # port = 636
     # ADMIN_DN = "admin@torro.ai"
@@ -59,7 +60,8 @@ class Auth(object):
         pwd = jwt.decode(pwd, api.Config.SECRET_KEY)
         return pwd
 
-    def __encode_auth_token(self, user_key, account_id, permissions, role_list, role, workspace_list, workspace_id, login_time):
+    def __encode_auth_token(self, user_key, account_id, permissions, role_list, role, workspace_list, workspace_id,
+                            login_time):
         """
         Token Generation
         :param USER_KEY: int
@@ -105,7 +107,8 @@ class Auth(object):
         """
         try:
             ###expire time checking
-            payload = jwt.decode(auth_token, api.Config.SECRET_KEY, leeway=datetime.timedelta(seconds=Config.PERMANENT_SESSION_LIFETIME))
+            payload = jwt.decode(auth_token, api.Config.SECRET_KEY,
+                                 leeway=datetime.timedelta(seconds=Config.PERMANENT_SESSION_LIFETIME))
             # # print("payload:", payload)
             # disable expire time checking
             # payload = jwt.decode(auth_token, api.Config.SECRET_KEY, options={'verify_exp': False})
@@ -132,7 +135,7 @@ class Auth(object):
 
             mail_user = "torroai@gmail.com"  # Set User Name
             mail_pass = ""  # Password
-            sender = 'torroai@gmail.com' # Set Sender
+            sender = 'torroai@gmail.com'  # Set Sender
 
             if user_base_data:
                 new_password = secret_key(username, 32)
@@ -141,13 +144,14 @@ class Auth(object):
                 if return_count > 0:
                     smtp_obj = Smtp(mail_host, mail_user, mail_pass, sender)
                     smtp_obj.send_email('TorroAi Login Info', 'Your offline password is: {}'.format(new_password),
-                                        mail_user,  [username], 'TorroAi')
+                                        mail_user, [username], 'TorroAi')
                 return True
             else:
                 return False
         except:
             logger.error("FN:get_offline_password error:{}".format(traceback.format_exc()))
             return False
+
     @classmethod
     def authenticate(cls, username, password, offline_flag):
         """
@@ -156,7 +160,7 @@ class Auth(object):
         :param password:
         :return: json
         """
-        
+
         password = prpcrypt.decrypt(password)
         # ldap:
         if username == 'TorroAdmin':
@@ -176,14 +180,14 @@ class Auth(object):
         else:
             ad_group_list, ldap_usernames = Auth.ldap_auth(username, password)
             logger.info("FN:AnthN login_mode:ldap  user:{}".format(ldap_usernames))
-            
+
         if ldap_usernames[0] is not None:
             user = user_mgr.get_user_by_name(username, ldap_usernames, ad_group_list)
         else:
             user = user_mgr.get_user_by_name(username)
         user_base_data = user.get('data')
         logger.debug('FN:authenticate user_base_data:{}{}'.format(user_base_data, user))
-        
+
         # Check if this user exists
         if (user_base_data is None):
             return response_code.LOGIN_FAIL
@@ -198,7 +202,8 @@ class Auth(object):
             login_time = int(time.time())
             # # print('user_data', user_data)
             # 生成token
-            token = cls.__encode_auth_token(cls, user_data.get('ID'), user_data.get('ACCOUNT_ID'), user_data.get('permissions'),
+            token = cls.__encode_auth_token(cls, user_data.get('ID'), user_data.get('ACCOUNT_ID'),
+                                            user_data.get('permissions'),
                                             user_data['role_list'], user_data['user_role'],
                                             user_data['workspace_list'], str(user_data['workspace_id']),
                                             login_time)
@@ -226,10 +231,21 @@ class Auth(object):
             user_role = 'viewer'
         # logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
         logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
-        logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
-        logger.debug('FN:_check_permissions api_permissions:{},{},{}'.format(api_permission,all_method_permission,all_endpoint_permission))
+        logger.info('FN:_check_permissions api_endpoint:{},{},{}'.format(request_id, api_endpoint, method))
+        logger.debug('FN:_check_permissions api_permissions:{},{},{}'.format(api_permission, all_method_permission,
+                                                                             all_endpoint_permission))
         for id in permissions:
+            logger.debug(
+                'FN:_check_permissions checking 11:{},{}'.format((request_id is None or str(id) == str(request_id)),
+                                                                 user_role in permissions[id]))
             if (request_id is None or str(id) == str(request_id)) and user_role in permissions[id]:
+                logger.debug(
+                    'FN:_check_permissions checking 22:{},{},{},{}'.format(all_permission in permissions[id][user_role],
+                                                                           api_permission in permissions[id][user_role],
+                                                                           all_method_permission in permissions[id][
+                                                                               user_role],
+                                                                           all_endpoint_permission in permissions[id][
+                                                                               user_role]))
                 if all_permission in permissions[id][user_role] or api_permission in \
                         permissions[id][user_role] or all_method_permission in \
                         permissions[id][user_role] or all_endpoint_permission in \
@@ -238,7 +254,7 @@ class Auth(object):
                     break
         logger.debug('FN:_check_permissions permission_allow: {}'.format(permission_allow))
         return permission_allow
-    
+
     @classmethod
     def refresh_token(cls, request, role_name, workspace_id, new_workspace_id_dict=None, remove_workspace_id_dict=None):
         # workspace_item_list: all the worksapce
@@ -287,7 +303,7 @@ class Auth(object):
 
             else:
                 workspace_id = None
-            if len(role_name_list)> 0:
+            if len(role_name_list) > 0:
                 role_name = role_name_list[0]
             else:
                 role_name = None
@@ -335,16 +351,15 @@ class Auth(object):
             else:
                 role_name = ''
 
-
         # print(role_name, role_list)
         # print(workspace_id, workspace_name_list)
-        token = cls.__encode_auth_token(cls, payload['data']['user_key'], payload['data']['account_id'], payload['data']['permissions'],
+        token = cls.__encode_auth_token(cls, payload['data']['user_key'], payload['data']['account_id'],
+                                        payload['data']['permissions'],
                                         role_name_list, role_name,
                                         workspace_item_list, workspace_id, login_time)
         logger.debug('FN:refresh_token token:{}'.format(token))
 
         return token.decode(), role_name, role_name_list, workspace_id, workspace_item_list
-
 
     @classmethod
     def identify(cls, request):
@@ -381,23 +396,25 @@ class Auth(object):
                     api_endpoint = request.endpoint
                     method = request.method
                     # logger.debug('FN:identify payload:{}{}'.format( payload, api_endpoint))
-                    
+
                     if (userInfo is None):
                         abort(401, 'user not found')
                     else:
                         # print('org permission:')
-                        permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint, method)
+                        permission_allow = Auth.__check_permission(user_role, org_permissions, None, api_endpoint,
+                                                                   method)
                         # logger.debug('FN:identify org permission_allow:{}'.format(permission_allow))
                         if permission_allow == 0:
                             # print('workspace permission:')
-                            permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id, api_endpoint, method)
+                            permission_allow = Auth.__check_permission(user_role, workspace_permissions, workspace_id,
+                                                                       api_endpoint, method)
                         # if permission_allow == 0:
                         #     # print('usecase permission:')
                         #     permission_allow = Auth.__check_permission(user_role, usecase_permissions, usecase_id, api_endpoint, method)
                         # if permission_allow == 0:
                         #     # print('team permission:')
                         #     permission_allow = Auth.__check_permission(user_role, team_permissions, team_id, api_endpoint, method)
-                            # logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
+                        # logger.debug('FN:identify wp permission_allow:{}'.format(permission_allow))
                         if permission_allow == 1:
                             return user_id, account_id, workspace_id
                         else:
