@@ -61,7 +61,9 @@ class system_define_field(baseTask):
                     sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'id', condition)
                     dynamic_field_value_info = self.execute_fetch_one(conn, sql)
                     if dynamic_field_value_info:
-                        return 'Label:{} has already in Field:{}'.format(option_label, field_name)
+                        data = response_code.BAD_REQUEST
+                        data ['msg'] = 'Label:{} has already in Field:{}'.format(option_label, field_name)
+                        return data
 
                 field_fields = ('workspace_id', 'dynamic_field_id', 'input_form_id', 'option_label', 'option_value', 'create_time')
                 values = (workspace_id, dynamic_field_id, input_form_id, option_label, options_value, now)

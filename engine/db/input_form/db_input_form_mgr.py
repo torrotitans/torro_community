@@ -489,7 +489,7 @@ class DbInputFormMgr(DbBase):
             fields = ('id', 'workflow_id', 'workflow_name', 'fields_num', 'stages_num',
                       'form_status', 'form_field_values_dict', 'workflow_stages_id_list', 'create_time', 'updated_time')
             values = (input_form_id, workflow_id, workflow_name, fields_num, stages_num,
-                      0, json.dumps(form_field_input_dict), json.dumps(workflow_stages_id_list), now, now)
+                      0, json.dumps(form_field_input_dict).replace('\\', '\\\\'), json.dumps(workflow_stages_id_list).replace('\\', '\\\\'), now, now)
             sql = self.create_insert_sql(db_name, 'inputFormTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbInputFormMgr_input_form_data inputFormTable_sql:{}".format(sql))
             history_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -613,7 +613,7 @@ class DbInputFormMgr(DbBase):
             fields = ('id', 'workflow_id', 'workflow_name', 'fields_num', 'stages_num',
                       'form_status', 'form_field_values_dict', 'workflow_stages_id_list', 'create_time', 'updated_time')
             values = (input_form_id, workflow_id, workflow_name, fields_num, stages_num,
-                      0, json.dumps(form_field_input_dict), json.dumps(workflow_stages_id_list), now, now)
+                      0, json.dumps(form_field_input_dict).replace('\\', '\\\\'), json.dumps(workflow_stages_id_list).replace('\\', '\\\\'), now, now)
             sql = self.create_insert_sql(db_name, 'inputFormTable', '({})'.format(', '.join(fields)), values)
             logger.debug("FN:DbInputFormMgr_input_form_data inputFormTable_sql:{}".format(sql))
             history_id = self.insert_exec(conn, sql, return_insert_id=True)
@@ -796,7 +796,7 @@ class DbInputFormMgr(DbBase):
             #     dynamic_field_infos = self.execute_fetch_all(conn, dynamic_field_query_sql)
             #     if dynamic_field_infos:
             #         raise Exception("dynamic_field optionLabel always exist: {} in {}".format(option_label, field_label))
-            input_stage_info.append(json.dumps(condition_value))
+            input_stage_info.append(json.dumps(condition_value).replace('\\', '\\\\'))
             input_stage_info.extend([now, now])
             workflow_stages_info_list.append(input_stage_info)
 

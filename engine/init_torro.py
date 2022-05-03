@@ -54,8 +54,8 @@ def init_gcp():
     except:
         logger.error("FN:init_gcp tag_template_error:{}".format(traceback.format_exc()))
    
-    print('ModifyTablePolicyTags update_sql dataOnboardTable:', sql)
-    
+    # print('ModifyTablePolicyTags update_sql dataOnboardTable:', sql)
+
 
 
 def init_db():

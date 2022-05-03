@@ -49,7 +49,7 @@ echo "<<==================== Initiating the MySQL db for the first time ========
 echo ""
 echo ""
 echo ""
-cd /home/torro_admin/torro_backend
+cd /root/torro_community/engine
 mysql -uroot -p123456 -Dtorro_api<./dbsql/data_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/form_api.sql
 mysql -uroot -p123456 -Dtorro_api<./dbsql/org_api.sql
@@ -68,6 +68,18 @@ export FLASK_CONFIG=production
 # pip3 install --upgrade pip
 # python3 -m pip install --upgrade setuptools
 pip3 install -r requirements.txt
+echo ""
+echo ""
+echo ""
+
+echo "<<==================== Configuring Nginx ====================>>"
+echo ""
+echo ""
+echo ""
+openssl genrsa -out /root/torro_community/engine/server.key &>/dev/null
+openssl req -new -x509 -key /root/torro_community/engine/server.key -subj "/CN=commmon" -out /root/torro_community/engine/server.crt &>/dev/null
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+cp -rf /root/torro_community/engine/nginx.conf /etc/nginx/
 echo ""
 echo ""
 echo ""

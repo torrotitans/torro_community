@@ -32,6 +32,7 @@ class stageBase(metaclass=abc.ABCMeta):
     def verify_all_param(verify_all_param, stage_dict):
         new_stage_dict = verify_all_param(stage_dict, stageBase.base_para)
         # # print('stage: ', stage_dict)
+        return new_stage_dict
         if new_stage_dict['flowType'] == 'Trigger':
             return new_stage_dict
         else:

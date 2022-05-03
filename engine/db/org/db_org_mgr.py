@@ -197,7 +197,7 @@ class DbOrgMgr(DbBase):
                 admin_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
-            values = (org_id, admin_group_id, json.dumps(['admin']))
+            values = (org_id, admin_group_id, json.dumps(['admin']).replace('\\', '\\\\'))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
             logger.debug('FN:__set_org org_to_adgroupTable_sql:{}'.format(sql))
             self.insert_exec(conn, sql, return_insert_id=True)
@@ -218,7 +218,7 @@ class DbOrgMgr(DbBase):
                 visitor_group_id = self.insert_exec(conn, sql, return_insert_id=True)
             # insert org_to_adgroupTable
             fields = ('ORG_ID', 'AD_GROUP_ID', 'ROLE_LIST')
-            values = (org_id, visitor_group_id, json.dumps(['viewer']))
+            values = (org_id, visitor_group_id, json.dumps(['viewer']).replace('\\', '\\\\'))
             sql = self.create_insert_sql(db_name, 'org_to_adgroupTable', '({})'.format(', '.join(fields)), values)
             logger.debug('FN:__set_org org_to_adgroupTable_sql:{}'.format(sql))
             self.insert_exec(conn, sql, return_insert_id=True)

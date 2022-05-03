@@ -424,7 +424,7 @@ class DbFormMgr(DbBase):
                         u_max_num = int(tp_max_id[1:])
                         u_max_id = tp_max_id
 
-            fields_list = json.dumps(form['fieldList'])
+            fields_list = json.dumps(form['fieldList']).replace('\\', '\\\\')
             creator_id = form.get('creator_id', '')
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             update_time = create_time
@@ -464,7 +464,7 @@ class DbFormMgr(DbBase):
                     form['fieldList'][index]['id'] = point_id
 
             # if copy_id_flag:
-            #     fields_list = json.dumps(form['fieldList'])
+            #     fields_list = json.dumps(form['fieldList']).replace('\\', '\\\\')
             #     fields = ('fields_list', )
             #     values = ( fields_list, )
             #     form_condition = "id='%s'" % form_id

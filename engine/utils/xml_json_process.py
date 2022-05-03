@@ -12,7 +12,7 @@ def xml_to_json(xml_str):
     :return:
     """
     xml_parse = xmltodict.parse(xml_str)
-    json_str = json.dumps(xml_parse, indent=1)
+    json_str = json.dumps(xml_parse, indent=1).replace('\\', '\\\\')
     return json_str
 
 

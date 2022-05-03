@@ -79,7 +79,9 @@ class UpdateTagTemplate(baseTask):
                     else:
                         break
                 if 'error' not in response and 'code' not in response['error']:
-                    return 'data catalog exist.'
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'data catalog exist.'
+                    return data
                 
                 tag_template_body = {'displayName': tag_template_name, 'fields': {}}
                 fields = {}
@@ -130,7 +132,7 @@ class UpdateTagTemplate(baseTask):
                 values = (
                     project, location, tag_template_name, tag_tempalte_form_id,
                     new_tag_template_id,
-                    json.dumps(tag_template_body), description, create_time)
+                    json.dumps(tag_template_body).replace('\\', '\\\\'), description, create_time)
                 condition = "(workspace_id='%s' or workspace_id=0) and tag_template_form_id='%s'" % (
                 workspace_id, old_tag_template_form_id)
                 sql = self.create_update_sql(db_name, 'tagTemplatesTable',

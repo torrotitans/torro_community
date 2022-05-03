@@ -92,7 +92,7 @@ class interfaceWorkspaceSetting(Resource):
                     data = response_code.SUCCESS
                     data['data'] = {'role_list': role_list, 'role_name': role_name,
                                     'workspace_list': workspace_list, 'workspace_id': workspace_id}
-                    resp = make_response(json.dumps(data, cls=DateEncoder))
+                    resp = make_response(json.dumps(data, cls=DateEncoder).replace('\\', '\\\\'))
                     # resp.headers['Access-Control-Allow-Origin'] = 'http://34.96.134.183:9000,http://localhost:8080'
                     # resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
                     origin = request.headers.get('Origin')
@@ -180,7 +180,7 @@ class interfaceWorkspaceSetting(Resource):
                     data = response_code.SUCCESS
                     data['data'] = {'role_list': role_list, 'role_name': role_name,
                                     'workspace_list': workspace_list, 'workspace_id': workspace_id}
-                    resp = make_response(json.dumps(data, cls=DateEncoder))
+                    resp = make_response(json.dumps(data, cls=DateEncoder).replace('\\', '\\\\'))
                     # resp.headers['Access-Control-Allow-Origin'] = 'http://34.96.134.183:9000,http://localhost:8080'
                     # resp.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
                     origin = request.headers.get('Origin')

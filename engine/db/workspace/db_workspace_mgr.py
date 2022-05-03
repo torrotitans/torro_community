@@ -52,7 +52,7 @@ class DbWorkspaceMgr(DbBase):
                 fields = ('WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGIONS',
                           'CREATE_TIME',
                           'DES')
-                values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
+                values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions).replace('\\', '\\\\'), create_time, des)
 
                 sql = self.create_update_sql(db_name, 'workspaceTable', fields, values, condition=condition)
                 logger.debug("FN:DbWorkspaceMgr__set_workspace workspaceTable_sql:{}".format(sql))
@@ -78,7 +78,7 @@ class DbWorkspaceMgr(DbBase):
 
                     # insert workspace_to_adgroupTable
                     w2a_fields = ('WORKSPACE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
-                    values = (workspace_id, json.dumps(label_list), group_id, json.dumps(role_list))
+                    values = (workspace_id, json.dumps(label_list).replace('\\', '\\\\'), group_id, json.dumps(role_list).replace('\\', '\\\\'))
                     sql = self.create_insert_sql(db_name, 'workspace_to_adgroupTable',
                                                  '({})'.format(', '.join(w2a_fields)),
                                                  values)
@@ -130,7 +130,7 @@ class DbWorkspaceMgr(DbBase):
                             field_fields = ('u_id', 'workspace_id', 'style', 'label', 'default_value', 'placeholder',
                                             'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
                             values = (u_id, workspace_id, system_style, label, default_value, placeholder, value_num,
-                                      json.dumps(value_list), edit, des, create_time, create_time)
+                                      json.dumps(value_list).replace('\\', '\\\\'), edit, des, create_time, create_time)
                             sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)), values)
                             logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))
                             _ = self.insert_exec(conn, sql)
@@ -139,7 +139,7 @@ class DbWorkspaceMgr(DbBase):
                             field_fields = ('u_id', 'style', 'label', 'default_value', 'placeholder',
                                             'value_num', 'value_list', 'edit', 'des', 'create_time', 'updated_time')
                             values = (u_id, system_style, label, default_value, placeholder, value_num,
-                                      json.dumps(value_list), edit, des, create_time, create_time)
+                                      json.dumps(value_list).replace('\\', '\\\\'), edit, des, create_time, create_time)
                             sql = self.create_update_sql(db_name, 'fieldTable', field_fields, values, condition=condition)
                             logger.debug("FN:DbWorkspaceMgr__set_workspace update_fieldTable_sql:{}".format(sql))
                             _ = self.updete_exec(conn, sql)
@@ -153,7 +153,7 @@ class DbWorkspaceMgr(DbBase):
                 fields = (
                     'WORKSPACE_NAME', 'IT_APPROVAL', 'HEAD_APPROVAL', 'RECERTIFICATION_CYCLE', 'REGIONS', 'CREATE_TIME',
                     'DES')
-                values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions), create_time, des)
+                values = (workspace_name, it_approval, head_approval, cycle, json.dumps(regions).replace('\\', '\\\\'), create_time, des)
 
                 sql = self.create_insert_sql(db_name, 'workspaceTable', '({})'.format(', '.join(fields)), values)
                 logger.debug("FN:DbWorkspaceMgr__set_workspace insert_workspaceTable_sql:{}".format(sql))
@@ -178,7 +178,7 @@ class DbWorkspaceMgr(DbBase):
                         group_id = self.insert_exec(conn, sql, return_insert_id=True)
                     # insert workspace_to_adgroupTable
                     w2a_fields = ('WORKSPACE_ID', 'LABEL_LIST', 'AD_GROUP_ID', 'ROLE_LIST')
-                    values = (workspace_id, json.dumps(label_list), group_id, json.dumps(role_list))
+                    values = (workspace_id, json.dumps(label_list).replace('\\', '\\\\'), group_id, json.dumps(role_list).replace('\\', '\\\\'))
                     sql = self.create_insert_sql(db_name, 'workspace_to_adgroupTable',
                                                  '({})'.format(', '.join(w2a_fields)),
                                                  values)
@@ -217,7 +217,7 @@ class DbWorkspaceMgr(DbBase):
                 #         value_num = len(value_list)
                 #
                 #         values = (workspace_id, u_id, system_style, label, default_value, placeholder, value_num,
-                #                   json.dumps(value_list), edit, des, create_time, create_time)
+                #                   json.dumps(value_list).replace('\\', '\\\\'), edit, des, create_time, create_time)
                 #         sql = self.create_insert_sql(db_name, 'fieldTable', '({})'.format(', '.join(field_fields)),
                 #                                      values)
                 #         logger.debug("FN:DbWorkspaceMgr__set_workspace insert_fieldTable_sql:{}".format(sql))

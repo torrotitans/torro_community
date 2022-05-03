@@ -406,7 +406,7 @@ class DbBase(object):
         :param search_data:
         E.g.:
             search_data = {'c_name':2,'c_no':2}
-            search_data = json.dumps(search_data)
+            search_data = json.dumps(.*?).replace('\\', '\\\\')
         :return: combined conditions
             e.g.: cmd_name like '%2%' and cmd_no like '%2%'
         """

@@ -130,14 +130,14 @@ class ModifyTableTags(baseTask):
 
                 if data_info:
                     column_fields = ('workspace_id', 'data_owner', 'project_id', 'location', 'dataset_id', 'table_id', 'fields', 'table_tags', 'create_time')
-                    values = (workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields), json.dumps(table_tags), now)
+                    values = (workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields).replace('\\', '\\\\'), json.dumps(table_tags).replace('\\', '\\\\'), now)
                     sql = self.create_update_sql(db_name, 'dataOnboardTable', column_fields, values, condition)
                     logger.debug("FN:ModifyTableTags_execute update_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.updete_exec(conn, sql)
 
                 else:
                     column_fields = ('input_form_id', 'workspace_id', 'data_owner', 'project_id', 'location', 'dataset_id', 'table_id', 'fields', 'table_tags', 'create_time')
-                    values = (input_form_id, workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields), json.dumps(table_tags), now)
+                    values = (input_form_id, workspace_id, ad_group, project_id, location, dataset_id, table_id, json.dumps(fields).replace('\\', '\\\\'), json.dumps(table_tags).replace('\\', '\\\\'), now)
                     sql = self.create_insert_sql(db_name, 'dataOnboardTable', '({})'.format(', '.join(column_fields)), values)
                     logger.debug("FN:ModifyTableTags_execute insert_dataOnboardTable_sql:{}".format(sql))
                     return_count = self.insert_exec(conn, sql)

@@ -570,8 +570,9 @@ class DbWorkflowMgr(DbBase):
             stage_num = len(workflow['stages'])
             creator_id = workflow.get('creator_id', '')
             last_modify_id = workflow.get('creator_id', '')
-            stages = json.dumps(workflow['stages'])
-            field_id_list = json.dumps(workflow['field_id_list'])
+            stages = json.dumps(workflow['stages']).replace('\\', '\\\\')
+
+            field_id_list = json.dumps(workflow['field_id_list']).replace('\\', '\\\\')
             des = workflow.get('des', '')
             create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             update_time = create_time
@@ -634,19 +635,20 @@ class DbWorkflowMgr(DbBase):
                 stage_num = len(workflow['stages'])
                 creator_id = workflow.get('creator_id', '')
                 last_modify_id = workflow.get('creator_id', '')
-                stages = json.dumps(workflow['stages'])
-                field_id_list = json.dumps(workflow['field_id_list'])
+                # print('json stages:', workflow['stages'])
+                stages = json.dumps(workflow['stages'], default=str).replace('\\', '\\\\')
+                # print('json stages text:', stages)
+
+                field_id_list = json.dumps(workflow['field_id_list']).replace('\\', '\\\\')
                 des = workflow.get('des', '')
                 create_time = workflow.get('create_time', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
                 update_time = create_time
                 fields = (
                     'form_id', 'workflow_name', 'stage_hash', 'stage_num', 'creator_id', 'last_modify_id', 'stages',
-                    'field_id_list',
-                    'create_time', 'updated_time', 'des')
+                    'field_id_list', 'available', 'create_time', 'updated_time', 'des')
                 values = (
-                    form_id, workflow_name, stage_hash, stage_num, creator_id, last_modify_id, stages, field_id_list,
-                    create_time,
-                    update_time, des)
+                    form_id, workflow_name, stage_hash, stage_num, creator_id, last_modify_id, stages,
+                    field_id_list, '1', create_time, update_time, des)
                 # update workflow
                 sql = self.create_update_sql(db_name, 'workflowTable', fields, values, workflow_condition)
                 logger.debug("FN:DbWorkflowMgr_update_workflow update_workflowTable_sql:{}".format(sql))
