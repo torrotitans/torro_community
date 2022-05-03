@@ -169,7 +169,10 @@ class DbUserMgr(DbBase):
                 sql = self.create_select_sql(db_name, 'roleTable', role_fields, condition=condition)
                 logger.debug('FN:__get_util_permission roleTable_sql:{}'.format(sql))
                 role_info = self.execute_fetch_one(conn, sql)
-                utils_permissions[utils_id][role_name] = json.loads(role_info['API_PERMISSION_LIST'], strict=False)
+                api_permission_list = json.loads(role_info['API_PERMISSION_LIST'], strict=False)
+                for i in range(len(api_permission_list)):
+                    api_permission_list[i] = api_permission_list[i].lower()
+                utils_permissions[utils_id][role_name] = api_permission_list
             return set(role_list), utils_permissions
         else:
             return set(), {}
