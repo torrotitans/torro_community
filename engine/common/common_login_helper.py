@@ -14,7 +14,8 @@ def login_required(func):
     def wrapper(*args, **kwargs):
         user_key, account_id, workspace_id = Auth.identify(request)
         logger.info('FN:Login_requred func:{} user_key:{} account_id:{} workspace_id:{}'.format(func.__name__,user_key, account_id, workspace_id))
-        
+        # if isinstance(user_key, dict) and 'code' in user_key and user_key['code'] == 401:
+        #     abort(401)
         if user_key > 0:
             g.user_key = user_key
             g.account_id = account_id

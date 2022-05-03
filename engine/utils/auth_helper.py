@@ -236,6 +236,7 @@ class Auth(object):
                         permissions[id][user_role]:
                     permission_allow = 1
                     break
+        logger.debug('FN:_check_permissions permission_allow: {}'.format(permission_allow))
         return permission_allow
     
     @classmethod
