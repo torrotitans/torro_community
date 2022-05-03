@@ -227,6 +227,7 @@ class Auth(object):
         # logger.debug('FN:_check_permissions default user_role:{}'.format(user_role))
         logger.debug('FN:_check_permissions permissions:{}'.format(permissions))
         logger.info('FN:_check_permissions api_endpoint:{}{}{}'.format(request_id, api_endpoint, method))
+        logger.debug('FN:_check_permissions api_permissions:{},{},{}'.format(api_permission,all_method_permission,all_endpoint_permission))
         for id in permissions:
             if (request_id is None or id == request_id) and user_role in permissions[id]:
                 if all_permission in permissions[id][user_role] or api_permission in \
