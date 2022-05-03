@@ -221,9 +221,9 @@ class Auth(object):
     @staticmethod
     def __check_permission(user_role, permissions, request_id, api_endpoint, method):
         # print('permissions:', permissions)
-        api_permission = '{}-{}'.format(api_endpoint, method)
-        all_method_permission = '*-{}'.format(method)
-        all_endpoint_permission = '{}-*'.format(api_endpoint)
+        api_permission = '{}-{}'.format(api_endpoint, method).lower()
+        all_method_permission = '*-{}'.format(method).lower()
+        all_endpoint_permission = '{}-*'.format(api_endpoint).lower()
         all_permission = '*-*'
         permission_allow = 0
         logger.info('FN:_check_permissions user_role:{}'.format(user_role))
