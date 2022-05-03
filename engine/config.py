@@ -146,7 +146,7 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
-    FRONTEND_URL = 'http://34.79.84.83'
+    FRONTEND_URL = 'http://34.92.25.44/'
     DEFAULT_BUCEKT = 'torro_ai_landing_bucket_prod_intricate_idiom_349112'
     DEFAULT_PROJECT = 'intricate-idiom-349112'
     DEFAULT_REGION = 'asia-east2'
