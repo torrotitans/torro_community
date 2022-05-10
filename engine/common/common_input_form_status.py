@@ -1,7 +1,9 @@
 class status:
+
     offline_flag = 0  #: using ldap
     # offline_flag = 1
 
+    # status code
     pending_approval = 0
     rejected = 1
     completed = 2
@@ -13,30 +15,9 @@ class status:
     code = {pending_approval: 'pending approval', rejected: 'rejected', completed: 'completed',
             in_porgress: 'in porgress', approved: 'approved',
             cancelled: 'cancelled', failed: 'failed'}
-    status_history_mapping = {
-        pending_approval: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
-                           {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
-        rejected: [{'label': 'Rejected', 'operator': '', 'comment': '', 'time': None}],
-        completed: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
-                    {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
-        in_porgress: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
-                      {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
-        approved: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
-                   {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
-        cancelled: [{'label': 'Cancelled', 'operator': '', 'comment': '', 'time': None}],
-        failed: [{'label': 'Failed', 'operator': '', 'comment': '', 'time': None}],
-    }
 
-    system_execute_tasks = ['system_define_field', 'system_create_form', 'system_delete_form', 'system_update_form',
-                            'system_create_tag', 'system_create_tag_template_form', 'system_add_new_usecase']
-
-    db_operation_tasks = ['CreatePolicyTagsV1', 'system_create_form', 'system_update_form', 'CreateTagTemplate',
-                          'ModifyTablePolicyTags', 'GrantRoleForPolicyTags',
-                          'UpdateTagTemplate', 'DeleteTagTemplate', 'system_add_new_usecase', 'system_define_field',
-                          'ModifyTableTags', 'GrantRoleForBQTable',
-                          'system_create_tag', 'system_create_tag_template_form', 'ModifyTablePolicyTags',
-                          'ModifyTableTags']
-
+    # form code
+    max_system_form_id = 350
     system_form_id = {'usecase': 2, 'add_user': 1, 'data_access': 108, 'data_ob': 107, 'data_approval_tag_template': 419,
                       'tag_template': 104}
     system_form_field_id = {'data_access': {'project_id': 'u1',
@@ -56,3 +37,33 @@ class status:
                                 'service_account': 'u8',
                             }
                             }
+
+    # field code
+    default_field_json_path = 'torroConfig/en/field/defaultField.json'
+    system_field_id = {'region': 1}
+
+
+    status_history_mapping = {
+        pending_approval: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
+                           {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
+        rejected: [{'label': 'Rejected', 'operator': '', 'comment': '', 'time': None}],
+        completed: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
+                    {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
+        in_porgress: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
+                      {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
+        approved: [{'label': 'In Progress', 'operator': '', 'comment': '', 'time': None},
+                   {'label': 'Completed', 'operator': '', 'comment': '', 'time': None}],
+        cancelled: [{'label': 'Cancelled', 'operator': '', 'comment': '', 'time': None}],
+        failed: [{'label': 'Failed', 'operator': '', 'comment': '', 'time': None}],
+    }
+
+    # system_execute_tasks = ['system_define_field', 'system_create_form', 'system_delete_form', 'system_update_form',
+    #                         'system_create_tag', 'system_create_tag_template_form', 'system_add_new_usecase']
+    #
+    # db_operation_tasks = ['CreatePolicyTagsV1', 'system_create_form', 'system_update_form', 'CreateTagTemplate',
+    #                       'ModifyTablePolicyTags', 'GrantRoleForPolicyTags',
+    #                       'UpdateTagTemplate', 'DeleteTagTemplate', 'system_add_new_usecase', 'system_define_field',
+    #                       'ModifyTableTags', 'GrantRoleForBQTable',
+    #                       'system_create_tag', 'system_create_tag_template_form', 'ModifyTablePolicyTags',
+    #                       'ModifyTableTags']
+
