@@ -29,7 +29,7 @@ Config = config[config_name]
 class DbInputFormMgr(DbBase):
     status = Status.code
     status_history_mapping = Status.status_history_mapping
-    system_execute_tasks = Status.system_execute_tasks
+    # system_execute_tasks = Status.system_execute_tasks
 
     def __get_workspace_owner_group(self, workspace_id, approval_label):
         conn = MysqlConn()

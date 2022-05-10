@@ -44,7 +44,10 @@ class system_notify(baseTask):
                 sql = self.create_select_sql(db_name, table_name, fields, condition)
                 input_form_infos = self.execute_fetch_all(conn, sql)
                 if not input_form_infos:
-                    raise Exception('input form not found: {}'.format(str(input_form_id)))
+                    data = response_code.BAD_REQUEST
+                    data['msg'] = 'input form not found: {}'.format(str(input_form_id))
+                    return data
+
                 # get history id
                 history_id = input_form_infos[0]['history_id']
 

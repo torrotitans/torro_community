@@ -26,7 +26,7 @@ for task_name in os.listdir(task_path):
 
 class taskOperator:
 
-    db_operation = Status.db_operation_tasks
+    # db_operation = Status.db_operation_tasks
 
     @staticmethod
     def execute_tasks(task_object_list, workspace_id=None, form_id=None, input_form_id=None, user_id=None):

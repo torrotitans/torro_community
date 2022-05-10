@@ -17,10 +17,6 @@ class formSingleton():
 
         return form_mgr.get_field_template(style, wp_id)
 
-    def add_new_system_field(self, wp_id, uc_id, field_data):
-
-        return form_mgr.add_new_system_field(wp_id, uc_id, field_data)
-
 
     def get_base_form_by_id(self, id):
 
@@ -47,9 +43,6 @@ class formSingleton():
 
         return form_mgr.get_all_fields(workspace_id)
 
-
-    def add_point_field(self, field_info, field_type, workspace_id):
-        return  form_mgr.add_point_field(field_info, field_type, workspace_id)
 formSingleton_singleton = formSingleton()
 
 

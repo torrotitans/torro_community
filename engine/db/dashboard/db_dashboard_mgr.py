@@ -144,16 +144,6 @@ class DbDashboardMgr(DbBase):
             else:
                 dy_field_id = None
                 dy_field_label = None
-            # dy_value_cond = 'dynamic_field_id=%s' % field_info['id']
-            # sql = self.create_select_sql(db_name, 'dynamicFieldValueTable', 'option_label, option_value', condition=dy_value_cond)
-            # dy_value_infos = self.execute_fetch_all(db_conn, sql)
-            # dy_label_value_dict = {}
-            # for dy_value_info in dy_value_infos:
-            #     option_label = dy_value_info['option_label']
-            #     option_value = dy_value_info['option_value']
-            #     if option_value not in dy_label_value_dict:
-            #         dy_label_value_dict[option_value] = option_label
-            # print('dy_label_value_dict:', dy_label_value_dict)
             # fetch duplicate form
 
             logger.debug("FN:get_data role_name_query_sql:{}".format(role_name_query_sql))

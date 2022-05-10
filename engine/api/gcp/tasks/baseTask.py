@@ -8,13 +8,16 @@ from config import configuration
 import logging
 import traceback
 import datetime
-import json
+from functools import wraps
+
 logger = logging.getLogger("main." + __name__)
 
 
 class baseTask(DbBase, metaclass=abc.ABCMeta):
+
     api_type = 'system'
     api_name = 'baseTask'
+
     arguments = {}
     role_list = []
     target_project = None
@@ -24,6 +27,7 @@ class baseTask(DbBase, metaclass=abc.ABCMeta):
 
     def verify_all_param(self):
         self.stage_dict = req.verify_all_param(self.stage_dict, self.arguments)
+
 
     @abc.abstractmethod
     def execute(self, *args, **kwargs):
