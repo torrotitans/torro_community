@@ -1,0 +1,78 @@
+{
+  "1": {
+    "style": 1,
+    "label": "CheckBox",
+    "default": "true,false",
+    "options": [
+      {
+        "label": "true"
+      },
+      {
+        "label": "false"
+      }
+    ],
+    "des": "",
+    "edit": 1,
+    "placeholder": ""
+  },
+  "2": {
+    "style": 2,
+    "label": "Dropdown",
+    "default": "Option1",
+    "options": [
+      {
+        "label": "Option1",
+        "value": "Option1"
+      },
+      {
+        "label": "Option2",
+        "value": "Option2"
+      }
+    ],
+    "des": "",
+    "edit": 1,
+    "required": true,
+    "placeholder": ""
+  },
+  "3": {
+    "style": 3,
+    "label": "Text",
+    "default": "",
+    "options": [],
+    "des": "",
+    "edit": 1,
+    "maxLength": 25,
+    "required": true,
+    "placeholder": "",
+    "rule": 0
+  },
+  "4": {
+    "style": 4,
+    "label": "Upload",
+    "placeholder": "",
+    "default": "",
+    "multiple": false,
+    "options": [],
+    "des": "",
+    "edit": 1
+  },
+  "5": {
+    "style": 5,
+    "label": "Switch",
+    "default": true,
+    "placeholder": "",
+    "options": [],
+    "des": "",
+    "edit": 1
+  },
+  "6": {
+    "style": 6,
+    "label": "DatePicker",
+    "placeholder": "",
+    "default": "",
+    "options": [],
+    "des": "",
+    "required": true,
+    "edit": 1
+  }
+}
