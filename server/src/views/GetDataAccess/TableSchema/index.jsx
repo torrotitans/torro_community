@@ -221,13 +221,11 @@ const TableSchema = ({
     return list;
   }, [tableData]);
 
-  console.log(existPolicyTag);
-
   const isSelectedAll = useMemo(() => {
     if (!selectedList.length || !tableList) {
       return false;
     }
-    let seletAll = existPolicyTag;
+    let seletAll = true;
     existPolicyTag.forEach((index) => {
       if (!selectedList.includes(index)) {
         seletAll = false;

@@ -12,6 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Delete from "@material-ui/icons/Delete";
 
 /* local components & methods */
+import { getQueryString } from "src/utils/url-util.js";
 import styles from "./styles.module.scss";
 import FormItem from "@comp/FormItem";
 import HeadLine from "@basics/HeadLine";
@@ -37,16 +38,41 @@ import TableSchema from "./TableSchema";
 const GET_ACCESS_FORM_ID = 108;
 
 const GetDataAccess = () => {
-  const { handleSubmit, control, register } = useForm(); // initialise the hook
+  const resType = getQueryString("type");
+  const projectId = getQueryString("id");
+  const datasetName = getQueryString("dataset");
+  const tableName = getQueryString("name");
+  const autoAdd = getQueryString("autoAdd");
+
+  const { handleSubmit, control, register } = useForm({
+    defaultValues: {
+      datasetName: datasetName || "",
+      projectId: projectId || "",
+      resourceType: resType || "GCP",
+      tableName: tableName || "",
+    },
+  }); // initialise the hook
+
   const navigate = useNavigate();
+
+  let defaultQuery = null;
+  if (resType && projectId && resType && tableName) {
+    defaultQuery = {
+      datasetName: datasetName,
+      projectId: projectId,
+      resourceType: resType,
+      tableName: tableName,
+    };
+  }
+
   const resourceType = useWatch({
     control,
     name: "resourceType",
-    defaultValue: "GCP",
+    defaultValue: resType || "GCP",
   });
 
   const [formLoading, setFormLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState(defaultQuery);
   const [tableData, setTableData] = useState(null);
   const [policys, setPolicys] = useState([]);
   const [cartList, setCartList] = useState([]);
@@ -56,6 +82,12 @@ const GetDataAccess = () => {
   const [useCaseList, setUseCaseList] = useState([]);
   const [selectedUc, setSelectedUc] = useState("");
   const [selectedList, setSelectedList] = useState([]);
+  const [modalData, setModalData] = useState({
+    open: false,
+    status: 0,
+    content: "",
+    cb: null,
+  });
 
   const tableForm = useMemo(() => {
     if (!onBoardDataForm) {
@@ -64,12 +96,6 @@ const GetDataAccess = () => {
     return resourceType === "GCP" ? onBoardDataForm.gcp : onBoardDataForm.hive;
   }, [resourceType, onBoardDataForm]);
 
-  const [modalData, setModalData] = useState({
-    open: false,
-    status: 0,
-    content: "",
-    cb: null,
-  });
   const tableList = useMemo(() => {
     return tableData?.schema?.fields;
   }, [tableData]);
@@ -78,8 +104,47 @@ const GetDataAccess = () => {
     setSearchQuery(data);
   };
 
+  const calculateColumns = useCallback((dataList, selectedList) => {
+    let tmp = [...dataList];
+    let list = [];
+    const removeNotSelected = (data, parentIndex) => {
+      for (let i = data.length - 1; i >= 0; i--) {
+        let item = data[i];
+        let index = i;
+        let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
+        if (item.type === "RECORD") {
+          removeNotSelected(item.fields, currIndex);
+        } else {
+          let policTagId = item?.policyTags?.names[0] || "";
+          if (policTagId && !selectedList.includes(policTagId)) {
+            let indexArr =
+              typeof currIndex === "string"
+                ? currIndex.split(".")
+                : [currIndex];
+            let objPointer = null;
+            list.push(currIndex);
+
+            indexArr.forEach((tmpIndex, arrIndex) => {
+              if (!objPointer) {
+                objPointer = tmp[tmpIndex];
+                if (arrIndex === indexArr.length - 1) {
+                  tmp.splice(index, 1);
+                }
+              } else if (arrIndex === indexArr.length - 1) {
+                objPointer.fields.splice(tmpIndex, 1);
+              } else {
+                objPointer = objPointer.fields[tmpIndex];
+              }
+            });
+          }
+        }
+      }
+    };
+    removeNotSelected(dataList);
+    return tmp;
+  }, []);
+
   const buttonClickHandle = useCallback(() => {
-    debugger;
     switch (modalData.status) {
       case 1:
       case 3:
@@ -129,43 +194,6 @@ const GetDataAccess = () => {
       });
 
       let requestList = cartList.map((item) => {
-        let selectedList = item.selectedList;
-        let tmp = [...item.schema.fields];
-        let list = [];
-        const removeNotSelected = (data, parentIndex) => {
-          for (let i = data.length - 1; i >= 0; i--) {
-            let item = data[i];
-            let index = i;
-            let currIndex = parentIndex ? `${parentIndex}.${index}` : index;
-            if (item.type === "RECORD") {
-              removeNotSelected(item.fields, currIndex);
-            } else {
-              let policTagId = item?.policyTags?.names[0] || "";
-              if (policTagId && !selectedList.includes(policTagId)) {
-                let indexArr =
-                  typeof currIndex === "string"
-                    ? currIndex.split(".")
-                    : [currIndex];
-                let objPointer = null;
-                list.push(currIndex);
-
-                indexArr.forEach((tmpIndex, arrIndex) => {
-                  if (!objPointer) {
-                    objPointer = tmp[tmpIndex];
-                    if (arrIndex === indexArr.length - 1) {
-                      tmp.splice(index, 1);
-                    }
-                  } else if (arrIndex === indexArr.length - 1) {
-                    objPointer.fields.splice(tmpIndex, 1);
-                  } else {
-                    objPointer = objPointer.fields[tmpIndex];
-                  }
-                });
-              }
-            }
-          }
-        };
-        removeNotSelected(item.schema.fields);
         return {
           form_id: GET_ACCESS_FORM_ID,
           form_field_values_dict: {
@@ -174,7 +202,7 @@ const GetDataAccess = () => {
             u3: item?.location,
             u4: item?.tableReference.datasetId,
             u5: item?.tableReference.tableId,
-            u6: tmp,
+            u6: calculateColumns(item.schema.fields, item.selectedList),
           },
         };
       });
@@ -183,7 +211,7 @@ const GetDataAccess = () => {
         data: requestList,
       });
     }
-  }, [selectedUc, cartList]);
+  }, [selectedUc, cartList, calculateColumns]);
 
   const closeModal = () => {
     setModalData({ ...modalData, open: false, cb: null });
@@ -261,6 +289,7 @@ const GetDataAccess = () => {
 
       setTableData(null);
       setSelectedList([]);
+      setSearchQuery(null);
     },
     [tableData, cartList]
   );
@@ -286,15 +315,25 @@ const GetDataAccess = () => {
       setFormLoading(true);
       apiCall(postData)
         .then((res) => {
-          setTableData(res.data);
-          setFormLoading(false);
-          setSelectedList([]);
+          if (autoAdd) {
+            setCartList([
+              {
+                ...res.data,
+                seq: 0,
+                selectedList: [],
+              },
+            ]);
+            setFormLoading(false);
+          } else {
+            setTableData(res.data);
+            setFormLoading(false);
+          }
         })
         .catch((e) => {
           sendNotify({ msg: e.message, status: 3, show: true });
         });
     }
-  }, [searchQuery, resourceType]);
+  }, [searchQuery, resourceType, autoAdd]);
 
   useEffect(() => {
     getPolicys()
@@ -441,7 +480,12 @@ const GetDataAccess = () => {
                                 </ListItemText>
                                 <ListItemText
                                   className={styles.columnLengh}
-                                >{`${row.schema.fields.length} columns`}</ListItemText>
+                                >{`${
+                                  calculateColumns(
+                                    row.schema.fields,
+                                    row.selectedList
+                                  ).length
+                                } columns`}</ListItemText>
                               </div>
                               <Delete
                                 onClick={() => {
