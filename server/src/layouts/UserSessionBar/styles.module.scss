@@ -26,8 +26,12 @@
 .logo {
   color: $white;
   margin-right: $rbwmspace20;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
   svg {
-    width: 7rem;
+    width: 12rem;
     height: auto;
   }
 }
