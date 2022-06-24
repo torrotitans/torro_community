@@ -13,12 +13,12 @@ class CreateBQDataset(baseTask):
     api_name = 'CreateBQDataset'
     def __init__(self, stage_dict):
         super(CreateBQDataset, self).__init__(stage_dict)
-        self.target_project = stage_dict['porject_id']
+        self.target_project = stage_dict['project_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         try:
-            project_id = self.stage_dict['porject_id'].strip()
+            project_id = self.stage_dict['project_id'].strip()
             dataset_name = self.stage_dict['dataset_name'].strip().replace(' ', '').replace('-', '_')
             location = self.stage_dict['dataset_location'].strip()
             dataset_labels_str = self.stage_dict.get('dataset_labels', '').strip()

@@ -14,7 +14,7 @@ logger = logging.getLogger("main." + __name__)
 class CreatePolicyTagsV1(baseTask):
     api_type = 'gcp'
     api_name = 'CreatePolicyTagsV1'
-    arguments = {"porject_id": {"type": str, "default": ''},
+    arguments = {"project_id": {"type": str, "default": ''},
                  "policy_location": {"type": str, "default": ''},
                  "taxonomy_display_name": {"type": str, "default": ''},
                  "taxonomy_ad_group": {"type": str, "default": ''},
@@ -28,7 +28,7 @@ class CreatePolicyTagsV1(baseTask):
         print('self.stage_dict:', self.stage_dict)
 
         self.full_resource_name = None
-        self.target_project = stage_dict['porject_id']
+        self.target_project = stage_dict['project_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
@@ -49,7 +49,7 @@ class CreatePolicyTagsV1(baseTask):
                 data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
                 return data
             else:
-                project_id = self.stage_dict['porject_id']
+                project_id = self.stage_dict['project_id']
                 location = self.stage_dict['policy_location']
                 taxonomy_display_name = self.stage_dict['taxonomy_display_name']
                 taxonomy_ad_group = self.stage_dict['taxonomy_ad_group']

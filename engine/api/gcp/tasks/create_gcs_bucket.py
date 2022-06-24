@@ -13,12 +13,12 @@ class CreateGCSBucket(baseTask):
 
     def __init__(self, stage_dict):
         super(CreateGCSBucket, self).__init__(stage_dict)
-        self.target_project = stage_dict['porject_id']
+        self.target_project = stage_dict['project_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
 
         try:
-            project_id = self.stage_dict['porject_id'].strip()
+            project_id = self.stage_dict['project_id'].strip()
             bucket_name = self.stage_dict['bucket_name'].strip().replace(' ', '').replace('_', '-').lower()
             location = self.stage_dict['bucket_location'].strip()
             bucket_labels_str = self.stage_dict.get('bucket_labels', '').strip()

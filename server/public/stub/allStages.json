@@ -36,7 +36,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -96,7 +96,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -182,7 +182,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -233,7 +233,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -298,7 +298,7 @@
           "condition": [
             {
               "des": "choose your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -333,7 +333,7 @@
           "condition": [
             {
               "des": "choose your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,

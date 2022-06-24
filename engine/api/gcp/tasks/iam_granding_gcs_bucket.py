@@ -11,7 +11,7 @@ logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 class GrantRoleForGCSBucket(baseTask):
     api_type = 'gcp'
     api_name = 'GrantRoleForGCSBucket'
-    arguments = {"porject_id": {"type": str, "default": ''},
+    arguments = {"project_id": {"type": str, "default": ''},
                  "bucket_name": {"type": str, "default": ''},
                  "member_roles ": {"type": str, "default": ''}}
 
@@ -24,7 +24,7 @@ class GrantRoleForGCSBucket(baseTask):
         # "ad1@abc.com+storage+storage.objectViewer,ad2@abc.com+storage+storage.objectViewer"
         try:
             successful_user = set()
-            project_id = self.stage_dict['porject_id']
+            project_id = self.stage_dict['project_id']
             bucket_name = self.stage_dict['bucket_name']
             member_roles_str = self.stage_dict['member_roles']
             roles_members = {}

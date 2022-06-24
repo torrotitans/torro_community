@@ -13,7 +13,7 @@ logger = logging.getLogger("main.api.gcp.tasks" + __name__)
 class CreateBQTable(baseTask):
     api_type = 'gcp'
     api_name = 'CreateBQTable'
-    arguments = {"porject_id": {"type": str, "default": ''},
+    arguments = {"project_id": {"type": str, "default": ''},
                  "usecase_name": {"type": str, "default": ''},
                  "dataset_name": {"type": str, "default": ''},
                  "table_name": {"type": str, "default": ''},
@@ -22,7 +22,7 @@ class CreateBQTable(baseTask):
 
     def __init__(self, stage_dict):
         super(CreateBQTable, self).__init__(stage_dict)
-        self.target_project = stage_dict['porject_id']
+        self.target_project = stage_dict['project_id']
 
     def execute(self, workspace_id=None, form_id=None, input_form_id=None, user_id=None):
         try:
@@ -39,7 +39,7 @@ class CreateBQTable(baseTask):
                 data['msg'] = 'Missing parameters: {}'.format(', '.join(missing_set))
                 return data
             else:
-                project_id = self.stage_dict['porject_id'].strip()
+                project_id = self.stage_dict['project_id'].strip()
                 dataset_name = self.stage_dict['dataset_name'].strip()
                 table_name = self.stage_dict['table_name'].strip()
                 table_id = '{}.{}.{}'.format(project_id, dataset_name, table_name)

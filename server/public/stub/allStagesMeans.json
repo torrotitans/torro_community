@@ -28,7 +28,7 @@
           "condition": [
             {
               "des": "input your project id", // description
-              "id": "porject_id", // condition id
+              "id": "project_id", // condition id
               "label": "Porject ID", // conditions 名称
               "regExp": "",
               "style": 3, // 对应所用 的 componment 类型
@@ -88,7 +88,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -174,7 +174,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -226,7 +226,7 @@
           "condition": [
             {
               "des": "input your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -292,7 +292,7 @@
           "condition": [
             {
               "des": "choose your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,
@@ -328,7 +328,7 @@
           "condition": [
             {
               "des": "choose your project id",
-              "id": "porject_id",
+              "id": "project_id",
               "label": "Porject ID",
               "regExp": "",
               "style": 3,

@@ -63,7 +63,7 @@
       "condition": [
         {
           "des": "input your project id",
-          "id": "porject_id",
+          "id": "project_id",
           "label": "Porject ID",
           "regExp": "",
           "style": 3,
